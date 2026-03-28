@@ -102,7 +102,7 @@ patterns across the codebase.
 
 ```
 .dev_flow/rules/
-├── _index.md           # Index of all rules with summary
+├── _index.yaml          # Index of all rules with summary
 ├── naming.md           # Naming conventions (classes, methods, variables, constants, packages)
 ├── structure.md        # Code structure and organization (class layout, method ordering, imports)
 ├── architecture.md     # Architectural rules (dependency direction, layer boundaries, communication)
@@ -120,6 +120,35 @@ Rules documents are living documents — they are updated during implement, revi
 and propagate phases when new patterns are discovered.
 
 **Role:** [onboard-rules-extractor.ai.md](../roles/onboard-rules-extractor.ai.md)
+
+### Step 5a: Initialize skills knowledge base
+
+After extracting rules, establish the domain knowledge hierarchy in `.dev_flow/skills/`.
+Skills capture project-specific expertise about technologies and patterns — distinct from rules
+(which govern code style) and from docs (which describe the system itself).
+
+1. **Identify domains** — from `layers.md`, `project_structure.md`, and module analyses,
+   determine which technology areas require project-specific knowledge:
+   - Which third-party SDKs, APIs, or frameworks have project-specific configuration?
+   - Which architectural patterns are non-obvious and specific to this project?
+   - Which build/CI/tooling decisions are non-standard?
+2. **Create directory hierarchy** under `.dev_flow/skills/` based on identified domains.
+   Create `_index.yaml` for each directory — initially empty skill lists.
+3. **Create root `_index.yaml`** listing all domains with their `topics` keywords.
+4. **Populate initial skills** — for any non-trivial pattern already discovered during
+   module analysis that passes the non-triviality filter:
+   - Required external research to understand
+   - Not obvious to a senior dev new to the project
+   - Likely to be needed again in future tasks
+5. Update `state.yaml`: `step: skills_initialized`.
+
+**Non-triviality filter:** Do NOT create skills for:
+- General Android SDK / Gradle / Java knowledge well-known to senior devs
+- Patterns already fully described in `onboard/analysis/` docs
+- Information derivable by reading the codebase directly
+
+**Format:** All `_index.yaml` files in `.dev_flow/skills/` use YAML.
+See [skill phase](skill.md) for the exact schema.
 
 ### Step 6: Generate docs (bottom-up, layer by layer)
 
@@ -173,7 +202,8 @@ This ensures cross-references (`Depends on`, `Used by`) are accurate.
    - Missing cross-references.
    - Contradictions between concepts.
    - Modules in `issues.md` that need manual attention.
-3. Validate that `.dev_flow/rules/` exists and contains at least `_index.md` and one category file.
+3. Validate that `.dev_flow/rules/` exists and contains at least `_index.yaml` and one category file.
+3a. Validate that `.dev_flow/skills/` exists and contains root `_index.yaml` with at least one domain.
 4. Generate a summary report in `.dev_flow/onboard/report.md`:
    - Total modules analyzed.
    - Documents generated (concepts, specs, plans, epics).

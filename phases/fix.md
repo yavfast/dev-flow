@@ -26,6 +26,14 @@ user-visible symptom, or a reference to a specific class/method.
 
 ## Procedure
 
+### Step 0: Check skills
+
+Before analyzing the bug, read `.dev_flow/skills/_index.yaml` and check if a skill exists
+for the technology area where the bug occurs (e.g., networking, storage, UI, event bus).
+If relevant skill(s) found — load them. They may contain known "Pitfalls" that explain
+the bug. If research is needed during analysis — save results to `.dev_flow/skills/` after
+the fix is complete. See [skill phase](skill.md).
+
 ### Step 1: Analyze
 
 1. **Understand the symptom** — parse the problem description.
@@ -46,7 +54,7 @@ If context is insufficient to identify the root cause, ask the user targeted que
 1. **Describe the root cause** — one paragraph explaining what goes wrong and why.
 2. **Propose the fix** — list specific changes (files, methods, what changes and why).
 3. **Assess impact** — note if the fix touches shared code that other features depend on.
-4. **Check rules** — read `.dev_flow/rules/_index.md` (if exists) to ensure the fix
+4. **Check rules** — read `.dev_flow/rules/_index.yaml` (if exists) to ensure the fix
    will comply with project coding rules.
 5. **Present to user** — show the analysis and proposed fix. Wait for approval
    before proceeding to implementation.

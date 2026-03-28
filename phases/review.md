@@ -79,7 +79,7 @@ When `.dev_flow/rules/` exists, review new or modified code against the project 
 
 During the **Plan → Code** gate and any code review:
 
-1. Read `.dev_flow/rules/_index.md` to identify applicable rule categories.
+1. Read `.dev_flow/rules/_index.yaml` to identify applicable rule categories.
 2. For each category relevant to the changed files, read the rules document.
 3. Check new code against rules by severity:
    - **must** rules — violation **blocks** advancement. Fix before proceeding.
@@ -102,7 +102,7 @@ Rules documents in `.dev_flow/rules/` are living documents. They can be updated:
 When updating rules:
 1. Edit the relevant `.dev_flow/rules/{category}.md` file.
 2. Add the `Source` metadata: `onboard analysis | manual | phase observation`.
-3. Update `.dev_flow/rules/_index.md` if a new rule was added.
+3. Update `.dev_flow/rules/_index.yaml` if a new rule was added.
 4. Existing code is NOT required to be retroactively fixed.
 
 ## Conflict Resolution Protocol

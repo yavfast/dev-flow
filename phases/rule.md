@@ -27,7 +27,7 @@ the appropriate changes to `.dev_flow/rules/`.
 
 ## Procedure
 
-1. **Read** `.dev_flow/rules/_index.md` to understand existing rules.
+1. **Read** `.dev_flow/rules/_index.yaml` to understand existing rules.
 
 2. **Interpret the request:**
    - Adding a new rule — no matching rule exists.
@@ -41,6 +41,10 @@ the appropriate changes to `.dev_flow/rules/`.
    - If ambiguous, ask the user (max 2 questions).
 
 4. **Find code examples** — search the codebase for 1-2 real examples matching the rule.
+
+4a. **Index format:** `.dev_flow/rules/_index.yaml` is YAML (not Markdown).
+    If the file is still in Markdown from an older onboard, convert it on first edit.
+    Move the "Key Patterns Quick Reference" section to `.dev_flow/rules/quick-reference.md`.
 
 5. **Write the rule** to `.dev_flow/rules/{category}.md` using the standard template:
 
@@ -73,7 +77,7 @@ the appropriate changes to `.dev_flow/rules/`.
 {Why this rule exists.}
 ```
 
-6. **Update `_index.md`** — add/update the row in the category table, update severity counts.
+6. **Update `_index.yaml`** — add/update the rule entry in `categories[].rules`, update `summary` counts.
 
 7. **Confirm** — report what was done: rule name, category, severity, action taken.
 
@@ -114,7 +118,7 @@ is added. Each file follows the same header format as standard categories.
 ## Initialization
 
 If `.dev_flow/rules/` does not exist, create the directory with empty category files
-and `_index.md` before proceeding.
+and `_index.yaml` before proceeding.
 
 ## Rules Are Living Documents
 

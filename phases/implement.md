@@ -31,6 +31,11 @@ Before writing code, verify:
 - [ ] Phase dependencies are explicitly stated
 - [ ] The specification passes its self-validation checklist
 
+**Skill check:** Before touching code, identify what technologies or patterns this task
+uses (SDK, API, architectural pattern). Read `.dev_flow/skills/_index.yaml` and check for
+relevant skills. If found — load them. If external research will be needed — note it;
+save consolidated results to `.dev_flow/skills/` after the task completes. See [skill phase](skill.md).
+
 ## Implementation Workflow
 
 ```

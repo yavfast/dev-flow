@@ -46,6 +46,11 @@ This command is handled by **DevFlowOrchestrator**:
 2. If active context does not exist, note this — the orchestrator will ask
    the user to describe the goal from scratch.
 
+3. **Skill check:** Based on the request topic, read `.dev_flow/skills/_index.yaml`.
+   If a relevant domain is found — read its `_index.yaml` and load matching skills.
+   If the task requires external research — note it; after completion, save results
+   to `.dev_flow/skills/`. See [skill phase](skill.md).
+
 ### Step 2: Interpret the request
 
 Analyze the freeform request against the loaded context to determine:

@@ -39,6 +39,7 @@ and defined rules for running/validating them.
 | 7. Review | `/dev-flow review` | Validate gates, resolve conflicts | Audit report |
 | — | `/dev-flow fix <problem>` | Analyze bug, plan fix, implement, verify | Fixed code + build/test result |
 | — | `/dev-flow rule <request>` | Add, edit, or remove coding rules (freeform) | Updated `.dev_flow/rules/` |
+| — | `/dev-flow skill <request>` | Find, add, update, or remove project knowledge skills | Updated `.dev_flow/skills/` |
 | — | `/dev-flow status` | Show current state, resume previous session | Status summary |
 | — | `/dev-flow ask <question>` | Read-only Q&A about code or feasibility — no changes | Answer + optional next-step suggestion |
 | — | `/dev-flow do <request>` | Freeform routing — interpret intent and run the right phases | Phase output + updated context |
