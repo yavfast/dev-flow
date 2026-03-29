@@ -17,13 +17,16 @@ All changes to the system start from concepts and specifications, not from code.
 The pipeline is strictly top-down:
 
 ```
-Concept -> [Gate] -> Specification -> [Gate] -> Plan -> [Gate] -> Code -> [Gate] -> Test* -> Commit
+Concept -> [Gate] -> Specification -> [Gate] -> Plan -> [Gate] -> Code -> [Gate] -> Test* -> [Gate] -> Review** -> Commit
 ```
 
 Each transition includes a validation gate to prevent drift.
 
 `*` — Testing phase is conditional: it activates only when the project has tests
 and defined rules for running/validating them.
+
+`**` — Pre-commit review is performed by a subagent with a clean context to ensure
+an unbiased perspective on the changes.
 
 ## Pipeline Phases
 
@@ -34,9 +37,9 @@ and defined rules for running/validating them.
 | 2. Specification | `/dev-flow spec` | Define data structures, contracts, rules | `*.sp.md` |
 | 3. Plan | `/dev-flow plan` | Break spec into actionable phases | `*.plan.md` |
 | 4. Implement | `/dev-flow implement` | Write code following the plan | Source code |
-| 5. Test | `/dev-flow test` | Verify code against spec contracts | Test results |
-| 6. Propagate | `/dev-flow propagate` | Update docs when code changes | Updated docs |
-| 7. Review | `/dev-flow review` | Validate gates, resolve conflicts | Audit report |
+| 5. Test | `/dev-flow test [target]` | Add/update/run tests for affected functionality | Test results |
+| 6. Review | `/dev-flow review` | Pre-commit review + validate gates, resolve conflicts | Review report |
+| 7. Propagate | `/dev-flow propagate` | Update docs when code changes | Updated docs |
 | — | `/dev-flow fix <problem>` | Analyze bug, plan fix, implement, verify | Fixed code + build/test result |
 | — | `/dev-flow rule <request>` | Add, edit, or remove coding rules (freeform) | Updated `.dev_flow/rules/` |
 | — | `/dev-flow skill <request>` | Find, add, update, or remove project knowledge skills | Updated `.dev_flow/skills/` |
@@ -57,7 +60,11 @@ and defined rules for running/validating them.
 
 > **Phase 5 (Test) activation condition:** The project must have an existing test suite
 > AND defined rules for running tests (e.g., `pytest`, `jest`, CI pipeline).
-> If neither exists — skip directly to Propagate.
+> If neither exists — skip directly to Review. The `test` command supports creating,
+> editing, or running tests and complex test scenarios.
+
+> **Phase 6 (Review):** Pre-commit code review is performed by a subagent with a
+> clean context to ensure an unbiased perspective. This is mandatory before any commit.
 
 ### Quick Start
 
@@ -87,11 +94,16 @@ Before writing or changing any code, ask yourself:
 - All spec contracts have corresponding test cases
 - All error cases from spec's Errors tables are tested
 - All invariants from spec are verified in tests
-- Tests pass successfully
+- Tests pass at all relevant levels (unit, mock, integration, live)
 
-**Code/Test -> Commit:**
+**Test -> Review:**
+- All relevant tests pass
+- No regressions in existing tests
+
+**Review -> Commit:**
+- Pre-commit review by a clean-context subagent passes (no blocking issues)
+- Warnings presented to user and acknowledged
 - Ask the user for explicit commit approval before committing
-- Commit only after successful review by the user
 
 ## Document Status Vocabulary
 
@@ -129,7 +141,8 @@ edit the existing document in place and update the Changelog.
 3. Update the **implementation plan** — mark completed, add new tasks.
 4. Update the **code** — implement according to the updated spec.
 5. Run **tests** — verify changes don't break spec contracts (if test suite exists).
-6. **Ask for commit approval** — present changes for review before committing.
+6. Run **pre-commit review** — subagent with clean context reviews the changes.
+7. **Ask for commit approval** — present changes for review before committing.
 
 ## Traceable Identifiers
 
@@ -167,12 +180,13 @@ Pipeline artifacts map to git workflow as follows:
 | Concept + Specification | One PR — reviewed together as a design unit |
 | Implementation Plan | Separate PR — technology decisions reviewed independently |
 | Implementation (per plan phase) | One PR per plan phase — incremental, reviewable |
-| Propagation + Review | Same PR as the triggering change |
+| Review + Propagation | Same PR as the triggering change |
 
 **Commit rules:**
 1. **Never commit without explicit user approval.** After completing a phase, present the changes and ask: "Ready to commit?"
-2. Only commit after the user confirms the review.
-3. Commit message must reference the traceable ID: `[C_XXX] / [SP_XXX] / [PL_XXX]`.
+2. **Run pre-commit review** by a clean-context subagent before asking for commit approval.
+3. Only commit after the review passes and the user confirms.
+4. Commit message must reference the traceable ID: `[C_XXX] / [SP_XXX] / [PL_XXX]`.
 
 ## Active Context & Session Continuity
 
@@ -245,9 +259,9 @@ reveals a coding pattern, constraint, or convention that is not yet captured in
 - [Specification phase](phases/specification.md) | [Template](templates/specification.md)
 - [Plan phase](phases/plan.md) | [Template](templates/plan.md)
 - [Implement phase](phases/implement.md)
-- [Test phase](phases/testing.md) *(conditional)*
+- [Test phase](phases/testing.md) *(conditional — add/update/run tests)*
+- [Review phase](phases/review.md) *(pre-commit review by clean-context subagent)*
 - [Propagate phase](phases/propagate.md)
-- [Review phase](phases/review.md)
 - [Fix phase](phases/fix.md) *(analyze, plan, fix, verify)*
 - [Rule phase](phases/rule.md) *(add/edit/remove coding rules)*
 - [Status phase](phases/status.md) | [Active context template](templates/active_context.md)

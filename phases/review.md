@@ -1,9 +1,65 @@
-# Phase 7: Review & Validation
+# Phase 6: Review & Validation
 
 ## Purpose
 
 Validate pipeline gates, detect conflicts between documents, manage deprecation,
-and ensure the documentation-code alignment is maintained.
+ensure the documentation-code alignment is maintained, and perform pre-commit
+code review of changes.
+
+## Pre-Commit Code Review
+
+**Before any commit**, a code review of the changes MUST be performed.
+This review should be executed by a **subagent with a clean context** to ensure
+an unbiased, fresh perspective on the changes.
+
+### Why a clean-context subagent?
+
+The agent that wrote the code has accumulated assumptions and context that may
+blind it to issues. A fresh subagent sees only the diff and the spec — the same
+perspective a human reviewer would have.
+
+### Pre-Commit Review Procedure
+
+1. **Launch a reviewer subagent** (role: [reviewer.ai.md](../roles/reviewer.ai.md))
+   with a clean context containing only:
+   - The git diff of all staged/unstaged changes
+   - The relevant specification (`*.sp.md`) for contract verification
+   - The relevant plan (`*.plan.md`) for completeness verification
+   - Project rules (`.dev_flow/rules/`) if they exist
+
+2. **The reviewer subagent checks:**
+
+   | Check | Description | Severity |
+   |-------|-------------|----------|
+   | Spec compliance | Code implements all spec contracts, error cases, invariants | blocks |
+   | Plan completeness | All plan tasks for the current phase are addressed | blocks |
+   | Rules compliance | New code follows `.dev_flow/rules/` | blocks (must), warns (should) |
+   | No regressions | Changes don't break existing functionality | blocks |
+   | No leftover artifacts | No debug code, TODOs, commented-out blocks | warns |
+   | Code quality | Naming, structure, readability follow project conventions | warns |
+   | Security | No obvious vulnerabilities (injection, exposure, etc.) | blocks |
+
+3. **Review result:**
+   - **Pass** — proceed to commit approval.
+   - **Fail (blocking)** — fix issues, re-run tests if needed, then re-review.
+   - **Warnings only** — present warnings to the user, proceed if user approves.
+
+4. **Report format:**
+
+   ```
+   ## Pre-Commit Review
+
+   **Result:** PASS / FAIL / WARNINGS
+
+   ### Blocking Issues
+   - [ ] {issue description} — {file:line}
+
+   ### Warnings
+   - {warning description} — {file:line}
+
+   ### Summary
+   {1-2 sentence summary of the review}
+   ```
 
 ## Validation Gates
 

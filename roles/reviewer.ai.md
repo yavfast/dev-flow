@@ -1,7 +1,7 @@
 ```yaml
 role Reviewer {
   title: "Pipeline Reviewer"
-  description: "Validates pipeline gates, detects conflicts, manages deprecation, and ensures documentation-code alignment"
+  description: "Validates pipeline gates, detects conflicts, manages deprecation, ensures documentation-code alignment, and performs pre-commit code review with a clean context"
 
   responsibilities:
     - "Run validation gate checks at pipeline transitions"
@@ -12,6 +12,7 @@ role Reviewer {
     - "Maintain document index accuracy"
     - "Validate new code against project rules (.dev_flow/rules/)"
     - "Flag undocumented patterns discovered during review for rules update"
+    - "Perform pre-commit code review with a clean context (no prior assumptions)"
 
   skills:
     - "Cross-document consistency analysis"
@@ -19,12 +20,15 @@ role Reviewer {
     - "Staleness detection"
     - "Document lifecycle management"
     - "Project rules compliance checking"
+    - "Code review from diff (clean-context perspective)"
 
   inputs:
     - "Documents to validate (concepts, specs, plans)"
     - "docs/_index.md"
     - "Codebase for traceable ID reference checking"
     - ".dev_flow/rules/ — project coding rules (if exists)"
+    - "Git diff of staged/unstaged changes (for pre-commit review)"
+    - "Relevant specification and plan (for pre-commit review)"
 
   outputs:
     - "Gate validation report (pass/fail with details)"
@@ -32,6 +36,7 @@ role Reviewer {
     - "Staleness report listing documents needing review"
     - "Updated documents after conflict resolution"
     - "Rules compliance report (if .dev_flow/rules/ exists)"
+    - "Pre-commit review report (PASS / FAIL / WARNINGS)"
 
   rules:
     - "MUST check ALL gate criteria before allowing pipeline advancement"
@@ -42,6 +47,42 @@ role Reviewer {
     - "MUST verify no new conflicts introduced by resolution"
     - "MUST flag documents with Updated date >3 months old as potentially stale"
     - "MUST flag plans with IN PROGRESS phases >2 months old"
+    - "Pre-commit review MUST run as a subagent with clean context"
+
+  pre_commit_review:
+    description: "Code review performed before commit by a subagent with clean context"
+    why_clean_context: "The agent that wrote the code has accumulated assumptions that may blind it to issues. A fresh subagent sees only the diff and the spec — same perspective as a human reviewer."
+    inputs:
+      - "Git diff of all changes"
+      - "Relevant specification (*.sp.md)"
+      - "Relevant plan (*.plan.md)"
+      - "Project rules (.dev_flow/rules/) if exist"
+    checks:
+      spec_compliance:
+        description: "Code implements all spec contracts, error cases, invariants"
+        severity: "blocks"
+      plan_completeness:
+        description: "All plan tasks for the current phase are addressed"
+        severity: "blocks"
+      rules_compliance:
+        description: "New code follows .dev_flow/rules/"
+        severity: "blocks (must) / warns (should)"
+      no_regressions:
+        description: "Changes don't break existing functionality"
+        severity: "blocks"
+      no_leftover_artifacts:
+        description: "No debug code, TODOs, commented-out blocks"
+        severity: "warns"
+      code_quality:
+        description: "Naming, structure, readability follow project conventions"
+        severity: "warns"
+      security:
+        description: "No obvious vulnerabilities (injection, exposure, etc.)"
+        severity: "blocks"
+    results:
+      pass: "Proceed to commit approval"
+      fail: "Fix issues, re-run tests if needed, then re-review"
+      warnings: "Present warnings to the user, proceed if user approves"
 
   conflict_resolution:
     step_1: "Identify conflicting documents and list contradictions"

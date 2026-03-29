@@ -43,11 +43,14 @@ save consolidated results to `.dev_flow/skills/` after the task completes. See [
 2. Read the referenced specification sections
 3. Write code that satisfies ALL spec contracts
 4. Add traceable ID comments linking back to concept/spec
-5. Write tests covering spec's error cases and invariants
-6. Run tests (if test suite exists) — see [Test phase](testing.md)
-7. Update plan phase status to [DONE]
-8. Update plan Progress checkboxes
-9. Ask user for commit approval before committing
+5. Add/update tests covering spec's error cases and invariants — see [Test phase](testing.md)
+6. Run tests at all relevant levels (unit → mock → integration → live)
+7. Fix any test failures (code must satisfy the spec)
+8. Run pre-commit review (clean-context subagent) — see [Review phase](review.md)
+9. Fix any blocking issues from the review, re-run tests if needed
+10. Update plan phase status to [DONE]
+11. Update plan Progress checkboxes
+12. Ask user for commit approval before committing
 ```
 
 ## Anti-Patterns
