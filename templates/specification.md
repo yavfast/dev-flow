@@ -74,6 +74,33 @@ Transition rules:
 |------|----|-----------|-------------|
 | {from} | {to} | {condition} | {side effects} |
 
+## 05. Verification Criteria  {#SP_XXX_05}
+
+### 05_01. Functional Expectations  {#SP_XXX_05_01}
+
+| Contract | Scenario | Input | Expected outcome |
+|----------|----------|-------|------------------|
+| {OperationName} | Happy path | {valid input} | {expected result} |
+| {OperationName} | Error case | {invalid input} | {expected error} |
+
+### 05_02. Invariant Checks  {#SP_XXX_05_02}
+
+| Invariant | Verification method |
+|-----------|-------------------|
+| {invariant} | {how to verify it holds} |
+
+### 05_03. Integration Scenarios  {#SP_XXX_05_03}
+
+| Scenario | Preconditions | Steps | Expected result |
+|----------|--------------|-------|-----------------|
+| {scenario} | {setup} | {steps} | {expected} |
+
+### 05_04. Edge Cases and Boundaries  {#SP_XXX_05_04}
+
+| Case | Input | Expected behavior |
+|------|-------|-------------------|
+| {edge case} | {input} | {behavior} |
+
 ## Changelog
 
 | Date | Change |

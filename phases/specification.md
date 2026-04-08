@@ -30,6 +30,8 @@ Every specification must pass these checks before advancing to the plan:
 - [ ] Is the spec precise enough to prevent hallucinations during code generation?
 - [ ] Are all constraints and invariants explicitly stated?
 - [ ] Are state transitions documented with conditions and side effects?
+- [ ] Are verification criteria defined for all contracts (expected outcomes, edge cases)?
+- [ ] Are integration scenarios described for cross-module interactions?
 
 ## Structure
 
@@ -117,6 +119,49 @@ Transition rules:
 |------|----|-----------|-------------|
 | draft | active | all required fields set | notify subscribers |
 | active | archived | no dependent entities | cascade cleanup |
+
+## 05. Verification Criteria  {#SP_XXX_05}
+
+Define expected outcomes and observable behavior for each contract.
+This section is the basis for test planning (Phase 5) and live scenario
+design (Phase 7). Without it, test coverage cannot be verified against the spec.
+
+### 05_01. Functional Expectations  {#SP_XXX_05_01}
+
+For each contract, define verifiable success and failure outcomes:
+
+| Contract | Scenario | Input | Expected outcome |
+|----------|----------|-------|------------------|
+| OperationName | Happy path | valid entity_id | Returns updated entity, status changed |
+| OperationName | Not found | non-existent ID | NOT_FOUND error, no state change |
+| OperationName | No permission | valid ID, no access | FORBIDDEN error, no state change |
+
+### 05_02. Invariant Checks  {#SP_XXX_05_02}
+
+For each invariant, define how to verify it holds:
+
+| Invariant | Verification method |
+|-----------|-------------------|
+| `id` is immutable | Attempt to change `id` after creation — must fail |
+| `status` transitions are one-way | Attempt reverse transition — must fail |
+
+### 05_03. Integration Scenarios  {#SP_XXX_05_03}
+
+When the feature interacts with other modules or external services,
+describe end-to-end scenarios for verification:
+
+| Scenario | Preconditions | Steps | Expected result |
+|----------|--------------|-------|-----------------|
+| Entity creation triggers notification | Notification service available | 1. Create entity 2. Activate entity | Subscriber receives notification |
+
+### 05_04. Edge Cases and Boundaries  {#SP_XXX_05_04}
+
+| Case | Input | Expected behavior |
+|------|-------|-------------------|
+| Max length name | 100-char string | Accepted |
+| Exceeds max length | 101-char string | Validation error |
+| Empty required field | name = "" | Validation error |
+| Concurrent modifications | Two parallel updates | One succeeds, one gets conflict error |
 ```
 
 ## Changelog Requirement
