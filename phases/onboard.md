@@ -203,14 +203,14 @@ This ensures cross-references (`Depends on`, `Used by`) are accurate.
    - Contradictions between concepts.
    - Modules in `issues.md` that need manual attention.
 3. Validate that `.dev_flow/rules/` exists and contains at least `_index.yaml` and one category file.
-3a. Validate that `.dev_flow/skills/` exists and contains root `_index.yaml` with at least one domain.
-4. Generate a summary report in `.dev_flow/onboard/report.md`:
+4. Validate that `.dev_flow/skills/` exists and contains root `_index.yaml` with at least one domain.
+5. Generate a summary report in `.dev_flow/onboard/report.md`:
    - Total modules analyzed.
    - Documents generated (concepts, specs, plans, epics).
    - Rules extracted (count per category, total).
    - Issues requiring manual attention.
    - Suggested next steps.
-4. Update `state.yaml`: `status: completed`.
+6. Update `state.yaml`: `status: completed`.
 
 ### Step 9: Cleanup (optional, after user approval)
 
@@ -313,7 +313,7 @@ Processing order:
 - A module in package B that imports from package A creates a cross-package dependency —
   package B is in a higher layer than package A.
 
-### Doc Generation (Step 5)
+### Doc Generation (Step 6)
 
 - Each package gets its own `docs/` subdirectory: `packages/{name}/docs/`.
 - Cross-package references use relative paths: `[SP_XXX](../../other-package/docs/other.sp.md)`.

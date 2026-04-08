@@ -95,6 +95,8 @@ Before writing or changing any code, ask yourself:
 **Specification -> Plan:**
 - All data structures fully defined with types, constraints, invariants
 - All contracts specified with inputs, outputs, error cases
+- Verification criteria defined for all contracts (expected outcomes, edge cases)
+- Integration scenarios described for cross-module interactions
 - Self-validation checklist passes (see [specification phase](phases/specification.md))
 
 **Plan -> Code:**
@@ -240,7 +242,7 @@ Rules are extracted during onboard and updated during implement/review phases.
 
 ```
 .dev_flow/rules/
-├── _index.md           # Index of all rules
+├── _index.yaml         # Index of all rules (YAML)
 ├── naming.md           # Naming conventions
 ├── structure.md        # Code structure patterns
 ├── architecture.md     # Architectural constraints
@@ -262,7 +264,7 @@ reveals a coding pattern, constraint, or convention that is not yet captured in
   no matching rule — add the rule so the same class of bug is prevented in the future.
 - New rules default to severity **should** unless the plan/fix explicitly marks them
   as **must** or **prefer**.
-- After adding a rule, update `.dev_flow/rules/_index.md` and mention the new rule
+- After adding a rule, update `.dev_flow/rules/_index.yaml` and mention the new rule
   in the commit message.
 
 ## Greenfield vs Takeover
@@ -290,6 +292,7 @@ reveals a coding pattern, constraint, or convention that is not yet captured in
 - [Propagate phase](phases/propagate.md)
 - [Fix phase](phases/fix.md) *(analyze, plan, fix, verify)*
 - [Rule phase](phases/rule.md) *(add/edit/remove coding rules)*
+- [Skill phase](phases/skill.md) *(manage project knowledge skills)*
 - [Status phase](phases/status.md) | [Active context template](templates/active_context.md)
 - [Ask phase](phases/ask.md) *(read-only Q&A, no file changes)*
 - [Do phase](phases/do.md) *(default fallback for freeform requests)*
@@ -313,7 +316,7 @@ Each phase has a specialized role for subagent execution:
 | Review | [reviewer.ai.md](roles/reviewer.ai.md) | Validates gates and resolves conflicts |
 | Verify | Uses [tester.ai.md](roles/tester.ai.md) | Regression, integration, and live testing |
 | Propagate | [propagator.ai.md](roles/propagator.ai.md) | Propagates changes across pipeline |
-| Fix | Uses [implementer.ai.md](roles/implementer.ai.md) | Analyzes bug, plans fix, implements, verifies |
+| Fix | Orchestrates multiple roles (analysis inline, implementation via [implementer.ai.md](roles/implementer.ai.md)) | Analyzes bug, plans fix, implements, verifies |
 | Rule | — (inline, no subagent) | Manages `.dev_flow/rules/` files directly |
 | Skill | — (inline, no subagent) | Manages `.dev_flow/skills/` files directly |
 | Status / all phases | [context-tracker.ai.md](roles/context-tracker.ai.md) | Reads and writes `.dev_flow/active_context.md` |

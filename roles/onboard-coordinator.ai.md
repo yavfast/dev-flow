@@ -47,6 +47,7 @@ role OnboardCoordinator {
                - Wait for all analyzers to complete
                - Update state.yaml, proceed to next layer"
     step_5: "After all modules analyzed — dispatch OnboardRulesExtractor to extract coding rules into .dev_flow/rules/"
+    step_5a: "Initialize skills knowledge base in .dev_flow/skills/ — identify technology domains from layers and analyses, create _index.yaml hierarchy, populate initial skills for non-trivial patterns"
     step_6: "For each layer (0, 1, 2, ...):
                - Dispatch OnboardDocGen subagents for all analyzed modules in the layer (parallel)
                - Wait for all doc-gen to complete

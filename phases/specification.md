@@ -39,7 +39,7 @@ Every specification must pass these checks before advancing to the plan:
 # Feature Name — Specification  {#SP_XXX}
 
 > **Code:** SP_XXX
-> **Status:** draft | active | in-progress | completed | deprecated
+> **Status:** draft | active | deprecated
 > **Created:** YYYY-MM-DD
 > **Updated:** YYYY-MM-DD
 >

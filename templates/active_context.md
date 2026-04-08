@@ -8,7 +8,7 @@
 | Field | Value |
 |-------|-------|
 | **Document** | `[type: concept/spec/plan/code]` — [title and file path] |
-| **Pipeline phase** | `[concept / spec / plan / implement / test / propagate / review]` |
+| **Pipeline phase** | `[onboard / concept / spec / plan / implement / test / review / verify / fix / propagate / rule / skill / ask / do / status]` |
 | **Status** | `[in-progress / blocked / review-pending / done]` |
 | **Traceable ID** | `[C_XXX / SP_XXX / PL_XXX or n/a]` |
 

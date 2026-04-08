@@ -69,6 +69,13 @@ After the review passes, proceed to the [Verify phase](verify.md) for regression
 integration, and live testing. Do NOT commit directly after review — verification
 must pass first.
 
+### Review -> Verify Gate
+
+- [ ] Pre-commit review by a clean-context subagent passes (no blocking issues)
+- [ ] Warnings presented to user and acknowledged
+- [ ] Ask user permission before creating new integration/live test scenarios
+- [ ] If no automated verification is possible — provide manual verification steps
+
 ## Validation Gates
 
 Run gate checks before advancing to the next pipeline stage.
@@ -207,7 +214,7 @@ Changelog tables reflecting significant changes since their creation.
    > **Status:** deprecated
    > **Deprecated-reason:** Replaced by [C_XXX_V2](./new.concept.md)
    ```
-3. Update `_index.md` to reflect deprecated status.
+3. Update `_index.yaml` to reflect deprecated status.
 4. Update all `Used by` references — dependents should migrate.
 
 ### Behavior of Draft and Deprecated Documents

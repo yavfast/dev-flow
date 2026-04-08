@@ -125,7 +125,7 @@ role Reviewer {
   rules_compliance:
     condition: ".dev_flow/rules/ directory exists"
     procedure:
-      - "Read .dev_flow/rules/_index.md to identify applicable categories"
+      - "Read .dev_flow/rules/_index.yaml to identify applicable categories"
       - "For each changed file, check against relevant rules by severity"
       - "must violations block advancement — fix before proceeding"
       - "should violations trigger warning — acceptable if justified"

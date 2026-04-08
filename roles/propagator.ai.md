@@ -40,7 +40,8 @@ role Propagator {
     step_2: "Update specification (skip only if plan-only adjustment)"
     step_3: "Update implementation plan (skip only for trivial fixes)"
     step_4: "Implement in code (never skip)"
-    step_5: "Update document index (skip only if no new/removed concepts)"
+    step_5: "Run Test → Review → Verify → Commit as per the main pipeline"
+    step_6: "Update document index (skip only if no new/removed concepts)"
 
   cascade_assessment:
     - "List all documents in Used by chain"

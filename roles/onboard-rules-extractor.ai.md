@@ -29,7 +29,7 @@ role OnboardRulesExtractor {
     - .dev_flow/rules/error-handling.md — Error handling and logging patterns
     - .dev_flow/rules/style.md — Code style, formatting, documentation conventions
     - .dev_flow/rules/testing.md — Testing patterns and requirements (if tests exist)
-    - .dev_flow/rules/_index.md — Index of all rules with summary
+    - .dev_flow/rules/_index.yaml — Index of all rules with summary (YAML)
 
   rules_document_structure: |
     # {Category} Rules
@@ -75,7 +75,7 @@ role OnboardRulesExtractor {
     step_5: "Include real code examples with file path references"
     step_6: "Flag inconsistencies found during extraction in issues.md"
     step_7: "Write rules documents per category"
-    step_8: "Generate _index.md with all rules summarized"
+    step_8: "Generate _index.yaml with all rules summarized"
 
   rules:
     - "Extract rules from ACTUAL code patterns, not assumptions"

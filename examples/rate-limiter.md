@@ -83,6 +83,11 @@ Exceeding the limit causes the call to be delayed, not rejected.
 Input: agent_id (string)
 Output: wait_seconds (float) — 0 if token acquired immediately, >0 if delayed.
 
+Errors:
+| Code | Condition | Guidance |
+|------|-----------|----------|
+| INVALID_AGENT | agent_id is empty or null | Provide a valid agent identifier |
+
 Processing:
     FUNCTION AcquireToken(agent_id):
         bucket = GET_OR_CREATE(agent_id)
@@ -95,9 +100,33 @@ Processing:
             SLEEP(wait)
             bucket.tokens -= 1
             RETURN wait
-## 03. Verification Criteria  {#SP_RLM_03}
 
-### 03_01. Functional Expectations  {#SP_RLM_03_01}
+## 03. Validation Rules  {#SP_RLM_03}
+
+### 03_01. Input Validation  {#SP_RLM_03_01}
+
+- agent_id must be a non-empty string
+- capacity must be in range 1..1000
+- refill_rate must be in range 0.1..100.0
+
+## 04. State Transitions  {#SP_RLM_04}
+
+### 04_01. RateBucket Lifecycle  {#SP_RLM_04_01}
+
+State diagram:
+    [empty] --refill()--> [partial] --refill()--> [full]
+    [full] --acquire()--> [partial] --acquire()--> [empty]
+
+Transition rules:
+| From | To | Condition | Side effects |
+|------|----|-----------|-------------|
+| any | partial | tokens consumed or refilled | tokens updated, last_refill set |
+| partial | empty | tokens < 1 | next acquire waits |
+| partial/empty | full | elapsed * refill_rate >= capacity - tokens | tokens capped at capacity |
+
+## 05. Verification Criteria  {#SP_RLM_05}
+
+### 05_01. Functional Expectations  {#SP_RLM_05_01}
 
 | Contract | Scenario | Input | Expected outcome |
 |----------|----------|-------|------------------|
@@ -105,20 +134,20 @@ Processing:
 | AcquireToken | Bucket empty | agent with 0 tokens | Returns wait_seconds > 0, call delayed |
 | AcquireToken | New agent | unknown agent_id | Creates bucket with default capacity, returns 0.0 |
 
-### 03_02. Invariant Checks  {#SP_RLM_03_02}
+### 03_02. Invariant Checks  {#SP_RLM_05_02}
 
 | Invariant | Verification method |
 |-----------|-------------------|
 | tokens <= capacity | Drain bucket, wait for refill, verify tokens never exceed capacity |
 | tokens >= 0 | Rapid concurrent calls, verify tokens don't go negative |
 
-### 03_03. Integration Scenarios  {#SP_RLM_03_03}
+### 03_03. Integration Scenarios  {#SP_RLM_05_03}
 
 | Scenario | Preconditions | Steps | Expected result |
 |----------|--------------|-------|-----------------|
 | LLM calls throttled | LLMRouter configured with RateLimiter | Send capacity+1 rapid calls | First N calls immediate, N+1 delayed by ~1/refill_rate seconds |
 
-### 03_04. Edge Cases and Boundaries  {#SP_RLM_03_04}
+### 03_04. Edge Cases and Boundaries  {#SP_RLM_05_04}
 
 | Case | Input | Expected behavior |
 |------|-------|-------------------|

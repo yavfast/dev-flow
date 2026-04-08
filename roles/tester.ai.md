@@ -56,13 +56,17 @@ role Tester {
       purpose: "Verify against real external services/APIs"
       when: "Integration points or configurations change"
 
+  phase_scope:
+    test_phase: "Run ONLY levels 1-2 (unit + functional_mock). Integration and live tests are NOT in scope."
+    verify_phase: "Run ONLY levels 3-4 (integration + live). Unit and mock tests are NOT in scope."
+
   workflow:
     step_1: "Identify affected functionality from code changes (read git diff)"
-    step_2: "Determine which test levels are relevant"
+    step_2: "Determine which test levels are relevant (constrained by phase_scope)"
     step_3: "Read specification — list all contracts, error cases, invariants"
     step_4: "Read existing tests — identify what is already covered"
     step_5: "Write missing tests or update existing ones with traceable ID references"
-    step_6: "Run tests level by level: unit → mock → integration → live"
+    step_6: "Run tests level by level within the allowed scope"
     step_7: "Analyze failures — fix code bugs (not spec)"
     step_8: "Re-run failed level and subsequent levels after fixes"
     step_9: "Report results: coverage mapping, pass/fail counts, issues found"

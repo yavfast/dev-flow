@@ -36,7 +36,7 @@ the appropriate changes to `.dev_flow/rules/`.
 
 3. **Determine rule properties:**
    - **Category:** naming | structure | architecture | error-handling | style
-   - **Severity:** must | should | prefer (infer from wording: "заборона"/"never" → must, "бажано"/"prefer" → should, "краще"/"advisory" → prefer)
+   - **Severity:** must | should | prefer (infer from wording: "заборона"/"never" → must, "рекомендується"/"should" → should, "бажано"/"prefer"/"краще"/"advisory" → prefer)
    - **Rule name:** PascalCase, concise (e.g., `NoMPrefixForFields`, `EnumOverConstants`)
    - If ambiguous, ask the user (max 2 questions).
 

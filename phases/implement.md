@@ -52,13 +52,15 @@ All new code must comply with loaded rules. See [rule phase](rule.md).
 3. Write code that satisfies ALL spec contracts
 4. Add traceable ID comments linking back to concept/spec
 5. Add/update tests covering spec's error cases and invariants — see [Test phase](testing.md)
-6. Run tests at all relevant levels (unit → mock → integration → live)
+6. Run functional tests (unit → mock) covering the changed code
 7. Fix any test failures (code must satisfy the spec)
 8. Run pre-commit review (clean-context subagent) — see [Review phase](review.md)
 9. Fix any blocking issues from the review, re-run tests if needed
-10. Update plan phase status to [DONE]
-11. Update plan Progress checkboxes
-12. Ask user for commit approval before committing
+10. Run verification (regression, integration, live) — see [Verify phase](verify.md)
+11. If Verify fails → fix code → re-run steps 6-10
+12. Update plan phase status to [DONE]
+13. Update plan Progress checkboxes
+14. Ask user for commit approval before committing
 ```
 
 ## Anti-Patterns

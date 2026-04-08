@@ -44,7 +44,7 @@ role ContextTracker {
       session: "Brief label identifying the session or work unit"
       current_work_item:
         document: "type + title + file path"
-        pipeline_phase: "one of: concept/spec/plan/implement/test/propagate/review"
+        pipeline_phase: "one of: onboard/concept/spec/plan/implement/test/review/verify/fix/propagate/rule/skill/ask/do/status"
         status: "one of: in-progress/blocked/review-pending/done"
         traceable_id: "C_XXX or SP_XXX or PL_XXX or n/a"
       current_task: "Free-text description of what is being worked on"

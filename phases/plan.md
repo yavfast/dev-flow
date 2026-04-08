@@ -37,7 +37,7 @@ Technology Decisions table. See [rule phase](rule.md).
 # Implementation Plan: Feature Name  {#PL_XXX}
 
 > **Code:** PL_XXX
-> **Status:** draft | active | in-progress | completed | deprecated
+> **Status:** draft | in-progress | completed | deprecated
 > **Created:** YYYY-MM-DD
 > **Updated:** YYYY-MM-DD
 >

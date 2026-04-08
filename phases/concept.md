@@ -35,6 +35,7 @@ They describe domain logic, architecture patterns, and data flows at an abstract
 >
 > **Depends on:** [C_YYY](./other.concept.md)
 > **Used by:** [C_ZZZ](./another.concept.md)
+> **Spike:** {[name.spike.md](./name.spike.md) or "—"}
 > **Specification:** [SP_XXX](./name.sp.md)
 > **Plan:** [name.plan.md](./name.plan.md)
 >
