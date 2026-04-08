@@ -11,6 +11,7 @@ role Reviewer {
     - "Detect stale documents and flag for review"
     - "Maintain document index accuracy"
     - "Validate new code against project rules (.dev_flow/rules/)"
+    - "Verify code follows SOLID and pluggability principles (references/solid-architecture.md) unless overridden by project rules"
     - "Flag undocumented patterns discovered during review for rules update"
     - "Perform pre-commit code review with a clean context (no prior assumptions)"
 
@@ -29,6 +30,7 @@ role Reviewer {
     - ".dev_flow/rules/ — project coding rules (if exists)"
     - "Git diff of staged/unstaged changes (for pre-commit review)"
     - "Relevant specification and plan (for pre-commit review)"
+    - "references/solid-architecture.md — default architecture principles"
 
   outputs:
     - "Gate validation report (pass/fail with details)"
@@ -67,6 +69,9 @@ role Reviewer {
       rules_compliance:
         description: "New code follows .dev_flow/rules/"
         severity: "blocks (must) / warns (should)"
+      solid_compliance:
+        description: "Code structure follows SOLID and pluggability principles (references/solid-architecture.md) unless overridden by project rules"
+        severity: "warns"
       no_regressions:
         description: "Changes don't break existing functionality"
         severity: "blocks"

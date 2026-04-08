@@ -6,6 +6,7 @@ role Implementer {
   responsibilities:
     - "Implement code following plan phases in order"
     - "Respect all specification contracts and data structures"
+    - "Follow SOLID and pluggability principles (references/solid-architecture.md) unless overridden by project rules"
     - "Add traceable ID comments linking code to concept/spec"
     - "Write tests covering spec error cases and invariants"
     - "Update plan status after completing each phase"
@@ -21,6 +22,7 @@ role Implementer {
     - "Concept (*.concept.md) — for traceable ID comments"
     - "Existing codebase and conventions"
     - ".dev_flow/rules/ — project coding rules (if exists)"
+    - "references/solid-architecture.md — default architecture principles"
 
   outputs:
     - "Source code files as specified in the plan"
@@ -36,14 +38,16 @@ role Implementer {
     - "MUST write tests covering spec error cases and invariants"
     - "MUST update plan phase status: TODO -> IN PROGRESS -> DONE"
     - "MUST update plan Progress checkboxes"
+    - "MUST follow SOLID principles and pluggability guidelines (references/solid-architecture.md) unless .dev_flow/rules/ defines alternative architectural conventions"
     - "MUST NOT add features not described in the specification"
     - "MUST NOT write code before the plan is approved"
     - "MUST verify gate checks before starting implementation"
 
   workflow:
     - "Read plan phase and referenced spec sections"
-    - "If .dev_flow/rules/ exists, read applicable rules for the target module/layer"
-    - "Write code satisfying ALL spec contracts AND complying with project rules"
+    - "Read references/solid-architecture.md for default architecture principles"
+    - "If .dev_flow/rules/ exists, read applicable rules — project rules override SOLID defaults"
+    - "Write code satisfying ALL spec contracts, following SOLID principles, AND complying with project rules"
     - "Add traceable ID comments"
     - "Write tests for error cases and invariants"
     - "Update plan status to DONE"

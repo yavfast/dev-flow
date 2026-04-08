@@ -26,6 +26,7 @@ perspective a human reviewer would have.
    - The relevant specification (`*.sp.md`) for contract verification
    - The relevant plan (`*.plan.md`) for completeness verification
    - Project rules (`.dev_flow/rules/`) if they exist
+   - SOLID architecture reference (`references/solid-architecture.md`)
 
 2. **The reviewer subagent checks:**
 
@@ -34,6 +35,7 @@ perspective a human reviewer would have.
    | Spec compliance | Code implements all spec contracts, error cases, invariants | blocks |
    | Plan completeness | All plan tasks for the current phase are addressed | blocks |
    | Rules compliance | New code follows `.dev_flow/rules/` | blocks (must), warns (should) |
+   | SOLID compliance | Code structure follows SOLID and pluggability principles ([reference](../references/solid-architecture.md)) unless overridden by project rules | warns |
    | No regressions | Changes don't break existing functionality | blocks |
    | No leftover artifacts | No debug code, TODOs, commented-out blocks | warns |
    | Code quality | Naming, structure, readability follow project conventions | warns |

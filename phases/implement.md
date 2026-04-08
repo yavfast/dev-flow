@@ -8,17 +8,21 @@ from the specification — never write code without an up-to-date plan.
 ## Rules
 
 1. **Follow the plan phases in order.** Respect dependencies between phases.
-2. **Reference traceable IDs in code comments:**
+2. **Follow SOLID and pluggability principles** as defined in
+   [solid-architecture reference](../references/solid-architecture.md).
+   If `.dev_flow/rules/` defines alternative architectural conventions — project rules
+   take precedence.
+3. **Reference traceable IDs in code comments:**
    ```python
    # [C_ACS_03_01] PermissionInterceptor — enforcement pattern
    class PermissionInterceptor:
        ...
    ```
-3. **Implement ALL fields from specification tables.** Do not skip optional fields —
+4. **Implement ALL fields from specification tables.** Do not skip optional fields —
    implement them with their default values.
-4. **Use immutable structures** where the spec says "immutable after creation".
-5. **Implement all error cases** from the spec's Errors tables.
-6. **Update the plan status** after completing each phase:
+5. **Use immutable structures** where the spec says "immutable after creation".
+6. **Implement all error cases** from the spec's Errors tables.
+7. **Update the plan status** after completing each phase:
    - Change `[TODO]` to `[IN PROGRESS]` when starting
    - Change `[IN PROGRESS]` to `[DONE]` when tests pass
    - Update the checkbox in the Progress section
