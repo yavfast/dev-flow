@@ -17,7 +17,7 @@ All changes to the system start from concepts and specifications, not from code.
 The pipeline is strictly top-down:
 
 ```
-Concept -> [Gate] -> Specification -> [Gate] -> Plan -> [Gate] -> Code -> [Gate] -> Test* -> [Gate] -> Review** -> [Gate] -> Verify* -> Commit
+Concept -> [Gate] -> Specification -> [Gate] -> Plan -> [Gate] -> Code -> [Gate] -> Test* -> [Gate] -> Review** -> [Gate] -> Verify* -> Commit -> Propagate
 ```
 
 Each transition includes a validation gate to prevent drift.
@@ -31,7 +31,7 @@ an unbiased perspective on the changes.
 **Two-stage testing:**
 - **Test** — functional tests only (unit + mock) covering the changed code.
 - **Verify** — regression, integration, and live testing (end-to-end flows, app/service launch).
-  If Verify finds issues → fix code → re-run Test → re-run Review → re-run Verify.
+  If Verify finds issues → fix code → re-run Test (if exists) → re-run Review → re-run Verify.
 
 ## Pipeline Phases
 
@@ -121,7 +121,7 @@ Before writing or changing any code, ask yourself:
 **Verify -> Commit:**
 - Integration tests pass (if applicable)
 - Live tests pass or manual verification completed (app/service launched, scenario checked)
-- If Verify finds issues → fix code → re-run Test → re-run Review → re-run Verify
+- If Verify finds issues → fix code → re-run Test (if exists) → re-run Review → re-run Verify
 - Ask the user for explicit commit approval before committing
 
 ## Document Status Vocabulary
@@ -129,16 +129,17 @@ Before writing or changing any code, ask yourself:
 All document types use a unified set of statuses with clear lifecycle:
 
 ```
-draft -> active -> in-progress -> completed -> deprecated
+draft -> active -> deprecated        (concepts, specifications — living documents)
+draft -> in-progress -> completed    (plans — finite work items)
 ```
 
-| Status | Meaning |
-|--------|---------|
-| `draft` | Initial version, not yet validated through gate |
-| `active` | Validated and current — the authoritative version |
-| `in-progress` | Being actively worked on (plans, implementations) |
-| `completed` | All work done, no further changes expected |
-| `deprecated` | Superseded or no longer relevant — excluded from conflict checks |
+| Status | Meaning | Applies to |
+|--------|---------|------------|
+| `draft` | Initial version, not yet validated through gate | All |
+| `active` | Validated and current — the authoritative version | Concepts, Specifications |
+| `in-progress` | Being actively worked on | Plans |
+| `completed` | All work done, no further changes expected | Plans |
+| `deprecated` | Superseded or no longer relevant — excluded from conflict checks | All |
 
 ## Versioning
 
@@ -162,7 +163,7 @@ edit the existing document in place and update the Changelog.
 5. Run **functional tests** — unit + mock tests covering the changed code (if test suite exists).
 6. Run **pre-commit review** — subagent with clean context reviews the changes.
 7. Run **verification** — regression, integration, and/or live tests; or provide manual verification steps.
-   If issues found → fix → re-run steps 5-7.
+   If issues found → fix → re-run steps 5 (if tests exist), 6, 7.
 8. **Ask for commit approval** — present changes for review before committing.
 
 ## Traceable Identifiers
@@ -187,8 +188,11 @@ All documents live in `docs/` directories. One concept = one file set:
 | Concept | `*.concept.md` | `access_control.concept.md` |
 | Specification | `*.sp.md` | `access_control.sp.md` |
 | Plan | `*.plan.md` | `access_control.plan.md` |
-| Epic | `*.epic.md` | `access_control.epic.md` |
 | Index | `_index.md` | `docs/_index.md` |
+
+> **Spike** is an optional pre-concept investigation artifact. Use it when
+> the problem domain is unclear and you need to explore approaches before
+> committing to a concept. Spikes do not pass through the pipeline gates.
 
 When `docs/` has more than 5 documents, maintain an `_index.md` catalog.
 
@@ -306,8 +310,12 @@ Each phase has a specialized role for subagent execution:
 | Plan | [plan-author.ai.md](roles/plan-author.ai.md) | Creates implementation plans |
 | Implement | [implementer.ai.md](roles/implementer.ai.md) | Writes code following plans |
 | Test | [tester.ai.md](roles/tester.ai.md) | Verifies code against spec contracts |
-| Propagate | [propagator.ai.md](roles/propagator.ai.md) | Propagates changes across pipeline |
 | Review | [reviewer.ai.md](roles/reviewer.ai.md) | Validates gates and resolves conflicts |
+| Verify | Uses [tester.ai.md](roles/tester.ai.md) | Regression, integration, and live testing |
+| Propagate | [propagator.ai.md](roles/propagator.ai.md) | Propagates changes across pipeline |
+| Fix | Uses [implementer.ai.md](roles/implementer.ai.md) | Analyzes bug, plans fix, implements, verifies |
+| Rule | — (inline, no subagent) | Manages `.dev_flow/rules/` files directly |
+| Skill | — (inline, no subagent) | Manages `.dev_flow/skills/` files directly |
 | Status / all phases | [context-tracker.ai.md](roles/context-tracker.ai.md) | Reads and writes `.dev_flow/active_context.md` |
 | Ask | [advisor.ai.md](roles/advisor.ai.md) | Read-only Q&A about code and feasibility |
 | Do (default) | [dev-flow-orchestrator.ai.md](roles/dev-flow-orchestrator.ai.md) | Interprets freeform requests and routes to the right phases |
