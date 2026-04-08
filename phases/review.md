@@ -61,6 +61,12 @@ perspective a human reviewer would have.
    {1-2 sentence summary of the review}
    ```
 
+## After Review: Verify Phase
+
+After the review passes, proceed to the [Verify phase](verify.md) for regression,
+integration, and live testing. Do NOT commit directly after review — verification
+must pass first.
+
 ## Validation Gates
 
 Run gate checks before advancing to the next pipeline stage.

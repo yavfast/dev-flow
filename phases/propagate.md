@@ -1,4 +1,4 @@
-# Phase 6: Change Propagation
+# Phase 8: Change Propagation
 
 ## Purpose
 

@@ -17,16 +17,21 @@ All changes to the system start from concepts and specifications, not from code.
 The pipeline is strictly top-down:
 
 ```
-Concept -> [Gate] -> Specification -> [Gate] -> Plan -> [Gate] -> Code -> [Gate] -> Test* -> [Gate] -> Review** -> Commit
+Concept -> [Gate] -> Specification -> [Gate] -> Plan -> [Gate] -> Code -> [Gate] -> Test* -> [Gate] -> Review** -> [Gate] -> Verify* -> Commit
 ```
 
 Each transition includes a validation gate to prevent drift.
 
-`*` — Testing phase is conditional: it activates only when the project has tests
-and defined rules for running/validating them.
+`*` — Test and Verify phases are conditional: they activate only when the project
+has tests and/or defined rules for running/validating them.
 
 `**` — Pre-commit review is performed by a subagent with a clean context to ensure
 an unbiased perspective on the changes.
+
+**Two-stage testing:**
+- **Test** — functional tests only (unit + mock) covering the changed code.
+- **Verify** — regression, integration, and live testing (end-to-end flows, app/service launch).
+  If Verify finds issues → fix code → re-run Test → re-run Review → re-run Verify.
 
 ## Pipeline Phases
 
@@ -37,9 +42,10 @@ an unbiased perspective on the changes.
 | 2. Specification | `/dev-flow spec` | Define data structures, contracts, rules | `*.sp.md` |
 | 3. Plan | `/dev-flow plan` | Break spec into actionable phases | `*.plan.md` |
 | 4. Implement | `/dev-flow implement` | Write code following the plan | Source code |
-| 5. Test | `/dev-flow test [target]` | Add/update/run tests for affected functionality | Test results |
+| 5. Test | `/dev-flow test [target]` | Run functional tests (unit + mock) for changed code | Test results |
 | 6. Review | `/dev-flow review` | Pre-commit review + validate gates, resolve conflicts | Review report |
-| 7. Propagate | `/dev-flow propagate` | Update docs when code changes | Updated docs |
+| 7. Verify | `/dev-flow verify [target]` | Regression, integration, and live testing | Verification results |
+| 8. Propagate | `/dev-flow propagate` | Update docs when code changes | Updated docs |
 | — | `/dev-flow fix <problem>` | Analyze bug, plan fix, implement, verify | Fixed code + build/test result |
 | — | `/dev-flow rule <request>` | Add, edit, or remove coding rules (freeform) | Updated `.dev_flow/rules/` |
 | — | `/dev-flow skill <request>` | Find, add, update, or remove project knowledge skills | Updated `.dev_flow/skills/` |
@@ -60,11 +66,17 @@ an unbiased perspective on the changes.
 
 > **Phase 5 (Test) activation condition:** The project must have an existing test suite
 > AND defined rules for running tests (e.g., `pytest`, `jest`, CI pipeline).
-> If neither exists — skip directly to Review. The `test` command supports creating,
-> editing, or running tests and complex test scenarios.
+> If neither exists — skip directly to Review. Runs only **functional tests** (unit + mock)
+> covering the changed code. Does NOT run integration or live tests at this stage.
 
 > **Phase 6 (Review):** Pre-commit code review is performed by a subagent with a
 > clean context to ensure an unbiased perspective. This is mandatory before any commit.
+
+> **Phase 7 (Verify):** Regression, integration, and live testing — runs after Review
+> passes. Includes launching the app/service and verifying end-to-end scenarios.
+> If issues are found during Verify, the cycle repeats: fix → Test → Review → Verify.
+> Ask user permission before creating new integration/live scenarios.
+> If no automated verification exists — provide manual verification steps for the user.
 
 ### Quick Start
 
@@ -90,19 +102,26 @@ Before writing or changing any code, ask yourself:
 - Technology decisions documented with rationale
 - Phase dependencies explicitly stated
 
-**Code -> Test** (conditional):
+**Code -> Test** (conditional — functional tests):
 - All spec contracts have corresponding test cases
 - All error cases from spec's Errors tables are tested
 - All invariants from spec are verified in tests
-- Tests pass at all relevant levels (unit, mock, integration, live)
+- Only tests covering the changed code are run (unit + mock)
 
 **Test -> Review:**
-- All relevant tests pass
-- No regressions in existing tests
+- All relevant functional tests pass
+- No regressions in changed code area
 
-**Review -> Commit:**
+**Review -> Verify** (conditional — regression/live):
 - Pre-commit review by a clean-context subagent passes (no blocking issues)
 - Warnings presented to user and acknowledged
+- Ask user permission before creating new integration/live test scenarios
+- If no automated verification is possible — provide manual verification steps
+
+**Verify -> Commit:**
+- Integration tests pass (if applicable)
+- Live tests pass or manual verification completed (app/service launched, scenario checked)
+- If Verify finds issues → fix code → re-run Test → re-run Review → re-run Verify
 - Ask the user for explicit commit approval before committing
 
 ## Document Status Vocabulary
@@ -140,9 +159,11 @@ edit the existing document in place and update the Changelog.
 2. Update the **specification** — what data structures or contracts changed?
 3. Update the **implementation plan** — mark completed, add new tasks.
 4. Update the **code** — implement according to the updated spec.
-5. Run **tests** — verify changes don't break spec contracts (if test suite exists).
+5. Run **functional tests** — unit + mock tests covering the changed code (if test suite exists).
 6. Run **pre-commit review** — subagent with clean context reviews the changes.
-7. **Ask for commit approval** — present changes for review before committing.
+7. Run **verification** — regression, integration, and/or live tests; or provide manual verification steps.
+   If issues found → fix → re-run steps 5-7.
+8. **Ask for commit approval** — present changes for review before committing.
 
 ## Traceable Identifiers
 
@@ -259,8 +280,9 @@ reveals a coding pattern, constraint, or convention that is not yet captured in
 - [Specification phase](phases/specification.md) | [Template](templates/specification.md)
 - [Plan phase](phases/plan.md) | [Template](templates/plan.md)
 - [Implement phase](phases/implement.md)
-- [Test phase](phases/testing.md) *(conditional — add/update/run tests)*
+- [Test phase](phases/testing.md) *(conditional — functional tests: unit + mock)*
 - [Review phase](phases/review.md) *(pre-commit review by clean-context subagent)*
+- [Verify phase](phases/verify.md) *(conditional — regression, integration, live testing)*
 - [Propagate phase](phases/propagate.md)
 - [Fix phase](phases/fix.md) *(analyze, plan, fix, verify)*
 - [Rule phase](phases/rule.md) *(add/edit/remove coding rules)*
