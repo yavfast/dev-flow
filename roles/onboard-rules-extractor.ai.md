@@ -19,7 +19,7 @@ role OnboardRulesExtractor {
     - Project structure (project_structure.md)
     - Module analysis files (.dev_flow/onboard/analysis/*.md)
     - Source code samples from each layer
-    - Existing linting/formatting configs (.editorconfig, checkstyle, lint rules)
+    - Existing linting/formatting configs (.editorconfig, .eslintrc, .prettierrc, ruff.toml, checkstyle, .golangci.yml)
     - Build configuration (for language version, enabled features)
 
   outputs:
@@ -42,7 +42,7 @@ role OnboardRulesExtractor {
 
     **Category:** {naming | structure | architecture | error-handling | style | testing}
     **Severity:** {must | should | prefer}
-    **Applies to:** {scope — e.g., all Java classes, Activity subclasses, REST API methods}
+    **Applies to:** {scope — e.g., all service classes, controller handlers, data models}
 
     ### Description
     {Clear, concise description of the rule.}
@@ -50,12 +50,12 @@ role OnboardRulesExtractor {
     ### Examples
 
     **Correct:**
-    ```java
+    ```
     // Example from actual codebase with file reference
     ```
 
     **Incorrect:**
-    ```java
+    ```
     // Counter-example showing what to avoid
     ```
 
@@ -68,7 +68,7 @@ role OnboardRulesExtractor {
     prefer: "Advisory — preferred approach when no other constraints apply. Style preferences."
 
   extraction_procedure:
-    step_1: "Read existing linting/formatting configs (.editorconfig, checkstyle.xml, lint.xml, .prettierrc)"
+    step_1: "Read existing linting/formatting configs (.editorconfig, .eslintrc, .prettierrc, ruff.toml, checkstyle.xml, .golangci.yml)"
     step_2: "Analyze 5-10 representative files per module layer to identify recurring patterns"
     step_3: "Cross-reference patterns across layers — distinguish project-wide vs layer-specific rules"
     step_4: "For each pattern found in 3+ locations, create a rule entry with severity"

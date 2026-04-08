@@ -23,10 +23,10 @@ the appropriate action to `.dev_flow/skills/`.
 ### Examples
 
 ```
-/dev-flow skill cloud REST authentication flow
-/dev-flow skill save Glide caching patterns discovered during image module work
-/dev-flow skill update event-bus-patterns with new routing example
-/dev-flow skill remove obsolete-ad-sdk
+/dev-flow skill REST authentication flow with token refresh
+/dev-flow skill save caching patterns discovered during image processing work
+/dev-flow skill update message-bus-patterns with new routing example
+/dev-flow skill remove obsolete-legacy-sdk
 ```
 
 ## When Skills Are Created Automatically
@@ -123,29 +123,29 @@ Root `_index.yaml` (`.dev_flow/skills/_index.yaml`):
 updated: {YYYY-MM-DD}
 
 domains:
-  - path: android/
-    description: Android SDK patterns, architecture, UI, storage, networking
-    topics: [Activity, Fragment, ContentProvider, EventBus, OkHttp, Glide]
-  - path: gradle/
-    description: Multi-module build config, flavors, dependency management
-    topics: [Gradle, AGP, flavors, modules, dependencies]
+  - path: api/
+    description: REST/GraphQL API patterns, authentication, rate limiting
+    topics: [REST, GraphQL, auth, rate-limit, middleware]
+  - path: data/
+    description: Data access, ORM, caching, migrations
+    topics: [ORM, migrations, caching, queries, transactions]
 ```
 
-Domain-level `_index.yaml` (e.g., `.dev_flow/skills/android/_index.yaml`):
+Domain-level `_index.yaml` (e.g., `.dev_flow/skills/api/_index.yaml`):
 
 ```yaml
-domain: android
-description: Android SDK patterns specific to this project
+domain: api
+description: API integration patterns specific to this project
 updated: {YYYY-MM-DD}
 
 subdomains:
-  - path: architecture/
-    covers: Event bus, VM/WF pair, SuspendValue, lifecycle
+  - path: auth/
+    covers: Token refresh, OAuth flow, session management
 
 skills:
-  - file: event-bus-patterns.md
-    skill: EventBusPatterns
-    topics: [EventsController, SuspendValue, bus routing, OnXxx events]
+  - file: rate-limiting.md
+    skill: RateLimitingPatterns
+    topics: [rate-limit, throttle, backoff, retry]
     source: onboard
     updated: {YYYY-MM-DD}
 ```
@@ -176,4 +176,4 @@ initialization procedure that runs during project onboard.
 - Update when: research reveals new information, implementation finds new pitfalls,
   library version changes, user corrects existing knowledge.
 - If new research contradicts an existing skill — update the skill and add a note in "Pitfalls".
-- Skills may reference related rules (e.g., a skill about event bus → rule `EventBusForCrossLayerCommunication`).
+- Skills may reference related rules (e.g., a skill about message bus → rule `MessageBusForCrossLayerCommunication`).

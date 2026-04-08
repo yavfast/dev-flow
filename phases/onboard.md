@@ -91,7 +91,7 @@ After analyzing all modules, extract coding rules, patterns, and style conventio
 into `.dev_flow/rules/`. This step uses cross-module analysis to identify consistent
 patterns across the codebase.
 
-1. Read existing linting/formatting configs (`.editorconfig`, `checkstyle.xml`, `lint.xml`, etc.).
+1. Read existing linting/formatting configs (`.editorconfig`, `.eslintrc`, `.prettierrc`, `ruff.toml`, `checkstyle.xml`, `.golangci.yml`, etc.).
 2. Analyze 5-10 representative files per module layer for recurring patterns.
 3. Cross-reference patterns across layers — distinguish project-wide vs layer-specific rules.
 4. For each pattern found in 3+ locations, create a rule entry with severity:
@@ -143,7 +143,7 @@ Skills capture project-specific expertise about technologies and patterns — di
 5. Update `state.yaml`: `step: skills_initialized`.
 
 **Non-triviality filter:** Do NOT create skills for:
-- General Android SDK / Gradle / Java knowledge well-known to senior devs
+- General SDK / framework / build tool knowledge well-known to senior devs
 - Patterns already fully described in `onboard/analysis/` docs
 - Information derivable by reading the codebase directly
 

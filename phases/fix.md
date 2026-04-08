@@ -20,8 +20,8 @@ user-visible symptom, or a reference to a specific class/method.
 ```
 /dev-flow fix Падає NPE при відкритті файлу без розширення
 /dev-flow fix Upload progress bar freezes at 99% on slow connections
-/dev-flow fix SyncAdapter не синхронізує нові папки після переіменування
-/dev-flow fix ClassCastException in FeedFragment2WF.onInit when event is null
+/dev-flow fix UserService не оновлює кеш після зміни профілю
+/dev-flow fix ClassCastException in EventHandler.onInit when payload is null
 ```
 
 ## Procedure
@@ -47,7 +47,7 @@ the fix is complete. See [skill phase](skill.md).
 
 If context is insufficient to identify the root cause, ask the user targeted questions
 (max 3). Examples: "Does this happen on first launch or only after re-login?",
-"Which Android version?", "Is there a stack trace?"
+"Which runtime/environment version?", "Is there a stack trace?"
 
 ### Step 2: Plan the fix
 
@@ -71,16 +71,13 @@ If context is insufficient to identify the root cause, ask the user targeted que
 
 ### Step 4: Verify
 
-1. **Compile** — run the appropriate build command and confirm success:
-   ```
-   ./gradlew :forshared.files:assembleFreeDebug
-   ```
+1. **Build** — run the project's build command and confirm success.
+   Use whatever build tool the project uses (e.g., `make`, `npm run build`,
+   `./gradlew build`, `go build ./...`, `cargo build`, `python -m build`).
    If the fix is in a specific module, build that module.
 
-2. **Test** — if applicable tests exist, run them:
-   ```
-   ./gradlew :libraries:cloud_rest:mocktests:connectedAndroidTest
-   ```
+2. **Test** — if applicable tests exist, run them using the project's test runner
+   (e.g., `pytest`, `npm test`, `./gradlew test`, `go test ./...`, `cargo test`).
 
 3. **Review the diff** — re-read all changed files to check for regressions,
    missed edge cases, or rule violations.
@@ -132,9 +129,9 @@ symptom — automatically extract it as a project rule.
 → Fix: знайти та виправити всі `catch (IOException ignored)`
 → Rule added: NoIgnoredException (must, error-handling)
 
-/dev-flow fix бажано використовувати ArrayUtils.convert замість циклів для перетворення списків
-→ Fix: замінити ручні цикли на ArrayUtils.convert
-→ Rule added: ArrayUtilsForTransformations (prefer, style) — merged with existing ArrayUtilsForCollectionOperations
+/dev-flow fix бажано використовувати вбудовані колекційні методи замість ручних циклів для перетворення списків
+→ Fix: замінити ручні цикли на стандартні map/filter/reduce
+→ Rule added: PreferCollectionMethods (prefer, style) — merged with existing CollectionOperationsStyle
 ```
 
 When the directive matches an existing rule semantically, update that rule instead

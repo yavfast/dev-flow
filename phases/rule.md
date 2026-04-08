@@ -19,7 +19,7 @@ the appropriate changes to `.dev_flow/rules/`.
 
 ```
 /dev-flow rule Не використовувати префікс m для полів
-/dev-flow rule Use IValue<T> instead of SuspendValue<T> when only get() needed
+/dev-flow rule Use ReadonlyConfig<T> instead of MutableConfig<T> when only get() needed
 /dev-flow rule Для нового коду використовувати Enum замість списку констант
 /dev-flow rule Видалити правило SomeObsoleteRule
 /dev-flow rule Змінити severity для NoMPrefixForFields на must
@@ -63,13 +63,13 @@ the appropriate changes to `.dev_flow/rules/`.
 ### Examples
 
 **Correct:**
-\```java
+\```
 // {file path}
 {code}
 \```
 
 **Incorrect:**
-\```java
+\```
 {code}
 \```
 
@@ -102,7 +102,7 @@ Additional categories (created on demand when rules don't fit standard ones):
 | security | `security.md` | Permissions, data exposure, encryption, token handling |
 | testing | `testing.md` | Test patterns, mocking, assertions, test naming |
 | ui | `ui.md` | View patterns, layouts, animations, accessibility |
-| data | `data.md` | DB operations, ContentProvider, cursors, migrations |
+| data | `data.md` | DB operations, ORM, queries, migrations |
 
 New category files are created automatically when the first rule for that category
 is added. Each file follows the same header format as standard categories.
