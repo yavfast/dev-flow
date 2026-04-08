@@ -77,7 +77,7 @@ the appropriate changes to `.dev_flow/rules/`.
 {Why this rule exists.}
 ```
 
-6. **Update `_index.yaml`** — add/update the rule entry in `categories[].rules`, update `summary` counts.
+6. **Update `_index.yaml`** — add/update the rule entry in `categories[].rules`.
 
 7. **Confirm** — report what was done: rule name, category, severity, action taken.
 
