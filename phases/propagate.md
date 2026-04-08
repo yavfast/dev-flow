@@ -18,6 +18,17 @@ to prevent drift between documentation and implementation.
 **Anti-pattern:** "I'll just fix the code and update the spec later."
 This ALWAYS leads to drift. The spec update takes 5 minutes now but 2 hours to reconstruct later.
 
+## Context Loading
+
+Before propagating changes, load relevant project knowledge:
+
+**Skill check:** Read `.dev_flow/skills/_index.yaml` and load skills relevant to the
+changed area — they provide domain context needed to accurately update specifications
+and concepts. See [skill phase](skill.md).
+
+**Rule check:** Read `.dev_flow/rules/_index.yaml` (if exists) — rules may need updating
+if the propagated change introduces or modifies a coding pattern. See [rule phase](rule.md).
+
 ## Keeping Documents Current
 
 - When you change the code — update the corresponding plan status and spec if needed.

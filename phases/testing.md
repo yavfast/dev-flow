@@ -67,6 +67,18 @@ Do not skip a level if the changes could affect it.
        """[SP_RLM_02_01] AcquireToken returns wait_seconds when bucket is empty."""
    ```
 
+## Context Loading
+
+Before writing or updating tests, load relevant project knowledge:
+
+**Skill check:** Read `.dev_flow/skills/_index.yaml` and load skills relevant to the
+tested functionality — they may contain known pitfalls, edge cases, or integration
+specifics that should be covered by tests. See [skill phase](skill.md).
+
+**Rule check:** Read `.dev_flow/rules/_index.yaml` (if exists) and load testing rules
+(e.g., test naming conventions, required assertion patterns, mocking guidelines).
+See [rule phase](rule.md).
+
 ## Gate Check (Code -> Test)
 
 Before running tests, verify:

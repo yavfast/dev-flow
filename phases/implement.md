@@ -36,6 +36,10 @@ uses (SDK, API, architectural pattern). Read `.dev_flow/skills/_index.yaml` and 
 relevant skills. If found — load them. If external research will be needed — note it;
 save consolidated results to `.dev_flow/skills/` after the task completes. See [skill phase](skill.md).
 
+**Rule check:** Read `.dev_flow/rules/_index.yaml` (if exists) and load rules relevant
+to the code area being modified (naming, structure, architecture, error-handling, etc.).
+All new code must comply with loaded rules. See [rule phase](rule.md).
+
 ## Implementation Workflow
 
 ```

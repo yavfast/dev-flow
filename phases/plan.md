@@ -18,6 +18,19 @@ file paths, and task tracking. This is where language, framework, and library de
 - **Pseudocode, not production code:** Include short sketches to clarify intent,
   but do not write full implementation.
 
+## Context Loading
+
+Before authoring or updating a plan, load relevant project knowledge:
+
+**Skill check:** Identify technologies and patterns relevant to this plan's scope.
+Read `.dev_flow/skills/_index.yaml` and load matching skills — they inform technology
+decisions and may reveal known pitfalls. See [skill phase](skill.md).
+
+**Rule check:** Read `.dev_flow/rules/_index.yaml` (if exists) and load rules relevant
+to the planned code area. Rules constrain technology decisions (e.g., naming conventions,
+architectural patterns, required error handling). Reference applicable rules in the
+Technology Decisions table. See [rule phase](rule.md).
+
 ## Structure
 
 ```markdown

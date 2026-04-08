@@ -51,6 +51,10 @@ This command is handled by **DevFlowOrchestrator**:
    If the task requires external research — note it; after completion, save results
    to `.dev_flow/skills/`. See [skill phase](skill.md).
 
+4. **Rule check:** Read `.dev_flow/rules/_index.yaml` (if exists) and load rules relevant
+   to the request area. Rules must be respected during routing to implement/fix phases
+   and passed as context to the executing phase. See [rule phase](rule.md).
+
 ### Step 2: Interpret the request
 
 Analyze the freeform request against the loaded context to determine:
