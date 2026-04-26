@@ -51,6 +51,7 @@ an unbiased perspective on the changes.
 | — | `/dev-flow skill <request>` | Find, add, update, or remove project knowledge skills | Updated `.dev_flow/skills/` |
 | — | `/dev-flow status` | Show current state, resume previous session | Status summary |
 | — | `/dev-flow ask <question>` | Read-only Q&A about code or feasibility — no changes | Answer + optional next-step suggestion |
+| — | `/dev-flow subtask <task>` | Delegate secondary task to subagent (runs any dev-flow phase: fix, test, ask, etc.) | Subtask report |
 | — | `/dev-flow do <request>` | Freeform routing — interpret intent and run the right phases | Phase output + updated context |
 
 > **Default command:** Any invocation of `/dev-flow <text>` that does not match a
@@ -295,6 +296,7 @@ reveals a coding pattern, constraint, or convention that is not yet captured in
 - [Skill phase](phases/skill.md) *(manage project knowledge skills)*
 - [Status phase](phases/status.md) | [Active context template](templates/active_context.md)
 - [Ask phase](phases/ask.md) *(read-only Q&A, no file changes)*
+- [Subtask phase](phases/subtask.md) *(delegate secondary tasks to subagent)*
 - [Do phase](phases/do.md) *(default fallback for freeform requests)*
 - [End-to-end example](examples/rate-limiter.md)
 
@@ -321,4 +323,5 @@ Each phase has a specialized role for subagent execution:
 | Skill | — (inline, no subagent) | Manages `.dev_flow/skills/` files directly |
 | Status / all phases | [context-tracker.ai.md](roles/context-tracker.ai.md) | Reads and writes `.dev_flow/active_context.md` |
 | Ask | [advisor.ai.md](roles/advisor.ai.md) | Read-only Q&A about code and feasibility |
+| Subtask | [subtask-executor.ai.md](roles/subtask-executor.ai.md) | Executes delegated secondary tasks independently |
 | Do (default) | [dev-flow-orchestrator.ai.md](roles/dev-flow-orchestrator.ai.md) | Interprets freeform requests and routes to the right phases |
