@@ -40,9 +40,19 @@ Be specific enough that an agent can continue without asking clarifying question
 
 ## Recent Changes
 
-[Brief log of what was changed in the last session. Helps quickly reconstruct changed state.]
+<!-- Keep at most 10 entries (newest first). Archive older entries to .dev_flow/session_history/ -->
+
+[Brief log of what was changed. One line per completed step, newest first.]
+
+## Session History
+
+<!-- Add references to archived session history files when entries are pruned -->
+
+[No archived sessions yet.]
 
 ---
 
 *This file is maintained automatically by dev-flow commands.
-Edit manually only when auto-update is not possible.*
+Edit manually only when auto-update is not possible.
+Hygiene: this file is "state as of now", not a journal — keep it under ~150 lines.
+See phases/status.md for archive procedure.*

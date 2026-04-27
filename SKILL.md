@@ -234,7 +234,13 @@ across sessions.
 - After **completing a phase**: set status = done, add entry to Recent Changes.
 - **Template** for new files: [templates/active_context.md](templates/active_context.md).
 
-See [status phase](phases/status.md) for full update protocol.
+**Hygiene:** `active_context.md` is "state as of now", not a cumulative journal.
+- **Recent Changes**: keep at most **10 entries**. Archive older entries to `.dev_flow/session_history/session_YYYY-MM-DD.md`.
+- **Current Task**: describe only the active work item. Do not accumulate narratives from completed tasks.
+- **File size**: if the file exceeds ~150 lines, trigger an archive cycle.
+- **No large blobs**: never store logs, diffs, or verbose narratives directly — reference a file instead.
+
+See [status phase](phases/status.md) for full update protocol and archive procedure.
 
 ## Project Rules
 
@@ -265,8 +271,8 @@ reveals a coding pattern, constraint, or convention that is not yet captured in
   no matching rule — add the rule so the same class of bug is prevented in the future.
 - New rules default to severity **should** unless the plan/fix explicitly marks them
   as **must** or **prefer**.
-- After adding a rule, update `.dev_flow/rules/_index.yaml` and mention the new rule
-  in the commit message.
+- After adding a rule, update `.dev_flow/rules/_index.yaml` (add entry with `file` and `summary`)
+  and mention the new rule in the commit message.
 
 ## Greenfield vs Takeover
 

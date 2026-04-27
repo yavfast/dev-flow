@@ -100,3 +100,54 @@ Roles responsible for updating context:
 - **Each phase role** updates the relevant fields when it runs.
 - **ContextTracker** ([context-tracker.ai.md](../roles/context-tracker.ai.md)) can be
   used as a standalone updater when context needs refreshing without executing a phase.
+
+## Context Hygiene
+
+**Principle:** `active_context.md` is "state as of now", not a cumulative journal.
+After a task is completed, keep a short summary and remove unnecessary details.
+
+### Hygiene rules
+
+1. **Recent Changes:** keep at most **10 entries** (newest first). When adding a new
+   entry would exceed 10, move the oldest entries to a session history file before adding.
+2. **Current Task:** must describe only the **active** work item. When a task completes
+   and a new one starts, compress the old task description to a one-line summary
+   in Recent Changes — do not accumulate prior task narratives in Current Task.
+3. **Progress State:** when switching to a new task, archive completed progress
+   from the prior task. Only the current task's checklist should be in Progress State.
+4. **File size:** if `active_context.md` exceeds ~150 lines, trigger an archive cycle.
+5. **No large blobs:** never store logs, diffs, full command output, or verbose
+   per-phase narratives directly. Reference a file instead.
+
+### Session history archive
+
+When pruning active_context, move detailed history to:
+
+```
+.dev_flow/session_history/session_YYYY-MM-DD.md
+```
+
+**Session history file format:**
+
+```markdown
+# Session History YYYY-MM-DD
+
+## Archived from active_context
+
+[Moved entries, with dates preserved]
+
+## Session Notes
+
+[Optional: decisions, blockers resolved, lessons learned]
+```
+
+**Archive procedure:**
+
+1. Create `.dev_flow/session_history/` directory if it does not exist.
+2. Create or append to `session_YYYY-MM-DD.md` (today's date).
+3. Move pruned Recent Changes entries into the file under `## Archived from active_context`.
+4. Compress Current Task if it contains history from completed tasks.
+5. Add a reference in active_context: `Full history: .dev_flow/session_history/session_YYYY-MM-DD.md`
+6. Update `Last updated` timestamp.
+
+**Do not** delete session history files automatically. They serve as an audit trail.
