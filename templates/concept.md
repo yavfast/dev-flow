@@ -5,6 +5,8 @@
 > **Created:** YYYY-MM-DD
 > **Updated:** YYYY-MM-DD
 > **Author:** {author}
+> **Owner:** {role / team / module responsible for long-term maintenance}
+> **Complexity:** {low | medium | high — estimated maintenance burden}
 >
 > **Depends on:** {list of [C_YYY](./path) references, or "none"}
 > **Used by:** {list of [C_ZZZ](./path) references, or "—"}

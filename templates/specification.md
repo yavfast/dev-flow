@@ -101,6 +101,19 @@ Transition rules:
 |------|-------|-------------------|
 | {edge case} | {input} | {behavior} |
 
+## 06. Reversibility  {#SP_XXX_06}
+
+### 06_01. Rollback Strategy  {#SP_XXX_06_01}
+
+{How to undo this feature if it fails or is deprecated.}
+
+| Aspect | Rollback approach |
+|--------|-------------------|
+| Data/state changes | {Can new data structures be dropped? Migration reversibility} |
+| Artifacts | {What files, configs, or resources need cleanup?} |
+| Dependent modules | {Which specs reference this one? What breaks if removed?} |
+| External contracts | {Published APIs or events that consumers depend on?} |
+
 ## Changelog
 
 | Date | Change |

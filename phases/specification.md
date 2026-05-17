@@ -21,6 +21,20 @@ Use abstract type notation and pseudocode. Implementation language is chosen in 
 - **Single Source of Truth:** Once created, source code becomes a derived artifact.
   All changes start in the specification first.
 
+## Banned Phrases
+
+Reject or flag the following phrases in any specification. They signal incomplete design
+that will propagate ambiguity into the implementation:
+
+| Phrase | Problem | What to write instead |
+|--------|---------|----------------------|
+| "temporarily" / "тимчасово" | Temporary contracts become permanent API surface | Define the final contract; if phased — specify both phases |
+| "at first" / "на першому етапі" | Implies unspecified future changes | Specify the complete behavior; use versioning for evolution |
+| "will refactor later" / "потім переробимо" | Deferred design decisions become frozen mistakes | Design it correctly now or create a separate spec |
+| "for now" / "поки що" | Same as "temporarily" | State the permanent design decision |
+| "implementation detail" | Specs must be precise, not hand-wavy | Describe the contract: input, output, errors, invariants |
+| "TBD" / "to be defined" | Incomplete spec passes an incomplete gate | Define it now or mark the section as blocked with a reason |
+
 ## Self-Validation Checklist
 
 Every specification must pass these checks before advancing to the plan:
@@ -32,6 +46,9 @@ Every specification must pass these checks before advancing to the plan:
 - [ ] Are state transitions documented with conditions and side effects?
 - [ ] Are verification criteria defined for all contracts (expected outcomes, edge cases)?
 - [ ] Are integration scenarios described for cross-module interactions?
+- [ ] Is the rollback strategy documented (Section 06)?
+- [ ] Does the spec contain no banned phrases (see Banned Phrases above)?
+- [ ] Is the spec minimal — no "just in case" contracts with no stated consumer?
 
 ## Structure
 
@@ -162,6 +179,21 @@ describe end-to-end scenarios for verification:
 | Exceeds max length | 101-char string | Validation error |
 | Empty required field | name = "" | Validation error |
 | Concurrent modifications | Two parallel updates | One succeeds, one gets conflict error |
+
+## 06. Reversibility  {#SP_XXX_06}
+
+### 06_01. Rollback Strategy  {#SP_XXX_06_01}
+
+How to undo this feature if it fails or is deprecated:
+
+| Aspect | Rollback approach |
+|--------|-------------------|
+| Data/state changes | Can new data structures be dropped without data loss? Migration reversibility |
+| Artifacts | What files, configs, or resources need cleanup on removal? |
+| Dependent modules | Which specs reference this one? What breaks if removed? |
+| External contracts | Are there published APIs or events that consumers depend on? |
+
+If full rollback is not possible — document the minimum safe state and manual steps required.
 ```
 
 ## Changelog Requirement

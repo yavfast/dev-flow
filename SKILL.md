@@ -92,12 +92,19 @@ Before writing or changing any code, ask yourself:
 - No contradictions with existing active concepts
 - All integration points listed in Dependencies
 - Scope clearly bounded (what this IS and IS NOT)
+- Pre-Concept Checklist answered (see concept phase)
+- Reuse Check completed — no unjustified overlap with existing concepts
+- No banned phrases (see concept phase — Banned Phrases)
+- Minimality: concept describes the minimum viable solution — no "just in case" sections with no stated consumer
 
 **Specification -> Plan:**
 - All data structures fully defined with types, constraints, invariants
 - All contracts specified with inputs, outputs, error cases
 - Verification criteria defined for all contracts (expected outcomes, edge cases)
 - Integration scenarios described for cross-module interactions
+- Rollback strategy documented (Section 06)
+- No banned phrases (see specification phase — Banned Phrases)
+- Minimality: no contracts or entities without a stated consumer
 - Self-validation checklist passes (see [specification phase](phases/specification.md))
 
 **Plan -> Code:**
