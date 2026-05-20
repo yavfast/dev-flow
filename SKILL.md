@@ -225,29 +225,109 @@ Pipeline artifacts map to git workflow as follows:
 
 ## Active Context & Session Continuity
 
-All dev-flow commands maintain a persistent state file:
+dev-flow uses a **collaborative per-task context model** so multiple AI agents can
+work on the same project in parallel. A task file is a **shared document with
+multiple contributors**; each contributor owns the parts they add and never
+rewrites parts authored by others.
 
 ```
-.dev_flow/active_context.md
+.dev_flow/
+├── active_context.md          # Dashboard — table of active tasks + recently completed
+├── tasks/
+│   ├── _index.md              # Catalog of task files (conventions + active/recent lists)
+│   ├── task_<ID>.md           # Per-task shared context — multiple contributors
+│   └── ...
+└── session_history/           # Archived completed tasks
 ```
 
-This file tracks the current work item, pipeline phase, progress state, blocking
-issues, and relevant documents. It is the single source of truth for resuming work
-across sessions.
+**Source of truth = the task files.** The two index files (`active_context.md`,
+`tasks/_index.md`) are derived views — any contributor can rebuild them from
+`tasks/*.md` when they drift.
 
-**Rules for all phases:**
-- At the **start** of any phase: update `active_context.md` — set document, phase, status = in-progress.
-- After **completing a step**: check it off in Progress State and update Next step.
-- After **completing a phase**: set status = done, add entry to Recent Changes.
-- **Template** for new files: [templates/active_context.md](templates/active_context.md).
+**Task file naming:**
+- Tied to a traceable doc → `task_C_AUTH.md`, `task_PL_RATE_LIMITER.md`.
+- Otherwise → `task_YYYYMMDD_HHMMSS_<slug>.md` (slug = 1–3-word kebab-case).
 
-**Hygiene:** `active_context.md` is "state as of now", not a cumulative journal.
-- **Recent Changes**: keep at most **10 entries**. Archive older entries to `.dev_flow/session_history/session_YYYY-MM-DD.md`.
-- **Current Task**: describe only the active work item. Do not accumulate narratives from completed tasks.
-- **File size**: if the file exceeds ~150 lines, trigger an archive cycle.
-- **No large blobs**: never store logs, diffs, or verbose narratives directly — reference a file instead.
+**Each task file contains:**
+- Header: Task ID, Created, Last updated, Status, **Contributors** (list of agent IDs).
+- **Current Work Item** — shared metadata (Document, Phase, Traceable ID).
+- **Description** — shared, additive paragraphs signed by contributor.
+- **Subtasks** — one block per contributor; each block has Author/Status/Goal/
+  Progress checklist/Activity. The block's author is its sole editor.
+- **Coordination Notes** — append-only conversation between contributors.
+- **Blocking Issues** — each tagged with the reporter who raised it.
+- **Relevant Context** — table; each row tagged with the contributor who added it.
+- **Shared Activity Log** — task-level events (subtask added, contributor joined,
+  status changed). Append-only, newest first.
 
-See [status phase](phases/status.md) for full update protocol and archive procedure.
+**`active_context.md`** is a lightweight dashboard listing active tasks with phase,
+status, contributors, and last-updated. **No per-task details live here.**
+
+**Templates:**
+- [templates/task_context.md](templates/task_context.md) — task file
+- [templates/active_context.md](templates/active_context.md) — dashboard
+- [templates/tasks_index.md](templates/tasks_index.md) — `tasks/_index.md`
+
+### Rules for all phases
+
+- At the **start** of any phase:
+  - **Continuation** — locate the task via `active_context.md`. If your own
+    Subtask block exists, resume it. If you have no block in this task yet,
+    add a new `### Subtask:` block (you become a Contributor).
+  - **New task** — create `tasks/task_<ID>.md` from the template with one
+    Subtask block (yours). Add a row to `active_context.md` and `tasks/_index.md`
+    via a **targeted Edit**.
+- After **completing a step**: in your own Subtask block, check off the
+  Progress item, set the next item, append to your Activity bullet list.
+  Refresh the task header's `Last updated`.
+- At a **phase boundary**: targeted Edit on the dashboard row (Phase / Status /
+  Contributors / Updated).
+- When you **finish your subtask**: set your Subtask's `Status: done`. The task
+  itself stays `in-progress` until all subtasks are done.
+- On **task completion** (all subtasks done): any contributor may set the
+  task's overall `Status: done`, move its row from "Active" to "Recently
+  Completed" in the dashboard, and update the catalog.
+
+### Multi-contributor tolerance
+
+Each contributor edits only their own subtask block and their own tagged entries
+in shared sections. The dashboard and catalog are updated with **targeted edits**
+(Edit, single row), never full rewrites.
+
+1. **Own your block, leave others':** each Subtask block has an `Author` tag.
+   Only the author edits it. Reading other contributors' blocks is encouraged —
+   they are shared context.
+2. **Additive shared sections:** Description paragraphs, Coordination Notes,
+   Blocking Issues, Relevant Context rows, and Shared Activity Log entries are
+   all tagged with their author. Append your own; do not rewrite others'.
+3. **Targeted edits over rewrites:** when updating the dashboard, the catalog,
+   or the task header (Last updated / Contributors / Status), use `Edit` on
+   the specific field/row rather than rewriting the whole file.
+4. **Read-before-write:** immediately before writing to a shared file, re-read it.
+   If another contributor's edit has landed, re-apply your edit on the latest content.
+5. **Append-only logs:** Coordination Notes and Shared Activity Log entries are
+   added newest-first; never rewrite an existing entry.
+6. **Indexes are regenerable:** if `active_context.md` or `_index.md` drift, any
+   contributor may rebuild them from `tasks/*.md` headers.
+7. **No exclusive locks, no time-based takeover.** If a contributor's subtask
+   is stale and another wants to continue that line of work, they **add a new
+   subtask block** referencing the original — they do not edit the original
+   block. Coordinate explicitly via Coordination Notes.
+
+### Hygiene
+
+- **Shared Activity Log** per task: keep at most **10 entries** (newest first).
+  Archive overflow to `.dev_flow/session_history/session_YYYY-MM-DD.md`.
+- **Per-subtask Activity:** also capped at ~10 entries per block.
+- **Task file size:** if a task file exceeds ~300 lines, trigger an archive cycle —
+  archive completed (done) subtask blocks first.
+- **Dashboard size:** `active_context.md` stays under ~80 lines. "Recently
+  completed" keeps the latest 5 — older entries go to `session_history/`.
+- **No large blobs** in any context file: never store logs, diffs, or verbose
+  narratives — reference a file instead.
+
+See [status phase](phases/status.md) for the full read/write protocol, regeneration
+procedure, and archive flow.
 
 ## Project Rules
 
@@ -307,7 +387,7 @@ reveals a coding pattern, constraint, or convention that is not yet captured in
 - [Fix phase](phases/fix.md) *(analyze, plan, fix, verify)*
 - [Rule phase](phases/rule.md) *(add/edit/remove coding rules)*
 - [Skill phase](phases/skill.md) *(manage project knowledge skills)*
-- [Status phase](phases/status.md) | [Active context template](templates/active_context.md)
+- [Status phase](phases/status.md) | Templates: [task_context](templates/task_context.md), [active_context (dashboard)](templates/active_context.md), [tasks_index](templates/tasks_index.md)
 - [Ask phase](phases/ask.md) *(read-only Q&A, no file changes)*
 - [Subtask phase](phases/subtask.md) *(delegate secondary tasks to subagent)*
 - [Do phase](phases/do.md) *(default fallback for freeform requests)*
@@ -334,7 +414,7 @@ Each phase has a specialized role for subagent execution:
 | Fix | Orchestrates multiple roles (analysis inline, implementation via [implementer.ai.md](roles/implementer.ai.md)) | Analyzes bug, plans fix, implements, verifies |
 | Rule | — (inline, no subagent) | Manages `.dev_flow/rules/` files directly |
 | Skill | — (inline, no subagent) | Manages `.dev_flow/skills/` files directly |
-| Status / all phases | [context-tracker.ai.md](roles/context-tracker.ai.md) | Reads and writes `.dev_flow/active_context.md` |
+| Status / all phases | [context-tracker.ai.md](roles/context-tracker.ai.md) | Reads, writes, and regenerates the per-task context model under `.dev_flow/` (task files + dashboard + catalog) |
 | Ask | [advisor.ai.md](roles/advisor.ai.md) | Read-only Q&A about code and feasibility |
 | Subtask | [subtask-executor.ai.md](roles/subtask-executor.ai.md) | Executes delegated secondary tasks independently |
 | Do (default) | [dev-flow-orchestrator.ai.md](roles/dev-flow-orchestrator.ai.md) | Interprets freeform requests and routes to the right phases |

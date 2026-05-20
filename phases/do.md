@@ -37,21 +37,34 @@ This command is handled by **DevFlowOrchestrator**:
 
 ### Step 1: Load context
 
-1. Read `.dev_flow/active_context.md` if it exists. Note:
-   - Current work item (document, phase, traceable ID)
-   - Current task description
-   - Next step from Progress State
-   - Any blocking issues
+1. Read `.dev_flow/active_context.md` (the dashboard) if it exists. Identify
+   which task this request relates to:
+   - User said "continue" → resume the most recently updated active task that
+     already lists your session in `Contributors`. If only one active task
+     exists, resume it.
+   - User described a specific item → match against active task titles/IDs.
+   - No match → this is a new task; a new `tasks/task_<ID>.md` will be created
+     in Step 6.
 
-2. If active context does not exist, note this — the orchestrator will ask
-   the user to describe the goal from scratch.
+2. For the chosen task (continuation), read its file `.dev_flow/tasks/task_<ID>.md`:
+   - Current Work Item (document, phase, traceable ID)
+   - Description
+   - **Your own Subtask block** (if you are already a Contributor) — pick up
+     from its `Next` step. If you are not yet a contributor on this task, you
+     will add a new Subtask block in Step 6.
+   - Other contributors' Subtask blocks — read for shared context, do not edit.
+   - Recent Coordination Notes — anything addressed to you or that changes the picture.
+   - Any open Blocking Issues.
 
-3. **Skill check:** Based on the request topic, read `.dev_flow/skills/_index.yaml`.
+3. If neither the dashboard nor any task file exists, note this — the orchestrator
+   will ask the user to describe the goal from scratch.
+
+4. **Skill check:** Based on the request topic, read `.dev_flow/skills/_index.yaml`.
    If a relevant domain is found — read its `_index.yaml` and load matching skills.
    If the task requires external research — note it; after completion, save results
    to `.dev_flow/skills/`. See [skill phase](skill.md).
 
-4. **Rule check:** Read `.dev_flow/rules/_index.yaml` (if exists) and load rules relevant
+5. **Rule check:** Read `.dev_flow/rules/_index.yaml` (if exists) and load rules relevant
    to the request area. Rules must be respected during routing to implement/fix phases
    and passed as context to the executing phase. See [rule phase](rule.md).
 
@@ -145,19 +158,43 @@ If updates are needed:
 - For significant doc changes — run `/dev-flow propagate` before presenting for commit.
 - Always report which documents were updated (or flagged for update) in the result.
 
-### Step 6: Update active context
+### Step 6: Update context
 
-After every phase step, update `.dev_flow/active_context.md`:
-- Reflect completed steps
-- Set next step
-- Update pipeline phase and status
+After every phase step, in `.dev_flow/tasks/task_<ID>.md`:
+- In **your own Subtask block** (the one whose `Author` is your session):
+  check off completed steps in Progress, set the next step, append a one-line
+  entry to that block's Activity bullet list.
+- In the **task header**: refresh `Last updated` (targeted Edit on that field).
+
+If this step also crosses a **phase boundary** (e.g. spec completed, plan starts):
+- Update your Subtask's `Status` (e.g. `done`, `review-pending`).
+- Targeted Edit on `.dev_flow/active_context.md` and `.dev_flow/tasks/_index.md`
+  to update your task's row (Phase, Status, Contributors, Updated).
+- Append a Shared Activity Log entry tagged `[your-id] — <event>`.
+
+Re-read each index file immediately before editing it — see
+[status phase: Targeted-edit safety](status.md#targeted-edit-safety).
+
+Never rewrite another contributor's Subtask block or their tagged entries in
+shared sections. To respond to or build on another contributor's work, add
+your own Coordination Note tagged with your session id.
 
 ### Step 7: Session wrap-up
 
 If the user ends the session (or after completing a full phase chain):
-1. Write final state to `.dev_flow/active_context.md`.
-2. Set **Last updated** to current date/time.
-3. Summarize what was done in **Recent Changes** section.
+1. In **your own Subtask block** — set `Status` (`review-pending` / `done` /
+   `blocked`), append a wrap-up entry to its Activity list. Optionally add a
+   Coordination Note about hand-off (`[your-id] — stepping away, anyone may
+   pick up from <here>`).
+2. In the task **header** — refresh `Last updated`. If all Subtasks across all
+   contributors are `done`, set the task-level `Status: done`.
+3. Targeted Edit on the dashboard and catalog:
+   - If task-level `Status: done` → move your task's row from "Active Tasks"
+     to "Recently Completed".
+   - Otherwise → update Status / Updated columns in place.
+4. Run hygiene checks (Shared Activity Log cap, per-subtask Activity cap, file
+   size) and archive overflow to `.dev_flow/session_history/` if triggered —
+   see [status phase](status.md).
 
 ## Routing Decision Tree
 
@@ -165,7 +202,7 @@ If the user ends the session (or after completing a full phase chain):
 User request received
 │
 ├─ "continue" / "resume" / no new info
-│   └─ Read active_context → resume next step
+│   └─ Read dashboard → open task file → resume your own Subtask block
 │
 ├─ Describes UI/API/behavior change
 │   ├─ Small (affects 1–2 spec sections)

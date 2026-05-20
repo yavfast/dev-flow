@@ -32,7 +32,8 @@ This command is handled by **Advisor**:
 ## Constraints
 
 - **No file writes.** Do not create, edit, or delete any files.
-- **No active context updates.** Do not touch `.dev_flow/active_context.md`.
+- **No context updates.** Do not touch `.dev_flow/active_context.md`,
+  `.dev_flow/tasks/_index.md`, or any file under `.dev_flow/tasks/`.
 - **No git operations.** No commits, branches, or stashes.
 - **No code generation.** Do not produce implementation code (pseudocode for illustration is OK).
 
@@ -51,7 +52,7 @@ This command is handled by **Advisor**:
 ### Step 2: Gather context
 
 1. Read relevant source files, concepts (`*.concept.md`), specs (`*.sp.md`), and plans (`*.plan.md`).
-2. If the project has `.dev_flow/active_context.md` — read it for current work context (but do not modify).
+2. If the project has `.dev_flow/active_context.md` — read it for the list of active tasks. If a task in the dashboard matches the question's area, also read its `.dev_flow/tasks/task_<ID>.md` for the most relevant context. **Read only — do not modify.**
 3. **Skill check:** Read `.dev_flow/skills/_index.yaml` and load skills relevant to the
    question topic — they may contain domain knowledge, known pitfalls, or architectural
    context that informs the answer. See [skill phase](skill.md).

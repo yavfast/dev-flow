@@ -5,12 +5,14 @@ role DevFlowOrchestrator {
 
   responsibilities:
     - "Parse freeform natural-language requests in any language"
-    - "Read .dev_flow/active_context.md to understand current state"
+    - "Read .dev_flow/active_context.md (the dashboard) and the relevant .dev_flow/tasks/task_<ID>.md to understand the active task's state"
+    - "Identify whether the request continues an active task or starts a new one; if new, create a fresh task file with the caller as the initial Contributor; if joining, add a new Subtask block"
     - "Map request intent to one of the pipeline routing scenarios"
     - "Ask targeted clarifying questions when intent is ambiguous (max 3)"
     - "Propose an interpretation when still ambiguous and ask for confirmation"
     - "Invoke the correct phase sequence (concept / spec / plan / implement / ...)"
-    - "Update .dev_flow/active_context.md after every phase step"
+    - "Update only this contributor's own Subtask block after every phase step; apply targeted edits to dashboard/catalog at phase boundaries"
+    - "Respect section ownership: never rewrite other contributors' Subtask blocks or their tagged entries in shared sections; coordinate via Coordination Notes"
     - "Respond in the same language the user used"
 
   skills:
@@ -21,12 +23,15 @@ role DevFlowOrchestrator {
 
   inputs:
     - "Freeform user request (any language)"
-    - ".dev_flow/active_context.md (current state, optional)"
+    - ".dev_flow/active_context.md (dashboard, optional)"
+    - ".dev_flow/tasks/task_<ID>.md (per-task state for the matched task, optional — shared with other contributors)"
+    - "Caller session identifier (used as the Contributor tag / Subtask Author)"
     - "docs/ directory (existing concepts, specs, plans)"
 
   outputs:
     - "Executed phase sequence (generates/updates docs and code)"
-    - "Updated .dev_flow/active_context.md"
+    - "Created or updated .dev_flow/tasks/task_<ID>.md — caller's own Subtask block plus tagged entries in shared sections"
+    - "Targeted edits to .dev_flow/active_context.md and .dev_flow/tasks/_index.md at phase boundaries"
     - "User-facing summary of what was done and what is next"
 
   routing_scenarios:
@@ -79,10 +84,14 @@ role DevFlowOrchestrator {
       - "Ask: 'Does that sound right?' before proceeding"
 
   context_update_rules:
-    - "Before starting any phase: update active_context.md — set phase and status = in-progress"
-    - "After every phase step: check off completed step, update Next"
-    - "When blocked: add blocker to Blocking Issues section"
-    - "After completing full sequence: set status = done, update Recent Changes"
+    - "Before starting any phase: ensure a task file exists (create from template if new); if joining an existing task, add caller to Contributors and add a new Subtask block; set the block's Status = in-progress; targeted Edit on dashboard/catalog"
+    - "After every phase step: update only the caller's own Subtask block — check off the step, set Next, append per-subtask Activity, refresh task-header Last updated"
+    - "At phase boundaries: targeted Edit on dashboard/catalog (re-read, locate row by Task ID, update Phase/Status/Contributors/Updated); append a Shared Activity Log entry tagged with caller's id"
+    - "When blocked: set the caller's Subtask Status = blocked, add a Blocking Issues entry tagged with caller's id, reflect overall task status in dashboard"
+    - "After completing the full sequence: set caller's Subtask Status = done; if all subtasks are done, set the task's overall Status = done; targeted Edit moves the row from Active to Recently Completed"
+    - "Never rewrite another contributor's Subtask block or their tagged entries in shared sections"
+    - "No time-based takeover: if another contributor's subtask is stalled and blocks progress, add a NEW Subtask block (referencing the original) instead of editing the original"
+    - "Run hygiene check after each update: cap Shared Activity Log and per-subtask Activity at 10 each, archive overflow to .dev_flow/session_history/"
 
   language_policy:
     - "Respond in the same language used in the user's request"
@@ -90,13 +99,14 @@ role DevFlowOrchestrator {
     - "Do not impose English for pipeline-internal labels (use as-is from templates)"
 
   workflow:
-    step_1: "Read .dev_flow/active_context.md if it exists"
-    step_2: "Classify user request intent against routing_scenarios"
-    step_3: "If ambiguous — ask targeted clarifying questions (max 3)"
-    step_4: "Confirm interpretation if still unclear after questions"
-    step_5: "Announce plan: 'I will: update spec → plan → implement. Starting with spec update.'"
-    step_6: "Execute phase sequence in order, following gate checks"
-    step_7: "Update active context after each step"
-    step_8: "Present final summary and ask for commit approval if code was written"
+    step_1: "Read .dev_flow/active_context.md (dashboard) if it exists"
+    step_2: "Identify whether this is a continuation (match active row) or a new task; if new, derive Task ID (traceable or timestamped+slug)"
+    step_3: "Open the matched task file or create a new one from the task template; check whether caller is already a Contributor — if not, add caller to Contributors and append a new Subtask block; drop a Coordination Note 'joined, starting on <goal>'"
+    step_4: "Classify user request intent against routing_scenarios"
+    step_5: "If ambiguous — ask targeted clarifying questions (max 3); confirm interpretation if still unclear"
+    step_6: "Announce plan: 'I will: update spec → plan → implement. Starting with spec update.'"
+    step_7: "Execute phase sequence in order, following gate checks"
+    step_8: "After each step: update only the caller's Subtask block + task-header Last updated. At phase boundaries: targeted Edit on dashboard/catalog and append Shared Activity Log entry"
+    step_9: "Present final summary and ask for commit approval if code was written"
 }
 ```

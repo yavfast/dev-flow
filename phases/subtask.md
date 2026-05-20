@@ -11,6 +11,17 @@ The key value: the main context stays clean. Instead of switching to a bug fix
 mid-concept and flooding the context with irrelevant code diffs, the subagent
 handles it in isolation and reports back only the essential result.
 
+> **Naming note — two related concepts:**
+> - **`/dev-flow subtask <description>` (this command)** spawns an isolated
+>   subagent that works on a self-contained piece of work and reports back to
+>   the main conversation. The subagent never touches `.dev_flow/` context files.
+> - **In-task "Subtask blocks"** inside a `tasks/task_<ID>.md` file are how
+>   peer AI contributors (separate sessions) divide work on the same task.
+>   Each contributor owns one Subtask block.
+>
+> The command here is about **delegation to a subagent**. In-task Subtasks
+> are about **collaboration between peer contributors**.
+
 ## Command
 
 ```
@@ -108,7 +119,8 @@ Phase details: <path to relevant phase file>
 
 ## Scope
 <boundaries — what NOT to do>
-- Do NOT update .dev_flow/active_context.md
+- Do NOT create or modify any file under .dev_flow/tasks/ — the main task is owned by the calling agent
+- Do NOT modify .dev_flow/active_context.md or .dev_flow/tasks/_index.md — the main context owns them
 - Do NOT commit to git
 
 ## Report Format
@@ -136,16 +148,18 @@ When the subagent completes:
    context can reference them.
 5. Continue the main task using the subtask results.
 
-### Step 5: Update active context (if applicable)
+### Step 5: Update the main task's context (if applicable)
 
-If the main task is tracked in `.dev_flow/active_context.md`, add a note
-about the completed subtask in the Recent Changes section:
+If the main work is tracked in `.dev_flow/tasks/task_<ID>.md`, append a one-line
+entry to its Activity Log:
 
 ```
-- Subtask completed (<phase>): <brief description> — <key result>
+- YYYY-MM-DD HH:MM — <agent> — subtask completed (<phase>): <brief description> — <key result>
 ```
 
-Do not create a separate active context entry for the subtask itself.
+Do **not** create a separate task file for the subtask itself — subtasks share
+the calling task's file. The subagent is forbidden from touching context files;
+only the calling (main) agent records the subtask outcome here.
 
 ## Parallel Subtasks
 

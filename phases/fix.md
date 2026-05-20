@@ -149,4 +149,8 @@ Route to the full pipeline instead when:
 - Documentation impact is checked in **Step 5** — propagate is triggered
   automatically when specs or concepts need updating.
 - If the fix reveals an undocumented pattern, suggest adding a **rule**.
-- The fix does NOT update `active_context.md` unless it's part of an ongoing task.
+- The fix does NOT touch any file under `.dev_flow/tasks/` or the dashboard
+  `active_context.md` unless this agent is already a contributor on the task
+  being worked on (i.e., it has its own Subtask block there). If you are
+  running `/dev-flow fix` as a standalone command, create a fresh task file
+  for the fix and add yourself as the first contributor.
