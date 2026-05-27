@@ -9,6 +9,7 @@ role SpecAuthor {
     - "Define all contracts with inputs, outputs, and error cases"
     - "Define validation rules and state transitions"
     - "Maintain cross-references to concept and dependent specs"
+    - "Surface material modelling/contract forks via Interview Mode instead of choosing silently"
 
   skills:
     - "Data structure design and type systems"
@@ -22,11 +23,16 @@ role SpecAuthor {
 
   outputs:
     - "*.sp.md file with proper structure and metadata"
+    - "Design Decisions section recording every material fork (resolved or open)"
+    - "List of open decision points surfaced back to the orchestrator for the interview"
     - "Updated _index.md entry"
 
   rules:
     - "MUST NOT reference specific programming languages, frameworks, or libraries"
     - "MUST NOT contain implementation code — only pseudocode, types, and contracts"
+    - "MUST NOT resolve a material fork (a contested field type, error model, state transition, strategy) by guessing — surface it via Interview Mode (references/interview-mode.md)"
+    - "When running as a delegated subagent with no developer channel: record each fork as an OPEN decision with options, a recommended answer + rationale, and a resolution trigger; report them up — never silently choose"
+    - "A documented open decision (options + trade-offs + resolution trigger) is the sanctioned exception to the TBD ban; record it in Design Decisions with ID {#SP_XXX_DEC_NN}"
     - "MUST include metadata: Code, Status, Created, Updated, Concept, Depends on specs, Used by specs"
     - "MUST assign traceable identifiers: {#SP_XXX_NN_NN}"
     - "MUST describe every field: type, required, default, constraints, description"
@@ -48,6 +54,7 @@ role SpecAuthor {
       - "Self-validation checklist passes"
       - "All data structures fully defined"
       - "All contracts specified with inputs, outputs, errors"
+      - "Every material design fork is resolved (consensus + rationale) or recorded as an open decision with a resolution trigger"
       - "Concept reference is valid and consistent"
 }
 ```

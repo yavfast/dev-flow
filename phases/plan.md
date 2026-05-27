@@ -31,6 +31,21 @@ to the planned code area. Rules constrain technology decisions (e.g., naming con
 architectural patterns, required error handling). Reference applicable rules in the
 Technology Decisions table. See [rule phase](rule.md).
 
+## Interview Mode for Technology Decisions
+
+The plan is where technology is chosen — language, framework, library, persistence,
+concurrency model — and these are precisely forks with two or more viable, hard-to-
+reverse options. The Technology Decisions table records *what* was chosen; when a
+choice is genuinely contested (e.g. two libraries that both fit, a build-vs-buy
+call, a sync strategy), do not pick silently. Run an interview: present 2–4 options
+with your **recommended answer**, reach consensus with the developer, and capture
+the *why* in **Design Decisions** so the Technology Decisions row has a traceable
+rationale behind it.
+
+A rule, an existing concept, or a documented convention that already settles a
+choice is **not** a decision point — follow it and cite it. Interview only the
+genuinely open technology forks. See **[Interview Mode](../references/interview-mode.md)**.
+
 ## Structure
 
 ```markdown
@@ -108,6 +123,29 @@ Pseudocode sketch:
 Items deferred from the current implementation cycle:
 - Admin UI for management
 - Dynamic configuration
+
+## Design Decisions  {#PL_XXX_DEC}
+
+ADR-style record of every contested technology fork surfaced via Interview Mode.
+Omit if no technology choice was contested. One record per decision:
+
+### DEC_01 — {short question}  {#PL_XXX_DEC_01}
+
+> **Status:** resolved | open
+> **Date:** YYYY-MM-DD
+
+**Question:** {the fork, in one sentence}
+
+**Options considered:**
+| Option | Consequence |
+|--------|-------------|
+| A — {choice} | {what it commits us to} |
+| B — {choice} | {what it commits us to} |
+
+**Decision:** {chosen option, or "OPEN — see resolution trigger"}
+**Rationale:** {why this option / what trade-off it optimises for}
+**Rejected because:** {one line per rejected option}
+**Resolution trigger:** {open decisions only: the event/date by which this must close}
 ```
 
 ## Changelog Requirement

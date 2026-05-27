@@ -61,6 +61,29 @@ Items deferred from the current implementation cycle:
 - {deferred item 1}
 - {deferred item 2}
 
+## Design Decisions  {#PL_XXX_DEC}
+
+<!-- One record per contested technology fork surfaced via Interview Mode. Delete
+     this section if no technology choice was contested. See references/interview-mode.md. -->
+
+### DEC_01 — {short question}  {#PL_XXX_DEC_01}
+
+> **Status:** {resolved | open}
+> **Date:** YYYY-MM-DD
+
+**Question:** {the fork, in one sentence}
+
+**Options considered:**
+| Option | Consequence |
+|--------|-------------|
+| A — {choice} | {what it commits us to} |
+| B — {choice} | {what it commits us to} |
+
+**Decision:** {chosen option, or "OPEN — see resolution trigger"}
+**Rationale:** {why this option / what trade-off it optimises for}
+**Rejected because:** {one line per rejected option}
+**Resolution trigger:** {open decisions only: the event/date by which this must close}
+
 ## Changelog
 
 | Date | Change |

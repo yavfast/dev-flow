@@ -114,6 +114,29 @@ Transition rules:
 | Dependent modules | {Which specs reference this one? What breaks if removed?} |
 | External contracts | {Published APIs or events that consumers depend on?} |
 
+## 07. Design Decisions  {#SP_XXX_DEC}
+
+<!-- One record per material fork surfaced via Interview Mode. Delete this section
+     if spec authoring surfaced no decision points. See references/interview-mode.md. -->
+
+### DEC_01 — {short question}  {#SP_XXX_DEC_01}
+
+> **Status:** {resolved | open}
+> **Date:** YYYY-MM-DD
+
+**Question:** {the fork, in one sentence}
+
+**Options considered:**
+| Option | Consequence |
+|--------|-------------|
+| A — {approach} | {what it commits us to} |
+| B — {approach} | {what it commits us to} |
+
+**Decision:** {chosen option, or "OPEN — see resolution trigger"}
+**Rationale:** {why this option / what trade-off it optimises for}
+**Rejected because:** {one line per rejected option}
+**Resolution trigger:** {open decisions only: the event/date by which this must close}
+
 ## Changelog
 
 | Date | Change |

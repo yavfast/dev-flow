@@ -219,6 +219,17 @@ Code review is performed by a **clean-context subagent** — a fresh AI instance
 - SOLID principles (unless project rules override)
 - Security, naming, code quality
 
+### Interview Mode
+
+The biggest architectural mistakes are made silently. When authoring a **concept**, **specification**, **plan**, or a **fix** hits a real fork — two or more viable, hard-to-reverse options (including the classic "band-aid vs proper fix") — dev-flow does **not** quietly pick one and bury it where no reviewer will catch it. Instead it stops and runs a short **interview**: it presents the fork with 2–4 marked options (A/B/C) and a **recommended answer**, and asks the developer to decide.
+
+Why the developer and not the AI? Because the developer holds the full context (roadmap, business constraints, team) and owns the consequences. Each fork ends in one of two ways:
+
+- **Resolved** — a consensus choice, recorded with its rationale and the rejected alternatives.
+- **Open** — for research/exploratory work, the alternatives are kept but documented with a **resolution trigger** (the event or date by which the choice must be closed). An open decision without a trigger is just a hidden "TBD" and is rejected.
+
+Every fork lands in a traceable **Design Decisions** (ADR-style) section of the document, and the validation gates won't pass while a material decision is still open without a trigger. See [`references/interview-mode.md`](references/interview-mode.md).
+
 ### Language Independence
 
 Concepts and specifications are **language-agnostic** — no programming languages, frameworks, or libraries mentioned. Implementation technology is chosen only in the Plan phase. This keeps design decisions clean and portable.

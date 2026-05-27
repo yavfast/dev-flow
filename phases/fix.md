@@ -41,7 +41,10 @@ the fix is complete. See [skill phase](skill.md).
    area of the codebase where the problem likely originates.
 3. **Reproduce mentally** — trace the execution path to understand how the symptom occurs.
 4. **Identify root cause** — distinguish root cause from symptoms. If the root cause
-   is unclear, list hypotheses ranked by probability.
+   is unclear, list hypotheses ranked by probability. If two or more hypotheses are
+   *materially different* — they lead to different fixes — and the developer likely
+   holds the deciding context, surface them as marked options instead of betting on
+   the top-ranked one (see [Interview Mode in Fix](#interview-mode-in-fix)).
 5. **Check related code** — look for the same pattern elsewhere that may have
    the same bug (if it's a pattern-level issue, not a one-off).
 
@@ -53,11 +56,15 @@ If context is insufficient to identify the root cause, ask the user targeted que
 
 1. **Describe the root cause** — one paragraph explaining what goes wrong and why.
 2. **Propose the fix** — list specific changes (files, methods, what changes and why).
+   If the same root cause admits *materially different* strategies — a quick
+   **band-aid**, a **structural** fix, a **workaround** — with different long-term
+   cost, surface them as marked options with a recommendation, not a single silent
+   pick (see [Interview Mode in Fix](#interview-mode-in-fix)).
 3. **Assess impact** — note if the fix touches shared code that other features depend on.
 4. **Check rules** — read `.dev_flow/rules/_index.yaml` (if exists) to ensure the fix
    will comply with project coding rules.
-5. **Present to user** — show the analysis and proposed fix. Wait for approval
-   before proceeding to implementation.
+5. **Present to user** — show the analysis and the fix option(s). Wait for approval
+   (or the developer's chosen/composed option) before proceeding to implementation.
 
 ### Step 3: Implement
 
@@ -104,6 +111,38 @@ related documentation artifacts:
 
 If any updates are needed, either apply them immediately (for small changes)
 or flag them explicitly in the result report for the user to decide.
+
+## Interview Mode in Fix
+
+A bug fix hides two forks that are easy to resolve silently and expensive to get
+wrong. When either is *material* — the options lead to genuinely different code or
+different long-term cost — do **not** pick one quietly. Surface it with marked
+options (`A`/`B`/`C`) and a recommended answer, per
+[Interview Mode](../references/interview-mode.md). Most bugs have one obvious fix, so
+the over-asking discipline applies hard here: trigger this only on a real fork.
+
+- **Root cause (Step 1).** When several plausible causes lead to *different* fixes and
+  the developer likely holds the deciding context ("does it happen only after
+  re-login?"), present the ranked hypotheses as options and let them confirm — rather
+  than betting on the top-ranked one.
+- **Fix strategy (Step 2).** The same cause often admits a quick **band-aid**, a
+  **structural** fix, and a **workaround**, with very different long-term cost. Surface
+  them; recommend one.
+
+**The sanctioned stop-gap.** The Banned Phrases rule forbids silent "temporary" fixes —
+but sometimes you genuinely must ship a stop-gap *now* (prod is down). Interview Mode's
+**open decision with a resolution trigger** is exactly how: record the band-aid as the
+chosen action **and** the proper fix as OPEN with a concrete trigger ("resolve by #123 /
+next sprint"). That converts a silent band-aid — which rots into permanence — into a
+tracked, owned decision.
+
+**Where the decision is recorded** (a code fix usually has no design document of its own):
+- Fix **changes a contract** → it propagates (Step 5) to the affected `*.sp.md` /
+  `*.concept.md`; record the decision in that document's **Design Decisions** section.
+- **Code-only** fix → record it in the **fix report** (Step 4) and the fix's **task
+  file** under `.dev_flow/tasks/`. An OPEN decision's resolution trigger MUST become a
+  tracked item (a plan/backlog entry, a rule, or a Blocking Issue in the task context)
+  so it cannot quietly expire.
 
 ## Rule Detection
 

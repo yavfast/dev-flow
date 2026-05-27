@@ -104,6 +104,7 @@ Before writing or changing any code, ask yourself:
 - Reuse Check completed — no unjustified overlap with existing concepts
 - No banned phrases (see concept phase — Banned Phrases)
 - Minimality: concept describes the minimum viable solution — no "just in case" sections with no stated consumer
+- Design decisions settled: every material fork is resolved (consensus + rationale) or recorded as an open decision with a resolution trigger (see [Interview Mode](references/interview-mode.md))
 
 **Specification -> Plan:**
 - All data structures fully defined with types, constraints, invariants
@@ -114,10 +115,12 @@ Before writing or changing any code, ask yourself:
 - No banned phrases (see specification phase — Banned Phrases)
 - Minimality: no contracts or entities without a stated consumer
 - Self-validation checklist passes (see [specification phase](phases/specification.md))
+- Design decisions settled: every material modelling/contract fork is resolved (consensus + rationale) or recorded as an open decision with a resolution trigger (see [Interview Mode](references/interview-mode.md))
 
 **Plan -> Code:**
 - Plan covers ALL specification sections
 - Technology decisions documented with rationale
+- Contested technology forks resolved (consensus + rationale) or recorded as open decisions with a resolution trigger (see [Interview Mode](references/interview-mode.md))
 - Phase dependencies explicitly stated
 
 **Code -> Test** (conditional — functional tests):
@@ -193,6 +196,11 @@ Every section has a unique, immutable identifier:
 | Concept | `C_XXX_NN_NN` | `C_ACS_01_01` |
 | Specification | `SP_XXX_NN_NN` | `SP_ACS_01_01` |
 | Plan | `PL_XXX` | `PL_ACS` |
+| Design decision | `<DocID>_DEC_NN` | `C_ACS_DEC_01`, `SP_ACS_DEC_02`, `PL_ACS_DEC_01` |
+
+The `_DEC_NN` form identifies a record in a document's **Design Decisions** section
+(see [Interview Mode](references/interview-mode.md)); the `_DEC` segment is reserved
+and never used as a numeric section number.
 
 In code, reference these as comments: `# [C_ACS_03_01] PermissionInterceptor`
 
@@ -387,6 +395,7 @@ reveals a coding pattern, constraint, or convention that is not yet captured in
 - [Concept phase](phases/concept.md) | [Template](templates/concept.md) | [Spike template](templates/spike.md)
 - [Specification phase](phases/specification.md) | [Template](templates/specification.md)
 - [Plan phase](phases/plan.md) | [Template](templates/plan.md)
+- [Interview Mode](references/interview-mode.md) *(cross-cutting sub-procedure of concept/spec/plan/fix — surface design forks to the developer instead of choosing silently)*
 - [Implement phase](phases/implement.md)
 - [Test phase](phases/testing.md) *(conditional — functional tests: unit + mock)*
 - [Review phase](phases/review.md) *(pre-commit review by clean-context subagent)*

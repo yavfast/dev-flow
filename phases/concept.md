@@ -43,6 +43,31 @@ If reuse check reveals that the problem is already covered — extend the existi
 - **Cross-references:** Link to related concepts with `[C_XXX]` identifiers.
 - **Changelog:** Every concept ends with a `## Changelog` table recording significant changes.
 
+## Interview Mode for Design Decisions
+
+Concepts are where the biggest, least-reversible choices are made — and where they
+are easiest to hide. When authoring surfaces **two or more materially different ways
+forward** (a different domain model, a different boundary, a different mechanism),
+do **not** pick one silently and bury it in the prose. Stop and run an interview:
+present the fork to the developer with 2–4 options and your **recommended answer**,
+reach a consensus, and record the outcome.
+
+The developer holds context you don't (roadmap, business constraints, team) and owns
+the consequences; an architectural mistake set here is expensive to undo once it
+reaches code. A cheap question now beats an expensive reversal later.
+
+See **[Interview Mode](../references/interview-mode.md)** for the full procedure —
+when a fork counts as a decision point (and when it does not), how to frame options
+with a recommendation, sequential vs batched questions, and the two valid outcomes
+(consensus vs documented open alternatives with a resolution trigger). Record every
+resolved or open decision in the concept's **Design Decisions** section.
+
+> **Interview vs Banned Phrases.** A documented **open** decision (options +
+> trade-offs + a resolution trigger) is *not* a banned deferral. The phrases below
+> ("temporarily", "for now", …) are *undocumented* deferrals with no owner and no
+> trigger; an open decision records the alternatives and the concrete event/date that
+> closes it — the sanctioned way to leave something open (e.g. for research work).
+
 ## Banned Phrases
 
 Reject or flag the following phrases in any concept. They signal deferred decisions
@@ -109,6 +134,29 @@ What other concepts this depends on (with [C_XXX] references).
 
 ### 4.2. API Surface  {#C_XXX_04_02}
 What this concept exposes (abstract contracts, not signatures).
+
+## 5. Design Decisions  {#C_XXX_DEC}
+
+ADR-style record of every material fork surfaced via Interview Mode. Omit the
+section only if authoring surfaced no decision points. One record per decision:
+
+### DEC_01 — {short question}  {#C_XXX_DEC_01}
+
+> **Status:** resolved | open
+> **Date:** YYYY-MM-DD
+
+**Question:** {the fork, in one sentence}
+
+**Options considered:**
+| Option | Consequence |
+|--------|-------------|
+| A — {approach} | {what it commits us to} |
+| B — {approach} | {what it commits us to} |
+
+**Decision:** {chosen option, or "OPEN — see resolution trigger"}
+**Rationale:** {why this option / what trade-off it optimises for}
+**Rejected because:** {one line per rejected option}
+**Resolution trigger:** {open decisions only: the event/date by which this must close}
 
 ## Changelog
 

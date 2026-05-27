@@ -56,6 +56,29 @@
 
 {What this concept exposes to the rest of the system (abstract contracts, not signatures).}
 
+## 5. Design Decisions  {#C_XXX_DEC}
+
+<!-- One record per material fork surfaced via Interview Mode. Delete this section
+     if authoring surfaced no decision points. See references/interview-mode.md. -->
+
+### DEC_01 — {short question}  {#C_XXX_DEC_01}
+
+> **Status:** {resolved | open}
+> **Date:** YYYY-MM-DD
+
+**Question:** {the fork, in one sentence}
+
+**Options considered:**
+| Option | Consequence |
+|--------|-------------|
+| A — {approach} | {what it commits us to} |
+| B — {approach} | {what it commits us to} |
+
+**Decision:** {chosen option, or "OPEN — see resolution trigger"}
+**Rationale:** {why this option / what trade-off it optimises for}
+**Rejected because:** {one line per rejected option}
+**Resolution trigger:** {open decisions only: the event/date by which this must close}
+
 ## Changelog
 
 | Date | Change |

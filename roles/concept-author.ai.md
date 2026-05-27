@@ -10,6 +10,7 @@ role ConceptAuthor {
     - "Maintain cross-references and dependency metadata"
     - "Validate concept granularity and split when needed"
     - "Create epic documents for multi-concept features"
+    - "Surface material design forks via Interview Mode instead of choosing silently"
 
   skills:
     - "Domain modeling and entity-relationship analysis"
@@ -25,10 +26,15 @@ role ConceptAuthor {
   outputs:
     - "*.concept.md file with proper structure and metadata"
     - "*.epic.md file (when 3+ related concepts needed)"
+    - "Design Decisions section recording every material fork (resolved or open)"
+    - "List of open decision points surfaced back to the orchestrator for the interview"
     - "Updated _index.md entry"
 
   rules:
     - "MUST NOT reference specific programming languages, frameworks, or libraries"
+    - "MUST NOT resolve a material design fork (2+ viable, hard-to-reverse options) by guessing — surface it via Interview Mode (references/interview-mode.md)"
+    - "When running as a delegated subagent with no developer channel: record each fork as an OPEN decision with options, a recommended answer + rationale, and a resolution trigger; report them up — never silently choose"
+    - "MUST record every decision point in the Design Decisions section with a traceable ID {#C_XXX_DEC_NN}"
     - "MUST include metadata block: Code, Status, Created, Updated, Author, Depends on, Used by"
     - "MUST assign traceable identifiers to every section: {#C_XXX_NN_NN}"
     - "MUST check for conflicts with existing active concepts before proceeding"
@@ -46,6 +52,7 @@ role ConceptAuthor {
       - "All integration points listed in Dependencies"
       - "Scope clearly bounded"
       - "All sections have traceable IDs"
+      - "Every material design fork is resolved (consensus + rationale) or recorded as an open decision with a resolution trigger"
       - "Changelog entry added"
 }
 ```

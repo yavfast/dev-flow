@@ -21,6 +21,25 @@ Use abstract type notation and pseudocode. Implementation language is chosen in 
 - **Single Source of Truth:** Once created, source code becomes a derived artifact.
   All changes start in the specification first.
 
+## Interview Mode for Design Decisions
+
+Specs are where a concept's choices get pinned to concrete data shapes and
+contracts — and a buried choice here (a field's type, an error model, a state
+transition, a sync strategy) is even harder to reverse than in the concept, because
+consumers bind to it. When authoring surfaces **two or more materially different
+ways to model or contract something**, do not pick one silently. Stop and run an
+interview: present the fork with 2–4 options and your **recommended answer**, reach
+a consensus, and record the outcome.
+
+See **[Interview Mode](../references/interview-mode.md)** for the full procedure.
+Record every resolved or open decision in the spec's **Design Decisions** section.
+
+> **Interview vs Banned Phrases.** A documented **open** decision (options +
+> trade-offs + a resolution trigger) is *not* a banned "TBD". The banned phrases
+> below are *undocumented* deferrals with no owner and no trigger. An open decision
+> records the alternatives and the concrete event/date that closes it — that is the
+> sanctioned way to leave something open (e.g. for research work).
+
 ## Banned Phrases
 
 Reject or flag the following phrases in any specification. They signal incomplete design
@@ -49,6 +68,7 @@ Every specification must pass these checks before advancing to the plan:
 - [ ] Is the rollback strategy documented (Section 06)?
 - [ ] Does the spec contain no banned phrases (see Banned Phrases above)?
 - [ ] Is the spec minimal — no "just in case" contracts with no stated consumer?
+- [ ] Is every material design fork either resolved (consensus + rationale) or recorded as an open decision with a resolution trigger in Design Decisions (see Interview Mode)?
 
 ## Structure
 
@@ -194,6 +214,30 @@ How to undo this feature if it fails or is deprecated:
 | External contracts | Are there published APIs or events that consumers depend on? |
 
 If full rollback is not possible — document the minimum safe state and manual steps required.
+
+## 07. Design Decisions  {#SP_XXX_DEC}
+
+ADR-style record of every material fork surfaced via Interview Mode (see Interview
+Mode above). Omit only if spec authoring surfaced no decision points. One record per
+decision:
+
+### DEC_01 — {short question}  {#SP_XXX_DEC_01}
+
+> **Status:** resolved | open
+> **Date:** YYYY-MM-DD
+
+**Question:** {the fork, in one sentence}
+
+**Options considered:**
+| Option | Consequence |
+|--------|-------------|
+| A — {approach} | {what it commits us to} |
+| B — {approach} | {what it commits us to} |
+
+**Decision:** {chosen option, or "OPEN — see resolution trigger"}
+**Rationale:** {why this option / what trade-off it optimises for}
+**Rejected because:** {one line per rejected option}
+**Resolution trigger:** {open decisions only: the event/date by which this must close}
 ```
 
 ## Changelog Requirement
