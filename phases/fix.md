@@ -39,7 +39,11 @@ the fix is complete. See [skill phase](skill.md).
 1. **Understand the symptom** — parse the problem description.
 2. **Locate the code** — use ai-search, grep, or read relevant files to find the
    area of the codebase where the problem likely originates.
-3. **Reproduce mentally** — trace the execution path to understand how the symptom occurs.
+3. **Confirm the cause from the evidence** — `fix` is normally invoked with evidence
+   already in hand (a description, screenshot, stack trace, error message). Trace the
+   execution path and check whether that evidence **corroborates** a specific located
+   cause (does the stack / screenshot line up with the code site?). The goal here is
+   confirmation from what you already have — not reproduction.
 4. **Identify root cause** — distinguish root cause from symptoms. If the root cause
    is unclear, list hypotheses ranked by probability. If two or more hypotheses are
    *materially different* — they lead to different fixes — and the developer likely
@@ -48,9 +52,14 @@ the fix is complete. See [skill phase](skill.md).
 5. **Check related code** — look for the same pattern elsewhere that may have
    the same bug (if it's a pattern-level issue, not a one-off).
 
-If context is insufficient to identify the root cause, ask the user targeted questions
-(max 3). Examples: "Does this happen on first launch or only after re-login?",
-"Which runtime/environment version?", "Is there a stack trace?"
+**Confidence gate — diagnose only when you must.** After analysis:
+- **Confident, located cause** corroborated by the provided evidence → go straight to
+  Step 2. Do **not** reproduce or build a feedback loop — the evidence already
+  establishes the bug, so reproduction here only burns time and tokens. (Correctness is
+  still confirmed at Step 4 Verify.)
+- **No confident cause** — you cannot locate it, cannot tell a real bug from expected
+  behavior, or several causes stay equally plausible → enter the optional
+  [Diagnosis](#diagnosis-optional) sub-step.
 
 ### Step 2: Plan the fix
 
@@ -78,6 +87,11 @@ If context is insufficient to identify the root cause, ask the user targeted que
 
 ### Step 4: Verify
 
+Verify runs on **every** fix — including the fast path that skipped Diagnosis.
+A confident cause is not proof the fix is correct; build/test/observe must still
+confirm it. Where no automated test exists (e.g. a UI symptom), "observe" can be a
+cheap re-check — re-run and confirm the symptom is gone (an adb screenshot, a log line).
+
 1. **Build** — run the project's build command and confirm success.
    Use whatever build tool the project uses (e.g., `make`, `npm run build`,
    `./gradlew build`, `go build ./...`, `cargo build`, `python -m build`).
@@ -87,7 +101,9 @@ If context is insufficient to identify the root cause, ask the user targeted que
    (e.g., `pytest`, `npm test`, `./gradlew test`, `go test ./...`, `cargo test`).
 
 3. **Review the diff** — re-read all changed files to check for regressions,
-   missed edge cases, or rule violations.
+   missed edge cases, or rule violations. If a Diagnosis sub-step added
+   `[DEBUG-xxxx]` instrumentation or a throwaway harness, remove it now — one `grep`
+   on the tag — and confirm none survives.
 
 4. **Report result** — summarize to the user:
    - Root cause (one sentence)
@@ -111,6 +127,53 @@ related documentation artifacts:
 
 If any updates are needed, either apply them immediately (for small changes)
 or flag them explicitly in the result report for the user to decide.
+
+## Diagnosis (optional)
+
+An optional sub-step of **Step 1**, entered only when the confidence gate fails — you
+have no confident, evidence-corroborated cause. It imports the discipline of the
+`diagnose` skill, but **gated**: most fixes arrive with enough evidence to skip it.
+
+> **Why optional.** An earlier mandatory pre-diagnosis step was removed because
+> reproduction was sometimes costlier than the fix. So diagnosis is opt-in — skipping
+> it is the default, *entering* it is the justified choice.
+
+**Before diagnosing — get context and a plan.** Do not start reproducing blindly. First
+gather the context the diagnosis needs and decide *how* you will obtain a pass/fail
+signal and roughly what it will cost. Then apply the cost gate.
+
+**Cost gate (surface as a decision — [Interview Mode](../references/interview-mode.md)).**
+When a reliable signal is expensive or uncertain to build, present the options instead
+of silently sinking tokens into reproduction:
+- `A` — **Diagnose (Recommended when feasible)** — run the loop below; when a signal is cheap to build.
+- `B` — **Fix on the best hypothesis** and rely on Step 4 Verify — when reproduction is
+  clearly costlier than the fix and the top hypothesis is well-supported.
+- `C` — **Request an artifact** from the developer — repro steps, a HAR/log/crash dump,
+  a timestamped screen recording, or environment access — rather than reconstructing it.
+  (For a manual/UI repro, a structured human-in-the-loop script keeps the signal usable.)
+
+**The diagnosis loop (path A)** — adapted from `diagnose`:
+1. **Build a feedback loop** — a fast, deterministic pass/fail signal for the bug. It
+   need **not** be a unit test: a failing test, a CLI/curl diff, a replayed trace, a
+   throwaway harness, or — where a human must act — an adb/live check are all valid.
+   Build the right loop and the bug is most of the way fixed.
+2. **Reproduce** — run the loop; confirm it shows the **user's** symptom, not a nearby
+   one (wrong bug → wrong fix). For flaky bugs, raise the reproduction *rate* until it is
+   debuggable rather than chasing a clean repro.
+3. **Falsifiable hypotheses** — 3–5, ranked, each stating a prediction ("if X is the
+   cause, changing Y makes it disappear"). A hypothesis with no prediction is a vibe —
+   sharpen or drop it. Show the ranked list to the developer when they hold deciding
+   context (a cheap checkpoint); proceed on your ranking if they are away.
+4. **Instrument** — one variable at a time; debugger / REPL over logs, logs over
+   "log everything and grep". Tag every temporary log with a unique prefix
+   (`[DEBUG-a4f2]`) so cleanup is a single `grep` (removed at Step 4). For performance
+   regressions, measure first (baseline / profiler), then fix.
+
+**No correct test seam is itself a finding.** If the bug cannot be locked down because
+the code has no seam exercising the real bug pattern (tangled callers, hidden coupling),
+do not fake it with a shallow test that gives false confidence — **record the missing
+seam** as a finding and route it upward (Step 5 → a `*.concept.md` note or a rule), the
+same way an architectural decision would be surfaced.
 
 ## Interview Mode in Fix
 
