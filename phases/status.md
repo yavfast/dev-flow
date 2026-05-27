@@ -10,6 +10,12 @@ Status also defines the **read/write protocol** that every other phase follows
 when touching the context files — read this whenever you need to update task
 state safely under multiple AI contributors.
 
+For the periodic whole-directory revision — reconciling task state with reality,
+trimming the dashboard, compacting and reflecting on closed tasks, and grooming
+`rules/`/`skills/` — see the [audit phase](audit.md). Where `status` *reports*
+drift, `audit` *resolves* it, building on this protocol's regeneration and archive
+procedures.
+
 ## Command
 
 ```

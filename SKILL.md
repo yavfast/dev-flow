@@ -50,6 +50,7 @@ an unbiased perspective on the changes.
 | — | `/dev-flow rule <request>` | Add, edit, or remove coding rules (freeform) | Updated `.dev_flow/rules/` |
 | — | `/dev-flow skill <request>` | Find, add, update, or remove project knowledge skills | Updated `.dev_flow/skills/` |
 | — | `/dev-flow status` | Show current state, resume previous session | Status summary |
+| — | `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` — reconcile task state with reality, trim context, compact closed tasks, groom rules/skills | Audit report + cleaned context |
 | — | `/dev-flow ask <question>` | Read-only Q&A about code or feasibility — no changes | Answer + optional next-step suggestion |
 | — | `/dev-flow subtask <task>` | Delegate secondary task to subagent (runs any dev-flow phase: fix, test, ask, etc.) | Subtask report |
 | — | `/dev-flow do <request>` | Freeform routing — interpret intent and run the right phases | Phase output + updated context |
@@ -60,6 +61,13 @@ an unbiased perspective on the changes.
 
 > **Ask command:** Use `/dev-flow ask <question>` for read-only questions about
 > the codebase or feasibility of changes. No files are modified, no context is updated.
+
+> **Audit command:** Use `/dev-flow audit` for the periodic whole-directory revision
+> of `.dev_flow/` — it reconciles every task's recorded state against reality (linked
+> docs + git), trims the dashboard, compacts/reflects on closed tasks (archiving noise,
+> harvesting lessons into rules/skills), and grooms the `rules/` and `skills/` catalogues.
+> Where [status](phases/status.md) *reports* drift, `audit` *resolves* it. Supports
+> `--dry-run` (report only) and a `scope` (`context` / `tasks` / `rules` / `skills` / `all`).
 
 > **Phase 0 (Onboard):** Optional. Run once when adopting dev-flow for an existing project.
 > Analyzes code bottom-up (utilities first), generates concepts, specs, and plans.
@@ -388,6 +396,7 @@ reveals a coding pattern, constraint, or convention that is not yet captured in
 - [Rule phase](phases/rule.md) *(add/edit/remove coding rules)*
 - [Skill phase](phases/skill.md) *(manage project knowledge skills)*
 - [Status phase](phases/status.md) | Templates: [task_context](templates/task_context.md), [active_context (dashboard)](templates/active_context.md), [tasks_index](templates/tasks_index.md)
+- [Audit phase](phases/audit.md) *(full `.dev_flow/` revision — reconcile, trim, compact + reflect, groom rules/skills)*
 - [Ask phase](phases/ask.md) *(read-only Q&A, no file changes)*
 - [Subtask phase](phases/subtask.md) *(delegate secondary tasks to subagent)*
 - [Do phase](phases/do.md) *(default fallback for freeform requests)*
@@ -415,6 +424,7 @@ Each phase has a specialized role for subagent execution:
 | Rule | — (inline, no subagent) | Manages `.dev_flow/rules/` files directly |
 | Skill | — (inline, no subagent) | Manages `.dev_flow/skills/` files directly |
 | Status / all phases | [context-tracker.ai.md](roles/context-tracker.ai.md) | Reads, writes, and regenerates the per-task context model under `.dev_flow/` (task files + dashboard + catalog) |
+| Audit | [auditor.ai.md](roles/auditor.ai.md) | Revises the whole `.dev_flow/` tree: reconciles task state, compacts + reflects on closed tasks, grooms rules/skills |
 | Ask | [advisor.ai.md](roles/advisor.ai.md) | Read-only Q&A about code and feasibility |
 | Subtask | [subtask-executor.ai.md](roles/subtask-executor.ai.md) | Executes delegated secondary tasks independently |
 | Do (default) | [dev-flow-orchestrator.ai.md](roles/dev-flow-orchestrator.ai.md) | Interprets freeform requests and routes to the right phases |

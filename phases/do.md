@@ -82,6 +82,7 @@ Analyze the freeform request against the loaded context to determine:
 | **Review/validate** | "check", "validate", "чи правильно", "review" | review |
 | **Manage rules** | "add rule", "додай правило", "edit rule", "remove rule", "list rules", "show rule" | rule |
 | **Understand state** | "що зроблено", "status", "де я?" | status |
+| **Revise / housekeep context** | "ревізія", "audit", "почисти контекст", "синхронізуй задачі", "оновити індекси", "groom", "tidy up", "compact", "retrospective" | audit |
 | **Delegate side task** | "subtask", "delegate", "делегуй", "зроби паралельно", "offload", explicit secondary task during active work | subtask |
 | **Question (no changes)** | "how does", "як працює", "can we", "чи можливо", "where is", "де знаходиться", "is it feasible" | ask |
 | **Plan only** | "plan", "сплануй", no code changes mentioned | plan |
@@ -215,6 +216,9 @@ User request received
 │
 ├─ Question about state / what's done
 │   └─ status
+│
+├─ Revise / clean up .dev_flow (reconcile state, trim context, dedupe rules/skills)
+│   └─ audit
 │
 ├─ Question about code / feasibility (no changes requested)
 │   └─ ask

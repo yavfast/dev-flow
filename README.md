@@ -43,6 +43,7 @@ Additional commands:
 | `/dev-flow rule <request>` | Manage project coding rules |
 | `/dev-flow skill <request>` | Manage project technology knowledge |
 | `/dev-flow status` | Show current state, resume previous session |
+| `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` — reconcile state, trim context, compact closed tasks, groom rules/skills |
 | `/dev-flow <anything>` | Freeform — auto-routes to the right phase |
 
 ## Installation
@@ -282,7 +283,7 @@ your-project/
 ```
 dev-flow/
 ├── SKILL.md              # Main skill definition and pipeline
-├── phases/               # 15 phase definitions
+├── phases/               # 17 phase definitions
 │   ├── concept.md
 │   ├── specification.md
 │   ├── plan.md
@@ -297,8 +298,10 @@ dev-flow/
 │   ├── do.md
 │   ├── rule.md
 │   ├── skill.md
-│   └── status.md
-├── roles/                # 14 AI-DSL subagent roles
+│   ├── status.md
+│   ├── subtask.md
+│   └── audit.md
+├── roles/                # 16 AI-DSL subagent roles
 │   ├── concept-author.ai.md
 │   ├── spec-author.ai.md
 │   ├── plan-author.ai.md
@@ -312,7 +315,9 @@ dev-flow/
 │   ├── onboard-coordinator.ai.md
 │   ├── onboard-analyzer.ai.md
 │   ├── onboard-docgen.ai.md
-│   └── onboard-rules-extractor.ai.md
+│   ├── onboard-rules-extractor.ai.md
+│   ├── subtask-executor.ai.md
+│   └── auditor.ai.md
 ├── templates/            # Document templates
 │   ├── concept.md
 │   ├── specification.md
