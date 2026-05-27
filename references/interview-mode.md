@@ -74,6 +74,33 @@ If you don't yet know the options, you may need a spike first (see
 
 ## The procedure
 
+### 0. Gather full context first
+
+An interview is only as good as the context behind it. A half-informed question
+wastes the developer's attention and builds the decision on a wrong premise — so
+before you surface any fork, make sure you actually understand it:
+
+- **Read the relevant code** — what does the system do *today*? Existing patterns,
+  the de-facto answer if one already exists, and the constraints the current
+  implementation imposes on the options.
+- **Read the relevant docs** — the concept/spec/plan in play (or, in a fix, the
+  task file, fix report, and any affected spec/concept), applicable `.dev_flow/rules/`,
+  and the **prior Design Decisions (`DEC_NN`)**. A fork may already be settled by an
+  earlier decision record — cite it, don't re-open it.
+- **Check what already exists** — the option you're about to propose, or the
+  abstraction behind it, may already be built or settled by a rule. In the concept
+  phase the [Reuse Check](../phases/concept.md) is exactly this search — lean on its
+  result, don't re-run it mid-interview.
+
+Anything you could have answered yourself from code or docs is **not** a question
+for the developer — it is homework you owe *before* asking. Reserve the interview
+for what genuinely cannot be answered from existing artifacts: forks whose right
+answer depends on context that lives only in the developer's head — business
+priorities, roadmap, team constraints that were never written down.
+
+The boundary is clean: **code and docs tell you everything already known or
+decided; the interview is for what isn't.**
+
 ### 1. Collect the decision points
 
 While authoring, keep a running list of decision points rather than interrupting at
@@ -175,7 +202,9 @@ the developer** — normally the orchestrator (the main session that received
 
 A **delegated author subagent** (concept-author, spec-author, plan-author running in
 its own context) usually has **no channel to the developer**. It must **not** resolve
-a material fork by guessing. Instead it:
+a material fork by guessing — and it must first exhaust the Step 0 context-gathering,
+since code and prior `DEC_NN` records often close a fork outright and keep the list of
+open decisions it escalates short. For whatever genuinely remains, it:
 1. records each decision point in Design Decisions as **open** — options, consequences,
    and its **recommended answer with rationale**, plus a resolution trigger of
    "resolve with developer before the gate"; and
