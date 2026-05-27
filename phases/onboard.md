@@ -150,6 +150,19 @@ Skills capture project-specific expertise about technologies and patterns — di
 **Format:** All `_index.yaml` files in `.dev_flow/skills/` use YAML.
 See [skill phase](skill.md) for the exact schema.
 
+### Step 5b: Extract project glossary
+
+Using the cross-module analysis, extract the project's **canonical domain vocabulary**
+into `docs/_glossary.md`. This gives the doc-generation step (Step 6) one agreed term
+per concept, so the same referent is named the same way across all generated documents.
+
+1. Collect domain nouns recurring across modules (entities, key value objects, core
+   events) — **domain terms only**, not general tech (timeouts, DI, interceptors).
+2. Where several words denote one concept, pick the canonical term and list the rest as
+   `_Avoid_` aliases; where a term is used two ways, record it under *Flagged ambiguities*.
+3. Write `docs/_glossary.md` in the [Glossary](../references/glossary.md) format.
+4. Update `state.yaml`: `step: glossary_extracted`.
+
 ### Step 6: Generate docs (bottom-up, layer by layer)
 
 For each analyzed module, starting from Layer 0:
@@ -204,6 +217,7 @@ This ensures cross-references (`Depends on`, `Used by`) are accurate.
    - Modules in `issues.md` that need manual attention.
 3. Validate that `.dev_flow/rules/` exists and contains at least `_index.yaml` and one category file.
 4. Validate that `.dev_flow/skills/` exists and contains root `_index.yaml` with at least one domain.
+4a. Validate that `docs/_glossary.md` exists if cross-module domain terms were found (Step 5b), and that its terms match those used in the generated documents.
 5. Generate a summary report in `.dev_flow/onboard/report.md`:
    - Total modules analyzed.
    - Documents generated (concepts, specs, plans, epics).
@@ -251,7 +265,7 @@ Recommended subagent allocation:
 status: initialized | in_progress | completed
 started: 2026-03-24
 updated: 2026-03-24
-current_step: structure_mapped | layers_built | analyzing | rules_extracted | generating_docs | index_generated | validating | completed
+current_step: structure_mapped | layers_built | analyzing | rules_extracted | skills_initialized | glossary_extracted | generating_docs | index_generated | validating | completed
 total_modules: 0
 modules_analyzed: 0
 modules_documented: 0

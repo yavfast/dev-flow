@@ -20,6 +20,10 @@ Use abstract type notation and pseudocode. Implementation language is chosen in 
   unless explicitly defined in contracts.
 - **Single Source of Truth:** Once created, source code becomes a derived artifact.
   All changes start in the specification first.
+- **Follow the glossary:** `docs/_glossary.md` is loaded with `docs/_index.md`; name every
+  entity, field, and contract with its canonical term (not an `_Avoid_` alias). If the spec
+  introduces a genuinely new domain term, add it to the glossary. Term *formation* is mainly
+  a concept-phase job — here you consume the canonical vocabulary. See [Glossary](../references/glossary.md).
 
 ## Interview Mode for Design Decisions
 

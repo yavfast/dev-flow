@@ -31,6 +31,26 @@ Before creating a new concept, answer these questions. If any answer is unclear 
 
 If reuse check reveals that the problem is already covered — extend the existing concept instead.
 
+## Project Glossary
+
+Load `docs/_glossary.md` together with `docs/_index.md` before authoring (it is the
+project's canonical domain vocabulary). While writing:
+
+- **Reuse canonical terms.** For every domain noun, use the glossary's term — not an
+  alias listed under `_Avoid_`. This is what keeps the same referent named the same way
+  across all concepts.
+- **Add new terms inline.** When the concept introduces a genuinely new domain term,
+  add it to `docs/_glossary.md` as you go (term + tight definition + aliases to avoid).
+  Create the file lazily if it does not exist yet.
+- **Challenge against the glossary.** If your wording conflicts with the glossary, use the
+  canonical term — a routine naming choice the glossary settles is not an interview. Escalate
+  to [Interview Mode](../references/interview-mode.md) only when the conflict is *material*
+  (two genuinely different concepts being conflated, or a canonical choice that shapes
+  contracts), then update the glossary once resolved.
+
+Boundary: the glossary says *what a word means*; this concept's Domain Model (§2) says
+*how the entities relate and behave*. See [Glossary](../references/glossary.md).
+
 ## Authoring Principles
 
 - **Ideas over implementation:** Describe "what" and "why", never "how in language X".

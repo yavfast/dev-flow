@@ -20,6 +20,7 @@ role SpecAuthor {
   inputs:
     - "Approved concept document (*.concept.md)"
     - "Existing specifications (for dependency analysis)"
+    - "docs/_glossary.md (canonical domain vocabulary; loaded together with _index.md)"
 
   outputs:
     - "*.sp.md file with proper structure and metadata"
@@ -30,6 +31,7 @@ role SpecAuthor {
   rules:
     - "MUST NOT reference specific programming languages, frameworks, or libraries"
     - "MUST NOT contain implementation code — only pseudocode, types, and contracts"
+    - "MUST name every entity/field/contract with the glossary's canonical term (not an _Avoid_ alias); add a genuinely new domain term to docs/_glossary.md (term formation is mainly the concept phase — here, consume the canonical vocabulary)"
     - "MUST NOT resolve a material fork (a contested field type, error model, state transition, strategy) by guessing — surface it via Interview Mode (references/interview-mode.md)"
     - "When running as a delegated subagent with no developer channel: record each fork as an OPEN decision with options, a recommended answer + rationale, and a resolution trigger; report them up — never silently choose"
     - "A documented open decision (options + trade-offs + resolution trigger) is the sanctioned exception to the TBD ban; record it in Design Decisions with ID {#SP_XXX_DEC_NN}"

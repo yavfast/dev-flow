@@ -215,12 +215,19 @@ All documents live in `docs/` directories. One concept = one file set:
 | Specification | `*.sp.md` | `access_control.sp.md` |
 | Plan | `*.plan.md` | `access_control.plan.md` |
 | Index | `_index.md` | `docs/_index.md` |
+| Glossary | `_glossary.md` | `docs/_glossary.md` |
 
 > **Spike** is an optional pre-concept investigation artifact. Use it when
 > the problem domain is unclear and you need to explore approaches before
 > committing to a concept. Spikes do not pass through the pipeline gates.
 
 When `docs/` has more than 5 documents, maintain an `_index.md` catalog.
+
+`docs/_glossary.md` is the project's canonical domain vocabulary (term → definition
++ aliases to avoid). It is created lazily (during onboard, or when the first
+cross-concept term is resolved) and, whenever present, is **loaded into context
+alongside `_index.md`** (independent of the >5-doc threshold that gates `_index.md`)
+— so authoring uses one canonical term per concept. See [Glossary](references/glossary.md).
 
 ## Git Workflow Integration
 
@@ -396,6 +403,7 @@ reveals a coding pattern, constraint, or convention that is not yet captured in
 - [Specification phase](phases/specification.md) | [Template](templates/specification.md)
 - [Plan phase](phases/plan.md) | [Template](templates/plan.md)
 - [Interview Mode](references/interview-mode.md) *(cross-cutting sub-procedure of concept/spec/plan/fix — surface design forks to the developer instead of choosing silently)*
+- [Glossary](references/glossary.md) *(`docs/_glossary.md` — canonical domain vocabulary; created at onboard/concept, loaded with `_index.md`)*
 - [Implement phase](phases/implement.md)
 - [Test phase](phases/testing.md) *(conditional — functional tests: unit + mock)*
 - [Review phase](phases/review.md) *(pre-commit review by clean-context subagent)*

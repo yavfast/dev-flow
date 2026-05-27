@@ -13,7 +13,8 @@ Audit is the periodic **whole-directory sweep** that brings `.dev_flow/` back in
 line with reality. It reconciles every task's recorded state against ground
 truth, trims the dashboard down to what is actually active, compacts and reflects
 on closed work so its lessons survive while its noise is archived, and grooms the
-`rules/` and `skills/` catalogues. It is the write-heavy cousin of
+`rules/` and `skills/` catalogues — plus the one doc-side artifact it owns for
+hygiene, the `docs/_glossary.md` vocabulary. It is the write-heavy cousin of
 [status](status.md): `status` *reports* drift, `audit` *resolves* it.
 
 Audit composes existing phases rather than reinventing them — it leans on the
@@ -30,7 +31,7 @@ when a reconciliation reveals that docs and code disagree.
 - `scope` (optional) — limit the sweep to one area. One of:
   `context` (dashboard + task reconciliation + compaction),
   `tasks` (reconcile + compact task files only),
-  `rules`, `skills`, or `all` (default).
+  `rules`, `skills`, or `all` (default). `all` also grooms `docs/_glossary.md`.
 - `--dry-run` — produce the audit report only; make no changes on disk.
 
 ### Examples
@@ -199,6 +200,21 @@ create it from the template.
    code/APIs, or that have decayed into general knowledge no longer worth keeping
    (re-apply the non-triviality filter). Propose removals; do not auto-delete.
 
+### Step 7a — Groom `docs/_glossary.md` (if present)
+
+Runs under `all`. Keep the project glossary lean and true (see
+[Glossary](../references/glossary.md)):
+
+1. **Duplicates** — merge terms that denote the same concept under different names;
+   keep the canonical one, fold the rest into its `_Avoid_` list. Do not auto-delete —
+   propose the merge.
+2. **Stale ambiguities** — for each entry under *Flagged ambiguities*, check whether the
+   conflict is now settled in the documents; if so, resolve it (canonical term + `_Avoid_`)
+   and drop the flag.
+3. **Boundary** — strip any implementation detail, contract, or relationship-as-behavior
+   that crept in (those belong to a concept, not the glossary), and remove general
+   tech terms that are not project domain vocabulary.
+
 ### Step 8 — Report
 
 Always end with a structured report (and in `--dry-run`, this is the *only*
@@ -220,6 +236,7 @@ Use this template so the result is scannable:
    • Rebuilt tasks/_index.md
    • rules/_index.yaml: +<a> entries, −<b> orphans, fixed <c> summaries
    • skills indexes: +<a>/−<b>
+   • docs/_glossary.md: merged <a> duplicate terms, resolved <b> stale ambiguities
 
 🔁 Reflection harvested
    • From <closed-task>: proposed rule <Name> (<category>/<severity>)

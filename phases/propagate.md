@@ -30,11 +30,15 @@ and concepts. See [skill phase](skill.md).
 **Rule check:** Read `.dev_flow/rules/_index.yaml` (if exists) — rules may need updating
 if the propagated change introduces or modifies a coding pattern. See [rule phase](rule.md).
 
+**Glossary check:** Load `docs/_glossary.md` (if present) with `docs/_index.md` — a change
+that renames or retires a domain term must be propagated here too. See [Glossary](../references/glossary.md).
+
 ## Keeping Documents Current
 
 - When you change the code — update the corresponding plan status and spec if needed.
 - When a concept is no longer relevant — set `Status: deprecated`.
 - When spec data structures change — update all field tables, invariants, and contracts.
+- When a domain term is renamed or retired — update `docs/_glossary.md` so it never lags the documents.
 - The `Updated` date in metadata MUST be refreshed on every edit.
 - Stale documents are worse than no documents.
 

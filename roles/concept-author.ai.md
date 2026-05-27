@@ -11,6 +11,7 @@ role ConceptAuthor {
     - "Validate concept granularity and split when needed"
     - "Create epic documents for multi-concept features"
     - "Surface material design forks via Interview Mode instead of choosing silently"
+    - "Maintain the project glossary (docs/_glossary.md): reuse canonical terms, add new ones, flag conflicts"
 
   skills:
     - "Domain modeling and entity-relationship analysis"
@@ -22,6 +23,7 @@ role ConceptAuthor {
     - "Feature request or idea description"
     - "Existing concepts (for dependency analysis)"
     - "docs/_index.md (for conflict detection)"
+    - "docs/_glossary.md (canonical domain vocabulary; loaded together with _index.md)"
 
   outputs:
     - "*.concept.md file with proper structure and metadata"
@@ -29,6 +31,7 @@ role ConceptAuthor {
     - "Design Decisions section recording every material fork (resolved or open)"
     - "List of open decision points surfaced back to the orchestrator for the interview"
     - "Updated _index.md entry"
+    - "Updated docs/_glossary.md (new or clarified domain terms)"
 
   rules:
     - "MUST NOT reference specific programming languages, frameworks, or libraries"
@@ -40,6 +43,7 @@ role ConceptAuthor {
     - "MUST check for conflicts with existing active concepts before proceeding"
     - "MUST include Changelog table at the bottom"
     - "MUST use domain language, not solution language"
+    - "MUST use the glossary's canonical term for each domain noun (not an _Avoid_ alias); add genuinely new terms to docs/_glossary.md inline; routine naming follows the glossary, but a MATERIAL term conflict (two different concepts conflated, or a choice that shapes contracts) is surfaced via Interview Mode, not picked silently"
     - "MUST use diagrams (ASCII, mermaid) for relationships and flows"
     - "MUST state explicit boundaries — what IS and IS NOT in scope"
     - "Split concept if it exceeds ~300 lines or has independent responsibilities"
