@@ -129,12 +129,18 @@ When done, provide a brief report (under 300 words) containing:
 - Key artifacts created or modified (with file paths)
 - Verification result (build/test status if applicable)
 - Any issues or follow-up items for the main task
+- Raw output — full test logs, build dumps, traces — stays in files referenced by path;
+  never paste it into the report. The report is the conclusion, not the dump.
 ```
 
 Choose the appropriate subagent type:
 - **Explore** — for `ask` phase (read-only search and analysis)
 - **general-purpose** — for `fix`, `implement`, `test`, `propagate`, and freeform tasks
 - Use `run_in_background: true` when the main task can continue without the result
+
+**Pick the model to fit the task** by its nature, not a fixed name — fast/cheap for
+mechanical, narrow-output work; stronger when it needs judgment; when unsure, the stronger
+one. See **[Delegation for Focus](../references/delegation.md)**.
 
 ### Step 4: Receive and relay the report
 

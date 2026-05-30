@@ -403,6 +403,8 @@ reveals a coding pattern, constraint, or convention that is not yet captured in
 - [Specification phase](phases/specification.md) | [Template](templates/specification.md)
 - [Plan phase](phases/plan.md) | [Template](templates/plan.md)
 - [Interview Mode](references/interview-mode.md) *(cross-cutting sub-procedure of concept/spec/plan/fix — surface design forks to the developer instead of choosing silently)*
+- [Delegation for Focus](references/delegation.md) *(cross-cutting sub-procedure of implement/fix/verify — delegate noisy work to a subagent, keep only the conclusion)*
+- [Roles](references/roles.md) *(base vs project-overlay subagent roles — reuse what exists, create new under .dev_flow/roles/ via inherits)*
 - [Glossary](references/glossary.md) *(`docs/_glossary.md` — canonical domain vocabulary; created at onboard/concept, loaded with `_index.md`)*
 - [Implement phase](phases/implement.md)
 - [Test phase](phases/testing.md) *(conditional — functional tests: unit + mock)*
@@ -419,29 +421,20 @@ reveals a coding pattern, constraint, or convention that is not yet captured in
 - [Do phase](phases/do.md) *(default fallback for freeform requests)*
 - [End-to-end example](examples/rate-limiter.md)
 
+## Delegation for Focus (Context Isolation)
+
+The main agent's focus — the plan, the spec, and the task state it holds while working —
+is the scarce resource, and it erodes when noisy secondary work (test output, build logs,
+screenshots, wide searches, reproduction traces) floods the same context. The fix is a
+reflex during implement / fix / verify: hand that work to a subagent and keep only the
+*conclusion, not the dump*; pick the subagent's model by the task's nature, never by a
+hardcoded name. The full principle — the core-vs-delegate line, the scenarios table, and
+the model guidance — lives in **[Delegation for Focus](references/delegation.md)**.
+
 ## Subagent Roles (AI-DSL)
 
-Each phase has a specialized role for subagent execution:
-
-| Phase | Role file | Purpose |
-|-------|-----------|---------|
-| Onboard | [onboard-coordinator.ai.md](roles/onboard-coordinator.ai.md) | Orchestrates the full onboard procedure |
-| Onboard | [onboard-analyzer.ai.md](roles/onboard-analyzer.ai.md) | Analyzes a single module (parallelizable) |
-| Onboard | [onboard-rules-extractor.ai.md](roles/onboard-rules-extractor.ai.md) | Extracts coding rules from codebase into `.dev_flow/rules/` |
-| Onboard | [onboard-docgen.ai.md](roles/onboard-docgen.ai.md) | Generates docs from analysis (parallelizable) |
-| Concept | [concept-author.ai.md](roles/concept-author.ai.md) | Creates and updates concept documents |
-| Specification | [spec-author.ai.md](roles/spec-author.ai.md) | Creates and updates specifications |
-| Plan | [plan-author.ai.md](roles/plan-author.ai.md) | Creates implementation plans |
-| Implement | [implementer.ai.md](roles/implementer.ai.md) | Writes code following plans |
-| Test | [tester.ai.md](roles/tester.ai.md) | Verifies code against spec contracts |
-| Review | [reviewer.ai.md](roles/reviewer.ai.md) | Validates gates and resolves conflicts |
-| Verify | Uses [tester.ai.md](roles/tester.ai.md) | Regression, integration, and live testing |
-| Propagate | [propagator.ai.md](roles/propagator.ai.md) | Propagates changes across pipeline |
-| Fix | Orchestrates multiple roles (analysis inline, implementation via [implementer.ai.md](roles/implementer.ai.md)) | Analyzes bug, plans fix, implements, verifies |
-| Rule | — (inline, no subagent) | Manages `.dev_flow/rules/` files directly |
-| Skill | — (inline, no subagent) | Manages `.dev_flow/skills/` files directly |
-| Status / all phases | [context-tracker.ai.md](roles/context-tracker.ai.md) | Reads, writes, and regenerates the per-task context model under `.dev_flow/` (task files + dashboard + catalog) |
-| Audit | [auditor.ai.md](roles/auditor.ai.md) | Revises the whole `.dev_flow/` tree: reconciles task state, compacts + reflects on closed tasks, grooms rules/skills |
-| Ask | [advisor.ai.md](roles/advisor.ai.md) | Read-only Q&A about code and feasibility |
-| Subtask | [subtask-executor.ai.md](roles/subtask-executor.ai.md) | Executes delegated secondary tasks independently |
-| Do (default) | [dev-flow-orchestrator.ai.md](roles/dev-flow-orchestrator.ai.md) | Interprets freeform requests and routes to the right phases |
+Each phase has a specialized **base role** for subagent execution (implementer, tester,
+reviewer, …), and a project adds its own **overlays** and specializations under
+`.dev_flow/roles/`, declared by naming the base role(s) in an `inherits:` field. The full
+catalogue of base roles by phase — and how to find, reuse, and create roles — lives in
+**[Roles](references/roles.md)**.

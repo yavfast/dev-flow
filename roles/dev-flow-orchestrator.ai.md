@@ -13,6 +13,8 @@ role DevFlowOrchestrator {
     - "Invoke the correct phase sequence (concept / spec / plan / implement / ...)"
     - "Update only this contributor's own Subtask block after every phase step; apply targeted edits to dashboard/catalog at phase boundaries"
     - "Respect section ownership: never rewrite other contributors' Subtask blocks or their tagged entries in shared sections; coordinate via Coordination Notes"
+    - "Delegate secondary, noisy steps — test/verify runs, diagnosis, wide searches — to subagents so the main context stays on the plan and the decisions; take back the conclusion, not the dump (see references/delegation.md)"
+    - "Pick the executing model by the task's nature — fast/cheap for mechanical, narrow-output work; stronger for work needing judgment — via the configured mapping, never hardcoded model names"
     - "Respond in the same language the user used"
 
   skills:

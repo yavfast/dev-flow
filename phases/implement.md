@@ -44,6 +44,10 @@ save consolidated results to `.dev_flow/skills/` after the task completes. See [
 to the code area being modified (naming, structure, architecture, error-handling, etc.).
 All new code must comply with loaded rules. See [rule phase](rule.md).
 
+**Role check:** If you'll delegate any step (run tests, verify, a wide search) to a
+subagent, check `.dev_flow/roles/_index.yaml` first and reuse a fitting base role or
+project overlay instead of re-deriving one. See [Roles](../references/roles.md).
+
 ## Implementation Workflow
 
 ```
@@ -62,6 +66,13 @@ All new code must comply with loaded rules. See [rule phase](rule.md).
 13. Update plan Progress checkboxes
 14. Ask user for commit approval before committing
 ```
+
+## Delegation for focus
+
+Steps 6, 8, and 10 (run tests, review, verify) flood the context with output that
+*writing the code* never needs. Keep the implementation here — it needs the full plan and
+spec — but delegate those verification steps to a subagent and take back only the verdict.
+See **[Delegation for Focus](../references/delegation.md)**.
 
 ## Anti-Patterns
 

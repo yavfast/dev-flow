@@ -9,6 +9,14 @@ at a broader scope: regression testing, integration testing, and live verificati
 This phase catches issues that unit/mock tests cannot — broken integrations,
 configuration problems, UI regressions, and real-world service interactions.
 
+## Delegation
+
+This is the noisiest phase in the pipeline — regression suites, integration logs, live
+runs, screenshots — and almost none of that output needs to reach the main context. Run
+verification through a subagent (the clean-context shape Review uses): it returns a verdict
+plus the failures that matter, with full logs in a file referenced by path. See
+**[Delegation for Focus](../references/delegation.md)**.
+
 ## Command
 
 ```

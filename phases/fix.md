@@ -26,13 +26,17 @@ user-visible symptom, or a reference to a specific class/method.
 
 ## Procedure
 
-### Step 0: Check skills
+### Step 0: Check skills and roles
 
 Before analyzing the bug, read `.dev_flow/skills/_index.yaml` and check if a skill exists
 for the technology area where the bug occurs (e.g., networking, storage, UI, event bus).
 If relevant skill(s) found — load them. They may contain known "Pitfalls" that explain
 the bug. If research is needed during analysis — save results to `.dev_flow/skills/` after
 the fix is complete. See [skill phase](skill.md).
+
+If you'll delegate the diagnosis loop or verification (see the **Delegation** note below)
+to a subagent, also check `.dev_flow/roles/_index.yaml` and reuse a fitting role rather
+than re-deriving one. See [Roles](../references/roles.md).
 
 ### Step 1: Analyze
 
@@ -174,6 +178,11 @@ the code has no seam exercising the real bug pattern (tangled callers, hidden co
 do not fake it with a shallow test that gives false confidence — **record the missing
 seam** as a finding and route it upward (Step 5 → a `*.concept.md` note or a rule), the
 same way an architectural decision would be surfaced.
+
+**Delegation.** The diagnosis loop (reproduce, instrument, parse output) and the
+build/test in Step 4 are the noisy work that erodes focus — delegate either to a subagent
+and keep the *fix decision* in the main context. See
+**[Delegation for Focus](../references/delegation.md)**.
 
 ## Interview Mode in Fix
 

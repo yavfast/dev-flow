@@ -1,0 +1,116 @@
+# Roles — Reusing and Creating Subagent Roles
+
+Cross-cutting reference for how dev-flow's subagent roles are organized, found, reused,
+and created. Every phase that hands work to a subagent (see
+[Delegation for Focus](delegation.md)) runs it as a *role* — this document is where roles
+come from. It is **not** a standalone pipeline stage.
+
+## Why this exists
+
+A role is the reusable description of *who* does a piece of work — its responsibilities,
+its capabilities, and the contract for what it returns. Writing that once and reusing it
+keeps behavior consistent (every tester returns its results the same way) and keeps shared
+protocols — like "return the conclusion, not the dump" — in one place instead of
+re-stated in every prompt. It mirrors Skill-First Execution: inspect what already exists,
+reuse it, and persist what you learn so the next run starts ahead.
+
+## Two layers
+
+**Base roles — the skill.** The roles under the skill's `roles/` directory (implementer,
+tester, reviewer, …) are the portable base: generic, stable, the same across
+every project. They carry the responsibilities and the output contract for each phase.
+
+**Project overlays — `.dev_flow/roles/`.** A project keeps its own roles under
+`.dev_flow/roles/`. Two kinds:
+- An **overlay** of a base role (same slug, e.g. `tester.ai.md`) that adds *this
+  project's* specifics — its test command, where live scenarios live, what counts as
+  pass/fail.
+- A **new specialization** (a slug the base doesn't have, e.g. `migration-verifier`) for
+  a role this project needs and the base doesn't provide.
+
+The base carries the contract; the overlay carries the project specifics. A role declares
+its base(s) by naming them in an `inherits:` field — a convention the executing agent
+honours when it reads the role, not engine machinery, so it works the same on any project
+(with or without an AI-DSL runtime).
+
+## Base roles by phase
+
+These are the base roles the skill ships, by phase (paths relative to the skill root).
+Some phases use several roles; a few are handled inline without a subagent. A project
+overlay or specialization with the same concern takes precedence over its base where it
+applies.
+
+| Phase | Base role | Purpose |
+|-------|-----------|---------|
+| Onboard | [onboard-coordinator.ai.md](../roles/onboard-coordinator.ai.md) | Orchestrates the full onboard procedure |
+| Onboard | [onboard-analyzer.ai.md](../roles/onboard-analyzer.ai.md) | Analyzes a single module (parallelizable) |
+| Onboard | [onboard-rules-extractor.ai.md](../roles/onboard-rules-extractor.ai.md) | Extracts coding rules from codebase into `.dev_flow/rules/` |
+| Onboard | [onboard-docgen.ai.md](../roles/onboard-docgen.ai.md) | Generates docs from analysis (parallelizable) |
+| Concept | [concept-author.ai.md](../roles/concept-author.ai.md) | Creates and updates concept documents |
+| Specification | [spec-author.ai.md](../roles/spec-author.ai.md) | Creates and updates specifications |
+| Plan | [plan-author.ai.md](../roles/plan-author.ai.md) | Creates implementation plans |
+| Implement | [implementer.ai.md](../roles/implementer.ai.md) | Writes code following plans |
+| Test | [tester.ai.md](../roles/tester.ai.md) | Verifies code against spec contracts |
+| Review | [reviewer.ai.md](../roles/reviewer.ai.md) | Validates gates and resolves conflicts |
+| Verify | Uses [tester.ai.md](../roles/tester.ai.md) | Regression, integration, and live testing |
+| Propagate | [propagator.ai.md](../roles/propagator.ai.md) | Propagates changes across pipeline |
+| Fix | Orchestrates multiple roles (analysis inline, implementation via [implementer.ai.md](../roles/implementer.ai.md)) | Analyzes bug, plans fix, implements, verifies |
+| Rule | — (inline, no subagent) | Manages `.dev_flow/rules/` files directly |
+| Skill | — (inline, no subagent) | Manages `.dev_flow/skills/` files directly |
+| Status / all phases | [context-tracker.ai.md](../roles/context-tracker.ai.md) | Reads, writes, and regenerates the per-task context model under `.dev_flow/` (task files + dashboard + catalog) |
+| Audit | [auditor.ai.md](../roles/auditor.ai.md) | Revises the whole `.dev_flow/` tree: reconciles task state, compacts + reflects on closed tasks, grooms rules/skills |
+| Ask | [advisor.ai.md](../roles/advisor.ai.md) | Read-only Q&A about code and feasibility |
+| Subtask | [subtask-executor.ai.md](../roles/subtask-executor.ai.md) | Executes delegated secondary tasks independently |
+| Do (default) | [dev-flow-orchestrator.ai.md](../roles/dev-flow-orchestrator.ai.md) | Interprets freeform requests and routes to the right phases |
+
+## The project role index
+
+A project's `.dev_flow/roles/` carries an `_index.yaml` — a one-line-per-role catalogue
+(role name → what it specializes, what project specifics it adds), serving the same purpose
+for roles as `.dev_flow/rules/_index.yaml` does for rules. It is the first place to look
+before writing a new role, so you reuse an existing one instead of duplicating it.
+Like the other indexes it's a derived view: if it drifts from the actual role files, any
+contributor can rebuild it from them. Add a line to it whenever you create a role, and
+keep each line short — the index is for *finding* a role, the role file holds the detail.
+
+## Using an existing role
+
+Before delegating a step or running a phase, check what already fits — don't re-derive
+behavior a role already captures:
+1. The phase's **base role** in the skill's `roles/` — the portable default.
+2. Any **overlay or specialization** under `.dev_flow/roles/` (start from its
+   `_index.yaml`) — these refine or replace the base for this project, so they win where
+   they apply.
+
+Point the subagent at the role(s) that fit and let it read them. If a project overlay
+exists for the phase, it's almost always the one to use.
+
+## Creating or extending a role
+
+When a recurring, project-specific need isn't covered:
+- **Overlay** an existing role (same slug under `.dev_flow/roles/`) when you're adding this
+  project's specifics to a base role.
+- **Create a new role** (a fresh slug) when the specialization is genuinely new.
+
+Use `inherits: [base-role, …]` to build on what exists — read it as "take these views into
+account," not as an algorithm that merges fields. The executing agent reads the base plus
+any overlays and applies judgment; when a genuine conflict appears, it asks the initiator
+rather than following a resolution rule. Keep roles short and in prose.
+
+**The bar for a role is reusability.** Create a role only for something that will be used
+again across tasks. One-off work tied to a single ticket, date, or artifact is a
+*subtask*, not a role — don't mint roles that can never be reused.
+
+## Reuse and accumulation
+
+- Project specifics **accumulate in the overlay** over time, the same way `rules/` and
+  `skills/` do: when a subagent hits an operational detail of its role (a flag, a path, a
+  gotcha), record it in the overlay so the next run inherits it for free.
+- What proves **broadly useful and isn't project-specific** is a candidate to lift up into
+  the skill's base roles, so other projects get it too.
+
+These are **projections, not formal specs** — recommended views the agent applies with
+judgment, not programs with inheritance semantics. A strong model authoring a role for a
+weaker one to execute should write it plain and unambiguous up front; that clarity is the
+author's job, not a runtime resolution mechanism. Don't encode merge rules or
+conflict-resolution machinery here.
