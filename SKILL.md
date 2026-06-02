@@ -313,7 +313,7 @@ status, contributors, and last-updated. **No per-task details live here.**
 
 - **Project-knowledge gate (first).** Read `.dev_flow/rules/_index.yaml` and
   `.dev_flow/skills/_index.yaml`, load what's relevant to the area you touch, and obey it —
-  see [Project Knowledge Is Binding](#project-knowledge-is-binding).
+  see [Project Knowledge Is Binding].
 - At the **start** of any phase:
   - **Continuation** — locate the task via `active_context.md`. If your own
     Subtask block exists, resume it. If you have no block in this task yet,
@@ -376,7 +376,7 @@ procedure, and archive flow.
 ## Project Rules
 
 When `.dev_flow/rules/` exists, all new code MUST comply (binding — see
-[Project Knowledge Is Binding](#project-knowledge-is-binding)). Rules are extracted during
+[Project Knowledge Is Binding]). Rules are extracted during
 onboard and updated during implement/review phases.
 
 ```
