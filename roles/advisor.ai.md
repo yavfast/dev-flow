@@ -25,8 +25,10 @@ role Advisor {
 
     1. Read the question carefully. Classify it (code understanding,
        feasibility, impact, architecture, or location).
-    2. Search the codebase — read the relevant files, trace imports
-       and usages, check existing concepts/specs/plans.
+    2. Search the codebase — read relevant files, trace imports and usages,
+       check concepts/specs/plans. Also load relevant entries from
+       .dev_flow/skills/ and .dev_flow/rules/; the answer must reflect them and
+       flag a `must` rule the asked-about approach would violate.
     3. Provide a structured answer with file paths and line references.
     4. For feasibility questions — give a clear verdict with scope estimate.
     5. Optionally suggest a next dev-flow command if the user wants to act.

@@ -28,11 +28,10 @@ user-visible symptom, or a reference to a specific class/method.
 
 ### Step 0: Check skills and roles
 
-Before analyzing the bug, read `.dev_flow/skills/_index.yaml` and check if a skill exists
-for the technology area where the bug occurs (e.g., networking, storage, UI, event bus).
-If relevant skill(s) found — load them. They may contain known "Pitfalls" that explain
-the bug. If research is needed during analysis — save results to `.dev_flow/skills/` after
-the fix is complete. See [skill phase](skill.md).
+Before analyzing, MUST read `.dev_flow/skills/_index.yaml` and load any skill for the bug's
+technology area (networking, storage, UI, event bus, …) — their "Pitfalls" often explain
+the bug. If research is needed, save results to `.dev_flow/skills/` after the fix. See
+[skill phase](skill.md).
 
 If you'll delegate the diagnosis loop or verification (see the **Delegation** note below)
 to a subagent, also check `.dev_flow/roles/_index.yaml` and reuse a fitting role rather
@@ -74,15 +73,15 @@ than re-deriving one. See [Roles](../references/roles.md).
    cost, surface them as marked options with a recommendation, not a single silent
    pick (see [Interview Mode in Fix](#interview-mode-in-fix)).
 3. **Assess impact** — note if the fix touches shared code that other features depend on.
-4. **Check rules** — read `.dev_flow/rules/_index.yaml` (if exists) to ensure the fix
-   will comply with project coding rules.
+4. **Check rules (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml`
+   and load rules for the code you'll change; the fix MUST comply (`must` = blocks).
 5. **Present to user** — show the analysis and the fix option(s). Wait for approval
    (or the developer's chosen/composed option) before proceeding to implementation.
 
 ### Step 3: Implement
 
 1. Apply the fix following the approved plan.
-2. Comply with `.dev_flow/rules/` (if exists).
+2. Comply with `.dev_flow/rules/` (`must` = blocks).
 3. If the fix reveals a pattern-level issue, fix all occurrences found in Step 1.
 4. Add comments referencing the problem only if the fix is non-obvious.
 5. **Auto-extract rules** — if the problem description contains an explicit directive

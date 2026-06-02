@@ -25,7 +25,8 @@ perspective a human reviewer would have.
    - The git diff of all staged/unstaged changes
    - The relevant specification (`*.sp.md`) for contract verification
    - The relevant plan (`*.plan.md`) for completeness verification
-   - Project rules (`.dev_flow/rules/`) if they exist
+   - Project rules (`.dev_flow/rules/`) if they exist — binding
+   - Relevant project skills (`.dev_flow/skills/`) for the changed area, if they exist
    - SOLID architecture reference (`references/solid-architecture.md`)
 
 2. **The reviewer subagent checks:**
@@ -35,6 +36,7 @@ perspective a human reviewer would have.
    | Spec compliance | Code implements all spec contracts, error cases, invariants | blocks |
    | Plan completeness | All plan tasks for the current phase are addressed | blocks |
    | Rules compliance | New code follows `.dev_flow/rules/` | blocks (must), warns (should) |
+   | Skill pitfalls | Change doesn't reintroduce a pitfall documented in a loaded skill | warns (blocks if also a `must` rule) |
    | SOLID compliance | Code structure follows SOLID and pluggability principles ([reference](../references/solid-architecture.md)) unless overridden by project rules | warns |
    | No regressions | Changes don't break existing functionality | blocks |
    | No leftover artifacts | No debug code, TODOs, commented-out blocks | warns |

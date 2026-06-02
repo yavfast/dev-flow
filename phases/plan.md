@@ -20,16 +20,15 @@ file paths, and task tracking. This is where language, framework, and library de
 
 ## Context Loading
 
-Before authoring or updating a plan, load relevant project knowledge:
+Loading project knowledge is a **gate** (see
+[Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding)):
 
-**Skill check:** Identify technologies and patterns relevant to this plan's scope.
-Read `.dev_flow/skills/_index.yaml` and load matching skills — they inform technology
-decisions and may reveal known pitfalls. See [skill phase](skill.md).
+**Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml` and load skills matching
+the plan's scope — they inform technology decisions and record known pitfalls. See [skill phase](skill.md).
 
-**Rule check:** Read `.dev_flow/rules/_index.yaml` (if exists) and load rules relevant
-to the planned code area. Rules constrain technology decisions (e.g., naming conventions,
-architectural patterns, required error handling). Reference applicable rules in the
-Technology Decisions table. See [rule phase](rule.md).
+**Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml`
+and load rules for the planned area; the plan MUST NOT propose anything violating a `must`
+rule. Reference applicable rules in the Technology Decisions table. See [rule phase](rule.md).
 
 ## Interview Mode for Technology Decisions
 

@@ -63,14 +63,14 @@ If none apply — skip directly to commit approval.
 
 ## Context Loading
 
-Before running verification, load relevant project knowledge:
+Loading project knowledge is a **gate** (see
+[Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding)):
 
-**Skill check:** Read `.dev_flow/skills/_index.yaml` and load skills relevant to the
-verified functionality — they may contain integration specifics, environment setup
-details, or known pitfalls. See [skill phase](skill.md).
+**Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml` and load skills for the
+verified functionality — integration specifics, environment setup, known pitfalls. See [skill phase](skill.md).
 
-**Rule check:** Read `.dev_flow/rules/_index.yaml` (if exists) and load testing rules
-(e.g., integration test conventions, required test environments, CI pipeline rules).
+**Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml`
+and load testing rules (test environments, CI conventions); verification MUST follow them.
 See [rule phase](rule.md).
 
 ## Safe Testing Principle

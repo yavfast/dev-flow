@@ -94,6 +94,24 @@ Before writing or changing any code, ask yourself:
 2. Does the specification define the data structures and contracts? If not — update the spec first.
 3. Only then — create/update the implementation plan and write code.
 
+## Project Knowledge Is Binding
+
+Loading `.dev_flow/rules/` and `.dev_flow/skills/` is a mandatory gate at the start of
+every code/test/doc phase; applying them is not optional.
+
+- **Rules (`.dev_flow/rules/`)** — load rules for the area you touch; new code MUST comply:
+  - `must` — violation **blocks**: fix it or surface the conflict and stop.
+  - `should` — violation needs a recorded justification.
+  - `prefer` — follow unless there is a stated local reason not to.
+- **Skills (`.dev_flow/skills/`)** — check `_index.yaml` and load matching skills BEFORE
+  external research; a skill's "Pitfalls"/"Usage in This Project" override generic knowledge.
+- **Precedence** — project rules override generic guidance (incl. the
+  [SOLID reference](references/solid-architecture.md)); project skills override generic
+  technology knowledge. On conflict: project wins, or surface it.
+
+If the directory is absent, the gate is a no-op. Each relevant phase restates this as its
+"Skill check" / "Rule check" — gates, not reminders.
+
 ## Validation Gates
 
 **Concept -> Specification:**
@@ -293,6 +311,9 @@ status, contributors, and last-updated. **No per-task details live here.**
 
 ### Rules for all phases
 
+- **Project-knowledge gate (first).** Read `.dev_flow/rules/_index.yaml` and
+  `.dev_flow/skills/_index.yaml`, load what's relevant to the area you touch, and obey it —
+  see [Project Knowledge Is Binding](#project-knowledge-is-binding).
 - At the **start** of any phase:
   - **Continuation** — locate the task via `active_context.md`. If your own
     Subtask block exists, resume it. If you have no block in this task yet,
@@ -354,8 +375,9 @@ procedure, and archive flow.
 
 ## Project Rules
 
-When `.dev_flow/rules/` exists, all new code must comply with the documented rules.
-Rules are extracted during onboard and updated during implement/review phases.
+When `.dev_flow/rules/` exists, all new code MUST comply (binding — see
+[Project Knowledge Is Binding](#project-knowledge-is-binding)). Rules are extracted during
+onboard and updated during implement/review phases.
 
 ```
 .dev_flow/rules/

@@ -59,14 +59,13 @@ This command is handled by **DevFlowOrchestrator**:
 3. If neither the dashboard nor any task file exists, note this — the orchestrator
    will ask the user to describe the goal from scratch.
 
-4. **Skill check:** Based on the request topic, read `.dev_flow/skills/_index.yaml`.
-   If a relevant domain is found — read its `_index.yaml` and load matching skills.
-   If the task requires external research — note it; after completion, save results
-   to `.dev_flow/skills/`. See [skill phase](skill.md).
+4. **Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml`; load matching skills
+   before routing and pass them as context to the executing phase. Save new research to
+   `.dev_flow/skills/` after completion. See [skill phase](skill.md).
 
-5. **Rule check:** Read `.dev_flow/rules/_index.yaml` (if exists) and load rules relevant
-   to the request area. Rules must be respected during routing to implement/fix phases
-   and passed as context to the executing phase. See [rule phase](rule.md).
+5. **Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml`
+   and load rules for the request area; pass them to the executing phase, which MUST comply
+   (`must` = blocks). See [rule phase](rule.md).
 
 ### Step 2: Interpret the request
 

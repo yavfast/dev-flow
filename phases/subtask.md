@@ -90,9 +90,9 @@ Before spawning the subagent, prepare a self-contained brief:
 
 1. **Task description** — what the subagent must accomplish (from the user's command).
 2. **Dev-flow phase** — which phase protocol to follow (from Step 1).
-3. **Context notes** — extract from the current conversation any information the subagent
-   will need: file paths, spec references, architectural constraints, naming conventions,
-   relevant rules from `.dev_flow/rules/`, related concept/spec documents.
+3. **Context notes** — file paths, spec references, architectural constraints, naming
+   conventions, related concept/spec docs. Name the applicable `.dev_flow/rules/` and
+   `.dev_flow/skills/` entries so the subagent's project-knowledge step has a starting point.
 4. **Output expectations** — what the report should contain: root cause, files changed,
    test results, analysis conclusions, etc.
 5. **Scope boundaries** — what the subagent should NOT do (e.g., "do not modify files
@@ -113,6 +113,12 @@ Use the Agent tool with a prompt structured as:
 Follow the `<phase>` phase protocol from the dev-flow skill.
 Skill location: <path to dev-flow SKILL.md>
 Phase details: <path to relevant phase file>
+
+## Project Knowledge (binding — do first)
+- Read `.dev_flow/rules/_index.yaml` (if present), load rules for the area you touch; new
+  code MUST comply (`must` = blocks: fix or report the conflict).
+- Read `.dev_flow/skills/_index.yaml` (if present), load matching skills BEFORE any
+  research; their pitfalls override generic knowledge.
 
 ## Context
 <relevant notes, file paths, spec references, rules, constraints>

@@ -11,6 +11,7 @@ role DevFlowOrchestrator {
     - "Ask targeted clarifying questions when intent is ambiguous (max 3)"
     - "Propose an interpretation when still ambiguous and ask for confirmation"
     - "Invoke the correct phase sequence (concept / spec / plan / implement / ...)"
+    - "Run the project-knowledge gate at each phase start (load and obey applicable .dev_flow/rules/ and .dev_flow/skills/) and pass relevant entries to delegated subagents"
     - "Update only this contributor's own Subtask block after every phase step; apply targeted edits to dashboard/catalog at phase boundaries"
     - "Respect section ownership: never rewrite other contributors' Subtask blocks or their tagged entries in shared sections; coordinate via Coordination Notes"
     - "Delegate secondary, noisy steps — test/verify runs, diagnosis, wide searches — to subagents so the main context stays on the plan and the decisions; take back the conclusion, not the dump (see references/delegation.md)"
@@ -107,7 +108,7 @@ role DevFlowOrchestrator {
     step_4: "Classify user request intent against routing_scenarios"
     step_5: "If ambiguous — ask targeted clarifying questions (max 3); confirm interpretation if still unclear"
     step_6: "Announce plan: 'I will: update spec → plan → implement. Starting with spec update.'"
-    step_7: "Execute phase sequence in order, following gate checks"
+    step_7: "Per phase: run the project-knowledge gate first (load applicable .dev_flow/rules/ and .dev_flow/skills/, binding), then execute the phase following gate checks"
     step_8: "After each step: update only the caller's Subtask block + task-header Last updated. At phase boundaries: targeted Edit on dashboard/catalog and append Shared Activity Log entry"
     step_9: "Present final summary and ask for commit approval if code was written"
 }

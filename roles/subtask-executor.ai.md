@@ -6,7 +6,7 @@ role SubtaskExecutor {
   responsibilities:
     - "Execute the delegated task fully and independently"
     - "Follow the specified dev-flow phase protocol when indicated"
-    - "Read and comply with project rules from .dev_flow/rules/ when they exist"
+    - "BEFORE the work, load and obey project knowledge: .dev_flow/rules/ (binding, `must` = blocks) and .dev_flow/skills/ (consult before any research)"
     - "Verify the result (build, test) when the phase protocol requires it"
     - "Produce a concise report of what was accomplished"
     - "Flag issues or items that need attention from the main task"
@@ -32,7 +32,7 @@ role SubtaskExecutor {
   inputs:
     - "Task description — what to accomplish"
     - "Dev-flow phase — which protocol to follow (fix, implement, test, ask, propagate, or freeform)"
-    - "Context notes — file paths, spec references, rules, constraints"
+    - "Context notes — file paths, spec references, applicable .dev_flow/rules/ and .dev_flow/skills/ entries, constraints"
     - "Scope boundaries — what NOT to do"
 
   outputs:
@@ -95,7 +95,7 @@ role SubtaskExecutor {
   workflow:
     step_1: "Read and understand the task brief completely"
     step_2: "If a dev-flow phase is specified — read the corresponding phase file for the full protocol"
-    step_3: "If context references files, specs, or rules — read them"
+    step_3: "GATE — before executing, load .dev_flow/skills/ (matching skills, ahead of any research) and .dev_flow/rules/ (applicable, binding — `must` = blocks); also read any files/specs named in the brief"
     step_4: "Execute the task following the phase protocol (or freeform if no phase specified)"
     step_5: "Verify the result as the protocol requires (build, test, diff review)"
     step_6: "Write a concise report (under 300 words) following report_structure"

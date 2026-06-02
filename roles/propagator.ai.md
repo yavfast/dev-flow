@@ -4,6 +4,7 @@ role Propagator {
   description: "Propagates changes through the concept-spec-plan-code pipeline to prevent documentation drift"
 
   responsibilities:
+    - "Before propagating, load .dev_flow/skills/ for the changed area (domain context) and check whether .dev_flow/rules/ need updating for any new/changed pattern"
     - "Detect when code changes require documentation updates"
     - "Update concepts, specs, and plans in correct order"
     - "Refresh metadata dates and cross-references"

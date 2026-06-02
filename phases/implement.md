@@ -35,14 +35,14 @@ Before writing code, verify:
 - [ ] Phase dependencies are explicitly stated
 - [ ] The specification passes its self-validation checklist
 
-**Skill check:** Before touching code, identify what technologies or patterns this task
-uses (SDK, API, architectural pattern). Read `.dev_flow/skills/_index.yaml` and check for
-relevant skills. If found — load them. If external research will be needed — note it;
-save consolidated results to `.dev_flow/skills/` after the task completes. See [skill phase](skill.md).
+**Skill check (gate).** Identify the technologies/patterns this task uses. MUST read
+`.dev_flow/skills/_index.yaml` and load matching skills BEFORE writing code or doing
+research. If research is still needed, save consolidated results to `.dev_flow/skills/`
+after the task. See [skill phase](skill.md).
 
-**Rule check:** Read `.dev_flow/rules/_index.yaml` (if exists) and load rules relevant
-to the code area being modified (naming, structure, architecture, error-handling, etc.).
-All new code must comply with loaded rules. See [rule phase](rule.md).
+**Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml`
+and load rules for the area being modified. New code MUST comply (`must` = blocks). See
+[rule phase](rule.md) and [Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding).
 
 **Role check:** If you'll delegate any step (run tests, verify, a wide search) to a
 subagent, check `.dev_flow/roles/_index.yaml` first and reuse a fitting base role or

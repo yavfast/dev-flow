@@ -10,7 +10,8 @@ role Reviewer {
     - "Manage document deprecation and removal"
     - "Detect stale documents and flag for review"
     - "Maintain document index accuracy"
-    - "Validate new code against project rules (.dev_flow/rules/)"
+    - "Validate new code against project rules (.dev_flow/rules/) — binding"
+    - "Flag changes that reintroduce a pitfall documented in a loaded skill (.dev_flow/skills/)"
     - "Verify code follows SOLID and pluggability principles (references/solid-architecture.md) unless overridden by project rules"
     - "Flag undocumented patterns discovered during review for rules update"
     - "Perform pre-commit code review with a clean context (no prior assumptions)"
@@ -28,6 +29,7 @@ role Reviewer {
     - "docs/_index.md"
     - "Codebase for traceable ID reference checking"
     - ".dev_flow/rules/ — project coding rules (if exists)"
+    - ".dev_flow/skills/ — for detecting reintroduced pitfalls (if exists)"
     - "Git diff of staged/unstaged changes (for pre-commit review)"
     - "Relevant specification and plan (for pre-commit review)"
     - "references/solid-architecture.md — default architecture principles"
@@ -59,6 +61,7 @@ role Reviewer {
       - "Relevant specification (*.sp.md)"
       - "Relevant plan (*.plan.md)"
       - "Project rules (.dev_flow/rules/) if exist"
+      - "Relevant project skills (.dev_flow/skills/) if exist"
     checks:
       spec_compliance:
         description: "Code implements all spec contracts, error cases, invariants"
@@ -69,6 +72,9 @@ role Reviewer {
       rules_compliance:
         description: "New code follows .dev_flow/rules/"
         severity: "blocks (must) / warns (should)"
+      skill_pitfalls:
+        description: "Change doesn't reintroduce a pitfall documented in a loaded skill"
+        severity: "warns (blocks if also a must rule)"
       solid_compliance:
         description: "Code structure follows SOLID and pluggability principles (references/solid-architecture.md) unless overridden by project rules"
         severity: "warns"

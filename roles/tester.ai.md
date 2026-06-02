@@ -6,6 +6,7 @@ role Tester {
   activation_condition: "Project has existing test suite AND defined test runner"
 
   responsibilities:
+    - "Before writing tests, load testing rules from .dev_flow/rules/ (binding) and .dev_flow/skills/ pitfalls/edge cases the tests MUST cover"
     - Identify affected functionality from code changes
     - Determine which test levels are relevant (unit / mock / integration / live)
     - Create new tests or update existing ones following project conventions

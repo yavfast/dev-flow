@@ -21,14 +21,14 @@ This ALWAYS leads to drift. The spec update takes 5 minutes now but 2 hours to r
 
 ## Context Loading
 
-Before propagating changes, load relevant project knowledge:
+Loading project knowledge is a **gate** (see
+[Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding)):
 
-**Skill check:** Read `.dev_flow/skills/_index.yaml` and load skills relevant to the
-changed area — they provide domain context needed to accurately update specifications
-and concepts. See [skill phase](skill.md).
+**Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml` and load skills for the
+changed area — domain context for updating specs/concepts. See [skill phase](skill.md).
 
-**Rule check:** Read `.dev_flow/rules/_index.yaml` (if exists) — rules may need updating
-if the propagated change introduces or modifies a coding pattern. See [rule phase](rule.md).
+**Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml`;
+rules may need updating if the change introduces or modifies a pattern. See [rule phase](rule.md).
 
 **Glossary check:** Load `docs/_glossary.md` (if present) with `docs/_index.md` — a change
 that renames or retires a domain term must be propagated here too. See [Glossary](../references/glossary.md).

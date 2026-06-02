@@ -4,6 +4,7 @@ role PlanAuthor {
   description: "Creates actionable implementation plans from specifications with technology choices and phased delivery"
 
   responsibilities:
+    - "Before deciding technology, load .dev_flow/rules/ (binding — no `must` violations in the plan) and matching .dev_flow/skills/ (how this project uses the technology)"
     - "Break specification into implementable phases"
     - "Make concrete technology decisions with rationale"
     - "Define file paths, module names, and dependencies"

@@ -72,15 +72,14 @@ that is the job of regression testing in the Verify phase.
 
 ## Context Loading
 
-Before writing or updating tests, load relevant project knowledge:
+Loading project knowledge is a **gate** (see
+[Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding)):
 
-**Skill check:** Read `.dev_flow/skills/_index.yaml` and load skills relevant to the
-tested functionality — they may contain known pitfalls, edge cases, or integration
-specifics that should be covered by tests. See [skill phase](skill.md).
+**Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml` and load skills for the
+tested functionality — their pitfalls and edge cases MUST be covered by the tests. See [skill phase](skill.md).
 
-**Rule check:** Read `.dev_flow/rules/_index.yaml` (if exists) and load testing rules
-(e.g., test naming conventions, required assertion patterns, mocking guidelines).
-See [rule phase](rule.md).
+**Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml`
+and load testing rules (naming, assertion patterns, mocking); new tests MUST comply. See [rule phase](rule.md).
 
 ## Gate Check (Code -> Test)
 
