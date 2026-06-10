@@ -11,7 +11,7 @@
 | Field | Value |
 |-------|-------|
 | **Document** | `[type: concept/spec/plan/code]` — [title and file path] |
-| **Pipeline phase** | `[onboard / research / concept / spec / plan / implement / test / review / verify / propagate / fix / rule / skill / cache / ask / do / subtask / status / audit]` |
+| **Pipeline phase** | `[onboard / research / concept / spec / plan / implement / test / review / verify / propagate / fix / rule / skill / ask / do / subtask / status / audit]` |
 | **Traceable ID** | `[C_XXX / SP_XXX / PL_XXX or n/a]` |
 
 ## Description

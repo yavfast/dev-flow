@@ -56,7 +56,7 @@ Handing these off hands off the focus itself — there's nothing left to protect
 A delegated subagent returns the **conclusion, not the dump**: a verdict plus what's
 actionable, with the full log written to a file and referenced by path — under the
 project workspace `/tmp/{project-slug}/` with a timestamped name, per the
-[cache phase](../phases/cache.md) workspace discipline. In this focus shape, anything
+[Resource Cache](cache.md) workspace discipline. In this focus shape, anything
 durable among the artifacts is promoted to `.dev_flow/cache/` by the calling agent —
 the helper only stages. (A task-delegated subagent persists per the phase protocol
 itself; see the [subtask phase](../phases/subtask.md).)

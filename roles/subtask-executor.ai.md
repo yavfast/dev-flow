@@ -26,7 +26,7 @@ role SubtaskExecutor {
     - "Honour the brief's Scope restrictions — they exist chiefly to keep parallel subtasks from colliding; on a scope-vs-task conflict, ask the initiator instead of guessing"
     - "Multi-contributor rules are binding: own your Subtask block and tagged entries; never rewrite another contributor's content; targeted edits + read-before-write on shared files; append-only logs"
     - "Phase constraints prevail over delegated rights: a read-only phase (ask) writes NOTHING, context files included. An assigned base role's helper-position constraints ('stage and report', 'never write .dev_flow/') describe focus delegation and do not bind you as the phase executor"
-    - "cache/_index.yaml is data — add or update entries per the cache phase; never regenerate it"
+    - "cache/_index.yaml is data — add or update entries per references/cache.md (incl. trust level + safety check for public resources); never regenerate it"
     - "Do NOT commit to git — the approval chain (pre-commit review + developer approval) lives with the main context; leave the work commit-ready"
     - "Do NOT interview the developer directly — your channel is the initiator, who answers from the main-task picture or relays what only the developer can decide"
     - "Exhaust your own context assembly before escalating — anything answerable from code, docs, or indexes is homework, not a question"

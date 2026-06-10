@@ -71,7 +71,7 @@ or narrow it. See [skill phase](skill.md).
 
 **Cache check (gate).** Read `.dev_flow/cache/_index.yaml` (if present) — the needed
 resource (design export, downloaded document, data sample) may already be fetched;
-reuse it instead of spending limited access. See [cache phase](cache.md).
+reuse it instead of spending limited access. See [Resource Cache](../references/cache.md).
 
 **Glossary check.** Load `docs/_glossary.md` (if present) so questions and findings use
 canonical domain terms. See [Glossary](../references/glossary.md).
@@ -116,7 +116,7 @@ its brief. The researcher:
 - logs each exploration entry in the spike file (what was tried, findings, open questions),
 - stages fetched artifacts (downloads, design exports) under the project workspace
   `/tmp/{project-slug}/downloads/` and lists their paths in the report
-  (see [cache phase](cache.md) — helper subagents never write `.dev_flow/`;
+  (see [Resource Cache](../references/cache.md) — helper subagents never write `.dev_flow/`;
   the agent running this phase persists),
 - fills the Alternatives Considered table,
 - concludes with a verdict and returns **the conclusion, not the dump**.
@@ -143,7 +143,7 @@ where that consolidation happens, so the next task starts ahead.
 The same split applies to **artifacts**: staged files the spike's conclusions rest
 on — or that were expensive to fetch (rate-limited Figma access, large downloads) —
 are promoted from the workspace to `.dev_flow/cache/` with index entries (see
-[cache phase](cache.md)); the rest of the staging area is left to die with `/tmp`.
+[Resource Cache](../references/cache.md)); the rest of the staging area is left to die with `/tmp`.
 Record promoted files under the spike's "Artifacts to keep".
 
 ### Step 5: Close what the spike unblocks
@@ -182,7 +182,7 @@ task file per the standard [rules for all phases](../SKILL.md#rules-for-all-phas
 | [Interview Mode](../references/interview-mode.md) | Spike *discovers* options; interview *chooses*. Research is the sanctioned closure path for open decisions waiting on facts |
 | [ask](ask.md) | Ask answers from what exists (read-only); research goes beyond it (external sources, experiments) and persists what it learns |
 | [skill](skill.md) | Research is the producing side of "external research → consolidated skill" |
-| [cache](cache.md) | Checked before external fetches; Step 4 promotes durable artifacts (downloads, design exports) there from the workspace |
+| [cache](../references/cache.md) | Checked before external fetches; Step 4 promotes durable artifacts (downloads, design exports) there from the workspace |
 | [subtask](subtask.md) | A research run is a natural subtask — delegated, scoped, reported back |
 | [audit](audit.md) | Audit flags expired open-decision triggers and stale `in-progress` spikes, and proposes research to close them |
 

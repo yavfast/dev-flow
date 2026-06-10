@@ -22,7 +22,7 @@ plus the failures that matter, with full logs in a file referenced by path. See
 (`{name}_YYYYMMDD_HHMMSS.{ext}`), never numeric suffixes. A capture worth keeping
 across sessions (e.g. a reference screenshot future runs compare against) is
 promoted to `.dev_flow/cache/app/` by the agent running this phase (focus helpers
-stage and report). See [cache phase](cache.md).
+stage and report). See [Resource Cache](../references/cache.md).
 
 ## Command
 

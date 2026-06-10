@@ -72,7 +72,7 @@ a clean-up and a data-loss incident.
    `.dev_flow/session_history/`, not to `/dev/null`. Indexes are regenerable, so
    they may be rewritten freely — with one exception: **`cache/_index.yaml` is
    data, not a derived view** (its `source` metadata exists nowhere else), so it is
-   only ever reconciled entry by entry, never regenerated (see [cache phase](cache.md)).
+   only ever reconciled entry by entry, never regenerated (see [Resource Cache](../references/cache.md)).
    Task files and history are not regenerable either — they are only ever appended
    to or relocated intact.
 3. **Source-of-truth order.** Task files win over the dashboard and catalog (those
@@ -258,7 +258,7 @@ reports the drift, it does not rewrite design documents.
    flag files with no entry (invisible) and entries pointing to missing files.
    Unlike other indexes, the cache index carries `source` metadata that exists
    nowhere else — **reconcile entry by entry, never regenerate from disk**
-   (see [cache phase](cache.md)).
+   (see [Resource Cache](../references/cache.md)).
 2. **Unreferenced / stale** — flag entries whose `refs` no longer resolve (the
    doc or task that linked them is gone/closed) and snapshots superseded by newer
    ones; propose removals. **Do not auto-delete.**
@@ -269,7 +269,11 @@ reports the drift, it does not rewrite design documents.
    and reported). Changed or uncheckable → flag for refresh; **audit never
    re-fetches** — the refresh belongs to the update task that made the resource
    stale (especially for `reacquire: manual / paid` entries).
-4. **Hygiene** — flag `/tmp`-style transients that crept in (logs, build output),
+4. **Trust & safety** — flag entries missing a `trust` level, and `trust: public`
+   entries missing `checked` (saved without the safety check — see
+   [Resource Cache → Trust & Safety](../references/cache.md)). Audit flags;
+   the check itself runs when the resource is next touched, not from audit.
+5. **Hygiene** — flag `/tmp`-style transients that crept in (logs, build output),
    missing `summary`/`source` fields, and domains grown disproportionately large;
    propose pruning oldest unreferenced entries first (cheapest `reacquire` first).
 
@@ -347,6 +351,6 @@ be proposed.
 | [status](status.md) | Reuses the read protocol, regeneration procedure, and archive flow. `status` reports drift; `audit` resolves it. |
 | [rule](rule.md) | Catalogue edits and reflection-derived rules follow the rule phase's category/severity model and index format. |
 | [skill](skill.md) | Skill index reconciliation, dedupe, and reflection-derived skills follow the skill phase's non-triviality filter and index chain. |
-| [cache](cache.md) | Step 7d reconciles the resource cache index ↔ disk and flags unreferenced/stale entries; the cache index is data (carries `source`), never regenerated. |
+| [cache](../references/cache.md) | Step 7d reconciles the resource cache index ↔ disk and flags unreferenced/stale entries; the cache index is data (carries `source`), never regenerated. |
 | [propagate](propagate.md) | When reconciliation reveals docs and code disagree, route the doc fix through propagate. Step 7c runs its drift detection algorithm as part of the sweep. |
 | [research](research.md) | The proposed closing route for expired open-decision triggers whose missing information is researchable, and for stale spikes. |

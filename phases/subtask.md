@@ -109,7 +109,7 @@ agent**, bounded by the same protocols — not by blanket bans:
   delegation and do **not** bind the phase executor. On any other genuine role
   conflict — ask the initiator (see [Roles](../references/roles.md)).
 - **Skills / cache / rules** — written directly by executing the owning phase's
-  protocol: the [skill](skill.md) non-triviality filter, the [cache](cache.md)
+  protocol: the [skill](skill.md) non-triviality filter, the [cache](../references/cache.md)
   worth-caching filter + entry-by-entry index discipline, the [rule](rule.md)
   severity model. Everything persisted is listed in the report.
 - **Commits — no.** Not a capability gap but the approval chain: commits require

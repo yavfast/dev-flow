@@ -12,7 +12,7 @@ Skills differ from rules and from the cache:
 - **Skills** (`.dev_flow/skills/`) — what you need to know about a technology or pattern to do a task well
 - **Cache** (`.dev_flow/cache/`) — fetched artifacts (design exports, downloaded documents,
   baselines): skills capture what you *learned*, the cache keeps what you *fetched*.
-  A skill may link cache entries. See [cache phase](cache.md)
+  A skill may link cache entries. See [Resource Cache](../references/cache.md)
 
 ## Command
 

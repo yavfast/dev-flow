@@ -46,7 +46,7 @@ and load rules for the area being modified. New code MUST comply (`must` = block
 
 **Resource check.** Before fetching a design export or external document (e.g. via the
 Figma MCP) for this implementation, check `.dev_flow/cache/_index.yaml` and reuse a cached
-copy; save an expensive new fetch back to the cache. See [cache phase](cache.md).
+copy; save an expensive new fetch back to the cache. See [Resource Cache](../references/cache.md).
 
 **Role check:** If you'll delegate any step (run tests, verify, a wide search) to a
 subagent, check `.dev_flow/roles/_index.yaml` first and reuse a fitting base role or

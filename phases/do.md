@@ -80,7 +80,7 @@ Analyze the freeform request against the loaded context to determine:
 | **Fix a bug** | "fix", "виправи", "bug", "баг", "падає", "crash", "NPE", "не працює", error description | fix |
 | **Review/validate** | "check", "validate", "чи правильно", "review" | review |
 | **Manage rules** | "add rule", "додай правило", "edit rule", "remove rule", "list rules", "show rule" | rule |
-| **Manage cached resources** | "cache", "закешуй", "збережи макет/скріншот/документ", "save this export", "find cached" | cache |
+| **Manage cached resources** | "cache", "закешуй", "збережи макет/скріншот/документ", "save this export", "find cached" | inline cache management — [Resource Cache](../references/cache.md) |
 | **Understand state** | "що зроблено", "status", "де я?" | status |
 | **Revise / housekeep context** | "ревізія", "audit", "почисти контекст", "синхронізуй задачі", "оновити індекси", "groom", "tidy up", "compact", "retrospective" | audit |
 | **Delegate side task** | "subtask", "delegate", "делегуй", "зроби паралельно", "offload", explicit secondary task during active work | subtask |
@@ -243,7 +243,7 @@ User request received
 │   └─ status
 │
 ├─ Manage a project catalogue (coding rules / knowledge skills / cached resources)
-│   └─ rule / skill / cache
+│   └─ rule / skill / inline cache management ([Resource Cache](../references/cache.md))
 │
 ├─ Revise / clean up .dev_flow (reconcile state, trim context, dedupe rules/skills/cache)
 │   └─ audit

@@ -43,7 +43,6 @@ Additional commands:
 | `/dev-flow ask <question>` | Read-only Q&A — no file changes |
 | `/dev-flow rule <request>` | Manage project coding rules |
 | `/dev-flow skill <request>` | Manage project technology knowledge |
-| `/dev-flow cache <request>` | Manage durable project resources (Figma exports, downloads, baselines) |
 | `/dev-flow subtask <task>` | Delegate a secondary task to a subagent — a full dev-flow participant that builds its own context and reports fully |
 | `/dev-flow status` | Show current state, resume previous session |
 | `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` — reconcile state, trim context, compact closed tasks, groom rules/skills/cache |
@@ -243,7 +242,7 @@ The pipeline's default is "code must satisfy the spec" — but sometimes a downs
 
 ### Resource Cache & Temp Workspace
 
-Expensive-to-reacquire resources — Figma layouts fetched over rate-limited MCP access, downloaded documents, baseline screenshots — die in `/tmp` on the next reboot. dev-flow keeps them in **`.dev_flow/cache/`**: a per-project store organized by source domain (`figma/`, `web/`, `app/`, `data/`) with an `_index.yaml` that records each file's source, summary, and references — so an agent checks the cache *before* spending another fetch, and anything linked from docs or task files outlives the session. Truly transient artifacts (logs, repro dumps, throwaway captures) go to one project workspace — `/tmp/{project-slug}/` — with **timestamped names** (`test-run_20260610_143205.log`), never numeric suffixes; whatever turns out durable is promoted to the cache. See [`phases/cache.md`](phases/cache.md).
+Expensive-to-reacquire resources — Figma layouts fetched over rate-limited MCP access, downloaded documents, baseline screenshots — die in `/tmp` on the next reboot. dev-flow keeps them in **`.dev_flow/cache/`**: a per-project store organized by source domain (`figma/`, `web/`, `app/`, `data/`) with an `_index.yaml` that records each file's source, summary, and references — so an agent checks the cache *before* spending another fetch, and anything linked from docs or task files outlives the session. Truly transient artifacts (logs, repro dumps, throwaway captures) go to one project workspace — `/tmp/{project-slug}/` — with **timestamped names** (`test-run_20260610_143205.log`), never numeric suffixes; whatever turns out durable is promoted to the cache. Each entry carries a **trust level** (`internal` / `controlled` / `public`); resources fetched from the open internet pass a safety check (type match, no active content, prompt-injection sweep) before they are cached, and cached content is always data, never instructions. Not a pipeline phase — it's infrastructure every phase touches; freeform cache requests route through `do`. See [`references/cache.md`](references/cache.md).
 
 ### Language Independence
 
@@ -315,7 +314,7 @@ your-project/
 ```
 dev-flow/
 ├── SKILL.md              # Main skill definition and pipeline
-├── phases/               # 19 phase definitions
+├── phases/               # 18 phase definitions
 │   ├── research.md
 │   ├── concept.md
 │   ├── specification.md
@@ -331,7 +330,6 @@ dev-flow/
 │   ├── do.md
 │   ├── rule.md
 │   ├── skill.md
-│   ├── cache.md
 │   ├── status.md
 │   ├── subtask.md
 │   └── audit.md
@@ -367,6 +365,7 @@ dev-flow/
 │   ├── escalation.md            # Upstream escalation (doc wrong, not code)
 │   ├── delegation.md            # Delegation for focus (subagents)
 │   ├── impact.md                # Impact Walk — blast radius of a change
+│   ├── cache.md                 # Resource cache + /tmp workspace discipline
 │   ├── roles.md                 # Base vs project-overlay roles
 │   ├── glossary.md              # Project domain vocabulary
 │   └── solid-architecture.md

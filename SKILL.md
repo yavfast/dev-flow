@@ -51,7 +51,6 @@ an unbiased perspective on the changes.
 | — | `/dev-flow fix <problem>` | Analyze bug, plan fix, implement, verify | Fixed code + build/test result |
 | — | `/dev-flow rule <request>` | Add, edit, or remove coding rules (freeform) | Updated `.dev_flow/rules/` |
 | — | `/dev-flow skill <request>` | Find, add, update, or remove project knowledge skills | Updated `.dev_flow/skills/` |
-| — | `/dev-flow cache <request>` | Find, save, update, or remove durable project resources (Figma exports, downloads, baselines) | Updated `.dev_flow/cache/` |
 | — | `/dev-flow status` | Show current state, resume previous session | Status summary |
 | — | `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` — reconcile task state with reality, trim context, compact closed tasks, groom rules/skills/cache | Audit report + cleaned context |
 | — | `/dev-flow ask <question>` | Read-only Q&A about code or feasibility — no changes | Answer + optional next-step suggestion |
@@ -72,12 +71,14 @@ an unbiased perspective on the changes.
 > gates. Produces `docs/*.spike.md` and persists durable findings to
 > `.dev_flow/skills/`. See [research phase](phases/research.md).
 
-> **Cache command:** Use `/dev-flow cache <request>` to manage `.dev_flow/cache/` —
-> the durable, indexed store for expensive-to-reacquire resources (Figma exports,
-> downloaded documents, baseline screenshots). Check its `_index.yaml` before any
-> expensive re-fetch; anything linked from docs or task files lives here, never in
-> `/tmp`. Transient artifacts go to the project workspace `/tmp/{project-slug}/`
-> with timestamped names. See [cache phase](phases/cache.md).
+> **Resource cache (not a phase):** `.dev_flow/cache/` is the durable, indexed
+> store for expensive-to-reacquire resources (Figma exports, downloaded documents,
+> baseline screenshots). Every phase checks its `_index.yaml` before an expensive
+> re-fetch and saves new fetches back; anything linked from docs or task files
+> lives here, never in `/tmp`. Transient artifacts go to the project workspace
+> `/tmp/{project-slug}/` with timestamped names. Freeform cache requests
+> ("збережи цей макет", "find the cached RFC") route through `do` and are applied
+> inline. See [Resource Cache](references/cache.md).
 
 > **Audit command:** Use `/dev-flow audit` for the periodic whole-directory revision
 > of `.dev_flow/` — it reconciles every task's recorded state against reality (linked
@@ -353,8 +354,9 @@ status, contributors, and last-updated. **No per-task details live here.**
   version) before any re-fetch. After an expensive fetch, save the artifact back — a
   focus-delegated helper *stages* it in the workspace and reports (a task-delegated
   subagent writes the cache itself per the protocol — see [subtask phase](phases/subtask.md)).
-  Transient artifacts follow the workspace discipline —
-  `/tmp/{project-slug}/` with timestamped names. See [cache phase](phases/cache.md).
+  A resource fetched from the open internet is saved with `trust: public` and goes
+  through the safety check first. Transient artifacts follow the workspace discipline —
+  `/tmp/{project-slug}/` with timestamped names. See [Resource Cache](references/cache.md).
 - At the **start** of any phase:
   - **Continuation** — locate the task via `active_context.md`. If your own
     Subtask block exists, resume it. If you have no block in this task yet,
@@ -410,7 +412,7 @@ in shared sections. The dashboard and catalog are updated with **targeted edits*
   completed" keeps the latest 5 — older entries go to `session_history/`.
 - **No large blobs** in any context file: never store logs, diffs, or verbose
   narratives — reference a file instead: durable resources from `.dev_flow/cache/`,
-  transient output from the project workspace in `/tmp` (see [cache phase](phases/cache.md)).
+  transient output from the project workspace in `/tmp` (see [Resource Cache](references/cache.md)).
   Never link a `/tmp` path from a doc or task file.
 
 See [status phase](phases/status.md) for the full read/write protocol, regeneration
@@ -472,6 +474,7 @@ reveals a coding pattern, constraint, or convention that is not yet captured in
 - [Upstream Escalation](references/escalation.md) *(cross-cutting sub-procedure of implement/test/review/verify/fix — when evidence shows the spec/plan/concept is wrong, fix the document, don't bend the code)*
 - [Delegation for Focus](references/delegation.md) *(cross-cutting sub-procedure of implement/fix/verify — delegate noisy work to a subagent, keep only the conclusion)*
 - [Impact Walk](references/impact.md) *(cross-cutting sub-procedure of ask/do/propagate/review — blast radius of a change: docs, code bindings, active tasks)*
+- [Resource Cache](references/cache.md) *(cross-cutting — durable resource store `.dev_flow/cache/` with trust levels + `/tmp` workspace discipline; every phase checks it before expensive fetches)*
 - [Roles](references/roles.md) *(base vs project-overlay subagent roles — reuse what exists, create new under .dev_flow/roles/ via inherits)*
 - [Glossary](references/glossary.md) *(`docs/_glossary.md` — canonical domain vocabulary; created at onboard/concept, loaded with `_index.md`)*
 - [Implement phase](phases/implement.md)
@@ -482,7 +485,6 @@ reveals a coding pattern, constraint, or convention that is not yet captured in
 - [Fix phase](phases/fix.md) *(analyze, plan, fix, verify)*
 - [Rule phase](phases/rule.md) *(add/edit/remove coding rules)*
 - [Skill phase](phases/skill.md) *(manage project knowledge skills)*
-- [Cache phase](phases/cache.md) *(durable resource cache `.dev_flow/cache/` + `/tmp` workspace discipline)*
 - [Status phase](phases/status.md) | Templates: [task_context](templates/task_context.md), [active_context (dashboard)](templates/active_context.md), [tasks_index](templates/tasks_index.md)
 - [Audit phase](phases/audit.md) *(full `.dev_flow/` revision — reconcile, trim, compact + reflect, groom rules/skills)*
 - [Ask phase](phases/ask.md) *(read-only Q&A, no file changes)*
@@ -503,7 +505,7 @@ the model guidance — lives in **[Delegation for Focus](references/delegation.m
 For a whole secondary *task* (not a single noisy step), use the
 [subtask phase](phases/subtask.md): there the subagent is a **full dev-flow
 participant with delegated rights** — it assembles its own context from hints,
-joins the task file as a contributor, persists skills/cache per the phase
+joins the task file as a contributor, persists skills/cache per their owning
 protocols, escalates real decisions to its initiator, and returns a full report.
 Commits stay with the main context (the developer-approval chain).
 
