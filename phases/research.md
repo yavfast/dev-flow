@@ -116,7 +116,8 @@ its brief. The researcher:
 - logs each exploration entry in the spike file (what was tried, findings, open questions),
 - stages fetched artifacts (downloads, design exports) under the project workspace
   `/tmp/{project-slug}/downloads/` and lists their paths in the report
-  (see [cache phase](cache.md) — subagents never write `.dev_flow/`),
+  (see [cache phase](cache.md) — helper subagents never write `.dev_flow/`;
+  the agent running this phase persists),
 - fills the Alternatives Considered table,
 - concludes with a verdict and returns **the conclusion, not the dump**.
 
@@ -134,7 +135,8 @@ artifacts to discard.
 ### Step 4: Persist durable knowledge & artifacts
 
 Findings that pass the [skill phase's non-triviality filter](skill.md) are saved
-to `.dev_flow/skills/` **by the main agent** (subagents do not write `.dev_flow/`).
+to `.dev_flow/skills/` **by the agent running this phase** — main agent or
+task-delegated executor; its helper subagents do not write `.dev_flow/`.
 This is the owner of the rule "web research → consolidated skill": research is
 where that consolidation happens, so the next task starts ahead.
 

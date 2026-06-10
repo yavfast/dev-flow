@@ -175,9 +175,10 @@ Cache without an explicit command when:
 | A doc or task file is about to link a local resource | Move the target into the cache first — never link `/tmp` |
 | [Verify](verify.md) produces a screenshot worth comparing against later | Promote to `app/` as a named baseline |
 
-When the fetch happens inside a **delegated subagent**, "save"/"promote" means:
+When the fetch happens inside a **focus-delegated helper**, "save"/"promote" means:
 stage in the workspace and list the path in the report — the cache write itself
-belongs to the calling agent (see Workspace Discipline below).
+belongs to the calling agent (see Workspace Discipline below). A **task-delegated**
+subagent ([subtask phase](subtask.md)) writes the cache itself, per this phase.
 
 ## Temporary Workspace (`/tmp`) Discipline
 
@@ -199,11 +200,14 @@ All transient artifacts go under **one project root** — `/tmp/{project-slug}/`
   collide across sessions, don't sort, and say nothing about when they were made.
 - The workspace is **disposable** — a reboot may wipe it at any time. Anything
   that must survive is promoted to the cache the moment that becomes clear.
-- **Subagents write only here.** A delegated subagent (researcher, tester — including
-  its Verify duty, subtask executor) stages its downloads, logs, and captures in the
-  workspace and reports the paths; the **calling (main) agent** promotes what is
-  durable to `.dev_flow/cache/` — the same ownership rule as skills (subagents never
-  write `.dev_flow/`).
+- **Helper subagents write only here.** A subagent doing one noisy step inside its
+  initiator's phase run (researcher, tester — including its Verify duty; see
+  [Delegation for Focus](../references/delegation.md)) stages its downloads, logs,
+  and captures in the workspace and reports the paths; the **calling agent**
+  promotes what is durable to `.dev_flow/cache/`. A **task-delegated** subagent
+  ([subtask phase](subtask.md)) executes the owning phase's protocol itself —
+  including cache writes with their index discipline — and lists what it
+  persisted in its report.
 
 ## Git
 
@@ -221,7 +225,7 @@ ignore rule accordingly.
 | [skill](skill.md) | Skills capture what you *learned* (text); the cache keeps what you *fetched* (files). A skill may link cache entries |
 | [verify](verify.md) | Transient run artifacts in the workspace; promoted baselines in `app/` |
 | [fix](fix.md) | Diagnosis artifacts (instrumented logs, repro dumps) live in the workspace; promote only what stays valuable |
-| [subtask](subtask.md) | Subagents stage in the workspace and report paths; the caller promotes |
+| [subtask](subtask.md) | Focus helpers stage in the workspace and report paths — the caller promotes; a task-delegated executor writes the cache itself per this phase |
 | [audit](audit.md) | Step 7d reconciles index ↔ disk, flags unreferenced/stale entries and size bloat; removals are proposed, never automatic |
 
 ## Anti-Patterns

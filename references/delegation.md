@@ -5,6 +5,15 @@ mechanism behind **Review** and the **Subtask** command). This is **not** a stan
 pipeline stage — it runs *inside* those phases whenever a step is about to flood the main
 context with secondary, noisy work.
 
+> **Two delegation shapes.** This reference covers **focus delegation** — a single
+> noisy *step* inside your own phase run: minimal rights, no `.dev_flow/` writes,
+> stage-and-report, no dialogue. Delegating a whole secondary *task* is the
+> [subtask phase](../phases/subtask.md) — there the subagent is a **full dev-flow
+> participant with delegated rights**: it assembles its own context, joins the task
+> file as a contributor, persists skills/cache per the phase protocols, and can
+> converse with its initiator. The moment a delegated step outgrows one exchange,
+> it is a subtask.
+
 ## Why this exists
 
 The main agent is the conductor. It holds the plan, the specification, and the task
@@ -47,8 +56,10 @@ Handing these off hands off the focus itself — there's nothing left to protect
 A delegated subagent returns the **conclusion, not the dump**: a verdict plus what's
 actionable, with the full log written to a file and referenced by path — under the
 project workspace `/tmp/{project-slug}/` with a timestamped name, per the
-[cache phase](../phases/cache.md) workspace discipline. Anything durable among the
-artifacts is promoted to `.dev_flow/cache/` by the calling agent, never by the subagent.
+[cache phase](../phases/cache.md) workspace discipline. In this focus shape, anything
+durable among the artifacts is promoted to `.dev_flow/cache/` by the calling agent —
+the helper only stages. (A task-delegated subagent persists per the phase protocol
+itself; see the [subtask phase](../phases/subtask.md).)
 
 Skip this and the win evaporates — the noise simply relocates from the tool output into
 the subagent's report, and the main context is flooded just the same, now with an extra
@@ -95,11 +106,13 @@ might need the main agent's full context. Use judgment.
 
 ## How
 
-The mechanism is the [Subtask phase](../phases/subtask.md): formulate a self-contained
-brief, spawn the subagent (picking type and model), and relay back a concise summary. Use
-it not only as the explicit `/dev-flow subtask` command but as a *reflex* during
-implement / fix / verify — the moment a step is about to dump noise into the main context,
-delegate it.
+The spawning mechanics live in the [Subtask phase](../phases/subtask.md): formulate the
+brief, spawn the subagent (picking type and model), and take back the conclusion. For a
+focus delegation the brief is a narrow step description; for a task delegation it is
+"keys, not content" — task + role + context hints, and the subagent assembles the rest.
+Use delegation not only as the explicit `/dev-flow subtask` command but as a *reflex*
+during implement / fix / verify — the moment a step is about to dump noise into the main
+context, delegate it.
 
 Project-specific delegation practice (how *this* project runs its tests, where its live
 scenarios live, what counts as pass/fail) belongs in a project role overlay under

@@ -210,19 +210,26 @@ The interview needs a live developer, so it is conducted by **whoever is talking
 the developer** — normally the orchestrator (the main session that received
 `/dev-flow concept|spec|plan`).
 
-A **delegated author subagent** (concept-author, spec-author, plan-author running in
-its own context) usually has **no channel to the developer**. It must **not** resolve
-a material fork by guessing — and it must first exhaust the Step 0 context-gathering,
-since code and prior `DEC_NN` records often close a fork outright and keep the list of
-open decisions it escalates short. For whatever genuinely remains, it:
-1. records each decision point in Design Decisions as **open** — options, consequences,
-   and its **recommended answer with rationale**, plus a resolution trigger of
-   "resolve with developer before the gate"; and
-2. surfaces the list of open decisions in its report back to the orchestrator.
+A **delegated subagent** (a phase author, or a task-delegated
+[subtask](../phases/subtask.md) executor) must **not** resolve a material fork by
+guessing — and it must first exhaust the Step 0 context-gathering, since code and
+prior `DEC_NN` records often close a fork outright. For whatever genuinely
+remains, its channel is the **initiator**, not the developer:
 
-The orchestrator then runs the actual interview with the developer and flips each
-record to `resolved`. The gate (below) will not pass while material decisions are
-still open without a trigger — so nothing slips through on the subagent path.
+1. **Escalate up the chain.** Present the fork to the initiator in the standard
+   form — markered options + a recommended answer, independent questions batched.
+   The initiator answers from the main-task picture it holds, or relays to the
+   developer what only the developer can decide, and the answer comes back down.
+2. **No live channel** (a one-shot run, batch work)? Checkpoint instead: record
+   each decision point in Design Decisions as **open** — options, consequences,
+   recommended answer with rationale, and a resolution trigger of "resolve with
+   the initiator/developer before the gate" — and surface the list in the report.
+   The initiator then answers and **continues the same subagent** (its assembled
+   context is the asset), or runs the interview with the developer itself and
+   flips each record to `resolved`.
+
+Either way the gate (below) will not pass while material decisions are still open
+without a trigger — so nothing slips through on the delegated path.
 
 ## Recording — the Design Decisions section
 

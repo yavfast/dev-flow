@@ -55,7 +55,7 @@ an unbiased perspective on the changes.
 | — | `/dev-flow status` | Show current state, resume previous session | Status summary |
 | — | `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` — reconcile task state with reality, trim context, compact closed tasks, groom rules/skills/cache | Audit report + cleaned context |
 | — | `/dev-flow ask <question>` | Read-only Q&A about code or feasibility — no changes | Answer + optional next-step suggestion |
-| — | `/dev-flow subtask <task>` | Delegate secondary task to subagent (runs any dev-flow phase: fix, test, ask, etc.) | Subtask report |
+| — | `/dev-flow subtask <task>` | Delegate a secondary task to a subagent — a full dev-flow participant that assembles its own context, runs any phase (fix, test, research, etc.), and can converse with its initiator | Full subtask report |
 | — | `/dev-flow do <request>` | Freeform routing — interpret intent and run the right phases | Phase output + updated context |
 
 > **Default command:** Any invocation of `/dev-flow <text>` that does not match a
@@ -351,8 +351,9 @@ status, contributors, and last-updated. **No per-task details live here.**
   check `.dev_flow/cache/_index.yaml` and reuse a cached copy (no-op while the directory
   is absent); an entry past its `valid_until` gets a cheap currency check (ETag, Figma
   version) before any re-fetch. After an expensive fetch, save the artifact back — a
-  delegated subagent *stages* it in the workspace and reports, the calling agent writes
-  the cache. Transient artifacts follow the workspace discipline —
+  focus-delegated helper *stages* it in the workspace and reports (a task-delegated
+  subagent writes the cache itself per the protocol — see [subtask phase](phases/subtask.md)).
+  Transient artifacts follow the workspace discipline —
   `/tmp/{project-slug}/` with timestamped names. See [cache phase](phases/cache.md).
 - At the **start** of any phase:
   - **Continuation** — locate the task via `active_context.md`. If your own
@@ -497,6 +498,13 @@ reflex during implement / fix / verify: hand that work to a subagent and keep on
 *conclusion, not the dump*; pick the subagent's model by the task's nature, never by a
 hardcoded name. The full principle — the core-vs-delegate line, the scenarios table, and
 the model guidance — lives in **[Delegation for Focus](references/delegation.md)**.
+
+For a whole secondary *task* (not a single noisy step), use the
+[subtask phase](phases/subtask.md): there the subagent is a **full dev-flow
+participant with delegated rights** — it assembles its own context from hints,
+joins the task file as a contributor, persists skills/cache per the phase
+protocols, escalates real decisions to its initiator, and returns a full report.
+Commits stay with the main context (the developer-approval chain).
 
 ## Subagent Roles (AI-DSL)
 

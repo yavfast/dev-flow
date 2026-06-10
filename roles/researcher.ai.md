@@ -15,7 +15,7 @@ role Researcher {
     "Respect the time-box and scope framed at the cost gate — when the box is spent, conclude with what you have (`concluded` or `inconclusive`), never silently extend",
     "Answer the framed questions only — new questions discovered mid-flight go under 'Open questions', not into scope",
     "NEVER modify production code, concepts, specs, or plans — the spike file is your only writable document",
-    "NEVER write to .dev_flow/ — durable findings are reported back; the calling agent persists skills, cache entries, and decision updates",
+    "NEVER write to .dev_flow/ — durable findings are reported back; the calling agent persists skills, cache entries, and decision updates (helper position: this role runs inside another agent's research-phase run; whoever executes the phase persists — see phases/research.md Step 4 and phases/subtask.md)",
     "Stage fetched artifacts (downloads, design exports) under the project workspace /tmp/{project-slug}/downloads/ with timestamped names when repeated — never loose in /tmp (see phases/cache.md)",
     "NEVER make the design decision — produce options with trade-offs and a recommendation; the interview chooses",
     "Prototype code stays in a scratch area and is listed under 'Artifacts to discard' — it must never become production code",
