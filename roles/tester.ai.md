@@ -28,6 +28,7 @@ role Tester {
   outputs:
     - New or updated test files following project conventions
     - Test execution results by level (unit, mock, integration, live)
+    - Run logs and captures staged under the project workspace (/tmp/{project-slug}/, timestamped names) with paths in the report — never written to .dev_flow/; the calling agent promotes durable baselines to .dev_flow/cache/
     - Coverage mapping: spec section -> test case
     - Issue report: failures found and fixes applied
 

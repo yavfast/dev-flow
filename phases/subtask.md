@@ -128,6 +128,9 @@ Phase details: <path to relevant phase file>
 <boundaries — what NOT to do>
 - Do NOT create or modify any file under .dev_flow/tasks/ — the main task is owned by the calling agent
 - Do NOT modify .dev_flow/active_context.md or .dev_flow/tasks/_index.md — the main context owns them
+- Do NOT write to .dev_flow/cache/ — stage artifacts in the project workspace
+  (/tmp/{project-slug}/, timestamped names — see the cache phase) and list their
+  paths in the report; the calling agent promotes the durable ones
 - Do NOT commit to git
 
 ## Report Format
@@ -136,7 +139,8 @@ When done, provide a brief report (under 300 words) containing:
 - Key artifacts created or modified (with file paths)
 - Verification result (build/test status if applicable)
 - Any issues or follow-up items for the main task
-- Raw output — full test logs, build dumps, traces — stays in files referenced by path;
+- Raw output — full test logs, build dumps, traces — stays in files referenced by path
+  (under /tmp/{project-slug}/ per the cache phase's workspace discipline);
   never paste it into the report. The report is the conclusion, not the dump.
 ```
 

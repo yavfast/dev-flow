@@ -7,9 +7,12 @@ project-specific knowledge about technologies, APIs, patterns, and tools — acq
 through external research, user explanations, or implementation discoveries — that
 must be preserved across sessions.
 
-Skills differ from rules:
+Skills differ from rules and from the cache:
 - **Rules** (`.dev_flow/rules/`) — how to write code in this project (naming, style, architecture)
 - **Skills** (`.dev_flow/skills/`) — what you need to know about a technology or pattern to do a task well
+- **Cache** (`.dev_flow/cache/`) — fetched artifacts (design exports, downloaded documents,
+  baselines): skills capture what you *learned*, the cache keeps what you *fetched*.
+  A skill may link cache entries. See [cache phase](cache.md)
 
 ## Command
 

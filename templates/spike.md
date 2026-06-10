@@ -60,5 +60,8 @@
 - {what the concept should include based on this spike}
 - {what the concept should explicitly exclude or defer}
 
+**Artifacts to keep:**
+- {staged files promoted to `.dev_flow/cache/` — cache path + what it is, or "—"}
+
 **Artifacts to discard:**
 - {prototype files, scratch code, temp branches — list what should be cleaned up}

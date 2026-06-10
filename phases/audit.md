@@ -13,8 +13,8 @@ Audit is the periodic **whole-directory sweep** that brings `.dev_flow/` back in
 line with reality. It reconciles every task's recorded state against ground
 truth, trims the dashboard down to what is actually active, compacts and reflects
 on closed work so its lessons survive while its noise is archived, and grooms the
-`rules/` and `skills/` catalogues — plus the one doc-side artifact it owns for
-hygiene, the `docs/_glossary.md` vocabulary. It is the write-heavy cousin of
+`rules/`, `skills/`, and `cache/` catalogues — plus the one doc-side artifact it
+owns for hygiene, the `docs/_glossary.md` vocabulary. It is the write-heavy cousin of
 [status](status.md): `status` *reports* drift, `audit` *resolves* it.
 
 Audit composes existing phases rather than reinventing them — it leans on the
@@ -31,7 +31,7 @@ when a reconciliation reveals that docs and code disagree.
 - `scope` (optional) — limit the sweep to one area. One of:
   `context` (dashboard + task reconciliation + compaction),
   `tasks` (reconcile + compact task files only),
-  `rules`, `skills`, or `all` (default). `all` additionally grooms
+  `rules`, `skills`, `cache`, or `all` (default). `all` additionally grooms
   `docs/_glossary.md`, sweeps open Design Decisions / plan backlogs / stale
   spikes, and runs docs ↔ code drift detection.
 - `--dry-run` — produce the audit report only; make no changes on disk.
@@ -44,6 +44,7 @@ when a reconciliation reveals that docs and code disagree.
 /dev-flow audit context          # only reconcile/trim context, skip rules & skills
 /dev-flow audit rules            # only groom .dev_flow/rules/
 /dev-flow audit skills           # only groom .dev_flow/skills/
+/dev-flow audit cache            # only groom .dev_flow/cache/
 ```
 
 ## When to Run
@@ -69,11 +70,17 @@ a clean-up and a data-loss incident.
 2. **Non-destructive by default.** History is moved, never deleted. Overflow logs,
    completed subtask blocks, and closed task files go to
    `.dev_flow/session_history/`, not to `/dev/null`. Indexes are regenerable, so
-   they may be rewritten freely; task files and history are not, so they are only
-   ever appended to or relocated intact.
+   they may be rewritten freely — with one exception: **`cache/_index.yaml` is
+   data, not a derived view** (its `source` metadata exists nowhere else), so it is
+   only ever reconciled entry by entry, never regenerated (see [cache phase](cache.md)).
+   Task files and history are not regenerable either — they are only ever appended
+   to or relocated intact.
 3. **Source-of-truth order.** Task files win over the dashboard and catalog (those
    are derived). For task *reality*, `docs/` document status and git win over the
    task header. For rules/skills, the files on disk win over their `_index.yaml`.
+   For the cache, disk decides *existence* (a missing file orphans its entry) but
+   the index owns *metadata* (`source`/`summary` cannot be rebuilt from disk) —
+   flag mismatches, never drop or regenerate entries wholesale (Step 7d).
 4. **Safe under contention.** Audit may run while other contributors hold open
    subtasks. It may fully rewrite *derived* indexes and *closed* task files, but
    it must never rewrite a live contributor's Subtask block or their tagged
@@ -245,6 +252,27 @@ stale documents, broken `Depends on`/`Used by` links) go into the report; actual
 doc fixes are routed through [propagate](propagate.md) as proposals — audit
 reports the drift, it does not rewrite design documents.
 
+### Step 7d — Revise `cache/` (scope `cache` / under `all`)
+
+1. **Index ↔ disk** — reconcile `cache/_index.yaml` against the actual files:
+   flag files with no entry (invisible) and entries pointing to missing files.
+   Unlike other indexes, the cache index carries `source` metadata that exists
+   nowhere else — **reconcile entry by entry, never regenerate from disk**
+   (see [cache phase](cache.md)).
+2. **Unreferenced / stale** — flag entries whose `refs` no longer resolve (the
+   doc or task that linked them is gone/closed) and snapshots superseded by newer
+   ones; propose removals. **Do not auto-delete.**
+3. **Expired validity** — for entries whose `valid_until` has passed (date) or
+   whose named event has visibly occurred: run a **cheap currency check** where
+   the source supports it (ETag/Last-Modified, Figma version metadata).
+   Confirmed unchanged → extend `valid_until` (evidence-backed — applied directly
+   and reported). Changed or uncheckable → flag for refresh; **audit never
+   re-fetches** — the refresh belongs to the update task that made the resource
+   stale (especially for `reacquire: manual / paid` entries).
+4. **Hygiene** — flag `/tmp`-style transients that crept in (logs, build output),
+   missing `summary`/`source` fields, and domains grown disproportionately large;
+   propose pruning oldest unreferenced entries first (cheapest `reacquire` first).
+
 ### Step 8 — Report
 
 Always end with a structured report (and in `--dry-run`, this is the *only*
@@ -266,6 +294,7 @@ Use this template so the result is scannable:
    • Rebuilt tasks/_index.md
    • rules/_index.yaml: +<a> entries, −<b> orphans, fixed <c> summaries
    • skills indexes: +<a>/−<b>
+   • cache: extended valid_until on <n> entries (cheap check confirmed unchanged)
    • docs/_glossary.md: merged <a> duplicate terms, resolved <b> stale ambiguities
 
 🔁 Reflection harvested
@@ -275,6 +304,7 @@ Use this template so the result is scannable:
 🟡 Proposed (need your confirmation)
    • Merge rule <A> into <B> (same constraint: <reason>)
    • Remove stale skill <domain/Name> (references deleted <X>)
+   • Remove cached <domain/file> (unreferenced since <date> / superseded by <newer>)
    • Close <DocID>_DEC_NN — trigger expired (<trigger>); route: research / interview
    • Backlog item "<item>" in <plan> has no return trigger; convert to DEC / schedule / drop
 
@@ -283,6 +313,8 @@ Use this template so the result is scannable:
    • Orphan task <task> references missing <doc/ID>
    • Drift: orphaned code ref <ID> at <file:line> / stale doc <doc> (code changed after Updated:)
    • Spike <name.spike.md> in-progress beyond its time-box
+   • Cache: <a> files without index entry / <b> entries with missing files (cannot invent `source`)
+   • Cache: <file> expired (<valid_until>), source changed or uncheckable — refresh belongs to its update task
 
 ✔️ Clean — no action: <areas with nothing to do>
 ```
@@ -302,7 +334,7 @@ Use this template so the result is scannable:
 
 ## Dry-Run
 
-`--dry-run` performs Steps 1–7c as analysis only and emits the Step 8 report
+`--dry-run` performs Steps 1–7d as analysis only and emits the Step 8 report
 without touching disk. Use it to preview a sweep, to review proposed merges and
 removals before committing to them, or to audit a shared `.dev_flow/` you do not
 want to mutate. The report distinguishes what *would* be applied from what would
@@ -315,5 +347,6 @@ be proposed.
 | [status](status.md) | Reuses the read protocol, regeneration procedure, and archive flow. `status` reports drift; `audit` resolves it. |
 | [rule](rule.md) | Catalogue edits and reflection-derived rules follow the rule phase's category/severity model and index format. |
 | [skill](skill.md) | Skill index reconciliation, dedupe, and reflection-derived skills follow the skill phase's non-triviality filter and index chain. |
+| [cache](cache.md) | Step 7d reconciles the resource cache index ↔ disk and flags unreferenced/stale entries; the cache index is data (carries `source`), never regenerated. |
 | [propagate](propagate.md) | When reconciliation reveals docs and code disagree, route the doc fix through propagate. Step 7c runs its drift detection algorithm as part of the sweep. |
 | [research](research.md) | The proposed closing route for expired open-decision triggers whose missing information is researchable, and for stale spikes. |

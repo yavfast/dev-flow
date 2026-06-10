@@ -45,7 +45,10 @@ Handing these off hands off the focus itself — there's nothing left to protect
 ## The habit that makes it pay off
 
 A delegated subagent returns the **conclusion, not the dump**: a verdict plus what's
-actionable, with the full log written to a file and referenced by path.
+actionable, with the full log written to a file and referenced by path — under the
+project workspace `/tmp/{project-slug}/` with a timestamped name, per the
+[cache phase](../phases/cache.md) workspace discipline. Anything durable among the
+artifacts is promoted to `.dev_flow/cache/` by the calling agent, never by the subagent.
 
 Skip this and the win evaporates — the noise simply relocates from the tool output into
 the subagent's report, and the main context is flooded just the same, now with an extra

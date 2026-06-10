@@ -25,6 +25,7 @@ role SubtaskExecutor {
     - "Work ONLY within the scope boundaries provided in the brief"
     - "Do NOT modify files outside the specified scope"
     - "Do NOT modify .dev_flow/active_context.md, .dev_flow/tasks/_index.md, or any task file under .dev_flow/tasks/ — the calling agent (one of the task's contributors) is responsible for updating its Subtask block and the shared indexes; the subagent must not touch context files at all"
+    - "Do NOT write to .dev_flow/cache/ — stage produced artifacts (logs, downloads, captures) under the project workspace /tmp/{project-slug}/ with timestamped names and list their paths in the report; the calling agent promotes the durable ones (see phases/cache.md)"
     - "Do NOT ask clarifying questions — work with what was provided"
     - "Do NOT commit to git — the main context decides when to commit"
     - "Keep the final report under 300 words"

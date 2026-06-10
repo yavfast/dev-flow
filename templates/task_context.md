@@ -11,7 +11,7 @@
 | Field | Value |
 |-------|-------|
 | **Document** | `[type: concept/spec/plan/code]` — [title and file path] |
-| **Pipeline phase** | `[onboard / research / concept / spec / plan / implement / test / review / verify / propagate / fix / rule / skill / ask / do / subtask / status / audit]` |
+| **Pipeline phase** | `[onboard / research / concept / spec / plan / implement / test / review / verify / propagate / fix / rule / skill / cache / ask / do / subtask / status / audit]` |
 | **Traceable ID** | `[C_XXX / SP_XXX / PL_XXX or n/a]` |
 
 ## Description
@@ -65,6 +65,7 @@ description. **Do not rewrite paragraphs another contributor wrote.**]
 |------|-------------|-----------------|
 | Concept | `docs/xxx.concept.md` | [why it's relevant — `<agent-id>`] |
 | Spec | `docs/xxx.sp.md` | [relevant sections — `<agent-id>`] |
+| Cache | `.dev_flow/cache/figma/xxx.png` | [what it shows — `<agent-id>`] |
 
 <!-- Each row tagged with the contributor who added it. Rows are additive;
      do not remove or rewrite rows added by others. -->

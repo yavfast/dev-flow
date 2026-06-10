@@ -58,8 +58,9 @@ applies.
 | Fix | Orchestrates multiple roles (analysis inline, implementation via [implementer.ai.md](../roles/implementer.ai.md)) | Analyzes bug, plans fix, implements, verifies |
 | Rule | — (inline, no subagent) | Manages `.dev_flow/rules/` files directly |
 | Skill | — (inline, no subagent) | Manages `.dev_flow/skills/` files directly |
+| Cache | — (inline, no subagent) | Manages `.dev_flow/cache/` files and index directly |
 | Status / all phases | [context-tracker.ai.md](../roles/context-tracker.ai.md) | Reads, writes, and regenerates the per-task context model under `.dev_flow/` (task files + dashboard + catalog) |
-| Audit | [auditor.ai.md](../roles/auditor.ai.md) | Revises the whole `.dev_flow/` tree: reconciles task state, compacts + reflects on closed tasks, grooms rules/skills |
+| Audit | [auditor.ai.md](../roles/auditor.ai.md) | Revises the whole `.dev_flow/` tree: reconciles task state, compacts + reflects on closed tasks, grooms rules/skills/cache |
 | Ask | [advisor.ai.md](../roles/advisor.ai.md) | Read-only Q&A about code and feasibility |
 | Subtask | [subtask-executor.ai.md](../roles/subtask-executor.ai.md) | Executes delegated secondary tasks independently |
 | Do (default) | [dev-flow-orchestrator.ai.md](../roles/dev-flow-orchestrator.ai.md) | Interprets freeform requests and routes to the right phases |

@@ -189,6 +189,11 @@ build/test in Step 4 are the noisy work that erodes focus — delegate either to
 and keep the *fix decision* in the main context. See
 **[Delegation for Focus](../references/delegation.md)**.
 
+**Diagnosis artifacts** (instrumented logs, repro dumps, screen captures) live in the
+project workspace — `/tmp/{project-slug}/logs/`, timestamped names — and die there.
+Promote to `.dev_flow/cache/` only what stays valuable past the fix (e.g. a HAR or
+recording a document references). See [cache phase](cache.md).
+
 ## Interview Mode in Fix
 
 A bug fix hides two forks that are easy to resolve silently and expensive to get

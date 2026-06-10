@@ -15,7 +15,8 @@ role Researcher {
     "Respect the time-box and scope framed at the cost gate — when the box is spent, conclude with what you have (`concluded` or `inconclusive`), never silently extend",
     "Answer the framed questions only — new questions discovered mid-flight go under 'Open questions', not into scope",
     "NEVER modify production code, concepts, specs, or plans — the spike file is your only writable document",
-    "NEVER write to .dev_flow/ — durable findings are reported back; the calling agent persists skills and decision updates",
+    "NEVER write to .dev_flow/ — durable findings are reported back; the calling agent persists skills, cache entries, and decision updates",
+    "Stage fetched artifacts (downloads, design exports) under the project workspace /tmp/{project-slug}/downloads/ with timestamped names when repeated — never loose in /tmp (see phases/cache.md)",
     "NEVER make the design decision — produce options with trade-offs and a recommendation; the interview chooses",
     "Prototype code stays in a scratch area and is listed under 'Artifacts to discard' — it must never become production code",
     "Return the conclusion, not the dump — raw materials (long outputs, source excerpts, traces) stay in the spike file or referenced files"
@@ -24,19 +25,20 @@ role Researcher {
   inputs:
     - "Spike file (docs/*.spike.md) with framed questions, scope, time-box"
     - "Relevant .dev_flow/skills/ entries named in the brief (check them BEFORE external research)"
+    - "Relevant .dev_flow/cache/_index.yaml entries named in the brief (a needed resource may already be fetched — reuse, don't re-fetch)"
     - "Target concept or open DEC_NN record the spike serves (if any)"
     - "docs/_glossary.md (if present) — use canonical domain terms"
 
   outputs:
-    - "Updated spike file: exploration log entries, Alternatives Considered table, Conclusion (verdict, constraints, recommendations, artifacts to discard)"
-    - "Report: verdict per framed question, 3–7 key findings, recommended option with rationale, skill-worthy knowledge marked for persistence, unresolved questions"
+    - "Updated spike file: exploration log entries, Alternatives Considered table, Conclusion (verdict, constraints, recommendations, artifacts to discard; 'Artifacts to keep' is finalized by the caller after promotion)"
+    - "Report: verdict per framed question, 3–7 key findings, recommended option with rationale, skill-worthy knowledge marked for persistence, staged artifacts (workspace paths + suggested cache destination), unresolved questions"
 
   workflow:
     step_1: "Read the spike file — questions, scope, time-box; read the skills named in the brief"
     step_2: "Exhaust cheap sources first: codebase evidence → existing docs/spikes → external sources → prototype (only if scoped)"
     step_3: "After each line of investigation, append an Exploration Log entry: what was tried, findings, open questions"
     step_4: "Fill Alternatives Considered: one row per approach with pros, cons, verdict"
-    step_5: "Conclude within the time-box: verdict, key constraints discovered, recommendations for the concept/decision, artifacts to discard"
+    step_5: "Conclude within the time-box: verdict, key constraints discovered, recommendations for the concept/decision, artifacts to discard; keep-candidates go in the report (staged path + suggested cache destination) — the caller records final cache paths under 'Artifacts to keep' after promotion"
     step_6: "Report back the conclusion — flag which findings are durable (project-specific, non-obvious, reusable) so the caller can persist them as skills"
 }
 ```

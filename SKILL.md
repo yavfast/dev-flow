@@ -51,8 +51,9 @@ an unbiased perspective on the changes.
 | — | `/dev-flow fix <problem>` | Analyze bug, plan fix, implement, verify | Fixed code + build/test result |
 | — | `/dev-flow rule <request>` | Add, edit, or remove coding rules (freeform) | Updated `.dev_flow/rules/` |
 | — | `/dev-flow skill <request>` | Find, add, update, or remove project knowledge skills | Updated `.dev_flow/skills/` |
+| — | `/dev-flow cache <request>` | Find, save, update, or remove durable project resources (Figma exports, downloads, baselines) | Updated `.dev_flow/cache/` |
 | — | `/dev-flow status` | Show current state, resume previous session | Status summary |
-| — | `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` — reconcile task state with reality, trim context, compact closed tasks, groom rules/skills | Audit report + cleaned context |
+| — | `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` — reconcile task state with reality, trim context, compact closed tasks, groom rules/skills/cache | Audit report + cleaned context |
 | — | `/dev-flow ask <question>` | Read-only Q&A about code or feasibility — no changes | Answer + optional next-step suggestion |
 | — | `/dev-flow subtask <task>` | Delegate secondary task to subagent (runs any dev-flow phase: fix, test, ask, etc.) | Subtask report |
 | — | `/dev-flow do <request>` | Freeform routing — interpret intent and run the right phases | Phase output + updated context |
@@ -71,12 +72,20 @@ an unbiased perspective on the changes.
 > gates. Produces `docs/*.spike.md` and persists durable findings to
 > `.dev_flow/skills/`. See [research phase](phases/research.md).
 
+> **Cache command:** Use `/dev-flow cache <request>` to manage `.dev_flow/cache/` —
+> the durable, indexed store for expensive-to-reacquire resources (Figma exports,
+> downloaded documents, baseline screenshots). Check its `_index.yaml` before any
+> expensive re-fetch; anything linked from docs or task files lives here, never in
+> `/tmp`. Transient artifacts go to the project workspace `/tmp/{project-slug}/`
+> with timestamped names. See [cache phase](phases/cache.md).
+
 > **Audit command:** Use `/dev-flow audit` for the periodic whole-directory revision
 > of `.dev_flow/` — it reconciles every task's recorded state against reality (linked
 > docs + git), trims the dashboard, compacts/reflects on closed tasks (archiving noise,
-> harvesting lessons into rules/skills), and grooms the `rules/` and `skills/` catalogues.
-> Where [status](phases/status.md) *reports* drift, `audit` *resolves* it. Supports
-> `--dry-run` (report only) and a `scope` (`context` / `tasks` / `rules` / `skills` / `all`).
+> harvesting lessons into rules/skills), and grooms the `rules/`, `skills/`, and `cache/`
+> catalogues. Where [status](phases/status.md) *reports* drift, `audit` *resolves* it.
+> Supports `--dry-run` (report only) and a `scope`
+> (`context` / `tasks` / `rules` / `skills` / `cache` / `all`).
 
 > **Phase 0 (Onboard):** Optional. Run once when adopting dev-flow for an existing project.
 > Analyzes code bottom-up (utilities first), generates concepts, specs, and plans.
@@ -260,9 +269,9 @@ All documents live in `docs/` directories. One concept = one file set:
 When `docs/` has more than 5 documents, maintain an `_index.md` catalog.
 
 > **Index format convention:** machine-read catalogues (`.dev_flow/rules/`,
-> `.dev_flow/skills/`, `.dev_flow/roles/`) use `_index.yaml` — structured entries
-> agents match against. Human-browsed catalogues (`docs/`, `.dev_flow/tasks/`)
-> use `_index.md`. Apply the same split to any new collection.
+> `.dev_flow/skills/`, `.dev_flow/roles/`, `.dev_flow/cache/`) use `_index.yaml` —
+> structured entries agents match against. Human-browsed catalogues (`docs/`,
+> `.dev_flow/tasks/`) use `_index.md`. Apply the same split to any new collection.
 
 `docs/_glossary.md` is the project's canonical domain vocabulary (term → definition
 + aliases to avoid). It is created lazily (during onboard, or when the first
@@ -297,6 +306,7 @@ rewrites parts authored by others.
 ```
 .dev_flow/
 ├── active_context.md          # Dashboard — table of active tasks + recently completed
+├── cache/                     # Durable resources (Figma exports, downloads, baselines) + _index.yaml
 ├── tasks/
 │   ├── _index.md              # Catalog of task files (conventions + active/recent lists)
 │   ├── task_<ID>.md           # Per-task shared context — multiple contributors
@@ -337,6 +347,13 @@ status, contributors, and last-updated. **No per-task details live here.**
 - **Project-knowledge gate (first).** Read `.dev_flow/rules/_index.yaml` and
   `.dev_flow/skills/_index.yaml`, load what's relevant to the area you touch, and obey it —
   see [Project Knowledge Is Binding].
+- **Resource gate.** Before an expensive external fetch (Figma export, web document),
+  check `.dev_flow/cache/_index.yaml` and reuse a cached copy (no-op while the directory
+  is absent); an entry past its `valid_until` gets a cheap currency check (ETag, Figma
+  version) before any re-fetch. After an expensive fetch, save the artifact back — a
+  delegated subagent *stages* it in the workspace and reports, the calling agent writes
+  the cache. Transient artifacts follow the workspace discipline —
+  `/tmp/{project-slug}/` with timestamped names. See [cache phase](phases/cache.md).
 - At the **start** of any phase:
   - **Continuation** — locate the task via `active_context.md`. If your own
     Subtask block exists, resume it. If you have no block in this task yet,
@@ -391,7 +408,9 @@ in shared sections. The dashboard and catalog are updated with **targeted edits*
 - **Dashboard size:** `active_context.md` stays under ~80 lines. "Recently
   completed" keeps the latest 5 — older entries go to `session_history/`.
 - **No large blobs** in any context file: never store logs, diffs, or verbose
-  narratives — reference a file instead.
+  narratives — reference a file instead: durable resources from `.dev_flow/cache/`,
+  transient output from the project workspace in `/tmp` (see [cache phase](phases/cache.md)).
+  Never link a `/tmp` path from a doc or task file.
 
 See [status phase](phases/status.md) for the full read/write protocol, regeneration
 procedure, and archive flow.
@@ -461,6 +480,7 @@ reveals a coding pattern, constraint, or convention that is not yet captured in
 - [Fix phase](phases/fix.md) *(analyze, plan, fix, verify)*
 - [Rule phase](phases/rule.md) *(add/edit/remove coding rules)*
 - [Skill phase](phases/skill.md) *(manage project knowledge skills)*
+- [Cache phase](phases/cache.md) *(durable resource cache `.dev_flow/cache/` + `/tmp` workspace discipline)*
 - [Status phase](phases/status.md) | Templates: [task_context](templates/task_context.md), [active_context (dashboard)](templates/active_context.md), [tasks_index](templates/tasks_index.md)
 - [Audit phase](phases/audit.md) *(full `.dev_flow/` revision — reconcile, trim, compact + reflect, groom rules/skills)*
 - [Ask phase](phases/ask.md) *(read-only Q&A, no file changes)*

@@ -43,8 +43,9 @@ Additional commands:
 | `/dev-flow ask <question>` | Read-only Q&A — no file changes |
 | `/dev-flow rule <request>` | Manage project coding rules |
 | `/dev-flow skill <request>` | Manage project technology knowledge |
+| `/dev-flow cache <request>` | Manage durable project resources (Figma exports, downloads, baselines) |
 | `/dev-flow status` | Show current state, resume previous session |
-| `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` — reconcile state, trim context, compact closed tasks, groom rules/skills |
+| `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` — reconcile state, trim context, compact closed tasks, groom rules/skills/cache |
 | `/dev-flow <anything>` | Freeform — auto-routes to the right phase |
 
 ## Installation
@@ -239,6 +240,10 @@ Interview Mode chooses among *known* options — but sometimes the options thems
 
 The pipeline's default is "code must satisfy the spec" — but sometimes a downstream phase is where reality pushes back on the *document*: a live test disproves a spec'd limit, implementation finds two defensible readings of a contract, a plan's technology choice fails in practice. Instead of bending the code or silently editing the spec, dev-flow escalates: stop, fix the owning document (through an interview if it's a fork), re-pass its gate, then resume. See [`references/escalation.md`](references/escalation.md).
 
+### Resource Cache & Temp Workspace
+
+Expensive-to-reacquire resources — Figma layouts fetched over rate-limited MCP access, downloaded documents, baseline screenshots — die in `/tmp` on the next reboot. dev-flow keeps them in **`.dev_flow/cache/`**: a per-project store organized by source domain (`figma/`, `web/`, `app/`, `data/`) with an `_index.yaml` that records each file's source, summary, and references — so an agent checks the cache *before* spending another fetch, and anything linked from docs or task files outlives the session. Truly transient artifacts (logs, repro dumps, throwaway captures) go to one project workspace — `/tmp/{project-slug}/` — with **timestamped names** (`test-run_20260610_143205.log`), never numeric suffixes; whatever turns out durable is promoted to the cache. See [`phases/cache.md`](phases/cache.md).
+
 ### Language Independence
 
 Concepts and specifications are **language-agnostic** — no programming languages, frameworks, or libraries mentioned. Implementation technology is chosen only in the Plan phase. This keeps design decisions clean and portable.
@@ -292,10 +297,16 @@ your-project/
     │   ├── naming.md
     │   ├── structure.md
     │   └── ...
-    └── skills/                     # Project technology knowledge
+    ├── skills/                     # Project technology knowledge
+    │   ├── _index.yaml
+    │   └── {domain}/
+    │       └── {skill}.md
+    └── cache/                      # Durable resources (gitignore by default)
         ├── _index.yaml
-        └── {domain}/
-            └── {skill}.md
+        ├── figma/                  # Design exports
+        ├── web/                    # Downloaded documents
+        ├── app/                    # Baseline screenshots
+        └── data/                   # Samples, fixtures
 ```
 
 ## Skill Structure
@@ -303,7 +314,7 @@ your-project/
 ```
 dev-flow/
 ├── SKILL.md              # Main skill definition and pipeline
-├── phases/               # 18 phase definitions
+├── phases/               # 19 phase definitions
 │   ├── research.md
 │   ├── concept.md
 │   ├── specification.md
@@ -319,6 +330,7 @@ dev-flow/
 │   ├── do.md
 │   ├── rule.md
 │   ├── skill.md
+│   ├── cache.md
 │   ├── status.md
 │   ├── subtask.md
 │   └── audit.md
