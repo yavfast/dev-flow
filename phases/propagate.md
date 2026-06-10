@@ -126,9 +126,16 @@ Produce a drift report listing:
 - When joining a project (as part of onboard)
 - Periodically (e.g., monthly) on active projects
 
+The [Impact Walk](../references/impact.md) reuses this ID-collection machinery to
+answer the *neighborhood* question for a single node — keep the two on one
+collection approach.
+
 ## Cascade Impact Assessment
 
-Before making a change:
-1. List all documents in the `Used by` chain.
+Before making a change, enumerate the chain with the
+[Impact Walk](../references/impact.md) (docs + code bindings + active tasks)
+instead of walking by hand:
+
+1. Take the `Used by` chain from the walk's radius.
 2. For each dependent, check if the change breaks any assumptions.
 3. If the cascade affects more than 3 documents — consider whether concept boundaries are wrong.

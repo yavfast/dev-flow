@@ -45,7 +45,7 @@ This command is handled by **Advisor**:
 |---------------|-----------|----------|
 | **Code understanding** | "how does X work", "what does Y do", "де визначено Z" | Read source, trace call chains, explain |
 | **Feasibility analysis** | "can we", "is it possible", "чи можливо", "what would it take" | Analyze architecture, identify constraints, assess effort |
-| **Impact assessment** | "what would break", "which modules affected", "що зміниться" | Trace dependencies, list affected files and contracts |
+| **Impact assessment** | "what would break", "which modules affected", "що зміниться" | Run the [Impact Walk](../references/impact.md) — trace dependencies, list affected docs, files, active tasks |
 | **Architecture question** | "why is X designed this way", "чому так", "what pattern" | Read code + docs, explain design decisions |
 | **Where to find** | "where is", "де знаходиться", "which file" | Search codebase, return file paths and relevant lines |
 
@@ -77,9 +77,10 @@ Structure the answer based on question type:
 - Estimated scope: small (1 spec section), medium (1 concept), large (multiple concepts)
 - Risks or open questions
 
-**For impact assessment:**
+**For impact assessment** (produced by the [Impact Walk](../references/impact.md)):
 - List of affected files and modules
 - Which concepts/specs/plans would need updating
+- Active tasks inside the radius (coordination risk)
 - Breaking vs non-breaking change assessment
 
 **For architecture questions:**

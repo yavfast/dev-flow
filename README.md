@@ -366,6 +366,7 @@ dev-flow/
 │   ├── interview-mode.md        # Surfacing design forks to the developer
 │   ├── escalation.md            # Upstream escalation (doc wrong, not code)
 │   ├── delegation.md            # Delegation for focus (subagents)
+│   ├── impact.md                # Impact Walk — blast radius of a change
 │   ├── roles.md                 # Base vs project-overlay roles
 │   ├── glossary.md              # Project domain vocabulary
 │   └── solid-architecture.md

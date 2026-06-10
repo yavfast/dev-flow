@@ -109,7 +109,9 @@ decision instead of per-phase skip rules:
 | **Internal refactor** | Structure changes, contracts identical | [Refactoring Protocol](plan.md#refactoring-protocol) (plan-only workflow) |
 
 When unsure between two classes, take the heavier one — under-classifying is how
-drift starts. The [propagation matrix](propagate.md#change-type-propagation-matrix)
+drift starts. When the class hinges on how far the change reaches, run the
+[Impact Walk](../references/impact.md) — the radius (docs / code bindings / active
+tasks) is the evidence. The [propagation matrix](propagate.md#change-type-propagation-matrix)
 remains the per-document authority on what must be updated; change classes decide
 where the route *starts*.
 

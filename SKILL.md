@@ -471,6 +471,7 @@ reveals a coding pattern, constraint, or convention that is not yet captured in
 - [Interview Mode](references/interview-mode.md) *(cross-cutting sub-procedure of concept/spec/plan/fix — surface design forks to the developer instead of choosing silently)*
 - [Upstream Escalation](references/escalation.md) *(cross-cutting sub-procedure of implement/test/review/verify/fix — when evidence shows the spec/plan/concept is wrong, fix the document, don't bend the code)*
 - [Delegation for Focus](references/delegation.md) *(cross-cutting sub-procedure of implement/fix/verify — delegate noisy work to a subagent, keep only the conclusion)*
+- [Impact Walk](references/impact.md) *(cross-cutting sub-procedure of ask/do/propagate/review — blast radius of a change: docs, code bindings, active tasks)*
 - [Roles](references/roles.md) *(base vs project-overlay subagent roles — reuse what exists, create new under .dev_flow/roles/ via inherits)*
 - [Glossary](references/glossary.md) *(`docs/_glossary.md` — canonical domain vocabulary; created at onboard/concept, loaded with `_index.md`)*
 - [Implement phase](phases/implement.md)

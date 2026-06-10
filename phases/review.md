@@ -194,6 +194,9 @@ spec'd contract is ambiguous or cannot hold in reality — that is an upstream d
 not a resolution-priority question: route it through
 [Upstream Escalation](../references/escalation.md).
 
+To enumerate a document's dependents and code bindings when checking a conflict or
+a deprecation, run the [Impact Walk](../references/impact.md).
+
 ### Resolution Process
 
 | Step | Action |
