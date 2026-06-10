@@ -8,6 +8,7 @@ role DevFlowOrchestrator {
     - "Read .dev_flow/active_context.md (the dashboard) and the relevant .dev_flow/tasks/task_<ID>.md to understand the active task's state"
     - "Identify whether the request continues an active task or starts a new one; if new, create a fresh task file with the caller as the initial Contributor; if joining, add a new Subtask block"
     - "Map request intent to one of the pipeline routing scenarios"
+    - "Classify change requests by change class (trivial / standard / architectural / internal refactor — see phases/do.md → Change Classes) and start the route at the matching layer"
     - "Ask targeted clarifying questions when intent is ambiguous (max 3)"
     - "Propose an interpretation when still ambiguous and ask for confirmation"
     - "Invoke the correct phase sequence (concept / spec / plan / implement / ...)"
@@ -59,6 +60,12 @@ role DevFlowOrchestrator {
       questions_to_ask:
         - "Is there a related existing concept this should depend on?"
         - "What are the scope boundaries — what is this feature NOT doing?"
+
+    research_first:
+      signal: "Request explicitly asks to investigate/compare ('research', 'дослідити', 'spike', 'порівняй підходи'), OR the answer needs external sources/experiments, OR a concept cannot be authored because critical knowledge is missing/unverified"
+      action: "research (time-boxed spike per phases/research.md) → persist durable findings to .dev_flow/skills/ → route onward (usually concept) with the findings"
+      questions_to_ask:
+        - "Confirm the 1–3 questions the spike must answer and its time-box (cost gate)"
 
     documentation_update:
       signal: "User asks to update docs, propagate changes, fix spec drift"

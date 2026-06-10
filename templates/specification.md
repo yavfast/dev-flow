@@ -6,8 +6,8 @@
 > **Updated:** YYYY-MM-DD
 >
 > **Concept:** [C_XXX](./concept_file.md)
-> **Depends on specs:** {list of [SP_YYY](./path) references, or "none"}
-> **Used by specs:** {list of [SP_ZZZ](./path) references, or "—"}
+> **Depends on:** {list of [SP_YYY](./path) references, or "none"}
+> **Used by:** {list of [SP_ZZZ](./path) references, or "—"}
 > **Plan:** [name.plan.md](./name.plan.md)
 >
 > {Brief description of what this specification defines.}

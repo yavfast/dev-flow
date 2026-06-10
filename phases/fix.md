@@ -131,6 +131,12 @@ related documentation artifacts:
 If any updates are needed, either apply them immediately (for small changes)
 or flag them explicitly in the result report for the user to decide.
 
+When root-cause analysis shows the **document itself is defective** — the spec is
+ambiguous or contradicts reality, not merely lagging behind the fix — do not patch
+it silently as "impact": follow [Upstream Escalation](../references/escalation.md)
+(surface the correction or fork to the developer, update the owning document,
+re-pass its gate).
+
 ## Diagnosis (optional)
 
 An optional sub-step of **Step 1**, entered only when the confidence gate fails — you

@@ -13,7 +13,9 @@ file paths, and task tracking. This is where language, framework, and library de
   `[DONE]`, `[IN PROGRESS]`, `[TODO]`, or `[BACKLOG]`.
 - **Top-level progress summary:** The plan must have a checkbox summary
   showing overall progress at a glance.
-- **Backlog section:** Out-of-scope items go to the backlog at the bottom.
+- **Backlog section:** Out-of-scope items go to the backlog at the bottom. Each item
+  names the **trigger** that returns it to scope (event or date) or an owner who
+  decides — an untriggered backlog item is a hidden "later" ([audit](audit.md) flags them).
 - **No orphaned phases:** Every phase must reference which spec sections it implements.
 - **Pseudocode, not production code:** Include short sketches to clarify intent,
   but do not write full implementation.
@@ -57,8 +59,8 @@ genuinely open technology forks. See **[Interview Mode](../references/interview-
 >
 > **Concept:** [C_XXX](./concept_file.md)
 > **Specification:** [SP_XXX](./spec_file.sp.md)
-> **Depends on plans:** [PL_YYY](./other.plan.md)
-> **Used by plans:** [PL_ZZZ](./another.plan.md)
+> **Depends on:** [PL_YYY](./other.plan.md)
+> **Used by:** [PL_ZZZ](./another.plan.md)
 >
 > Brief description of the implementation goal.
 
@@ -119,9 +121,9 @@ Pseudocode sketch:
 
 ## Backlog
 
-Items deferred from the current implementation cycle:
-- Admin UI for management
-- Dynamic configuration
+Items deferred from the current implementation cycle (each with a return trigger):
+- Admin UI for management — return when: first admin-facing feature is scheduled
+- Dynamic configuration — return when: second consumer of the config appears
 
 ## Design Decisions  {#PL_XXX_DEC}
 

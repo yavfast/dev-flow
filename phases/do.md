@@ -83,11 +83,34 @@ Analyze the freeform request against the loaded context to determine:
 | **Understand state** | "що зроблено", "status", "де я?" | status |
 | **Revise / housekeep context** | "ревізія", "audit", "почисти контекст", "синхронізуй задачі", "оновити індекси", "groom", "tidy up", "compact", "retrospective" | audit |
 | **Delegate side task** | "subtask", "delegate", "делегуй", "зроби паралельно", "offload", explicit secondary task during active work | subtask |
-| **Question (no changes)** | "how does", "як працює", "can we", "чи можливо", "where is", "де знаходиться", "is it feasible" | ask |
+| **Question (no changes)** | "how does", "як працює", "can we", "чи можливо", "where is", "де знаходиться", "is it feasible" — answerable from codebase + docs | ask |
+| **Research / investigate** | "research", "дослідити", "spike", "compare approaches", "порівняй підходи", "не знаю, який підхід", "what's the best way to" — answer needs external sources, measurements, or an unexplored solution space | research |
 | **Plan only** | "plan", "сплануй", no code changes mentioned | plan |
 
 When the intent is **ambiguous**, ask 1–2 targeted clarifying questions before routing.
 Do **not** start executing before the intent is clear.
+
+If the request requires knowledge nobody has yet (unfamiliar domain, unverified
+library capability, unknown solution space) — route through [research](research.md)
+*first*, then continue to the design phases with the findings.
+
+### Change Classes
+
+For change requests (not questions/research), classify the change **before** routing —
+this is what scales the pipeline ceremony to the size of the change, in one explicit
+decision instead of per-phase skip rules:
+
+| Class | What it is | Route |
+|-------|-----------|-------|
+| **Trivial** | No behavior change: typo, comment, log message, rename with no contract impact | implement → test (if suite exists) → review → commit approval. Skip concept/spec/plan edits; pre-commit review stays a clean-context subagent ([review phase](review.md)) — it just has little to read |
+| **Standard** | Behavior changes within an existing spec'd area: new field, changed validation, UI element | spec → plan → implement → full Test/Review/Verify pipeline |
+| **Architectural** | New capability, new entity, changed mechanism or boundary | concept → spec → plan → implement → full pipeline |
+| **Internal refactor** | Structure changes, contracts identical | [Refactoring Protocol](plan.md#refactoring-protocol) (plan-only workflow) |
+
+When unsure between two classes, take the heavier one — under-classifying is how
+drift starts. The [propagation matrix](propagate.md#change-type-propagation-matrix)
+remains the per-document authority on what must be updated; change classes decide
+where the route *starts*.
 
 ### Step 3: Ask clarifying questions (if needed)
 
@@ -220,7 +243,13 @@ User request received
 │   └─ audit
 │
 ├─ Question about code / feasibility (no changes requested)
-│   └─ ask
+│   ├─ Answerable from codebase + docs
+│   │   └─ ask
+│   └─ Needs external sources / experiments / unknown solution space
+│       └─ research (time-boxed spike)
+│
+├─ Knowledge missing to even start a concept
+│   └─ research → then concept with the findings
 │
 ├─ Side task during active work
 │   └─ subtask (delegate to subagent)

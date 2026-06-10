@@ -189,6 +189,11 @@ A conflict exists when:
 - A specification contradicts another specification it depends on.
 - A new concept requires changes to an existing concept that others depend on.
 
+When the conflict is not doc ↔ doc but **evidence ↔ doc** — review findings show a
+spec'd contract is ambiguous or cannot hold in reality — that is an upstream defect,
+not a resolution-priority question: route it through
+[Upstream Escalation](../references/escalation.md).
+
 ### Resolution Process
 
 | Step | Action |

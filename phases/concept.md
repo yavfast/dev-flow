@@ -20,6 +20,13 @@ Before creating a new concept, answer these questions. If any answer is unclear 
 - [ ] **What is the rollback strategy?** How to undo this if it fails or is deprecated. Record in "1.2 Design Constraints".
 - [ ] **Who will maintain this?** Which role, team, or module is responsible long-term.
 
+**Answers must rest on verified knowledge, not guesses.** If a critical answer
+depends on something nobody has confirmed — an unfamiliar domain, an unverified
+capability, an unexplored solution space — run **[research](research.md)**
+(`/dev-flow research`) before authoring. Proceeding on an unverified assumption is
+a user decision: record it as an **open** Design Decision with a resolution
+trigger, never as silent confidence. The Concept → Spec gate checks this.
+
 ## Reuse Check
 
 **Mandatory before creating a new concept.** Prevents duplication and "reinventing the wheel".
@@ -30,6 +37,19 @@ Before creating a new concept, answer these questions. If any answer is unclear 
 4. Document findings in section "1.2 Design Constraints" or as a spike.
 
 If reuse check reveals that the problem is already covered — extend the existing concept instead.
+
+## Context Loading
+
+Loading project knowledge is a **gate** (see
+[Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding)):
+
+**Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml` and load skills for the
+concept's domain — known constraints and pitfalls bound what the architecture can promise.
+See [skill phase](skill.md).
+
+**Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml`
+and load architecture rules for the area; the concept MUST NOT propose a mechanism that
+violates a `must` rule. See [rule phase](rule.md).
 
 ## Project Glossary
 
@@ -100,6 +120,7 @@ that become permanent technical debt:
 | "will refactor later" / "потім переробимо" | Deferred cleanup rarely happens | Either do it now or create a separate concept for the refactoring |
 | "for now" / "поки що" | Same as "temporarily" | State the permanent design decision |
 | "simple wrapper around X" | Wrappers grow into unmaintainable layers | Describe the actual abstraction and its boundaries |
+| "TBD" / "to be defined" | A hidden deferral with no owner and no trigger | Resolve it now, run a [research spike](research.md), or record an open decision with a resolution trigger |
 
 ## Structure
 
@@ -189,33 +210,26 @@ section only if authoring surfaced no decision points. One record per decision:
 
 Before writing a concept, you may need to explore an idea: research libraries,
 prototype approaches, or discuss trade-offs. This is formalized as a **spike** —
-a lightweight, time-boxed exploration that feeds into the concept.
+a lightweight, time-boxed exploration that feeds into the concept. Spikes are
+executed by the **[research phase](research.md)** (`/dev-flow research`, alias
+`spike`) — it owns the cost gate, the delegation to the researcher subagent, the
+spike rules, and persisting durable findings to `.dev_flow/skills/`.
 
 ### When to Spike
 
 - The domain is unfamiliar — need to understand constraints before committing to an architecture.
-- Multiple competing approaches exist — need to compare before choosing.
+- Multiple competing approaches exist — need to compare before choosing
+  (the spike *discovers* options; the [interview](../references/interview-mode.md) then *chooses*).
 - A critical technical question blocks concept authoring (e.g., "can library X handle Y?").
+- A Pre-Concept Checklist answer rests on an unverified assumption.
 - The user explicitly asks for exploration before design.
 
-### Spike Workflow
+When any of these hold mid-authoring, pause the concept, run the
+[research phase](research.md), then resume with the findings. Reference the spike
+from the concept: `Spike: [name.spike.md](./name.spike.md)`.
 
-```
-1. Create a spike file: docs/{name}.spike.md
-2. Define the question(s) to answer and a time/scope boundary
-3. Research, prototype, discuss — log findings as entries
-4. Conclude with a verdict and status
-5. Reference the spike from the concept: Spike: [name.spike.md](./name.spike.md)
-```
-
-### Spike Rules
-
-- A spike is **throwaway research**, not a deliverable. It does not go through validation gates.
-- Spike conclusions feed into the concept — they do not replace it.
-- A spike that produces no clear verdict should be marked `inconclusive` with reasons.
-- Prototypes created during a spike should be deleted or moved to a scratch directory — they must NOT become production code.
-
-See [spike template](../templates/spike.md) for the file structure.
+See [research phase](research.md) for the full procedure and spike rules, and the
+[spike template](../templates/spike.md) for the file structure.
 
 ## Concept Granularity
 

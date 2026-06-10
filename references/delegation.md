@@ -85,6 +85,7 @@ might need the main agent's full context. Use judgment.
 | Build / verify run (verify) | Yes | pass/fail + failures that matter, log path | fast / cheap |
 | Regression / integration / live (verify) | Yes | verdict + failures, artifact paths | fast / cheap |
 | Diagnosis: reproduce + instrument (fix) | Yes | confirmed cause + evidence, log path | fast / cheap |
+| Spike investigation (research) | Yes | verdict + findings + recommendation; raw material stays in the spike file | standard / strong — weighing sources and trade-offs needs judgment |
 | Broad code search ("where is X used?") | Yes | findings + file:line list | fast / cheap |
 | Pre-commit review | Yes (clean ctx) | blocking issues + warnings | standard / strong |
 | Untangle a tangled root cause | Borderline | cause + reasoning | stronger |

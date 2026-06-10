@@ -75,7 +75,8 @@ should follow:
 |-------------|-------|-------|
 | Bug report, error, "fix" | `fix` | Full fix protocol: analyze → plan → implement → verify |
 | "Write tests", "add tests" | `test` | Follow testing phase protocol |
-| "Research", "find out", "ask" | `ask` | Read-only analysis, no file changes |
+| "Find out", "where is", "ask" — answerable from the codebase | `ask` | Read-only analysis, no file changes |
+| "Research", "investigate", "compare approaches" — needs external sources or experiments | `research` | Time-boxed spike; report returns verdict + skill-worthy findings (the main agent persists them) |
 | "Refactor", "extract", "rename" | `implement` | Code changes following plan |
 | "Update spec", "update docs" | `propagate` | Documentation updates |
 | General / no clear phase | — | Freeform execution with scope boundaries |
@@ -141,7 +142,8 @@ When done, provide a brief report (under 300 words) containing:
 
 Choose the appropriate subagent type:
 - **Explore** — for `ask` phase (read-only search and analysis)
-- **general-purpose** — for `fix`, `implement`, `test`, `propagate`, and freeform tasks
+- **general-purpose** — for `fix`, `implement`, `test`, `propagate`, `research`
+  (writes the spike file), and freeform tasks
 - Use `run_in_background: true` when the main task can continue without the result
 
 **Pick the model to fit the task** by its nature, not a fixed name — fast/cheap for

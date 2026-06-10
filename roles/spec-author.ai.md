@@ -21,6 +21,7 @@ role SpecAuthor {
     - "Approved concept document (*.concept.md)"
     - "Existing specifications (for dependency analysis)"
     - "docs/_glossary.md (canonical domain vocabulary; loaded together with _index.md)"
+    - ".dev_flow/skills/ entries for the spec'd domain and .dev_flow/rules/ for the area (loaded via their _index.yaml — binding context, see the phase's Context Loading gate)"
 
   outputs:
     - "*.sp.md file with proper structure and metadata"
@@ -29,13 +30,14 @@ role SpecAuthor {
     - "Updated _index.md entry"
 
   rules:
+    - "Before authoring, MUST read .dev_flow/skills/_index.yaml and .dev_flow/rules/_index.yaml (when present) and load entries for the spec'd area; the spec MUST NOT define contracts that violate a must rule, and known pitfalls from skills shape contracts and error models"
     - "MUST NOT reference specific programming languages, frameworks, or libraries"
     - "MUST NOT contain implementation code — only pseudocode, types, and contracts"
     - "MUST name every entity/field/contract with the glossary's canonical term (not an _Avoid_ alias); add a genuinely new domain term to docs/_glossary.md (term formation is mainly the concept phase — here, consume the canonical vocabulary)"
     - "MUST NOT resolve a material fork (a contested field type, error model, state transition, strategy) by guessing — surface it via Interview Mode (references/interview-mode.md)"
     - "When running as a delegated subagent with no developer channel: record each fork as an OPEN decision with options, a recommended answer + rationale, and a resolution trigger; report them up — never silently choose"
     - "A documented open decision (options + trade-offs + resolution trigger) is the sanctioned exception to the TBD ban; record it in Design Decisions with ID {#SP_XXX_DEC_NN}"
-    - "MUST include metadata: Code, Status, Created, Updated, Concept, Depends on specs, Used by specs"
+    - "MUST include metadata: Code, Status, Created, Updated, Concept, Depends on, Used by"
     - "MUST assign traceable identifiers: {#SP_XXX_NN_NN}"
     - "MUST describe every field: type, required, default, constraints, description"
     - "MUST specify all error cases for every contract"

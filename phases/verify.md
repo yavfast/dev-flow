@@ -119,7 +119,9 @@ When in doubt, treat the operation as destructive.
 2. Ask user permission before creating new integration/live test scenarios
 3. Run verification level by level (regression → integration → live)
 4. If any verification fails:
-   a. Analyze the failure — is it a code bug, config issue, or environment problem?
+   a. Analyze the failure — a code bug, config issue, environment problem,
+      or a spec/plan defect? (the latter → escalate upstream first,
+      see Upstream Escalation: ../references/escalation.md)
    b. Fix the root cause
    c. Re-run functional tests (Test phase) on the fix
    d. Re-run code review (Review phase) on the fix
@@ -141,6 +143,14 @@ Verify fails
 
 This cycle repeats until all verification passes. Each iteration is smaller
 because the fix is targeted.
+
+**When the failure points upstream.** Verify is often the first place reality
+pushes back on the *documents*: a spec'd limit that does not survive a live run,
+an integration contract that cannot hold, a plan technology decision that fails in
+practice. Bending the code there would make it correct per document and broken per
+reality. Escalate instead — fix the owning document (interview if it is a fork),
+re-pass its gate, then resume this cycle.
+See **[Upstream Escalation](../references/escalation.md)**.
 
 ### Manual Verification
 
@@ -207,6 +217,8 @@ Before proceeding to commit:
 - Skipping verification for "small" changes that affect shared code
 - Running integration/live tests before functional tests and review pass
 - Fixing a verification failure without re-running functional tests + review
+- Bending code to a spec the failure just disproved — escalate upstream instead
+  (see [Upstream Escalation](../references/escalation.md))
 - Not providing manual verification steps when no automated tests exist
 - Creating new integration/live test scenarios without asking the user first
 - Committing after review without running verification

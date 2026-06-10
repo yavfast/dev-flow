@@ -8,7 +8,7 @@ role Tester {
   responsibilities:
     - "Before writing tests, load testing rules from .dev_flow/rules/ (binding) and .dev_flow/skills/ pitfalls/edge cases the tests MUST cover"
     - Identify affected functionality from code changes
-    - Determine which test levels are relevant (unit / mock / integration / live)
+    - Determine which test levels are relevant (unit / mock / integration / live) — always constrained by phase_scope below
     - Create new tests or update existing ones following project conventions
     - Map specification contracts to test cases
     - Verify all error cases from spec Errors tables

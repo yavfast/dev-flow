@@ -46,6 +46,7 @@ applies.
 | Onboard | [onboard-analyzer.ai.md](../roles/onboard-analyzer.ai.md) | Analyzes a single module (parallelizable) |
 | Onboard | [onboard-rules-extractor.ai.md](../roles/onboard-rules-extractor.ai.md) | Extracts coding rules from codebase into `.dev_flow/rules/` |
 | Onboard | [onboard-docgen.ai.md](../roles/onboard-docgen.ai.md) | Generates docs from analysis (parallelizable) |
+| Research | [researcher.ai.md](../roles/researcher.ai.md) | Time-boxed investigation (spike) — closes knowledge gaps before concept/spec/plan; produces options, never designs |
 | Concept | [concept-author.ai.md](../roles/concept-author.ai.md) | Creates and updates concept documents |
 | Specification | [spec-author.ai.md](../roles/spec-author.ai.md) | Creates and updates specifications |
 | Plan | [plan-author.ai.md](../roles/plan-author.ai.md) | Creates implementation plans |

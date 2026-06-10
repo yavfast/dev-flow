@@ -100,6 +100,21 @@ If the question naturally leads to action, suggest which dev-flow command to run
 
 This is a suggestion only — do not execute anything.
 
+## Escalation to Research
+
+Ask answers from **what exists**: the codebase, the docs, the loaded skills. When
+the honest answer is "this cannot be determined from the project alone" — the
+question hinges on an external library's capability, prior art, measurements, or
+an unexplored solution space — do **not** guess and do not present a hollow
+verdict. Say exactly what is missing and suggest escalating:
+
+> "This can't be answered from the codebase — it depends on whether {X} supports {Y}.
+> Run `/dev-flow research {question}` to investigate (time-boxed spike); findings
+> will be persisted to `.dev_flow/skills/`."
+
+Ask itself stays read-only — the escalation is a suggestion, not an execution.
+See [research phase](research.md).
+
 ## Language Policy
 
 Respond in the **same language** the user used in their question.

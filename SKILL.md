@@ -6,6 +6,7 @@ description: >
   modifying existing functionality, propagating changes across concept-spec-plan-code,
   reviewing documentation pipeline, assessing impact of architectural changes,
   asking questions about the codebase or feasibility of changes (read-only),
+  researching unknowns before committing to a design (spike),
   or working with concept/spec documents.
 user-invocable: true
 argument-hint: "[phase] [target]"
@@ -46,6 +47,7 @@ an unbiased perspective on the changes.
 | 6. Review | `/dev-flow review` | Pre-commit review + validate gates, resolve conflicts | Review report |
 | 7. Verify | `/dev-flow verify [target]` | Regression, integration, and live testing | Verification results |
 | 8. Propagate | `/dev-flow propagate` | Update docs when code changes | Updated docs |
+| — | `/dev-flow research <topic>` | Time-boxed investigation (spike) when knowledge is insufficient for a concept/spec/plan or to close an open decision | `*.spike.md` + updated skills |
 | — | `/dev-flow fix <problem>` | Analyze bug, plan fix, implement, verify | Fixed code + build/test result |
 | — | `/dev-flow rule <request>` | Add, edit, or remove coding rules (freeform) | Updated `.dev_flow/rules/` |
 | — | `/dev-flow skill <request>` | Find, add, update, or remove project knowledge skills | Updated `.dev_flow/skills/` |
@@ -61,6 +63,13 @@ an unbiased perspective on the changes.
 
 > **Ask command:** Use `/dev-flow ask <question>` for read-only questions about
 > the codebase or feasibility of changes. No files are modified, no context is updated.
+
+> **Research command:** Use `/dev-flow research <topic>` (alias: `spike`) when a
+> concept/spec/plan cannot be confidently authored — unfamiliar domain, unverified
+> library capability, unknown solution space — or to close an open Design Decision
+> waiting on facts. Time-boxed and cost-gated; spikes pass through no validation
+> gates. Produces `docs/*.spike.md` and persists durable findings to
+> `.dev_flow/skills/`. See [research phase](phases/research.md).
 
 > **Audit command:** Use `/dev-flow audit` for the periodic whole-directory revision
 > of `.dev_flow/` — it reconciles every task's recorded state against reality (linked
@@ -118,7 +127,9 @@ If the directory is absent, the gate is a no-op. Each relevant phase restates th
 - No contradictions with existing active concepts
 - All integration points listed in Dependencies
 - Scope clearly bounded (what this IS and IS NOT)
-- Pre-Concept Checklist answered (see concept phase)
+- Pre-Concept Checklist answered (see concept phase) — answers rest on verified
+  knowledge: an unverified critical assumption goes through [research](phases/research.md)
+  (spike) first, or is explicitly accepted by the user as an open decision with a trigger
 - Reuse Check completed — no unjustified overlap with existing concepts
 - No banned phrases (see concept phase — Banned Phrases)
 - Minimality: concept describes the minimum viable solution — no "just in case" sections with no stated consumer
@@ -161,6 +172,8 @@ If the directory is absent, the gate is a no-op. Each relevant phase restates th
 - Integration tests pass (if applicable)
 - Live tests pass or manual verification completed (app/service launched, scenario checked)
 - If Verify finds issues → fix code → re-run Test (if exists) → re-run Review → re-run Verify
+- If a failure traces to the spec/plan itself (not the code) — do not bend the code:
+  escalate upstream first (see [Upstream Escalation](references/escalation.md))
 - Ask the user for explicit commit approval before committing
 
 ## Document Status Vocabulary
@@ -194,6 +207,10 @@ For **non-breaking changes** (adding fields, extending contracts, fixing descrip
 edit the existing document in place and update the Changelog.
 
 ## When Modifying Existing Functionality
+
+Scale the ceremony to the change class first (see [do phase → Change Classes](phases/do.md#change-classes)):
+a **trivial** change takes the short route, a **standard** change starts at the spec,
+an **architectural** change runs the full pipeline below.
 
 1. Update the **concept** — what changed in the idea or architecture?
 2. Update the **specification** — what data structures or contracts changed?
@@ -235,11 +252,17 @@ All documents live in `docs/` directories. One concept = one file set:
 | Index | `_index.md` | `docs/_index.md` |
 | Glossary | `_glossary.md` | `docs/_glossary.md` |
 
-> **Spike** is an optional pre-concept investigation artifact. Use it when
-> the problem domain is unclear and you need to explore approaches before
-> committing to a concept. Spikes do not pass through the pipeline gates.
+> **Spike** is an optional pre-concept investigation artifact, produced by the
+> [research phase](phases/research.md) (`/dev-flow research`). Use it when the
+> problem domain is unclear and you need to explore approaches before committing
+> to a concept. Spikes do not pass through the pipeline gates.
 
 When `docs/` has more than 5 documents, maintain an `_index.md` catalog.
+
+> **Index format convention:** machine-read catalogues (`.dev_flow/rules/`,
+> `.dev_flow/skills/`, `.dev_flow/roles/`) use `_index.yaml` — structured entries
+> agents match against. Human-browsed catalogues (`docs/`, `.dev_flow/tasks/`)
+> use `_index.md`. Apply the same split to any new collection.
 
 `docs/_glossary.md` is the project's canonical domain vocabulary (term → definition
 + aliases to avoid). It is created lazily (during onboard, or when the first
@@ -421,10 +444,12 @@ reveals a coding pattern, constraint, or convention that is not yet captured in
 ## Phase Details & Templates
 
 - [Onboard phase](phases/onboard.md) *(optional, for takeover)*
-- [Concept phase](phases/concept.md) | [Template](templates/concept.md) | [Spike template](templates/spike.md)
+- [Research phase](phases/research.md) | [Spike template](templates/spike.md) *(on-demand — time-boxed investigation when knowledge is insufficient; alias `spike`)*
+- [Concept phase](phases/concept.md) | [Template](templates/concept.md)
 - [Specification phase](phases/specification.md) | [Template](templates/specification.md)
 - [Plan phase](phases/plan.md) | [Template](templates/plan.md)
 - [Interview Mode](references/interview-mode.md) *(cross-cutting sub-procedure of concept/spec/plan/fix — surface design forks to the developer instead of choosing silently)*
+- [Upstream Escalation](references/escalation.md) *(cross-cutting sub-procedure of implement/test/review/verify/fix — when evidence shows the spec/plan/concept is wrong, fix the document, don't bend the code)*
 - [Delegation for Focus](references/delegation.md) *(cross-cutting sub-procedure of implement/fix/verify — delegate noisy work to a subagent, keep only the conclusion)*
 - [Roles](references/roles.md) *(base vs project-overlay subagent roles — reuse what exists, create new under .dev_flow/roles/ via inherits)*
 - [Glossary](references/glossary.md) *(`docs/_glossary.md` — canonical domain vocabulary; created at onboard/concept, loaded with `_index.md`)*

@@ -41,7 +41,7 @@ role Propagator {
     step_2: "Update specification (skip only if plan-only adjustment)"
     step_3: "Update implementation plan (skip only for trivial fixes)"
     step_4: "Implement in code (never skip)"
-    step_5: "Run Test → Review → Verify → Commit as per the main pipeline"
+    step_5: "Run Test → Review → Verify → Commit as per the main pipeline (Test and Verify are conditional — if one does not activate for this project, note why in the report and proceed)"
     step_6: "Update document index (skip only if no new/removed concepts)"
 
   cascade_assessment:

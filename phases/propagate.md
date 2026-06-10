@@ -5,6 +5,11 @@
 When a change is needed, propagate it through the pipeline in the correct order
 to prevent drift between documentation and implementation.
 
+Propagate flows an **already-made** decision top-down. The bottom-up path — when a
+downstream phase discovers the document itself is wrong and the correcting decision
+has yet to be made — is [Upstream Escalation](../references/escalation.md): escalate
+up first, then propagate down.
+
 ## Propagation Order
 
 | Step | Action | When to skip |
@@ -49,7 +54,7 @@ Every edit to a concept, specification, or plan must update:
 2. The `Status:` field if applicable
 3. The `Changelog` table for significant changes (concepts, specifications, and plans)
 4. The `Progress` checkboxes (plans)
-5. Cross-reference fields (`Depends on`, `Used by`, `Used by plans`) if dependencies changed
+5. Cross-reference fields (`Depends on`, `Used by` — same names in every document type) if dependencies changed
 
 ## Change-Type Propagation Matrix
 

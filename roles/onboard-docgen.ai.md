@@ -49,8 +49,8 @@ role OnboardDocGen {
     - "Contracts: from analysis Public Contracts — inputs, outputs, errors"
     - "Validation Rules: from analysis Validation Rules"
     - "State Transitions: from analysis State Transitions"
-    - "Depends on specs: reference SP_* from lower layers"
-    - "Used by specs: leave as '—' — will be filled by higher layer doc-gen"
+    - "Depends on: reference SP_* from lower layers"
+    - "Used by: leave as '—' — will be filled by higher layer doc-gen"
     - "Status: active"
     - "Changelog: single entry — 'Initialized from existing codebase via onboard'"
 

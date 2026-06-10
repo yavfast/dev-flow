@@ -7,8 +7,8 @@
 >
 > **Concept:** [C_XXX](./concept_file.md)
 > **Specification:** [SP_XXX](./spec_file.sp.md)
-> **Depends on plans:** {list of [PL_YYY](./path) references, or "none"}
-> **Used by plans:** {list of [PL_ZZZ](./path) references, or "—"}
+> **Depends on:** {list of [PL_YYY](./path) references, or "none"}
+> **Used by:** {list of [PL_ZZZ](./path) references, or "—"}
 >
 > {Brief description of the implementation goal.}
 
@@ -57,9 +57,10 @@ Pseudocode sketch:
 
 ## Backlog
 
-Items deferred from the current implementation cycle:
-- {deferred item 1}
-- {deferred item 2}
+Items deferred from the current implementation cycle (each names the trigger that
+returns it to scope, or the owner who decides):
+- {deferred item 1} — return when: {event or date}
+- {deferred item 2} — return when: {event or date}
 
 ## Design Decisions  {#PL_XXX_DEC}
 

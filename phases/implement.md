@@ -74,10 +74,21 @@ Steps 6, 8, and 10 (run tests, review, verify) flood the context with output tha
 spec — but delegate those verification steps to a subagent and take back only the verdict.
 See **[Delegation for Focus](../references/delegation.md)**.
 
+## When the Spec Pushes Back
+
+"Code must satisfy the spec" assumes the spec is right. If implementation surfaces
+evidence it is not — two defensible readings of a contract, a constraint that cannot
+hold, a plan technology decision that does not work as assumed — do **not** pick a
+reading silently and do not bend the code to a document you have evidence is wrong.
+Stop the affected work item and escalate to the owning document:
+see **[Upstream Escalation](../references/escalation.md)**.
+
 ## Anti-Patterns
 
 - Writing code before the spec is complete
 - Implementing only the "happy path" and ignoring spec error cases
+- Silently choosing one of two defensible spec readings instead of escalating
+  (see [Upstream Escalation](../references/escalation.md))
 - Skipping traceable ID comments
 - Not updating plan status after completion
 - Adding features not described in the specification

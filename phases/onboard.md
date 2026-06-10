@@ -183,7 +183,7 @@ For each analyzed module, starting from Layer 0:
    - Validation rules from code assertions and checks.
    - State transitions from lifecycle patterns.
    - Status: `active`.
-   - Include `Depends on specs` referencing specs from lower layers.
+   - Include `Depends on` referencing specs from lower layers.
 
 3. **Generate plan** (`docs/{module_name}.plan.md`):
    - Status: `completed` (code already implemented).

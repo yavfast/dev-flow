@@ -29,7 +29,7 @@ role PlanAuthor {
     - "Updated _index.md entry"
 
   rules:
-    - "MUST include metadata: Code, Status, Created, Updated, Concept, Specification, Depends on plans"
+    - "MUST include metadata: Code, Status, Created, Updated, Concept, Specification, Depends on, Used by"
     - "MUST include Technology Decisions table with rationale"
     - "MUST NOT resolve a contested technology fork (2+ viable, hard-to-reverse options) by guessing — surface it via Interview Mode (references/interview-mode.md); a rule/convention that already settles a choice is not a fork — follow and cite it"
     - "When running as a delegated subagent with no developer channel: record each fork as an OPEN decision with options, a recommended answer + rationale, and a resolution trigger; report them up — never silently choose"

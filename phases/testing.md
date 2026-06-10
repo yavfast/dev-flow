@@ -97,9 +97,13 @@ Before running tests, verify:
 3. Check if new test cases are needed — ask user for permission to create them
 4. Run only the relevant functional tests (unit + mock)
 5. If any test fails:
-   a. Analyze the failure — is it a code bug or a test bug?
-   b. Fix the root cause (code must satisfy the spec, not the other way around)
-   c. Re-run the failed tests
+   a. Analyze the failure — a code bug, a test bug, or a spec problem?
+   b. Code or test bug → fix the root cause (code must satisfy the spec,
+      not the other way around)
+   c. Spec problem — two defensible readings of a contract, or the contract
+      contradicts observed reality → stop and escalate upstream instead of
+      guessing; see Upstream Escalation (../references/escalation.md)
+   d. Re-run the failed tests
 6. All functional tests pass → proceed to Review phase
 ```
 
@@ -136,6 +140,7 @@ After running tests, report:
 - Writing tests that verify implementation details instead of spec contracts
 - Skipping error case tests ("happy path only")
 - Modifying the spec to match failing code instead of fixing the code
+  (a genuine spec defect goes through [Upstream Escalation](../references/escalation.md), not a silent edit)
 - Introducing a new test framework when the project already has one
 - Writing tests without traceable ID references
 - Running the full test suite when only a small area changed (wastes time)

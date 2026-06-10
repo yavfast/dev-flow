@@ -4,9 +4,11 @@
 > **Created:** YYYY-MM-DD
 > **Updated:** YYYY-MM-DD
 > **Author:** {author}
-> **Time-box:** {estimated scope, e.g., "2 hours", "1 session"}
+> **Time-box:** {budget, e.g., "2 hours", "1 session", "10 sources max"}
+> **Scope:** {codebase / external / prototype — combine as needed}
 >
 > **Target concept:** [C_XXX](./name.concept.md) *(or "to be created")*
+> **Serves:** {open decision this spike must close, e.g. C_XXX_DEC_NN — or "—"}
 > **Question(s):** {1-3 specific questions this spike must answer}
 
 ## Context

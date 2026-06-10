@@ -38,6 +38,7 @@ Additional commands:
 
 | Command | Purpose |
 |---------|---------|
+| `/dev-flow research <topic>` | Time-boxed investigation (spike) when knowledge is missing |
 | `/dev-flow fix <problem>` | Investigate and fix a bug |
 | `/dev-flow ask <question>` | Read-only Q&A — no file changes |
 | `/dev-flow rule <request>` | Manage project coding rules |
@@ -230,6 +231,14 @@ Why the developer and not the AI? Because the developer holds the full context (
 
 Every fork lands in a traceable **Design Decisions** (ADR-style) section of the document, and the validation gates won't pass while a material decision is still open without a trigger. See [`references/interview-mode.md`](references/interview-mode.md).
 
+### Research Spikes
+
+Interview Mode chooses among *known* options — but sometimes the options themselves are unknown: an unfamiliar domain, an unverified library capability, an unexplored solution space. That is the **research phase** (`/dev-flow research <topic>`, alias `spike`): a time-boxed, cost-gated investigation that produces a `docs/*.spike.md` artifact (questions → exploration log → alternatives → verdict) and persists durable findings to `.dev_flow/skills/`. Spikes are throwaway research — they feed the concept, never replace it, and they are the sanctioned way to close an open Design Decision that waits on facts. See [`phases/research.md`](phases/research.md).
+
+### Upstream Escalation
+
+The pipeline's default is "code must satisfy the spec" — but sometimes a downstream phase is where reality pushes back on the *document*: a live test disproves a spec'd limit, implementation finds two defensible readings of a contract, a plan's technology choice fails in practice. Instead of bending the code or silently editing the spec, dev-flow escalates: stop, fix the owning document (through an interview if it's a fork), re-pass its gate, then resume. See [`references/escalation.md`](references/escalation.md).
+
 ### Language Independence
 
 Concepts and specifications are **language-agnostic** — no programming languages, frameworks, or libraries mentioned. Implementation technology is chosen only in the Plan phase. This keeps design decisions clean and portable.
@@ -294,7 +303,8 @@ your-project/
 ```
 dev-flow/
 ├── SKILL.md              # Main skill definition and pipeline
-├── phases/               # 17 phase definitions
+├── phases/               # 18 phase definitions
+│   ├── research.md
 │   ├── concept.md
 │   ├── specification.md
 │   ├── plan.md
@@ -312,7 +322,8 @@ dev-flow/
 │   ├── status.md
 │   ├── subtask.md
 │   └── audit.md
-├── roles/                # 16 AI-DSL subagent roles
+├── roles/                # 17 AI-DSL subagent roles
+│   ├── researcher.ai.md
 │   ├── concept-author.ai.md
 │   ├── spec-author.ai.md
 │   ├── plan-author.ai.md
@@ -338,7 +349,12 @@ dev-flow/
 │   ├── active_context.md       # Dashboard
 │   ├── task_context.md         # Per-task file
 │   └── tasks_index.md          # tasks/_index.md
-├── references/           # Architecture guidelines
+├── references/           # Cross-cutting procedures & guidelines
+│   ├── interview-mode.md        # Surfacing design forks to the developer
+│   ├── escalation.md            # Upstream escalation (doc wrong, not code)
+│   ├── delegation.md            # Delegation for focus (subagents)
+│   ├── roles.md                 # Base vs project-overlay roles
+│   ├── glossary.md              # Project domain vocabulary
 │   └── solid-architecture.md
 └── examples/             # End-to-end walkthrough
     └── rate-limiter.md

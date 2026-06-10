@@ -31,7 +31,9 @@ when a reconciliation reveals that docs and code disagree.
 - `scope` (optional) — limit the sweep to one area. One of:
   `context` (dashboard + task reconciliation + compaction),
   `tasks` (reconcile + compact task files only),
-  `rules`, `skills`, or `all` (default). `all` also grooms `docs/_glossary.md`.
+  `rules`, `skills`, or `all` (default). `all` additionally grooms
+  `docs/_glossary.md`, sweeps open Design Decisions / plan backlogs / stale
+  spikes, and runs docs ↔ code drift detection.
 - `--dry-run` — produce the audit report only; make no changes on disk.
 
 ### Examples
@@ -215,6 +217,34 @@ Runs under `all`. Keep the project glossary lean and true (see
    that crept in (those belong to a concept, not the glossary), and remove general
    tech terms that are not project domain vocabulary.
 
+### Step 7b — Sweep open decisions, backlogs & spikes (under `all`)
+
+Open deferrals are sanctioned only while their trigger lives — this step is what
+keeps them from quietly becoming permanent (see
+[Interview Mode → open decisions](../references/interview-mode.md)):
+
+1. **Open Design Decisions** — scan `docs/*.concept.md|*.sp.md|*.plan.md` for
+   `DEC_NN` records with `Status: open`. For each, check the **resolution
+   trigger** against evidence (dates passed; the named event visible in git,
+   docs, or task files). Trigger expired → flag it in the report and **propose
+   the closing route**: a [research](research.md) run if the missing information
+   is researchable, otherwise an interview with the developer. Never resolve a
+   decision yourself; an open record with a still-live trigger is healthy — leave it.
+2. **Plan backlogs** — flag backlog items that carry no return trigger/owner or
+   whose trigger has expired; propose converting each to an open `DEC_NN` with a
+   trigger, scheduling it into a plan phase, or dropping it explicitly.
+3. **Spikes** — flag `docs/*.spike.md` stuck in `in-progress` beyond their
+   time-box; propose concluding them (`concluded` / `inconclusive` / `abandoned`).
+
+### Step 7c — Docs ↔ code drift detection (under `all`)
+
+Run the [drift detection algorithm](propagate.md#drift-detection-algorithm) from
+the propagate phase: collect traceable IDs from code and docs, cross-reference,
+check freshness by dates. Findings (orphaned references, unreferenced sections,
+stale documents, broken `Depends on`/`Used by` links) go into the report; actual
+doc fixes are routed through [propagate](propagate.md) as proposals — audit
+reports the drift, it does not rewrite design documents.
+
 ### Step 8 — Report
 
 Always end with a structured report (and in `--dry-run`, this is the *only*
@@ -245,10 +275,14 @@ Use this template so the result is scannable:
 🟡 Proposed (need your confirmation)
    • Merge rule <A> into <B> (same constraint: <reason>)
    • Remove stale skill <domain/Name> (references deleted <X>)
+   • Close <DocID>_DEC_NN — trigger expired (<trigger>); route: research / interview
+   • Backlog item "<item>" in <plan> has no return trigger; convert to DEC / schedule / drop
 
 ⚠️ Flagged (evidence insufficient — left unchanged)
    • <task> header says <X> but <Y>; cannot resolve from docs/git
    • Orphan task <task> references missing <doc/ID>
+   • Drift: orphaned code ref <ID> at <file:line> / stale doc <doc> (code changed after Updated:)
+   • Spike <name.spike.md> in-progress beyond its time-box
 
 ✔️ Clean — no action: <areas with nothing to do>
 ```
@@ -268,7 +302,7 @@ Use this template so the result is scannable:
 
 ## Dry-Run
 
-`--dry-run` performs Steps 1–7 as analysis only and emits the Step 8 report
+`--dry-run` performs Steps 1–7c as analysis only and emits the Step 8 report
 without touching disk. Use it to preview a sweep, to review proposed merges and
 removals before committing to them, or to audit a shared `.dev_flow/` you do not
 want to mutate. The report distinguishes what *would* be applied from what would
@@ -281,4 +315,5 @@ be proposed.
 | [status](status.md) | Reuses the read protocol, regeneration procedure, and archive flow. `status` reports drift; `audit` resolves it. |
 | [rule](rule.md) | Catalogue edits and reflection-derived rules follow the rule phase's category/severity model and index format. |
 | [skill](skill.md) | Skill index reconciliation, dedupe, and reflection-derived skills follow the skill phase's non-triviality filter and index chain. |
-| [propagate](propagate.md) | When reconciliation reveals docs and code disagree, route the doc fix through propagate. |
+| [propagate](propagate.md) | When reconciliation reveals docs and code disagree, route the doc fix through propagate. Step 7c runs its drift detection algorithm as part of the sweep. |
+| [research](research.md) | The proposed closing route for expired open-decision triggers whose missing information is researchable, and for stale spikes. |

@@ -25,6 +25,21 @@ Use abstract type notation and pseudocode. Implementation language is chosen in 
   introduces a genuinely new domain term, add it to the glossary. Term *formation* is mainly
   a concept-phase job — here you consume the canonical vocabulary. See [Glossary](../references/glossary.md).
 
+## Context Loading
+
+Loading project knowledge is a **gate** (see
+[Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding)) — a spec
+authored blind to project constraints fails at the Plan gate at the earliest, in
+code at the latest:
+
+**Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml` and load skills matching
+the spec's domain — known pitfalls and platform constraints shape contracts and error
+models. See [skill phase](skill.md).
+
+**Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml`
+and load rules for the spec'd area; the spec MUST NOT define contracts that violate a
+`must` rule (e.g. an error-handling pattern the project forbids). See [rule phase](rule.md).
+
 ## Interview Mode for Design Decisions
 
 Specs are where a concept's choices get pinned to concrete data shapes and
@@ -85,8 +100,8 @@ Every specification must pass these checks before advancing to the plan:
 > **Updated:** YYYY-MM-DD
 >
 > **Concept:** [C_XXX](./concept_file.md)
-> **Depends on specs:** [SP_YYY](./other.sp.md)
-> **Used by specs:** [SP_ZZZ](./another.sp.md)
+> **Depends on:** [SP_YYY](./other.sp.md)
+> **Used by:** [SP_ZZZ](./another.sp.md)
 > **Plan:** [name.plan.md](./name.plan.md)
 >
 > Brief description of what this specification defines.
@@ -254,9 +269,10 @@ This is critical for tracing when and why a contract was modified.
 
 If a specification uses entities or contracts from another specification:
 
-1. **In metadata:** list in `Depends on specs` field.
+1. **In metadata:** list in the `Depends on` field (same-type references — a spec
+   depends on specs; the `Concept:` field carries the cross-type link).
 2. **In body:** reference specific sections:
    ```
    > Uses [SP_ENT_01_03](./entity.sp.md#SP_ENT_01_03) AgentState structure.
    ```
-3. **Reverse references:** the referenced document lists this in `Used by specs`.
+3. **Reverse references:** the referenced document lists this in `Used by`.

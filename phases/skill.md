@@ -36,7 +36,8 @@ Skills are created or updated automatically — without an explicit command — 
 | Trigger | Action |
 |---------|--------|
 | User explains a project-specific pattern | Create or update skill |
-| Web/context7 research was needed for a task | Save consolidated results after task completes |
+| A [research](research.md) run (spike) produced durable findings | The research phase's Step 4 persists them here — this is the primary owner of "external research → consolidated skill" |
+| Web/context7 research was needed mid-task (outside a formal spike) | Save consolidated results after task completes |
 | Non-obvious pattern discovered during `implement` | Add to relevant skill |
 | Bug traced to API/SDK misuse | Add "Pitfalls" entry to relevant skill |
 | `onboard` reverse-engineers a non-trivial pattern | Create skill for it |

@@ -69,8 +69,9 @@ These are complementary, not the same:
 - An **interview** *chooses* among options that are already known. It produces a
   decision.
 
-If you don't yet know the options, you may need a spike first (see
-[concept phase](../phases/concept.md) → Spike). Once options exist, interview.
+If you don't yet know the options, run a spike first — the
+[research phase](../phases/research.md) (`/dev-flow research`) owns that
+procedure. Once options exist, interview.
 
 ## The procedure
 
@@ -193,6 +194,15 @@ Each decision ends in exactly one of two states:
   [concept](../phases/concept.md) and [specification](../phases/specification.md)
   phases). The resolution trigger is what distinguishes a deliberate, bounded
   deferral from rot.
+
+  **Open decisions have a lifecycle, not just a record.** When the missing
+  information is *researchable* (numbers, prior art, library facts), the trigger
+  should name the research — and the [research phase](../phases/research.md) is
+  the sanctioned way to close it: the spike brings back findings, the developer
+  decides, the record flips to `resolved`. The [audit phase](../phases/audit.md)
+  sweeps all `DEC_NN` records for **expired triggers** (the named event/date has
+  passed) and proposes the closing route — so an open decision cannot silently
+  outlive its trigger.
 
 ### Who conducts the interview
 
