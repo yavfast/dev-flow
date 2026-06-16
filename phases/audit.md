@@ -256,8 +256,12 @@ reports the drift, it does not rewrite design documents.
 
 1. **Index ↔ disk** — reconcile `cache/_index.yaml` against the actual files:
    flag files with no entry (invisible) and entries pointing to missing files.
-   Unlike other indexes, the cache index carries `source` metadata that exists
-   nowhere else — **reconcile entry by entry, never regenerate from disk**
+   For a **single-file entry**, the target is its `file`; for a **collection
+   entry**, the targets are every `files[].name` resolved against the entry's
+   `path` — flag a `files[]` sub-entity whose file is missing, and a file under
+   `path` with no matching sub-entity. Unlike other indexes, the cache index
+   carries `source` metadata that exists nowhere else — **reconcile entry by
+   entry (and sub-entity by sub-entity), never regenerate from disk**
    (see [Resource Cache](../references/cache.md)).
 2. **Unreferenced / stale** — flag entries whose `refs` no longer resolve (the
    doc or task that linked them is gone/closed) and snapshots superseded by newer

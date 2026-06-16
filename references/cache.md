@@ -82,31 +82,77 @@ Do **NOT** cache:
 
 ## The Index (`_index.yaml`)
 
-One entry per cached file:
+The index is a list of entries under a `resources:` root. An entry takes one of
+**two shapes** — a single-file entry, or a collection entry when one source
+yields many related files. Pick the shape by counting files, not by domain.
+
+### Single-file entry
+
+For a standalone resource — one file, one `source`:
 
 ```yaml
-- file: figma/auth/login-form.png
-  source: "https://www.figma.com/design/ABC?node-id=12-34"
-  summary: "Login form layout — auth flow baseline"
-  fetched: 2026-06-10
-  trust: controlled                                 # internal | controlled | public
-  valid_until: "auth redesign lands (C_AUTH v2)"   # optional — date or event
-  reacquire: rate-limited                           # optional — only when non-trivial
-  refs: [docs/auth.concept.md, task_C_AUTH]
-
-- file: web/oauth2-rfc6749.html
-  source: "https://datatracker.ietf.org/doc/html/rfc6749"
-  summary: "OAuth 2.0 RFC — snapshot backing the auth spec"
-  fetched: 2026-06-10
-  trust: public
-  checked: 2026-06-10                               # public only — last safety check
-  refs: [docs/auth.sp.md]
+resources:
+  - file: web/oauth2-rfc6749.html
+    source: "https://datatracker.ietf.org/doc/html/rfc6749"
+    summary: "OAuth 2.0 RFC — snapshot backing the auth spec"
+    fetched: 2026-06-10
+    trust: public
+    checked: 2026-06-10                               # public only — last safety check
+    refs: [docs/auth.sp.md]
 ```
 
-- `file` — path relative to `.dev_flow/cache/`.
+### Collection entry (one source → many files)
+
+When a single acquisition yields a *set* of related files — a Figma page's
+frames, a multi-part document, a screenshot series — use one collection entry.
+The metadata shared by every file (`source` base, `fetched`, `trust`,
+`valid_until`, `reacquire`, `path`) lifts to the parent; the `files:` list holds
+**one structured sub-entity per file** — `name`, `source` (its link), `summary`
+(its description). Follow this template:
+
+```yaml
+  - group: figma-auth-redesign
+    kind: figma-export
+    source: "https://www.figma.com/design/ABC"        # base link; per-file locators extend it
+    fetched: 2026-06-10
+    trust: controlled                                 # internal | controlled | public
+    valid_until: "auth redesign lands (C_AUTH v2)"
+    reacquire: rate-limited
+    path: figma/auth/                                 # directory holding the files
+    summary: "Auth redesign frames, all platform variants — C_AUTH / SP_AUTH"
+    refs: [docs/auth.concept.md, task_C_AUTH]
+    files:
+      - name: login-form.png
+        source: "node-id=12-34"                       # this file's own locator
+        summary: "Login form layout — mobile portrait"
+      - name: login-empty.png
+        source: "node-id=12-56"
+        summary: 'Login — empty/error state ("Check your connection")'
+```
+
+Each file is its own object, so adding, editing, or removing one file touches
+exactly one list item — its three facts (name, link, description) stay together.
+That locality is the whole point of the template: a file's `summary` and `source`
+ride *with* its `name`, rather than the link living in the parent's prose and the
+description in a trailing `#` comment on a bare filename.
+
+### Fields
+
+- `file` — (single-file) path relative to `.dev_flow/cache/`.
+- `group` — (collection) kebab-case id for the set; `path` gives its directory and
+  each `files[].name` is a filename within it.
+- `kind` — (collection, optional) the acquisition type that produced the set
+  (`figma-export`, `screenshot-series`, `multi-part-doc`); a hint for grooming and
+  re-fetch, not a controlled vocabulary.
+- `path` — (collection) directory under `.dev_flow/cache/` holding the set's files;
+  each `files[].name` resolves against it.
 - `source` — where it came from: URL, Figma node, "app screenshot of {screen}",
-  or the command that produced it. This is what makes re-fetching possible.
+  or the command that produced it. This is what makes re-fetching possible. On a
+  collection it is the shared base; each `files[].source` is that file's own
+  locator (a node-id, a page anchor) — extending the base or standing alone.
 - `summary` — one line; what an agent matches against when looking for a resource.
+  Required on every entry; on a collection it describes the set as a whole **and**
+  each `files[]` item carries its own one-line `summary`.
 - `fetched` — date of last acquisition.
 - `trust` — security trust level of the source: `internal` / `controlled` /
   `public` (see Trust & Safety below). A `public` entry additionally carries
@@ -121,6 +167,12 @@ One entry per cached file:
   `rate-limited` / `manual` / `paid`. Guides pruning order (cheap-to-refetch
   entries are proposed for removal first) and removal caution.
 - `refs` — optional: docs and task files that link this resource.
+
+Keep shared fields (`source` base, `fetched`, `trust`, `valid_until`,
+`reacquire`, `refs`) on the parent of a collection, and per-file fields (`name`,
+`source` locator, `summary`) in the `files[]` items. A file that would need its
+own `trust` or `fetched` has stopped being part of that set — give it its own
+single-file entry instead.
 
 > **This index is data, not a derived view.** Unlike the task catalog or
 > `docs/_index.md`, the cache index carries `source` metadata that exists nowhere
@@ -291,6 +343,8 @@ ignore rule accordingly.
 - Re-fetching a Figma node or document that is already cached — check the index first
 - Caching logs, build output, or one-off screenshots (workspace material)
 - A cached file with no `_index.yaml` entry — invisible, unfindable, wasted
+- A multi-file source indexed as anything other than the collection template — its
+  per-file links and descriptions belong in `files[]` sub-entities (see The Index)
 - Numeric suffixes (`screenshot-1.png`, `screenshot-2.png`) instead of timestamps
 - Re-downloading a resource when a cheap currency check (ETag/Last-Modified,
   Figma version) would have confirmed it unchanged

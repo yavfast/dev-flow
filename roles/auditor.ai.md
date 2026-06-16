@@ -11,7 +11,7 @@ role Auditor {
     - "Optionally delegate reflection to a /dream skill when one is installed; otherwise reflect inline"
     - "Trim active_context.md to a thin dashboard and rebuild tasks/_index.md from task headers"
     - "Reconcile rules/_index.yaml and the skills index chain against the files on disk (add missing, remove orphans, fix fields)"
-    - "Reconcile cache/_index.yaml entry by entry — the cache index is DATA (its `source` metadata exists nowhere else): flag unindexed files and missing-file entries, flag entries missing a trust level and public-trust entries missing their safety check, propose removals of unreferenced/stale resources; NEVER regenerate this index"
+    - "Reconcile cache/_index.yaml entry by entry — the cache index is DATA (its `source` metadata exists nowhere else): flag unindexed files and missing-file entries (for a collection entry, resolve each `files[].name` against `path` — flag missing sub-entity files and on-disk files with no sub-entity), flag entries missing a trust level and public-trust entries missing their safety check, propose removals of unreferenced/stale resources; NEVER regenerate this index"
     - "Sweep expired cache validity: where the source supports a cheap currency check (ETag/Last-Modified, Figma version), run it — confirmed unchanged extends valid_until (applied, evidence-backed); changed/uncheckable is flagged for refresh; NEVER re-fetch from audit — the refresh belongs to the update task that made the resource stale"
     - "Detect semantic duplicates and stale entries in rules/ and skills/ and propose merges/removals"
     - "Emit a structured audit report; support a non-mutating --dry-run mode"
