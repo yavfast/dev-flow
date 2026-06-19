@@ -156,6 +156,9 @@ Using the cross-module analysis, extract the project's **canonical domain vocabu
 into `docs/_glossary.md`. This gives the doc-generation step (Step 6) one agreed term
 per concept, so the same referent is named the same way across all generated documents.
 
+> Runs **after** Step 4 (all modules analyzed) so the vocabulary is drawn from the
+> complete module set; running it earlier would miss terms from unanalyzed modules.
+
 1. Collect domain nouns recurring across modules (entities, key value objects, core
    events) — **domain terms only**, not general tech (timeouts, DI, interceptors).
 2. Where several words denote one concept, pick the canonical term and list the rest as
@@ -217,14 +220,14 @@ This ensures cross-references (`Depends on`, `Used by`) are accurate.
    - Modules in `issues.md` that need manual attention.
 3. Validate that `.dev_flow/rules/` exists and contains at least `_index.yaml` and one category file.
 4. Validate that `.dev_flow/skills/` exists and contains root `_index.yaml` with at least one domain.
-4a. Validate that `docs/_glossary.md` exists if cross-module domain terms were found (Step 5b), and that its terms match those used in the generated documents.
-5. Generate a summary report in `.dev_flow/onboard/report.md`:
+5. Validate that `docs/_glossary.md` exists if cross-module domain terms were found (Step 5b), and that its terms match those used in the generated documents.
+6. Generate a summary report in `.dev_flow/onboard/report.md`:
    - Total modules analyzed.
    - Documents generated (concepts, specs, plans, epics).
    - Rules extracted (count per category, total).
    - Issues requiring manual attention.
    - Suggested next steps.
-6. Update `state.yaml`: `status: completed`.
+7. Update `state.yaml`: `status: completed`.
 
 ### Step 9: Cleanup (optional, after user approval)
 

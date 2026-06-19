@@ -295,6 +295,11 @@ fix or coordinate first.
 
 ## Context Hygiene
 
+> **Canonical hygiene caps.** This section is the single source of truth for the
+> context-hygiene limits (activity-log entries, task-file/dashboard sizes). The
+> [audit phase](audit.md) enforces them and SKILL.md summarizes them — both defer
+> to the numbers here.
+
 **Principle:** task files are "shared state as of now", not journals. Per-section
 logs are the only history kept in-place, and they are capped.
 

@@ -51,7 +51,8 @@ when a reconciliation reveals that docs and code disagree.
 
 - Periodically (e.g. end of a milestone, before a release, on a cadence).
 - When `/dev-flow status` reports drift, stale tasks, or missing/incorrect indexes.
-- When `active_context.md` has grown past its hygiene cap (~80 lines) or carries
+- When `active_context.md` has grown past its hygiene cap (~80 lines — caps defined
+  in [status phase → Context Hygiene](status.md#context-hygiene)) or carries
   per-task narratives that belong in the task files.
 - Before a new contributor or a fresh session needs a trustworthy picture.
 - After a burst of commits, when several tasks closed but their headers were

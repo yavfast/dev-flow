@@ -259,6 +259,7 @@ All documents live in `docs/` directories. One concept = one file set:
 | Concept | `*.concept.md` | `access_control.concept.md` |
 | Specification | `*.sp.md` | `access_control.sp.md` |
 | Plan | `*.plan.md` | `access_control.plan.md` |
+| Epic | `*.epic.md` | `access_management.epic.md` |
 | Index | `_index.md` | `docs/_index.md` |
 | Glossary | `_glossary.md` | `docs/_glossary.md` |
 
@@ -266,6 +267,10 @@ All documents live in `docs/` directories. One concept = one file set:
 > [research phase](phases/research.md) (`/dev-flow research`). Use it when the
 > problem domain is unclear and you need to explore approaches before committing
 > to a concept. Spikes do not pass through the pipeline gates.
+
+> **Epic** is an optional grouping document for a feature spanning 3+ closely related
+> concepts (see onboard Step 7 and [concept phase](phases/concept.md)). Template:
+> [templates/epic.md](templates/epic.md).
 
 When `docs/` has more than 5 documents, maintain an `_index.md` catalog.
 
@@ -448,7 +453,8 @@ reveals a coding pattern, constraint, or convention that is not yet captured in
   no matching rule — add the rule so the same class of bug is prevented in the future.
 - New rules default to severity **should** unless the plan/fix explicitly marks them
   as **must** or **prefer**.
-- After adding a rule, update `.dev_flow/rules/_index.yaml` (add entry with `file` and `summary`)
+- After adding a rule, update `.dev_flow/rules/_index.yaml` (add it under its
+  category's `rules` list — see [rule phase → Index Format](phases/rule.md#index-format))
   and mention the new rule in the commit message.
 
 ## Greenfield vs Takeover

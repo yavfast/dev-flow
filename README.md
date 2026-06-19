@@ -204,6 +204,11 @@ Each gate checks specific criteria before allowing advancement:
 | Review → Verify | Clean-context review passes, no blocking issues |
 | Verify → Commit | All verification levels pass, user approval |
 
+> This table is an at-a-glance summary. The **authoritative, complete** gate criteria
+> (Pre-Concept Checklist, Reuse Check, banned phrases, minimality, design-decision
+> settlement, rollback strategy, self-validation) live in
+> [SKILL.md → Validation Gates](SKILL.md#validation-gates).
+
 ### Two-Stage Testing
 
 - **Test** (Phase 5) — functional tests only (unit + mock), covering changed code

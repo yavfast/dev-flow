@@ -1,6 +1,11 @@
 # End-to-End Example: Rate Limiter
 
-A minimal walkthrough showing the full concept-driven development pipeline.
+A minimal walkthrough showing the **core** concept-driven development pipeline
+(Concept → … → Commit → Propagate). To stay focused it omits the on-demand and
+cross-cutting flows — [research](../phases/research.md) spikes,
+[Interview Mode](../references/interview-mode.md), [Upstream Escalation](../references/escalation.md),
+the [resource cache](../references/cache.md) gate, and the per-task
+[context model](../phases/status.md) — each documented in its own phase/reference.
 
 ## Step 1 — Concept (`docs/rate_limiter.concept.md`)
 
@@ -134,20 +139,20 @@ Transition rules:
 | AcquireToken | Bucket empty | agent with 0 tokens | Returns wait_seconds > 0, call delayed |
 | AcquireToken | New agent | unknown agent_id | Creates bucket with default capacity, returns 0.0 |
 
-### 03_02. Invariant Checks  {#SP_RLM_05_02}
+### 05_02. Invariant Checks  {#SP_RLM_05_02}
 
 | Invariant | Verification method |
 |-----------|-------------------|
 | tokens <= capacity | Drain bucket, wait for refill, verify tokens never exceed capacity |
 | tokens >= 0 | Rapid concurrent calls, verify tokens don't go negative |
 
-### 03_03. Integration Scenarios  {#SP_RLM_05_03}
+### 05_03. Integration Scenarios  {#SP_RLM_05_03}
 
 | Scenario | Preconditions | Steps | Expected result |
 |----------|--------------|-------|-----------------|
 | LLM calls throttled | LLMRouter configured with RateLimiter | Send capacity+1 rapid calls | First N calls immediate, N+1 delayed by ~1/refill_rate seconds |
 
-### 03_04. Edge Cases and Boundaries  {#SP_RLM_05_04}
+### 05_04. Edge Cases and Boundaries  {#SP_RLM_05_04}
 
 | Case | Input | Expected behavior |
 |------|-------|-------------------|
@@ -399,3 +404,22 @@ After user confirms:
 git add engine/rate_limiter.py tests/test_rate_limiter.py docs/rate_limiter.plan.md
 git commit -m "[SP_RLM] Implement token-bucket rate limiter with per-agent limits"
 ```
+
+---
+
+## Step 9 — Propagate (`/dev-flow propagate`)
+
+Code landed → keep the docs in sync. The plan's phases are marked `[DONE]` and its
+`Status` moves to `completed`; the concept/spec stay `active`. An
+[Impact Walk](../references/impact.md) confirms nothing else references the changed
+contracts (e.g. `LLMRouter` integration).
+
+```
+Propagation check for [SP_RLM]:
+- ✓ rate_limiter.plan.md → Status: completed, all phases [DONE]
+- ✓ rate_limiter.concept.md / .sp.md → still active, no contract drift
+- ✓ No other concept/spec depends on RateLimiter — no downstream updates needed
+- ✓ _glossary.md → "rate limiter" term already canonical
+```
+
+Nothing further to propagate → the cycle is complete.

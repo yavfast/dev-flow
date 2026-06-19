@@ -1,7 +1,7 @@
 # Implementation Plan: {Feature Name}  {#PL_XXX}
 
 > **Code:** PL_XXX
-> **Status:** in-progress
+> **Status:** draft
 > **Created:** YYYY-MM-DD
 > **Updated:** YYYY-MM-DD
 >

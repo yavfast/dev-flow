@@ -35,9 +35,10 @@ The target is optional. Without it, tests are determined from the current active
 /dev-flow test auth module              # Test the auth module specifically
 /dev-flow test add login validation     # Create tests for login validation
 /dev-flow test update rate limiter      # Update existing rate limiter tests
-/dev-flow test integration sync         # Run integration tests for sync
-/dev-flow test live api endpoints       # Run live tests against real API
 ```
+
+> Integration and live tests are **not** run here — they belong to the
+> [Verify phase](verify.md) (`/dev-flow verify integration …`, `/dev-flow verify live …`).
 
 ## Test Categories (This Phase)
 
@@ -94,7 +95,8 @@ Before running tests, verify:
 ```
 1. Identify affected functionality from the code changes
 2. Find existing unit and mock tests covering the changed code
-3. Check if new test cases are needed — ask user for permission to create them
+3. Check if new functional test cases (unit/mock) are needed — create them without
+   asking (they are safe; see Anti-Patterns)
 4. Run only the relevant functional tests (unit + mock)
 5. If any test fails:
    a. Analyze the failure — a code bug, a test bug, or a spec problem?

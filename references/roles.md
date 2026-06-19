@@ -33,6 +33,30 @@ its base(s) by naming them in an `inherits:` field — a convention the executin
 honours when it reads the role, not engine machinery, so it works the same on any project
 (with or without an AI-DSL runtime).
 
+## Two framings: obligations vs bounded autonomy
+
+Roles are written in one of two framings — a **convention**, not a fixed schema (these
+files are prose projections; see the closing note). Pick the framing that fits what the
+role is:
+
+- **Obligation framing** — `responsibilities` + binding `rules` (+ a `skills` gate +
+  `workflow`). Use it for **gated pipeline executors** whose output must pass a validation
+  gate: concept/spec/plan authors, implementer, tester, reviewer, propagator, auditor,
+  context-tracker, the onboard-* roles, the orchestrator. These roles *must* do certain
+  things, so they state duties and binding rules.
+- **Bounded-autonomy framing** — `capabilities` (what it MAY do) + `constraints` (hard
+  `NEVER`s). Use it for **read-only or self-directing roles** that sit outside the strict
+  gate chain: `advisor` (read-only Q&A), `researcher` (time-boxed spike, no gates),
+  `subtask-executor` (delegated full participant — it also carries `responsibilities`, as
+  a deliberate hybrid). These roles act with judgement inside guardrails, so framing them
+  as capability + limit is clearer than a duty list.
+
+Both framings typically carry the shared spine (`title`/`description`/`inputs`/`outputs`
+— a lean role like `advisor` keeps only what it needs) and a `workflow` step list
+(structured `step_N:` entries, or a short prose block for a simple role). Everything else
+is role-specific and added freely. Don't normalise a role into the
+other framing for uniformity's sake; choose by whether the role is *obligated* or *autonomous*.
+
 ## Base roles by phase
 
 These are the base roles the skill ships, by phase (paths relative to the skill root).

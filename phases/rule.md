@@ -77,9 +77,37 @@ the appropriate changes to `.dev_flow/rules/`.
 {Why this rule exists.}
 ```
 
-6. **Update `_index.yaml`** — add/update the rule entry in `categories[].rules`.
+6. **Update `_index.yaml`** — add/update the rule entry in `categories[].rules`
+   (see [Index Format](#index-format) below for the canonical schema).
 
 7. **Confirm** — report what was done: rule name, category, severity, action taken.
+
+## Index Format
+
+`.dev_flow/rules/_index.yaml` is grouped by category. Each category entry carries the
+backing `file` and a `summary`; each rule under it carries `name`, `severity`, and a
+one-line `summary`:
+
+```yaml
+categories:
+  - category: naming
+    file: naming.md
+    summary: Names of classes, methods, variables, constants, packages
+    rules:
+      - name: NoMPrefixForFields
+        severity: must
+        summary: Do not prefix instance fields with `m`
+      - name: EnumOverConstants
+        severity: prefer
+        summary: Use an enum instead of a list of integer constants
+  - category: error-handling
+    file: error-handling.md
+    summary: Exceptions, logging, null safety, lifecycle
+    rules:
+      - name: WrapCheckedExceptions
+        severity: should
+        summary: Wrap checked exceptions in a domain exception at the boundary
+```
 
 ## Rule Categories
 
