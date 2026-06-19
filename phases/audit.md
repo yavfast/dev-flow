@@ -143,11 +143,20 @@ or otherwise demonstrably finished (per Step 2). For each closed task:
 - Move verbose per-subtask Activity, Coordination Notes overflow, and `done`
   Subtask blocks into `.dev_flow/session_history/session_YYYY-MM-DD.md` (see the
   [status archive procedure](status.md#session-history-archive)).
+- Order eviction by **effective salience**, not pure age (see [Salience
+  Markers](status.md#salience-markers)): `noise`/`superseded` entries are archived
+  first; a `pin` is retained while its task is still active and goes inert once the
+  task closes — **Reflect** (below) harvests its lesson *before* that demotion, so
+  nothing durable is lost when the pin expires. Flag any task — active or closing —
+  whose `pin` ratio is implausibly high and propose a re-grade (advisory, no hard cap).
 - Leave behind a short outcome summary (1 short paragraph) plus links to the
   commit(s) and the archived history. The task file should read as "what this
   was and how it ended", not as a journal.
 
-**Reflect** — harvest lessons before they are buried:
+**Reflect** — harvest lessons before they are buried. This is the task-close
+**Transition Checkpoint** of [Experience Capture](../references/experience-capture.md) —
+the same propose-not-apply reflection, not a parallel path; its *harvest-before-demote*
+ordering is why it runs before any salience demotion on the closing task:
 - Distill what the closed task *taught* that is not already captured. A reusable
   coding constraint or convention → propose a rule (apply the [rule](rule.md)
   phase's category/severity model). Project-specific technology knowledge,
@@ -316,6 +325,7 @@ Use this template so the result is scannable:
    • Remove cached <domain/file> (unreferenced since <date> / superseded by <newer>)
    • Close <DocID>_DEC_NN — trigger expired (<trigger>); route: research / interview
    • Backlog item "<item>" in <plan> has no return trigger; convert to DEC / schedule / drop
+   • Re-grade <task>: pin ratio implausibly high (<n> pins) — propose demoting the stale ones
 
 ⚠️ Flagged (evidence insufficient — left unchanged)
    • <task> header says <X> but <Y>; cannot resolve from docs/git

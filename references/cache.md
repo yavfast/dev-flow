@@ -24,7 +24,39 @@ opposite treatment:
 
 The boundary in one line: **`/tmp` is staging, the cache is keeping** — anything in
 the workspace that turns out durable is *promoted* into the cache, and nothing in
-docs or task context ever links into `/tmp`.
+docs or task context ever links into `/tmp`. Both sit inside a wider three-tier
+memory/data model, introduced next.
+
+## Memory & Data Tiers (L0/L1/L2)
+
+A session's state lives at three levels, distinguished by how long each survives.
+Knowing which tier a thing belongs to is how you keep the right state in the right
+place — and why a fresh session can resume cleanly after the live context is gone.
+
+| Tier | What it is | Lifetime | Holds |
+|------|-----------|----------|-------|
+| **L0 — live context** | The working transcript the agent reasons over | Dies on compact | Everything in attention right now |
+| **L1 — session scratch** | Session-scoped on-disk scratch | Survives compact, gone on restart/reboot | **Working memory** (distilled notes/params/reminders) + the **data cache** (raw artifacts staged this session) |
+| **L2 — durable** | The project's `.dev_flow/` store | Survives compact *and* restart | Task files, the resource cache, rules/skills — the source of truth |
+
+The north star: keep durable task state complete in **L2** so that when L0 is lost
+(compact) or the session ends (restart), work resumes deterministically from files —
+which beats riding a lossy context-summary. **L1 is the bridge**: it survives a
+compact so the agent can re-attend without a durable write on every step, yet it is
+*acceptably lost* on restart because anything that must outlive the session has been
+promoted to L2.
+
+L1 has a **memory** half and a **data** half, treated differently:
+- **Working memory** — small, distilled, re-read *whole* (notes, parameters,
+  reminders). Defined in [Session Working Memory](#session-working-memory-l1) below.
+- **Data cache** — raw, bulky artifacts (logs, downloads, captures) referenced *by
+  path*, never inlined. This is the project workspace under `/tmp` (see
+  [Temporary Workspace Discipline](#temporary-workspace-tmp-discipline)). Raw data
+  lives here, never in working memory.
+
+The **resource cache** (`.dev_flow/cache/`, the bulk of this document) is the durable
+**L2 data** store: an L1 data-cache artifact that proves worth keeping is *promoted*
+into it, exactly as `/tmp` staging is promoted today.
 
 ## Invocation
 
@@ -289,9 +321,66 @@ stage in the workspace and list the path in the report — the cache write itsel
 belongs to the calling agent (see Temporary Workspace Discipline below). A **task-delegated**
 subagent ([subtask phase](../phases/subtask.md)) writes the cache itself, per this reference.
 
+## Session Working Memory (L1)
+
+Working memory is the agent's **distilled self-state** for the session — the notes,
+parameters, and reminders it would need to re-orient after a compaction or a subtask
+switch, beyond what any single tool output holds. It is the L1 *memory* half: small
+enough to re-read whole, session-scoped, and promoted to L2 before anything important
+could be lost.
+
+### The area
+
+- **Host** — the runtime's session scratchpad: a **session-UUID-keyed** directory
+  that survives a compact and is discarded on restart. (Session-UUID keying, not the
+  project slug, is deliberate — it avoids collisions between concurrent sessions on the
+  same project.) Where the runtime exposes no such scratchpad, fall back to
+  `/tmp/dev_flow/<session-uuid>/`; where even that is unavailable, skip L1 and promote
+  working state to `.dev_flow/` more eagerly.
+- **Layout** — a `working_memory/` subdirectory with one small file per kind:
+  `notes.md` (appended), `params` (key/value, **replaced** in place), `reminders.md`
+  (appended). Small and whole-re-readable by design.
+- **Survives compact, lost on restart** — this is a property of the session-keyed
+  host, not something the agent maintains. Its one obligation is to *promote* the
+  durable part to L2 (below).
+
+### Content — notes / parameters / reminders only
+
+- **`note`** — a free observation worth keeping for the session ("the auth flow calls
+  X before Y"). Appended.
+- **`parameter`** — a keyed working value (`current_segment`, `active_specialist`,
+  `context_pressure_tier`). **Replaced** in place on update, never accumulated.
+- **`reminder`** — a future-facing intention ("re-run verify after the spec edit").
+  Appended.
+
+Raw data and artifacts do **not** belong here — they are the L1 *data cache* (the
+`/tmp` workspace), referenced by path. Working memory holds the *distillation*, not
+the payload.
+
+### Working with the area
+
+- **Resolve (lazily)** — locate-or-create the `working_memory/` area under the session
+  scratchpad on first use.
+- **Write** — record a note or reminder (append), or set a parameter (replace by key).
+  Reject a raw-data blob: that goes to the data cache.
+- **Read (re-attention)** — re-read the *whole* area to rebuild focus. Cheap, and
+  called exactly **after a compaction, on a subtask switch, or on demand**. This is the
+  re-attention move the [status read protocol](../phases/status.md#read-protocol) and
+  [Experience Capture](experience-capture.md) lean on.
+- **Promote to durable** — at a checkpoint (Experience Capture) move anything that must
+  outlive the session — a settled decision, a confirmed parameter, a harvested lesson —
+  into `.dev_flow/` (the task file, or a proposed rule/skill). The remainder stays L1
+  scratch and is acceptably lost on restart.
+
+Keep the area **small enough to re-read whole**: when it grows, summarise or promote —
+do not hoard.
+
 ## Temporary Workspace (`/tmp`) Discipline
 
-All transient artifacts go under **one project root** — `/tmp/{project-slug}/`
+This is the **L1 data cache** — the *data* half of session scratch (see
+[Memory & Data Tiers](#memory--data-tiers-l0l1l2)): raw artifacts staged this session,
+referenced by path and disposable, the counterpart to the distilled working memory
+above. All transient artifacts go under **one project root** — `/tmp/{project-slug}/`
 (slug = the repository directory name, kebab-case) — never scattered loose in
 `/tmp`:
 

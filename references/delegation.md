@@ -69,6 +69,10 @@ Review already works this way for a second reason — a clean-context subagent r
 diff without the author's rationalizations, so its judgment is unbiased. Verify and
 diagnosis share the shape; they just optimize for focus rather than impartiality.
 
+[Experience Capture](experience-capture.md) borrows the same move: distilling a closing
+segment is a noisy read whose *conclusion* — a short summary plus any durable lesson — is
+all that comes back, so the checkpoint delegates the read and keeps only the distillation.
+
 ## Fit the model to the task — by its nature, not its name
 
 A delegated step can run on a different model than the main agent, chosen by the
@@ -101,8 +105,39 @@ might need the main agent's full context. Use judgment.
 | Diagnosis: reproduce + instrument (fix) | Yes | confirmed cause + evidence, log path | fast / cheap |
 | Spike investigation (research) | Yes | verdict + findings + recommendation; raw material stays in the spike file | standard / strong — weighing sources and trade-offs needs judgment |
 | Broad code search ("where is X used?") | Yes | findings + file:line list | fast / cheap |
+| Distill a closing segment at a checkpoint (experience capture) | Yes | segment summary + any proposed lessons | standard — judging what's durable |
 | Pre-commit review | Yes (clean ctx) | blocking issues + warnings | standard / strong |
 | Untangle a tangled root cause | Borderline | cause + reasoning | stronger |
+
+## Named specialists and the routing reflex
+
+Some noisy steps recur enough in a given project to be worth a **named, reusable helper**
+rather than an ad-hoc subagent each time — a wide/structural **code search**, triaging a
+large **log/trace**, analysing a **screenshot/image**. When that pattern appears, create a
+**project-specific specialist role** under `.dev_flow/roles/` (the "new specialization"
+path in [Roles](roles.md)) and route to it thereafter. These are **not shipped with the
+skill**: a generic `log-analyst` cannot know your log format, nor a `screenshot-analyst`
+your UI — so a specialist is born where that knowledge lives, the project, tailored to its
+log formats, its screens, its module layout.
+
+A specialist is a **read-only focus helper**: it owns one task-signature, returns the
+conclusion (not the dump), stages raw output in the workspace by path, and stays out of
+`.dev_flow/` task context, the contributor list, and commits — its one writable target is
+its own role-local memory.
+
+**Route by description, not a dispatcher.** Match the noisy step against each specialist
+role's `description` and send it to the one that fits; there is no central routing table.
+A trivial one-off (a single-line grep) is not worth delegating — do it inline.
+
+**They accumulate, and they self-compact.** A specialist warm-starts from a small
+role-local memory of distilled heuristics (`.dev_flow/roles/<name>.memory.md`) so the next
+run starts ahead of cold; what proves broadly useful is *proposed* as a skill via
+[Experience Capture](experience-capture.md), never self-written. Crucially they store
+**only the distillation, never the raw payload** — raw output stays staged in the
+workspace, referenced by path. Whether an instance stays warm across a burst or re-spawns
+per call follows the work: one that builds an expensive reusable artifact (a repo/symbol
+map) is kept alive across ≥2 calls, while large call-specific inputs (a log, an image)
+re-spawn fresh and warm-start from memory.
 
 ## How
 

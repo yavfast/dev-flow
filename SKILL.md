@@ -309,6 +309,15 @@ work on the same project in parallel. A task file is a **shared document with
 multiple contributors**; each contributor owns the parts they add and never
 rewrites parts authored by others.
 
+> **Three memory tiers.** This durable per-task context is **L2** (`.dev_flow/`, survives
+> both compact and restart). Above it sit **L0** live context (the transcript, lost on
+> compact) and **L1** session scratch (survives compact, lost on restart): the [session
+> working memory](references/cache.md#session-working-memory-l1) of distilled
+> notes/params/reminders plus the data workspace. [Experience
+> Capture](references/experience-capture.md) checkpoints promote L1→L2, and [salience
+> markers](phases/status.md#salience-markers) decide what survives a compaction — together
+> keeping durable task state complete so a fresh session can resume from files.
+
 ```
 .dev_flow/
 ├── active_context.md          # Dashboard — table of active tasks + recently completed
@@ -374,6 +383,10 @@ status, contributors, and last-updated. **No per-task details live here.**
   Refresh the task header's `Last updated`.
 - At a **phase boundary**: targeted Edit on the dashboard row (Phase / Status /
   Contributors / Updated).
+- At a **transition** (phase/subtask boundary, task switch) run a **Transition
+  Checkpoint** — distill the closing segment into a `{s:pin}` summary, demote its raw
+  entries, propose any durable lesson, and promote durable working-memory parts to the
+  task file. See [Experience Capture](references/experience-capture.md).
 - When you **finish your subtask**: set your Subtask's `Status: done`. The task
   itself stays `in-progress` until all subtasks are done.
 - On **task completion** (all subtasks done): any contributor may set the
@@ -408,6 +421,10 @@ in shared sections. The dashboard and catalog are updated with **targeted edits*
 
 ### Hygiene
 
+- **Salience-ordered compaction:** when a cap forces eviction, drop `noise`/`superseded`
+  entries first and retain `pin` entries of active tasks, falling back to age-order for
+  the `normal` remainder — markers are task-scoped and go inert on task close (see
+  [Salience Markers](phases/status.md#salience-markers)).
 - **Shared Activity Log** per task: keep at most **10 entries** (newest first).
   Archive overflow to `.dev_flow/session_history/session_YYYY-MM-DD.md`.
 - **Per-subtask Activity:** also capped at ~10 entries per block.
@@ -479,6 +496,7 @@ reveals a coding pattern, constraint, or convention that is not yet captured in
 - [Interview Mode](references/interview-mode.md) *(cross-cutting sub-procedure of concept/spec/plan/fix — surface design forks to the developer instead of choosing silently)*
 - [Upstream Escalation](references/escalation.md) *(cross-cutting sub-procedure of implement/test/review/verify/fix — when evidence shows the spec/plan/concept is wrong, fix the document, don't bend the code)*
 - [Delegation for Focus](references/delegation.md) *(cross-cutting sub-procedure of implement/fix/verify — delegate noisy work to a subagent, keep only the conclusion)*
+- [Experience Capture](references/experience-capture.md) *(cross-cutting sub-procedure of all phases — Transition Checkpoint: distill a closing segment into a pinned summary, demote raw turns, propose durable lessons; factual Response Trailer; tiered context-pressure response)*
 - [Impact Walk](references/impact.md) *(cross-cutting sub-procedure of ask/do/propagate/review — blast radius of a change: docs, code bindings, active tasks)*
 - [Resource Cache](references/cache.md) *(cross-cutting — durable resource store `.dev_flow/cache/` with trust levels + `/tmp` workspace discipline; every phase checks it before expensive fetches)*
 - [Roles](references/roles.md) *(base vs project-overlay subagent roles — reuse what exists, create new under .dev_flow/roles/ via inherits)*
@@ -522,3 +540,12 @@ reviewer, …), and a project adds its own **overlays** and specializations unde
 `.dev_flow/roles/`, declared by naming the base role(s) in an `inherits:` field. The full
 catalogue of base roles by phase — and how to find, reuse, and create roles — lives in
 **[Roles](references/roles.md)**.
+
+Beyond the per-phase roles, a project can grow **specialist focus helpers** — read-only
+roles that own a recurring noisy step (wide code search, log/trace triage, screenshot
+analysis). They are **not shipped base roles** (a generic log-analyst can't know your log
+format); the agent creates them per-project under `.dev_flow/roles/` when the pattern
+recurs, and the [Delegation routing reflex](references/delegation.md#named-specialists-and-the-routing-reflex)
+routes matching work to them by description. Each warm-starts from a role-local memory of
+distilled heuristics and promotes the broadly-useful ones to skills via
+[Experience Capture](references/experience-capture.md).

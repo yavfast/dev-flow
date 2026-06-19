@@ -91,6 +91,14 @@ referencing the stale one — never rewrites the stale block.
 
 ## Read Protocol
 
+> **Re-attention first (after a compaction or subtask switch).** Before re-reading the
+> task files, re-read the **session working memory** area — the L1 notes / parameters /
+> reminders that survive a compaction (see [Resource Cache → Session Working
+> Memory](../references/cache.md#session-working-memory-l1)). It is small and
+> whole-re-readable, and it restores the working focus the dropped transcript held. The
+> dashboard and task files (below) remain the durable source of truth; working memory
+> just rebuilds *attention* cheaply.
+
 ### Step 1: Read the dashboard
 
 1. Check if `.dev_flow/active_context.md` exists.
@@ -185,6 +193,14 @@ one, or add a new one if not.
 Every dev-flow command MUST update context using this protocol. The goal is
 **tolerance to other contributors**: an agent's writes must not destroy state
 another contributor has written.
+
+> **Working memory → durable (promote at a checkpoint).** Transient working state — the
+> L1 notes / parameters / reminders — is *not* written to task files on every step. At a
+> checkpoint (a phase or subtask boundary, or an [Experience
+> Capture](../references/experience-capture.md) checkpoint) **promote** the durable part
+> — a settled decision, a confirmed parameter, a harvested lesson — into the task file
+> (or a proposed rule/skill). The rest stays L1 scratch, acceptably lost on restart. See
+> [Resource Cache → Session Working Memory](../references/cache.md#session-working-memory-l1).
 
 ### When a phase starts on a task
 
@@ -293,6 +309,79 @@ Regeneration is a full rewrite — only do it when targeted edits cannot recover
 the state. If you suspect another contributor is mid-write, prefer a targeted
 fix or coordinate first.
 
+## Salience Markers
+
+Compaction is where context is lost, and dev-flow archives by **age** — oldest
+first, whether or not it still matters. Salience markers let the author of an entry
+record *how much it matters*, so a dev-flow-owned compaction keeps the signal and
+sheds the noise instead of going purely by age.
+
+A marker attaches to a single **entry** — a Shared Activity Log line, a Coordination
+Note, or a Relevant Context row — never to a whole document (that axis is the
+document `Status`).
+
+### Vocabulary
+
+A marker is exactly one of a closed set; the unmarked majority is `normal`:
+
+| Value | Meaning | Compaction effect |
+|-------|---------|-------------------|
+| `pin` | Must survive while the owning task is active | Never the first dropped; retained |
+| `superseded` | Was relevant, now replaced by a later entry | Evicted first; carries a `→` pointer to its successor |
+| `noise` | Service detail, never important | Evicted first |
+| `normal` | Default — the unmarked majority | Age-ordered, exactly as before |
+
+### Written form
+
+A non-`normal` marker is a compact trailing token appended to the entry text:
+
+- `{s:pin}` · `{s:noise}` · `{s:superseded→<entry-ref>}`
+- `<entry-ref>` is a short human-resolvable locator (a dated log line's date + first
+  words, or a section anchor).
+- **Absence of any `{s:…}` token = `normal`** — `normal` is never written explicitly.
+- At most **one** token per entry. The token is greppable (`{s:`) so compaction finds
+  marked entries mechanically.
+
+### Scope and expiry — markers are task-scoped
+
+A marker has **no weight of its own**; its weight is conditioned on its owning task
+(the task file the entry lives in). The **effective salience** of an entry is:
+
+- `normal` if the entry has no token, **or** if the owning task is closed / off the
+  active dashboard / out of focus;
+- otherwise the token's value.
+
+So `pin` means "survive while this task is active" — not "survive forever". When the
+task closes or loses focus its markers go inert (effective `normal`); this is what
+stops completed tasks clogging the active context. A durable lesson does **not** rely
+on a `pin` surviving closure — it is harvested into a rule/skill *before* the task
+closes (see [Experience Capture](../references/experience-capture.md), whose
+harvest-before-demote ordering runs the reflection before markers are demoted).
+
+### How the protocol treats markers
+
+- **Tag at write-time.** When you add a log line / note / row that is clearly durable
+  (a settled decision, a segment summary) or clearly disposable (a routine service
+  entry), append the matching token. Most entries stay `normal` — mark **sparingly**.
+- **Re-grade by appending, never editing.** Logs are append-only, so you do not edit
+  an entry to change its marker. To supersede an entry, append a new tagged note that
+  references the original (`{s:superseded→…}` points at the successor).
+- **`superseded` keeps the trail.** Never evict a `superseded` entry whose successor
+  would also be gone — the successor must survive.
+- **Compaction honours effective salience.** When this protocol's archiving or
+  [audit](audit.md) Step 3 reduces a set of entries, a `pin` (of an active task) is
+  retained, `noise`/`superseded` are evicted first, and only then does the existing
+  age rule apply to the `normal` remainder. Evicted entries are **archived to
+  `session_history/`, never lost** (the non-destructive rule still holds).
+- **Over-pinning is self-correcting.** There is no hard cap on `pin` count;
+  [audit](audit.md) flags a task whose `pin` ratio is implausibly high and proposes a
+  re-grade (advisory).
+
+> **dev-flow compaction only.** Markers are honoured by dev-flow's *own* compaction
+> (this protocol, audit). The **runtime's** context-summary is not a dev-flow-owned
+> event — there a `pin` is at most conveyed as in-context phrasing (advisory). The
+> durable copy in the task file is what dev-flow compaction honours.
+
 ## Context Hygiene
 
 > **Canonical hygiene caps.** This section is the single source of truth for the
@@ -301,12 +390,17 @@ fix or coordinate first.
 > to the numbers here.
 
 **Principle:** task files are "shared state as of now", not journals. Per-section
-logs are the only history kept in-place, and they are capped.
+logs are the only history kept in-place, and they are capped. When a cap forces
+eviction, eviction order is by **effective salience** first (see [Salience
+Markers](#salience-markers)) — `noise`/`superseded` go before `normal`, a `pin` of an
+active task is retained — and only then by age within the `normal` remainder.
 
 ### Hygiene rules
 
 1. **Shared Activity Log:** keep at most **10 entries** per task file (newest first).
-   Move the oldest overflow to a session history file before appending.
+   When over the cap, evict `noise`/`superseded` first and then the oldest `normal`
+   entries; a `pin` on an active task is kept. Move the evicted overflow to a session
+   history file before appending.
 2. **Per-subtask Activity:** same cap — ~10 entries per subtask block. When
    exceeded, archive that block's older entries.
 3. **Description:** describes the active understanding. New paragraphs are

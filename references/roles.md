@@ -89,6 +89,19 @@ applies.
 | Subtask | [subtask-executor.ai.md](../roles/subtask-executor.ai.md) | Full dev-flow participant with delegated rights — assembles its own context, executes a secondary task end to end, escalates real decisions to its initiator, reports fully |
 | Do (default) | [dev-flow-orchestrator.ai.md](../roles/dev-flow-orchestrator.ai.md) | Interprets freeform requests and routes to the right phases |
 
+> **Specialist focus helpers** are a *kind of project specialization*, **not shipped base
+> roles**. When a noisy task-type recurs in a project — wide code search, log/trace triage,
+> screenshot analysis — create a project-tailored specialist under `.dev_flow/roles/` (the
+> "new specialization" path in [Creating or extending a role](#creating-or-extending-a-role))
+> and route to it by description (the
+> [delegation routing reflex](delegation.md#named-specialists-and-the-routing-reflex)). The
+> skill ships none: a generic specialist can't know this project's log format or UI. Their
+> experience store is **hybrid** — narrow operational heuristics accumulate in a role-local
+> memory file (`.dev_flow/roles/<name>.memory.md`, the same way overlays accumulate project
+> specifics), while broadly-useful lessons are *promoted* to `.dev_flow/skills/` as
+> proposals via [Experience Capture](experience-capture.md). They warm-start from the memory
+> file, store only distilled heuristics (never raw payload), and stay read-only.
+
 ## The project role index
 
 A project's `.dev_flow/roles/` carries an `_index.yaml` — a one-line-per-role catalogue
