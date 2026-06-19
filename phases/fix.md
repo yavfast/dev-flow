@@ -87,6 +87,15 @@ If any updates are needed, either apply them immediately (for small changes) or 
 
 When root-cause analysis shows the **document itself is defective** — the spec is ambiguous or contradicts reality, not merely lagging behind the fix — do not patch it silently as "impact": follow [Upstream Escalation](../references/escalation.md) (surface the correction or fork to the developer, update the owning document, re-pass its gate).
 
+### Step 6: Reflect — harvest the lesson
+
+A fix is the highest-yield **rule auto-discovery** moment: a bug just proved a gap. At the close of the fix (the [Transition Checkpoint](../references/experience-capture.md)), harvest what the root cause taught so the same bug *class* is prevented next time:
+
+- **Rule from a violated invariant.** If the root cause was a violated invariant or convention with no matching rule in `.dev_flow/rules/` — propose the rule (default `should`), even when the problem text carried no explicit directive. (That explicit-directive path is Step 3's [Rule Detection](#rule-detection); this one fires on what the *analysis* revealed.) See [Project Rules → Auto-discovery](../SKILL.md#project-rules).
+- **Skill from a non-obvious diagnosis.** If diagnosis produced broadly-useful, non-trivial knowledge — a stack-specific pitfall, a debugging technique that paid off — propose a skill through the [skill phase](skill.md) non-triviality filter.
+
+**Propose, never apply** — the rule/skill gate confirms; the checkpoint never auto-writes. Then distill the segment, demote the raw diagnosis turns, and promote durable parts to the fix's task file. See **[Experience Capture](../references/experience-capture.md)**. (For a code-only fix, the proposal and any open decision are recorded as in [Interview Mode in Fix](#interview-mode-in-fix).)
+
 ## Diagnosis (optional)
 
 An optional sub-step of **Step 1**, entered only when the confidence gate fails — you have no confident, evidence-corroborated cause. It imports the discipline of the `diagnose` skill, but **gated**: most fixes arrive with enough evidence to skip it.

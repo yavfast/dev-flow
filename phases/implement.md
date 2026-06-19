@@ -54,12 +54,22 @@ Before writing code, verify:
 11. If Verify fails → fix code → re-run steps 6-10
 12. Update plan phase status to [DONE]
 13. Update plan Progress checkboxes
-14. Ask user for commit approval before committing
+14. Reflection checkpoint — harvest any rule/skill proposals (see [Reflection](#reflection--harvest-rules-and-skills) below)
+15. Ask user for commit approval before committing
 ```
 
 ## Delegation for focus
 
 Steps 6, 8, and 10 (run tests, review, verify) flood the context with output that *writing the code* never needs. Keep the implementation here — it needs the full plan and spec — but delegate those verification steps to a subagent and take back only the verdict. See **[Delegation for Focus](../references/delegation.md)**.
+
+## Reflection — harvest rules and skills
+
+At the phase/subtask boundary, before asking for commit approval, run the [Transition Checkpoint](../references/experience-capture.md) over the work item just closed. This is where the project's knowledge base improves automatically — implementation is the primary **rule auto-discovery** touchpoint:
+
+- **Rule from a recurring pattern.** If the plan phase or the code surfaced an architectural constraint, naming convention, or error-handling pattern not yet in `.dev_flow/rules/` — propose it as a rule (default severity `should` unless clearly `must`/`prefer`). See [Project Rules → Auto-discovery](../SKILL.md#project-rules) and the [rule phase](rule.md).
+- **Skill from non-trivial knowledge.** If research during the task produced broadly-useful, non-obvious technology knowledge — propose a skill through the [skill phase](skill.md) non-triviality filter, so the next task starts ahead.
+
+**Propose, never apply.** A harvested lesson starts `proposed` and is written to the catalogue only through the rule/skill gate (developer accepts) — the checkpoint never auto-writes. Then distill the segment into a pinned summary, demote its raw turns, and promote durable working-memory parts to the task file. See **[Experience Capture](../references/experience-capture.md)**.
 
 ## When the Spec Pushes Back
 
@@ -73,3 +83,4 @@ Steps 6, 8, and 10 (run tests, review, verify) flood the context with output tha
 - Skipping traceable ID comments
 - Not updating plan status after completion
 - Adding features not described in the specification
+- Closing a work item without reflecting — a recurring pattern left uncaptured as a proposed rule/skill (see [Reflection](#reflection--harvest-rules-and-skills))

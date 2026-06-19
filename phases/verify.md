@@ -106,7 +106,7 @@ When in doubt, treat the operation as destructive.
    c. Re-run functional tests (Test phase) on the fix
    d. Re-run code review (Review phase) on the fix
    e. Re-run the failed verification level and all subsequent levels
-5. All verification passes → proceed to commit approval
+5. All verification passes → reflect (harvest rule/skill proposals, see Reflection below) → proceed to commit approval
 ```
 
 ### Fix Cycle
@@ -162,6 +162,15 @@ For integration and live tests that require setup:
 4. **Verify results** — compare against spec expectations.
 5. **Clean up** — tear down test fixtures, restore state.
 
+## Reflection — harvest verification lessons
+
+Once verification passes, run the [Transition Checkpoint](../references/experience-capture.md) before commit approval. Verify is where reality first tests the integrated system, so its lessons are about how things *break together*:
+
+- **Rule from a recurring failure mode.** A regression that a convention would have prevented, a flaky-test pattern, an integration contract that needed a guard — propose a rule (default `should`; testing-area rules live under `.dev_flow/rules/testing.md`). See [Project Rules → Auto-discovery](../SKILL.md#project-rules).
+- **Skill from a verification gotcha.** A non-obvious environment setup, a sandbox/seed-data trick, a known-pitfall in a live integration — propose a skill through the [skill phase](skill.md) non-triviality filter.
+
+**Propose, never apply** — the rule/skill gate confirms. Then distill the segment (the noisy run output stays in the workspace, referenced by path), demote raw turns, and promote durable parts to the task file. See **[Experience Capture](../references/experience-capture.md)**.
+
 ## Verification Result Reporting
 
 After running verification, report:
@@ -182,6 +191,7 @@ Before proceeding to commit:
 - [ ] All integration tests pass (if applicable)
 - [ ] Live tests pass or manual verification completed by user
 - [ ] No fix cycles remain incomplete
+- [ ] Reflection checkpoint run — recurring failure modes harvested as proposed rules/skills (see [Reflection](#reflection--harvest-verification-lessons))
 - [ ] Ask the user for explicit commit approval
 
 ## Anti-Patterns

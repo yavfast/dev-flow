@@ -122,6 +122,10 @@ After running tests, report:
 | New tests added | List with traceable IDs |
 | Tests updated | List with change description |
 
+## Reflection
+
+At the phase boundary, run the [Transition Checkpoint](../references/experience-capture.md): if writing tests surfaced a recurring assertion/mocking pattern or a coverage gap worth a convention, propose a testing rule (`.dev_flow/rules/testing.md`); if it produced a non-trivial fixture/harness technique, propose a skill. Propose, never apply — the [rule](rule.md)/[skill](skill.md) gate confirms. See **[Experience Capture](../references/experience-capture.md)**.
+
 ## Anti-Patterns
 
 - Writing tests that verify implementation details instead of spec contracts
