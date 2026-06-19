@@ -18,7 +18,7 @@ A session's state lives at three levels, distinguished by how long each survives
 | Tier | What it is | Lifetime | Holds |
 |------|-----------|----------|-------|
 | **L0 — live context** | The working transcript the agent reasons over | Dies on compact | Everything in attention right now |
-| **L1 — session scratch** | Session-scoped on-disk scratch | Survives compact, gone on restart/reboot | **Working memory** (distilled notes/params/reminders) + the **data cache** (raw artifacts staged this session) |
+| **L1 — session scratch** | Two scratch stores below L2 | Survive compact; non-durable — working memory dies on restart, the data cache is cleared on reboot | **Working memory** (session-UUID-keyed: distilled notes/params/reminders) + the **data cache** (project-slug `/tmp` workspace: raw artifacts staged this session) |
 | **L2 — durable** | The project's `.dev_flow/` store | Survives compact *and* restart | Task files, the resource cache, rules/skills — the source of truth |
 
 The north star: keep durable task state complete in **L2** so that when L0 is lost (compact) or the session ends (restart), work resumes deterministically from files — which beats riding a lossy context-summary. **L1 is the bridge**: it survives a compact so the agent can re-attend without a durable write on every step, yet it is *acceptably lost* on restart because anything that must outlive the session has been promoted to L2.
@@ -26,6 +26,8 @@ The north star: keep durable task state complete in **L2** so that when L0 is lo
 L1 has a **memory** half and a **data** half, treated differently:
 - **Working memory** — small, distilled, re-read *whole* (notes, parameters, reminders). Defined in [Session Working Memory](#session-working-memory-l1) below.
 - **Data cache** — raw, bulky artifacts (logs, downloads, captures) referenced *by path*, never inlined. This is the project workspace under `/tmp` (see [Temporary Workspace Discipline](#temporary-workspace-tmp-discipline)). Raw data lives here, never in working memory.
+
+The two halves are **keyed differently**, so their lifetimes differ: working memory is **session-UUID-keyed** (it dies on a session restart), while the data cache is **project-slug-keyed** (`/tmp/{project-slug}/` — shared per-repo, cleared only on reboot, with timestamped names preventing cross-session collisions). Both survive a compact; neither is durable — anything that must outlive its tier is promoted to L2.
 
 The **resource cache** (`.dev_flow/cache/`, the bulk of this document) is the durable **L2 data** store: an L1 data-cache artifact that proves worth keeping is *promoted* into it, exactly as `/tmp` staging is promoted today.
 
@@ -198,9 +200,9 @@ Working memory is the agent's **distilled self-state** for the session — the n
 
 ### The area
 
-- **Host** — the runtime's session scratchpad: a **session-UUID-keyed** directory that survives a compact and is discarded on restart. (Session-UUID keying, not the project slug, is deliberate — it avoids collisions between concurrent sessions on the same project.) Where the runtime exposes no such scratchpad, fall back to `/tmp/dev_flow/<session-uuid>/`; where even that is unavailable, skip L1 and promote working state to `.dev_flow/` more eagerly.
+- **Host** — a **per-session directory nested under the project workspace**: `/tmp/{project-slug}/sessions/{session-uuid}/working_memory/`. The `sessions/{session-uuid}/` segment makes it **session-scoped** — a new session gets a fresh `{session-uuid}`, hence a fresh empty area — while the shared `/tmp/{project-slug}/` root co-locates it with the project [data cache](#temporary-workspace-tmp-discipline), so a project's whole L1 footprint is one tree. `{session-uuid}` is the runtime's session id — taken from its session-scratchpad path, an env var, or an API; the scratchpad only **supplies the uuid**, it is not an alternate host (the area always lives at the canonical path above). **Portable fallback** (for IDEs/CLIs that expose neither a scratchpad nor a session id): use `$TMPDIR` (else `/tmp`) as the temp root, and when no session id is given, **mint one once and record it as `Session-id:` in your task-file subtask block** — so it survives a compaction and the area stays re-findable (a fresh session mints its own). Only when there is no writable temp root at all, skip L1 and promote working state straight to `.dev_flow/` (L2). (Session-scoping the working memory — rather than project-scoping it like the data cache — is deliberate: it isolates concurrent sessions on the same project; the data cache instead shares one root because its timestamped filenames already prevent cross-session collisions.)
 - **Layout** — a `working_memory/` subdirectory with one small file per kind: `notes.md` (appended), `params` (key/value, **replaced** in place), `reminders.md` (appended). Small and whole-re-readable by design.
-- **Survives compact, lost on restart** — this is a property of the session-keyed host, not something the agent maintains. Its one obligation is to *promote* the durable part to L2 (below).
+- **Survives compact, lost on restart** — survives a compact because it is on disk; "lost on restart" because a new session keys a fresh `sessions/{session-uuid}/`, so the prior area is never read again (and is physically cleared when `/tmp/{project-slug}/` is wiped on reboot). The agent does not maintain this — the session-keyed path gives it. Its one obligation is to *promote* the durable part to L2 (below).
 
 ### Content — notes / parameters / reminders only
 
@@ -212,27 +214,47 @@ Raw data and artifacts do **not** belong here — they are the L1 *data cache* (
 
 ### Working with the area
 
-- **Resolve (lazily)** — locate-or-create the `working_memory/` area under the session scratchpad on first use.
+- **Resolve (lazily)** — locate-or-create the `working_memory/` area under `/tmp/{project-slug}/sessions/{session-uuid}/` (or the runtime's session scratchpad) on first use.
 - **Write** — record a note or reminder (append), or set a parameter (replace by key). Reject a raw-data blob: that goes to the data cache.
 - **Read (re-attention)** — re-read the *whole* area to rebuild focus. Cheap, and called exactly **after a compaction, on a subtask switch, or on demand**. This is the re-attention move the [status read protocol](../phases/status.md#read-protocol) and [Experience Capture](experience-capture.md) lean on.
 - **Promote to durable** — at a checkpoint (Experience Capture) move anything that must outlive the session — a settled decision, a confirmed parameter, a harvested lesson — into `.dev_flow/` (the task file, or a proposed rule/skill). The remainder stays L1 scratch and is acceptably lost on restart.
 
 Keep the area **small enough to re-read whole**: when it grows, summarise or promote — do not hoard.
 
+### When to use it — a reflex, not a chore
+
+Working memory only pays off if you write to it *as you work*; an empty area helps no one. The habit is cheap and specific:
+
+| Moment | Write | Example |
+|--------|-------|---------|
+| Phase / subtask start | set orienting **parameters** | `current_segment = impl-SP_AUTH` · `phase = implement` · `target = src/auth.py` |
+| You learn a non-obvious fact | append a **note** | "validate() runs before persist(); tests stub the clock" |
+| You defer an action | append a **reminder** | "re-run verify after the spec edit" · "revert the temp log in auth.py" |
+| Before a context-risky step (wide search, long build, large output) | snapshot focus as a **note** | "mid-refactor of retry logic; next: wire backoff" |
+| A working value changes | **replace** the parameter | `current_segment = review-SP_AUTH` |
+
+Then re-read the whole area (re-attention) whenever you've lost the thread — after a compaction, on a subtask switch, or any "where was I?" moment — *before* re-reading docs or task files.
+
+**Why bother:** the transcript (L0) is exactly what a compaction takes from you; working memory is the cheap insurance that survives it. Two lines written now save re-reading several files later, and a parameter set now means you never re-derive "which segment / file / id was I on." Used as a habit this is what keeps a long, multi-topic session sharp instead of drifting; left empty, the whole L1 tier is dead weight.
+
 ## Temporary Workspace (`/tmp`) Discipline
 
-This is the **L1 data cache** — the *data* half of session scratch (see [Memory & Data Tiers](#memory--data-tiers-l0l1l2)): raw artifacts staged this session, referenced by path and disposable, the counterpart to the distilled working memory above. All transient artifacts go under **one project root** — `/tmp/{project-slug}/` (slug = the repository directory name, kebab-case) — never scattered loose in `/tmp`:
+This is the **L1 data cache** — the *data* half of session scratch (see [Memory & Data Tiers](#memory--data-tiers-l0l1l2)): raw artifacts staged this session, referenced by path and disposable, the counterpart to the distilled working memory above. All transient artifacts — and the per-session working-memory area — go under **one project root** — `/tmp/{project-slug}/` (slug = the repository directory name, kebab-case) — never scattered loose in `/tmp`:
 
 ```
-/tmp/{project-slug}/
-├── logs/         # test / build / run output
-├── screenshots/  # transient captures
-├── downloads/    # staging for fetched resources (pre-cache)
-└── scratch/      # spike prototypes, throwaway harnesses
+/tmp/{project-slug}/                  # project workspace — survives a session restart, wiped on reboot
+├── logs/         # test / build / run output           ┐ data cache (data half):
+├── screenshots/  # transient captures                  │ project-scoped, shared by
+├── downloads/    # staging for fetched resources        │ every session on this repo
+├── scratch/      # spike prototypes, throwaway harnesses ┘
+└── sessions/
+    └── {session-uuid}/
+        └── working_memory/   # L1 working memory (notes.md · params · reminders.md) — session-scoped
+                              # (the memory half; see "Session Working Memory (L1)" above)
 ```
 
 - **Timestamp suffixes, not numeric indexes.** When the same artifact recurs, name it `{name}_YYYYMMDD_HHMMSS.{ext}` (`test-run_20260610_143205.log`) — the same compact format task files use. Numeric suffixes (`run-1.log`, `run-2.log`) collide across sessions, don't sort, and say nothing about when they were made.
-- The workspace is **disposable** — a reboot may wipe it at any time. Anything that must survive is promoted to the cache the moment that becomes clear.
+- The workspace is **disposable** and **project-scoped, not session-scoped** — it is shared by concurrent sessions on the same repo (timestamped names avoid collisions), it *survives* a session restart, and a reboot may wipe it at any time. Anything that must survive is promoted to the cache the moment that becomes clear.
 - **Helper subagents write only here.** A subagent doing one noisy step inside its initiator's phase run (researcher, tester — including its Verify duty; see [Delegation for Focus](delegation.md)) stages its downloads, logs, and captures in the workspace and reports the paths; the **calling agent** promotes what is durable to `.dev_flow/cache/`. A **task-delegated** subagent ([subtask phase](../phases/subtask.md)) executes the owning phase's protocol itself — including cache writes with their index discipline — and lists what it persisted in its report.
 
 ## Git

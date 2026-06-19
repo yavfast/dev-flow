@@ -231,7 +231,7 @@ Regeneration is a full rewrite — only do it when targeted edits cannot recover
 
 Compaction is where context is lost, and dev-flow archives by **age** — oldest first, whether or not it still matters. Salience markers let the author of an entry record *how much it matters*, so a dev-flow-owned compaction keeps the signal and sheds the noise instead of going purely by age.
 
-A marker attaches to a single **entry** — a Shared Activity Log line, a Coordination Note, or a Relevant Context row — never to a whole document (that axis is the document `Status`).
+A marker attaches to a single **entry** — a Shared Activity Log line, a Coordination Note, a Relevant Context row, or a per-subtask Activity entry — never to a whole document (that axis is the document `Status`).
 
 ### Vocabulary
 

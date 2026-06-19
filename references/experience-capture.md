@@ -35,7 +35,7 @@ The pinned summary now survives a dev-flow compaction while the raw turns are ev
 
 ## Harvest before demote (ordering invariant)
 
-When a task **closes**, its salience markers go inert (a `pin` is task-scoped — see [Salience Markers](../phases/status.md#salience-markers)). The checkpoint that harvests the closing task's lesson MUST run **before** that demotion — reflect first, demote second — so a durable lesson is never lost in the moment its `pin` expires.
+When a task **closes**, `DemoteOnTaskClose` makes its salience markers inert (a `pin` is task-scoped — see [Salience Markers](../phases/status.md#salience-markers)), re-grading the segment's still-pinned raw turns to effective `normal` and so making them eviction-eligible. The checkpoint that harvests the closing task's lesson MUST run **before** that demotion — reflect first, demote second — so reflection reads the segment's full, still-retained material before it can be evicted (and so the new summary's `pin` is recorded while the task is still active). The harvested lesson itself does not depend on the `pin` — it is routed out to a proposal — but the reflection that produces it must run while its source is still protected. (This task-close *demote* — inerting all the task's markers — is distinct from the intra-checkpoint *demote* in step 3, which re-grades the segment's raw turns to `noise`.)
 
 ## Proposing experience — propose, never apply
 
@@ -71,10 +71,10 @@ Between checkpoints, an individual response can still carry salience and signal 
 A checkpoint can also fire because the context is filling up — but assessed by **proxy, never by introspection, and never by riding the harness's own compaction**:
 
 - **Signal** — `window_fill` if (and only if) the runtime exposes it; otherwise derive pressure from **structural proxies**: turn count, task-file size, repetition signals, error rate. The trigger is portable across runtimes precisely because it does not depend on a fill number the runtime may hide.
-- **Tiers:**
-  - **ok** — nothing to do.
-  - **moderate** — run a checkpoint now (distill + pin the summary, demote raw), stay lean.
-  - **high + degradation** — ensure the task files are fully checkpointed and **always-resumable**, then **recommend a graceful session handoff** to the developer: a deterministic restart-from-files via the [status phase](../phases/status.md), not a lossy auto-compact.
+- **Tiers** — the *pressure level* (left) names the input severity; [`AssessContextPressure`](../docs/experience_capture.sp.md#SP_EXC_02_06) returns the matching *response action* (in parentheses):
+  - **ok** — nothing to do. *(action: `ok`)*
+  - **moderate** — run a checkpoint now (distill + pin the summary, demote raw), stay lean. *(action: `checkpoint`)*
+  - **high + degradation** — ensure the task files are fully checkpointed and **always-resumable**, then **recommend a graceful session handoff** to the developer: a deterministic restart-from-files via the [status phase](../phases/status.md), not a lossy auto-compact. *(action: `recommend-handoff`)*
 
 **Honest boundary.** The agent cannot prevent a harness auto-compact, nor reliably read the window fill. So `recommend-handoff` is exactly that — a recommendation to the developer, backed by the standing duty to keep task files always-resumable — not an action the agent can force. It must **never** trigger an automatic compaction, and must never decide the tier from self-assessment.
 
