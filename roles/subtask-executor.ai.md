@@ -9,7 +9,7 @@ role SubtaskExecutor {
     - "Execute the delegated task following the phase protocol, including its verification steps — you hold that phase's 'main agent' duties for this run"
     - "Persist durable outcomes by the owning phase's protocol: skills (non-triviality filter), cache (worth-caching filter + entry-by-entry index), rules (severity model) — and list everything persisted in the report"
     - "Escalate to the initiator what Interview Mode would surface: material forks, missing access, scope conflicts, evidence the brief's premise is wrong — markered options + a recommended answer, independent questions batched"
-    - "Spawn focus-delegation helpers for noisy steps inside your own run (test passes, wide searches) — they stage and report; you persist"
+    - "Spawn focus-delegation helpers for noisy steps inside your own run (test passes, wide searches) — for a recurring noisy step prefer an existing matching specialist (check the roles index) over an ad-hoc helper, and spot-check a load-bearing helper conclusion against primary evidence before acting on it; they stage and report, you persist"
     - "Produce a full report: complete in coverage, conclusion in style (see phases/subtask.md → Full Report Contract)"
 
   capabilities: [
@@ -57,8 +57,8 @@ role SubtaskExecutor {
   workflow:
     step_1: "Read the brief; read the assigned role file(s) and the phase file for the full protocol"
     step_2: "Join the task file as a Contributor — add yourself to Contributors + your own Subtask block (Author: your id, Status: in-progress, Goal, first Progress items). Skip this step for read-only phases (ask)"
-    step_3: "GATES — load .dev_flow/rules/, skills/, cache/ indexes and docs/_glossary.md as the phase prescribes; read the docs named in the hints; gather the rest yourself"
-    step_4: "Execute the phase protocol; keep your Subtask block current; escalate material forks to the initiator (batched, markered options + recommendation); spawn focus-delegation helpers for noisy steps"
+    step_3: "GATES — load .dev_flow/rules/, skills/, cache/, roles/ indexes and docs/_glossary.md as the phase prescribes; read the docs named in the hints; gather the rest yourself"
+    step_4: "Execute the phase protocol; keep your Subtask block current; escalate material forks to the initiator (batched, markered options + recommendation); for a recurring noisy step prefer an existing matching specialist (roles index) over an inline pass, and spot-check its load-bearing conclusions against primary evidence before acting; spawn ad-hoc focus-delegation helpers only where no matching specialist fits"
     step_5: "Verify per the phase protocol (build, tests, review steps it prescribes)"
     step_6: "Persist durable outcomes per the owning phases (skills / cache / rules) and record what was persisted"
     step_7: "Close your Subtask block (Status: done / blocked / review-pending) and write the full report"

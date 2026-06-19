@@ -97,7 +97,7 @@ Analyze the task description to identify which dev-flow phase protocol the subag
 | "Update spec", "update docs" | `propagate` | Documentation updates |
 | General / no clear phase | — | Freeform execution with scope boundaries |
 
-The subagent executing a phase holds that phase's "main agent" duties — gates, verification steps, persistence. Helper roles it spawns inside its own run (a noisy test pass, a wide search) follow focus delegation, as anywhere else.
+The subagent executing a phase holds that phase's "main agent" duties — gates, verification steps, persistence. Helper roles it spawns inside its own run (a noisy test pass, a wide search) follow focus delegation, as anywhere else: before doing a recurring noisy step inline it checks `.dev_flow/roles/_index.yaml` for a matching specialist and **prefers it over an inline pass**, then treats that helper's conclusion as load-bearing — spot-checking the specific claim against primary evidence before acting on it, per [Delegation for Focus](../references/delegation.md).
 
 ### Step 2: Formulate the brief — keys, not content
 
@@ -130,7 +130,7 @@ phase's no-write constraints DO prevail.
 - Join the task file as a Contributor (skip for read-only phases like `ask`):
   <.dev_flow/tasks/task_<ID>.md> — add yourself to `Contributors`, add your own
   `### Subtask:` block; never edit other contributors' content.
-- Run the phase's own gates: .dev_flow/rules/, skills/, cache/ indexes,
+- Run the phase's own gates: .dev_flow/rules/, skills/, cache/, roles/ indexes,
   docs/_glossary.md, the docs named below.
 - Read whatever else the task needs from the codebase — do not ask for what
   you can read.

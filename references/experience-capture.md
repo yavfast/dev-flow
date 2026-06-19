@@ -92,7 +92,7 @@ Experience Capture is what fires the L1→L2 movements of [session working memor
 | implement / fix / verify | Checkpoint at phase and subtask boundaries; trailer on complex responses; context-pressure assessed as the session grows |
 | [audit](../phases/audit.md) Step 3 (reflect) | The reflect step **is** a checkpoint invocation — harvest lessons from a closing task into proposed rules/skills |
 | [research](../phases/research.md) Step 4 | Persisting durable spike findings is the same propose-experience move |
-| Specialist end-of-burst | A project specialist accrues role-local heuristics **per call** (it self-writes its own memory, so the next call warm-starts on them); at **end-of-burst** this procedure harvests the burst's heuristics and *proposes* the broadly-useful ones as skills (hybrid store — role-local memory + skill proposals) |
+| Specialist end-of-burst | A project specialist accrues role-local heuristics **per call** (it self-writes its own memory, so the next call warm-starts on them); this per-call append is **ungated** (only the skill promotion below passes a gate), so — applying "trust structure, not self-assessment" to memory *content* — each heuristic is written as a *falsifiable, evidence-scoped observation*, never an absolute verdict (an over-stated one poisons later warm-starts). At **end-of-burst** this procedure harvests the burst's heuristics and *proposes* the broadly-useful ones as skills (hybrid store — role-local memory + skill proposals) |
 | Optional `/dream` | If a reflection/`dream` skill is installed, delegate the distillation step to it for a deeper retrospective; otherwise distill inline. Experience Capture does not depend on `/dream`. |
 
 ## A note on these guidelines
