@@ -1,11 +1,8 @@
 # Dev-Flow Active Context
 
-This file is a **dashboard** — a thin index over the task files in
-[`tasks/`](tasks/). Detailed per-task state lives in those files; this file
-only lists what is active and what has recently completed.
+This file is a **dashboard** — a thin index over the task files in [`tasks/`](tasks/). Detailed per-task state lives in those files; this file only lists what is active and what has recently completed.
 
-Any contributor may rebuild this dashboard from `tasks/*.md` if it becomes
-stale or inconsistent. See [phases/status.md](../phases/status.md).
+Any contributor may rebuild this dashboard from `tasks/*.md` if it becomes stale or inconsistent. See [phases/status.md](../phases/status.md).
 
 ## Active Tasks
 
@@ -26,11 +23,8 @@ stale or inconsistent. See [phases/status.md](../phases/status.md).
 
 ## Notes
 
-[Cross-task observations, coordination notes that span multiple tasks,
-or session-wide blockers. Leave empty if none.]
+[Cross-task observations, coordination notes that span multiple tasks, or session-wide blockers. Leave empty if none.]
 
 ---
 
-*Dashboard maintained by dev-flow commands. Each contributor updates only
-their own row context (e.g., adds itself to Contributors when joining a task).
-Hygiene: keep under ~80 lines; rebuild from `tasks/` when in doubt.*
+*Dashboard maintained by dev-flow commands. Each contributor updates only their own row context (e.g., adds itself to Contributors when joining a task). Hygiene: keep under ~80 lines; rebuild from `tasks/` when in doubt.*

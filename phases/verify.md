@@ -2,27 +2,15 @@
 
 ## Purpose
 
-After functional tests pass and code review is approved, verify the changes
-at a broader scope: regression testing, integration testing, and live verification
-(launching the app/service to check end-to-end behavior).
+After functional tests pass and code review is approved, verify the changes at a broader scope: regression testing, integration testing, and live verification (launching the app/service to check end-to-end behavior).
 
-This phase catches issues that unit/mock tests cannot — broken integrations,
-configuration problems, UI regressions, and real-world service interactions.
+This phase catches issues that unit/mock tests cannot — broken integrations, configuration problems, UI regressions, and real-world service interactions.
 
 ## Delegation
 
-This is the noisiest phase in the pipeline — regression suites, integration logs, live
-runs, screenshots — and almost none of that output needs to reach the main context. Run
-verification through a subagent (the clean-context shape Review uses): it returns a verdict
-plus the failures that matter, with full logs in a file referenced by path. See
-**[Delegation for Focus](../references/delegation.md)**.
+This is the noisiest phase in the pipeline — regression suites, integration logs, live runs, screenshots — and almost none of that output needs to reach the main context. Run verification through a subagent (the clean-context shape Review uses): it returns a verdict plus the failures that matter, with full logs in a file referenced by path. See **[Delegation for Focus](../references/delegation.md)**.
 
-**Artifacts.** Run output and screenshots go to the project workspace —
-`/tmp/{project-slug}/logs/` and `/tmp/{project-slug}/screenshots/`, timestamped
-(`{name}_YYYYMMDD_HHMMSS.{ext}`), never numeric suffixes. A capture worth keeping
-across sessions (e.g. a reference screenshot future runs compare against) is
-promoted to `.dev_flow/cache/app/` by the agent running this phase (focus helpers
-stage and report). See [Resource Cache](../references/cache.md).
+**Artifacts.** Run output and screenshots go to the project workspace — `/tmp/{project-slug}/logs/` and `/tmp/{project-slug}/screenshots/`, timestamped (`{name}_YYYYMMDD_HHMMSS.{ext}`), never numeric suffixes. A capture worth keeping across sessions (e.g. a reference screenshot future runs compare against) is promoted to `.dev_flow/cache/app/` by the agent running this phase (focus helpers stage and report). See [Resource Cache](../references/cache.md).
 
 ## Command
 
@@ -30,8 +18,7 @@ stage and report). See [Resource Cache](../references/cache.md).
 /dev-flow verify [target]
 ```
 
-The target is optional. Without it, verification scope is determined from the
-current active context and the nature of the changes.
+The target is optional. Without it, verification scope is determined from the current active context and the nature of the changes.
 
 ### Examples
 
@@ -70,44 +57,30 @@ If none apply — skip directly to commit approval.
 
 ## Context Loading
 
-Loading project knowledge is a **gate** (see
-[Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding)):
+Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding)):
 
-**Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml` and load skills for the
-verified functionality — integration specifics, environment setup, known pitfalls. See [skill phase](skill.md).
+**Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml` and load skills for the verified functionality — integration specifics, environment setup, known pitfalls. See [skill phase](skill.md).
 
-**Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml`
-and load testing rules (test environments, CI conventions); verification MUST follow them.
-See [rule phase](rule.md).
+**Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml` and load testing rules (test environments, CI conventions); verification MUST follow them. See [rule phase](rule.md).
 
 ## Safe Testing Principle
 
-Integration and live tests operate on real data and real services. The primary rule:
-**never damage or delete user data during verification.**
+Integration and live tests operate on real data and real services. The primary rule: **never damage or delete user data during verification.**
 
 ### Guidelines
 
-1. **Use a dedicated test account.** If the project supports multiple accounts or tenants,
-   always run destructive operations (delete, modify, reset) under a test account,
-   never a real user account.
+1. **Use a dedicated test account.** If the project supports multiple accounts or tenants, always run destructive operations (delete, modify, reset) under a test account, never a real user account.
 
 2. **Use test entities.** For operations like deletion, parameter changes, or state transitions:
    - Use existing test entities if they are available (e.g., items marked as test data).
-   - If none exist — create new entities with an explicit test marker
-     (e.g., prefix `[TEST]`, tag `test`, or a dedicated flag) so they are clearly
-     distinguishable from real data.
+   - If none exist — create new entities with an explicit test marker (e.g., prefix `[TEST]`, tag `test`, or a dedicated flag) so they are clearly distinguishable from real data.
    - After verification, clean up test entities unless they serve as fixtures.
 
-3. **Ask before touching real data.** If a verification scenario requires interaction
-   with real user data and there is no safe alternative — stop and ask the user
-   for explicit confirmation before proceeding. Describe exactly which data will
-   be affected and what the operation does.
+3. **Ask before touching real data.** If a verification scenario requires interaction with real user data and there is no safe alternative — stop and ask the user for explicit confirmation before proceeding. Describe exactly which data will be affected and what the operation does.
 
-4. **Prefer read-only checks first.** When verifying a feature, start with read-only
-   operations (list, get, search) before attempting write operations (create, update, delete).
+4. **Prefer read-only checks first.** When verifying a feature, start with read-only operations (list, get, search) before attempting write operations (create, update, delete).
 
-5. **Sandbox environments.** If the project has a staging, sandbox, or dev environment —
-   prefer it over production for all live tests.
+5. **Sandbox environments.** If the project has a staging, sandbox, or dev environment — prefer it over production for all live tests.
 
 ### What counts as a destructive operation
 
@@ -148,21 +121,13 @@ Verify fails
   → Re-run verification from the failed level
 ```
 
-This cycle repeats until all verification passes. Each iteration is smaller
-because the fix is targeted.
+This cycle repeats until all verification passes. Each iteration is smaller because the fix is targeted.
 
-**When the failure points upstream.** Verify is often the first place reality
-pushes back on the *documents*: a spec'd limit that does not survive a live run,
-an integration contract that cannot hold, a plan technology decision that fails in
-practice. Bending the code there would make it correct per document and broken per
-reality. Escalate instead — fix the owning document (interview if it is a fork),
-re-pass its gate, then resume this cycle.
-See **[Upstream Escalation](../references/escalation.md)**.
+**When the failure points upstream.** Verify is often the first place reality pushes back on the *documents*: a spec'd limit that does not survive a live run, an integration contract that cannot hold, a plan technology decision that fails in practice. Bending the code there would make it correct per document and broken per reality. Escalate instead — fix the owning document (interview if it is a fork), re-pass its gate, then resume this cycle. See **[Upstream Escalation](../references/escalation.md)**.
 
 ### Manual Verification
 
-When automated verification is not available, provide the user with a step-by-step
-checklist of actions to perform:
+When automated verification is not available, provide the user with a step-by-step checklist of actions to perform:
 
 1. **Prerequisites** — running services, test data, environment setup
 2. **Step-by-step actions** the user should perform
@@ -224,8 +189,7 @@ Before proceeding to commit:
 - Skipping verification for "small" changes that affect shared code
 - Running integration/live tests before functional tests and review pass
 - Fixing a verification failure without re-running functional tests + review
-- Bending code to a spec the failure just disproved — escalate upstream instead
-  (see [Upstream Escalation](../references/escalation.md))
+- Bending code to a spec the failure just disproved — escalate upstream instead (see [Upstream Escalation](../references/escalation.md))
 - Not providing manual verification steps when no automated tests exist
 - Creating new integration/live test scenarios without asking the user first
 - Committing after review without running verification

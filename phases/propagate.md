@@ -2,13 +2,9 @@
 
 ## Purpose
 
-When a change is needed, propagate it through the pipeline in the correct order
-to prevent drift between documentation and implementation.
+When a change is needed, propagate it through the pipeline in the correct order to prevent drift between documentation and implementation.
 
-Propagate flows an **already-made** decision top-down. The bottom-up path — when a
-downstream phase discovers the document itself is wrong and the correcting decision
-has yet to be made — is [Upstream Escalation](../references/escalation.md): escalate
-up first, then propagate down.
+Propagate flows an **already-made** decision top-down. The bottom-up path — when a downstream phase discovers the document itself is wrong and the correcting decision has yet to be made — is [Upstream Escalation](../references/escalation.md): escalate up first, then propagate down.
 
 ## Propagation Order
 
@@ -21,22 +17,17 @@ up first, then propagate down.
 | 5 | Run Test → Review → Verify → Commit | Follow the main pipeline phases |
 | 6 | Update document index | Only if no new/removed concepts |
 
-**Anti-pattern:** "I'll just fix the code and update the spec later."
-This ALWAYS leads to drift. The spec update takes 5 minutes now but 2 hours to reconstruct later.
+**Anti-pattern:** "I'll just fix the code and update the spec later." This ALWAYS leads to drift. The spec update takes 5 minutes now but 2 hours to reconstruct later.
 
 ## Context Loading
 
-Loading project knowledge is a **gate** (see
-[Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding)):
+Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding)):
 
-**Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml` and load skills for the
-changed area — domain context for updating specs/concepts. See [skill phase](skill.md).
+**Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml` and load skills for the changed area — domain context for updating specs/concepts. See [skill phase](skill.md).
 
-**Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml`;
-rules may need updating if the change introduces or modifies a pattern. See [rule phase](rule.md).
+**Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml`; rules may need updating if the change introduces or modifies a pattern. See [rule phase](rule.md).
 
-**Glossary check:** Load `docs/_glossary.md` (if present) with `docs/_index.md` — a change
-that renames or retires a domain term must be propagated here too. See [Glossary](../references/glossary.md).
+**Glossary check:** Load `docs/_glossary.md` (if present) with `docs/_index.md` — a change that renames or retires a domain term must be propagated here too. See [Glossary](../references/glossary.md).
 
 ## Keeping Documents Current
 
@@ -77,39 +68,29 @@ Use this matrix to determine which documents to update based on the type of chan
 
 Legend: `+` = update required, `—` = no update needed.
 
-**How to use:** Before propagating, identify the change type in the left column.
-Update only the documents marked with `+`. If your change does not fit any row,
-treat it as "New contract/operation" (full pipeline).
+**How to use:** Before propagating, identify the change type in the left column. Update only the documents marked with `+`. If your change does not fit any row, treat it as "New contract/operation" (full pipeline).
 
 ## Drift Detection Algorithm
 
-When you suspect documents may be out of sync with code, follow this algorithm
-to identify stale documents. This is a manual procedure — adapt the specific
-commands to your OS and toolchain.
+When you suspect documents may be out of sync with code, follow this algorithm to identify stale documents. This is a manual procedure — adapt the specific commands to your OS and toolchain.
 
 ### Step 1: Collect traceable IDs from code
 
-Search the entire codebase for comments matching traceable ID patterns:
-`[C_*]`, `[SP_*]`, `[PL_*]`. Collect a set of all referenced IDs.
+Search the entire codebase for comments matching traceable ID patterns: `[C_*]`, `[SP_*]`, `[PL_*]`. Collect a set of all referenced IDs.
 
 ### Step 2: Collect traceable IDs from documents
 
-Scan all `*.concept.md`, `*.sp.md`, `*.plan.md` files in `docs/`.
-Extract all defined IDs (from headers with `{#ID}` anchors and metadata `Code:` fields).
+Scan all `*.concept.md`, `*.sp.md`, `*.plan.md` files in `docs/`. Extract all defined IDs (from headers with `{#ID}` anchors and metadata `Code:` fields).
 
 ### Step 3: Cross-reference
 
-- **Orphaned code references:** IDs found in code but not in any document →
-  the document was deleted or renamed without updating code comments.
-- **Unreferenced documents:** IDs defined in documents but never referenced in code →
-  the code was not yet written, or the traceable ID comment was removed.
+- **Orphaned code references:** IDs found in code but not in any document → the document was deleted or renamed without updating code comments.
+- **Unreferenced documents:** IDs defined in documents but never referenced in code → the code was not yet written, or the traceable ID comment was removed.
 - **Missing documents:** Code references a concept/spec/plan that has no corresponding file.
 
 ### Step 4: Check freshness by dates
 
-For each document, compare its `Updated:` date with the last modification date
-of source files that reference its traceable IDs (via git log or file timestamps).
-If source files were modified after the document's `Updated` date — the document may be stale.
+For each document, compare its `Updated:` date with the last modification date of source files that reference its traceable IDs (via git log or file timestamps). If source files were modified after the document's `Updated` date — the document may be stale.
 
 ### Step 5: Report
 
@@ -126,15 +107,11 @@ Produce a drift report listing:
 - When joining a project (as part of onboard)
 - Periodically (e.g., monthly) on active projects
 
-The [Impact Walk](../references/impact.md) reuses this ID-collection machinery to
-answer the *neighborhood* question for a single node — keep the two on one
-collection approach.
+The [Impact Walk](../references/impact.md) reuses this ID-collection machinery to answer the *neighborhood* question for a single node — keep the two on one collection approach.
 
 ## Cascade Impact Assessment
 
-Before making a change, enumerate the chain with the
-[Impact Walk](../references/impact.md) (docs + code bindings + active tasks)
-instead of walking by hand:
+Before making a change, enumerate the chain with the [Impact Walk](../references/impact.md) (docs + code bindings + active tasks) instead of walking by hand:
 
 1. Take the `Used by` chain from the walk's radius.
 2. For each dependent, check if the change breaks any assumptions.

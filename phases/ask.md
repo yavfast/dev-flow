@@ -2,11 +2,9 @@
 
 ## Purpose
 
-Answer questions about the project's codebase, architecture, or feasibility of new
-functionality — **without making any changes** to code, docs, or active context.
+Answer questions about the project's codebase, architecture, or feasibility of new functionality — **without making any changes** to code, docs, or active context.
 
-This is a read-only, advisory phase. It explores the codebase, analyzes existing
-concepts/specs/plans, and provides a well-grounded answer.
+This is a read-only, advisory phase. It explores the codebase, analyzes existing concepts/specs/plans, and provides a well-grounded answer.
 
 ## Command
 
@@ -26,14 +24,12 @@ concepts/specs/plans, and provides a well-grounded answer.
 
 ## Role Responsible
 
-This command is handled by **Advisor**:
-[roles/advisor.ai.md](../roles/advisor.ai.md)
+This command is handled by **Advisor**: [roles/advisor.ai.md](../roles/advisor.ai.md)
 
 ## Constraints
 
 - **No file writes.** Do not create, edit, or delete any files.
-- **No context updates.** Do not touch `.dev_flow/active_context.md`,
-  `.dev_flow/tasks/_index.md`, or any file under `.dev_flow/tasks/`.
+- **No context updates.** Do not touch `.dev_flow/active_context.md`, `.dev_flow/tasks/_index.md`, or any file under `.dev_flow/tasks/`.
 - **No git operations.** No commits, branches, or stashes.
 - **No code generation.** Do not produce implementation code (pseudocode for illustration is OK).
 
@@ -53,11 +49,8 @@ This command is handled by **Advisor**:
 
 1. Read relevant source files, concepts (`*.concept.md`), specs (`*.sp.md`), and plans (`*.plan.md`).
 2. If the project has `.dev_flow/active_context.md` — read it for the list of active tasks. If a task in the dashboard matches the question's area, also read its `.dev_flow/tasks/task_<ID>.md` for the most relevant context. **Read only — do not modify.**
-3. **Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml` and load skills for the
-   question topic — the answer MUST reflect them, not generic assumptions. See [skill phase](skill.md).
-4. **Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml`
-   and load rules for the question area; any proposed code/approach MUST honour them (flag a
-   `must` rule it would violate). See [rule phase](rule.md).
+3. **Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml` and load skills for the question topic — the answer MUST reflect them, not generic assumptions. See [skill phase](skill.md).
+4. **Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml` and load rules for the question area; any proposed code/approach MUST honour them (flag a `must` rule it would violate). See [rule phase](rule.md).
 5. Use Grep/Glob to trace references, imports, and usage patterns.
 6. For feasibility questions — also check existing tests and integration points.
 
@@ -103,18 +96,13 @@ This is a suggestion only — do not execute anything.
 
 ## Escalation to Research
 
-Ask answers from **what exists**: the codebase, the docs, the loaded skills. When
-the honest answer is "this cannot be determined from the project alone" — the
-question hinges on an external library's capability, prior art, measurements, or
-an unexplored solution space — do **not** guess and do not present a hollow
-verdict. Say exactly what is missing and suggest escalating:
+Ask answers from **what exists**: the codebase, the docs, the loaded skills. When the honest answer is "this cannot be determined from the project alone" — the question hinges on an external library's capability, prior art, measurements, or an unexplored solution space — do **not** guess and do not present a hollow verdict. Say exactly what is missing and suggest escalating:
 
 > "This can't be answered from the codebase — it depends on whether {X} supports {Y}.
 > Run `/dev-flow research {question}` to investigate (time-boxed spike); findings
 > will be persisted to `.dev_flow/skills/`."
 
-Ask itself stays read-only — the escalation is a suggestion, not an execution.
-See [research phase](research.md).
+Ask itself stays read-only — the escalation is a suggestion, not an execution. See [research phase](research.md).
 
 ## Language Policy
 

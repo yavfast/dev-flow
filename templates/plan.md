@@ -57,8 +57,7 @@ Pseudocode sketch:
 
 ## Backlog
 
-Items deferred from the current implementation cycle (each names the trigger that
-returns it to scope, or the owner who decides):
+Items deferred from the current implementation cycle (each names the trigger that returns it to scope, or the owner who decides):
 - {deferred item 1} — return when: {event or date}
 - {deferred item 2} — return when: {event or date}
 

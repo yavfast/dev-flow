@@ -16,15 +16,11 @@
 
 ## Description
 
-[Shared. What this task is about overall, written as the team understands it.
-Each contributor may append a paragraph signed `— <agent-id>` to extend the
-description. **Do not rewrite paragraphs another contributor wrote.**]
+[Shared. What this task is about overall, written as the team understands it. Each contributor may append a paragraph signed `— <agent-id>` to extend the description. **Do not rewrite paragraphs another contributor wrote.**]
 
 ## Subtasks
 
-> A subtask is a thread of work claimed by one contributor. To join this task,
-> add a new `### Subtask:` block below. **Only the block's author modifies it.**
-> Reading other contributors' blocks is encouraged — they are shared context.
+A subtask is a thread of work claimed by one contributor. To join this task, add a new `### Subtask:` block below. **Only the block's author modifies it.** Reading other contributors' blocks is encouraged — they are shared context.
 
 ### Subtask: <short title>
 > Author: `<agent-id>` — Created: HH:MM — Last updated: HH:MM — Status: `in-progress`
@@ -80,8 +76,4 @@ description. **Do not rewrite paragraphs another contributor wrote.**]
 
 ---
 
-*This is a shared file. Each contributor owns their own subtask block and
-their own tagged entries in shared sections (Description paragraphs,
-Coordination Notes, Blocking Issues, Relevant Context rows, Activity Log
-entries). Do not refactor others' content. Coordinate via Coordination Notes.
-See [phases/status.md](../phases/status.md) for the full protocol.*
+*This is a shared file. Each contributor owns their own subtask block and their own tagged entries in shared sections (Description paragraphs, Coordination Notes, Blocking Issues, Relevant Context rows, Activity Log entries). Do not refactor others' content. Coordinate via Coordination Notes. See [phases/status.md](../phases/status.md) for the full protocol.*

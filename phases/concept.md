@@ -2,13 +2,11 @@
 
 ## Purpose
 
-A concept describes the idea, architecture, mechanisms, and philosophy.
-It answers "what" and "why", not "how to implement".
+A concept describes the idea, architecture, mechanisms, and philosophy. It answers "what" and "why", not "how to implement".
 
 ## Language Independence
 
-Concepts MUST NOT reference specific programming languages, frameworks, or libraries.
-They describe domain logic, architecture patterns, and data flows at an abstract level.
+Concepts MUST NOT reference specific programming languages, frameworks, or libraries. They describe domain logic, architecture patterns, and data flows at an abstract level.
 
 ## Pre-Concept Checklist
 
@@ -20,12 +18,7 @@ Before creating a new concept, answer these questions. If any answer is unclear 
 - [ ] **What is the rollback strategy?** How to undo this if it fails or is deprecated. Record in "1.2 Design Constraints".
 - [ ] **Who will maintain this?** Which role, team, or module is responsible long-term.
 
-**Answers must rest on verified knowledge, not guesses.** If a critical answer
-depends on something nobody has confirmed — an unfamiliar domain, an unverified
-capability, an unexplored solution space — run **[research](research.md)**
-(`/dev-flow research`) before authoring. Proceeding on an unverified assumption is
-a user decision: record it as an **open** Design Decision with a resolution
-trigger, never as silent confidence. The Concept → Spec gate checks this.
+**Answers must rest on verified knowledge, not guesses.** If a critical answer depends on something nobody has confirmed — an unfamiliar domain, an unverified capability, an unexplored solution space — run **[research](research.md)** (`/dev-flow research`) before authoring. Proceeding on an unverified assumption is a user decision: record it as an **open** Design Decision with a resolution trigger, never as silent confidence. The Concept → Spec gate checks this.
 
 ## Reuse Check
 
@@ -40,78 +33,44 @@ If reuse check reveals that the problem is already covered — extend the existi
 
 ## Context Loading
 
-Loading project knowledge is a **gate** (see
-[Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding)):
+Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding)):
 
-**Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml` and load skills for the
-concept's domain — known constraints and pitfalls bound what the architecture can promise.
-See [skill phase](skill.md).
+**Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml` and load skills for the concept's domain — known constraints and pitfalls bound what the architecture can promise. See [skill phase](skill.md).
 
-**Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml`
-and load architecture rules for the area; the concept MUST NOT propose a mechanism that
-violates a `must` rule. See [rule phase](rule.md).
+**Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml` and load architecture rules for the area; the concept MUST NOT propose a mechanism that violates a `must` rule. See [rule phase](rule.md).
 
 ## Project Glossary
 
-Load `docs/_glossary.md` together with `docs/_index.md` before authoring (it is the
-project's canonical domain vocabulary). While writing:
+Load `docs/_glossary.md` together with `docs/_index.md` before authoring (it is the project's canonical domain vocabulary). While writing:
 
-- **Reuse canonical terms.** For every domain noun, use the glossary's term — not an
-  alias listed under `_Avoid_`. This is what keeps the same referent named the same way
-  across all concepts.
-- **Add new terms inline.** When the concept introduces a genuinely new domain term,
-  add it to `docs/_glossary.md` as you go (term + tight definition + aliases to avoid).
-  Create the file lazily if it does not exist yet.
-- **Challenge against the glossary.** If your wording conflicts with the glossary, use the
-  canonical term — a routine naming choice the glossary settles is not an interview. Escalate
-  to [Interview Mode](../references/interview-mode.md) only when the conflict is *material*
-  (two genuinely different concepts being conflated, or a canonical choice that shapes
-  contracts), then update the glossary once resolved.
+- **Reuse canonical terms.** For every domain noun, use the glossary's term — not an alias listed under `_Avoid_`. This is what keeps the same referent named the same way across all concepts.
+- **Add new terms inline.** When the concept introduces a genuinely new domain term, add it to `docs/_glossary.md` as you go (term + tight definition + aliases to avoid). Create the file lazily if it does not exist yet.
+- **Challenge against the glossary.** If your wording conflicts with the glossary, use the canonical term — a routine naming choice the glossary settles is not an interview. Escalate to [Interview Mode](../references/interview-mode.md) only when the conflict is *material* (two genuinely different concepts being conflated, or a canonical choice that shapes contracts), then update the glossary once resolved.
 
-Boundary: the glossary says *what a word means*; this concept's Domain Model (§2) says
-*how the entities relate and behave*. See [Glossary](../references/glossary.md).
+Boundary: the glossary says *what a word means*; this concept's Domain Model (§2) says *how the entities relate and behave*. See [Glossary](../references/glossary.md).
 
 ## Authoring Principles
 
-- **Ideas over implementation:** Describe "what" and "why", never "how in language X".
-  If you find yourself writing class names or imports — you've gone too far.
-- **Domain language:** Use problem domain language, not solution domain.
-  Say "permission check" not "decorator that wraps the function".
-- **Diagrams over prose:** Use ASCII diagrams, mermaid, or structured tables
-  to show relationships, hierarchies, and flows.
+- **Ideas over implementation:** Describe "what" and "why", never "how in language X". If you find yourself writing class names or imports — you've gone too far.
+- **Domain language:** Use problem domain language, not solution domain. Say "permission check" not "decorator that wraps the function".
+- **Diagrams over prose:** Use ASCII diagrams, mermaid, or structured tables to show relationships, hierarchies, and flows.
 - **Explicit boundaries:** State what this concept IS and IS NOT.
 - **Cross-references:** Link to related concepts with `[C_XXX]` identifiers.
 - **Changelog:** Every concept ends with a `## Changelog` table recording significant changes.
 
 ## Interview Mode for Design Decisions
 
-Concepts are where the biggest, least-reversible choices are made — and where they
-are easiest to hide. When authoring surfaces **two or more materially different ways
-forward** (a different domain model, a different boundary, a different mechanism),
-do **not** pick one silently and bury it in the prose. Stop and run an interview:
-present the fork to the developer with 2–4 options and your **recommended answer**,
-reach a consensus, and record the outcome.
+Concepts are where the biggest, least-reversible choices are made — and where they are easiest to hide. When authoring surfaces **two or more materially different ways forward** (a different domain model, a different boundary, a different mechanism), do **not** pick one silently and bury it in the prose. Stop and run an interview: present the fork to the developer with 2–4 options and your **recommended answer**, reach a consensus, and record the outcome.
 
-The developer holds context you don't (roadmap, business constraints, team) and owns
-the consequences; an architectural mistake set here is expensive to undo once it
-reaches code. A cheap question now beats an expensive reversal later.
+The developer holds context you don't (roadmap, business constraints, team) and owns the consequences; an architectural mistake set here is expensive to undo once it reaches code. A cheap question now beats an expensive reversal later.
 
-See **[Interview Mode](../references/interview-mode.md)** for the full procedure —
-when a fork counts as a decision point (and when it does not), how to frame options
-with a recommendation, sequential vs batched questions, and the two valid outcomes
-(consensus vs documented open alternatives with a resolution trigger). Record every
-resolved or open decision in the concept's **Design Decisions** section.
+See **[Interview Mode](../references/interview-mode.md)** for the full procedure — when a fork counts as a decision point (and when it does not), how to frame options with a recommendation, sequential vs batched questions, and the two valid outcomes (consensus vs documented open alternatives with a resolution trigger). Record every resolved or open decision in the concept's **Design Decisions** section.
 
-> **Interview vs Banned Phrases.** A documented **open** decision (options +
-> trade-offs + a resolution trigger) is *not* a banned deferral. The phrases below
-> ("temporarily", "for now", …) are *undocumented* deferrals with no owner and no
-> trigger; an open decision records the alternatives and the concrete event/date that
-> closes it — the sanctioned way to leave something open (e.g. for research work).
+**Interview vs Banned Phrases.** A documented **open** decision (options + trade-offs + a resolution trigger) is *not* a banned deferral. The phrases below ("temporarily", "for now", …) are *undocumented* deferrals with no owner and no trigger; an open decision records the alternatives and the concrete event/date that closes it — the sanctioned way to leave something open (e.g. for research work).
 
 ## Banned Phrases
 
-Reject or flag the following phrases in any concept. They signal deferred decisions
-that become permanent technical debt:
+Reject or flag the following phrases in any concept. They signal deferred decisions that become permanent technical debt:
 
 | Phrase | Problem | What to write instead |
 |--------|---------|----------------------|
@@ -208,28 +167,19 @@ section only if authoring surfaced no decision points. One record per decision:
 
 ## Spike / Exploration (Optional)
 
-Before writing a concept, you may need to explore an idea: research libraries,
-prototype approaches, or discuss trade-offs. This is formalized as a **spike** —
-a lightweight, time-boxed exploration that feeds into the concept. Spikes are
-executed by the **[research phase](research.md)** (`/dev-flow research`, alias
-`spike`) — it owns the cost gate, the delegation to the researcher subagent, the
-spike rules, and persisting durable findings to `.dev_flow/skills/`.
+Before writing a concept, you may need to explore an idea: research libraries, prototype approaches, or discuss trade-offs. This is formalized as a **spike** — a lightweight, time-boxed exploration that feeds into the concept. Spikes are executed by the **[research phase](research.md)** (`/dev-flow research`, alias `spike`) — it owns the cost gate, the delegation to the researcher subagent, the spike rules, and persisting durable findings to `.dev_flow/skills/`.
 
 ### When to Spike
 
 - The domain is unfamiliar — need to understand constraints before committing to an architecture.
-- Multiple competing approaches exist — need to compare before choosing
-  (the spike *discovers* options; the [interview](../references/interview-mode.md) then *chooses*).
+- Multiple competing approaches exist — need to compare before choosing (the spike *discovers* options; the [interview](../references/interview-mode.md) then *chooses*).
 - A critical technical question blocks concept authoring (e.g., "can library X handle Y?").
 - A Pre-Concept Checklist answer rests on an unverified assumption.
 - The user explicitly asks for exploration before design.
 
-When any of these hold mid-authoring, pause the concept, run the
-[research phase](research.md), then resume with the findings. Reference the spike
-from the concept: `Spike: [name.spike.md](./name.spike.md)`.
+When any of these hold mid-authoring, pause the concept, run the [research phase](research.md), then resume with the findings. Reference the spike from the concept: `Spike: [name.spike.md](./name.spike.md)`.
 
-See [research phase](research.md) for the full procedure and spike rules, and the
-[spike template](../templates/spike.md) for the file structure.
+See [research phase](research.md) for the full procedure and spike rules, and the [spike template](../templates/spike.md) for the file structure.
 
 ## Concept Granularity
 
@@ -258,6 +208,4 @@ Ask: "Can someone work on part A without understanding part B?" If yes — split
 
 ## Epic / Feature Group
 
-When a large feature requires 3+ related concepts with ordering dependencies,
-create an epic document (`*.epic.md`) to coordinate them.
-See [epic template](../templates/epic.md) for the structure.
+When a large feature requires 3+ related concepts with ordering dependencies, create an epic document (`*.epic.md`) to coordinate them. See [epic template](../templates/epic.md) for the structure.

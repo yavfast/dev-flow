@@ -2,50 +2,30 @@
 
 ## Purpose
 
-Break the specification into actionable phases with concrete technology choices,
-file paths, and task tracking. This is where language, framework, and library decisions are made.
+Break the specification into actionable phases with concrete technology choices, file paths, and task tracking. This is where language, framework, and library decisions are made.
 
 ## Key Rules
 
-- **Concrete technology choices:** This is the only document where you specify
-  languages, frameworks, libraries, file paths, and module names.
-- **Always track progress:** Every phase must have a status:
-  `[DONE]`, `[IN PROGRESS]`, `[TODO]`, or `[BACKLOG]`.
-- **Top-level progress summary:** The plan must have a checkbox summary
-  showing overall progress at a glance.
-- **Backlog section:** Out-of-scope items go to the backlog at the bottom. Each item
-  names the **trigger** that returns it to scope (event or date) or an owner who
-  decides — an untriggered backlog item is a hidden "later" ([audit](audit.md) flags them).
+- **Concrete technology choices:** This is the only document where you specify languages, frameworks, libraries, file paths, and module names.
+- **Always track progress:** Every phase must have a status: `[DONE]`, `[IN PROGRESS]`, `[TODO]`, or `[BACKLOG]`.
+- **Top-level progress summary:** The plan must have a checkbox summary showing overall progress at a glance.
+- **Backlog section:** Out-of-scope items go to the backlog at the bottom. Each item names the **trigger** that returns it to scope (event or date) or an owner who decides — an untriggered backlog item is a hidden "later" ([audit](audit.md) flags them).
 - **No orphaned phases:** Every phase must reference which spec sections it implements.
-- **Pseudocode, not production code:** Include short sketches to clarify intent,
-  but do not write full implementation.
+- **Pseudocode, not production code:** Include short sketches to clarify intent, but do not write full implementation.
 
 ## Context Loading
 
-Loading project knowledge is a **gate** (see
-[Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding)):
+Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding)):
 
-**Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml` and load skills matching
-the plan's scope — they inform technology decisions and record known pitfalls. See [skill phase](skill.md).
+**Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml` and load skills matching the plan's scope — they inform technology decisions and record known pitfalls. See [skill phase](skill.md).
 
-**Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml`
-and load rules for the planned area; the plan MUST NOT propose anything violating a `must`
-rule. Reference applicable rules in the Technology Decisions table. See [rule phase](rule.md).
+**Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml` and load rules for the planned area; the plan MUST NOT propose anything violating a `must` rule. Reference applicable rules in the Technology Decisions table. See [rule phase](rule.md).
 
 ## Interview Mode for Technology Decisions
 
-The plan is where technology is chosen — language, framework, library, persistence,
-concurrency model — and these are precisely forks with two or more viable, hard-to-
-reverse options. The Technology Decisions table records *what* was chosen; when a
-choice is genuinely contested (e.g. two libraries that both fit, a build-vs-buy
-call, a sync strategy), do not pick silently. Run an interview: present 2–4 options
-with your **recommended answer**, reach consensus with the developer, and capture
-the *why* in **Design Decisions** so the Technology Decisions row has a traceable
-rationale behind it.
+The plan is where technology is chosen — language, framework, library, persistence, concurrency model — and these are precisely forks with two or more viable, hard-to- reverse options. The Technology Decisions table records *what* was chosen; when a choice is genuinely contested (e.g. two libraries that both fit, a build-vs-buy call, a sync strategy), do not pick silently. Run an interview: present 2–4 options with your **recommended answer**, reach consensus with the developer, and capture the *why* in **Design Decisions** so the Technology Decisions row has a traceable rationale behind it.
 
-A rule, an existing concept, or a documented convention that already settles a
-choice is **not** a decision point — follow it and cite it. Interview only the
-genuinely open technology forks. See **[Interview Mode](../references/interview-mode.md)**.
+A rule, an existing concept, or a documented convention that already settles a choice is **not** a decision point — follow it and cite it. Interview only the genuinely open technology forks. See **[Interview Mode](../references/interview-mode.md)**.
 
 ## Structure
 
@@ -151,14 +131,11 @@ Omit if no technology choice was contested. One record per decision:
 
 ## Changelog Requirement
 
-Every plan must include a Changelog table at the bottom. Record significant changes:
-technology decision changes, added/removed phases, scope changes. Minor status updates
-(TODO → DONE) do not require a changelog entry.
+Every plan must include a Changelog table at the bottom. Record significant changes: technology decision changes, added/removed phases, scope changes. Minor status updates (TODO → DONE) do not require a changelog entry.
 
 ## Refactoring Protocol
 
-When a code change restructures modules, files, or internal organization **without changing
-the specification contracts**, use a lightweight plan-only workflow:
+When a code change restructures modules, files, or internal organization **without changing the specification contracts**, use a lightweight plan-only workflow:
 
 ### When This Applies
 

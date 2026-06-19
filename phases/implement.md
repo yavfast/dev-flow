@@ -2,24 +2,19 @@
 
 ## Purpose
 
-Write code following the implementation plan. Code is a derived artifact
-from the specification — never write code without an up-to-date plan.
+Write code following the implementation plan. Code is a derived artifact from the specification — never write code without an up-to-date plan.
 
 ## Rules
 
 1. **Follow the plan phases in order.** Respect dependencies between phases.
-2. **Follow SOLID and pluggability principles** as defined in
-   [solid-architecture reference](../references/solid-architecture.md).
-   If `.dev_flow/rules/` defines alternative architectural conventions — project rules
-   take precedence.
+2. **Follow SOLID and pluggability principles** as defined in [solid-architecture reference](../references/solid-architecture.md). If `.dev_flow/rules/` defines alternative architectural conventions — project rules take precedence.
 3. **Reference traceable IDs in code comments:**
    ```python
    # [C_ACS_03_01] PermissionInterceptor — enforcement pattern
    class PermissionInterceptor:
        ...
    ```
-4. **Implement ALL fields from specification tables.** Do not skip optional fields —
-   implement them with their default values.
+4. **Implement ALL fields from specification tables.** Do not skip optional fields — implement them with their default values.
 5. **Use immutable structures** where the spec says "immutable after creation".
 6. **Implement all error cases** from the spec's Errors tables.
 7. **Update the plan status** after completing each phase:
@@ -35,22 +30,13 @@ Before writing code, verify:
 - [ ] Phase dependencies are explicitly stated
 - [ ] The specification passes its self-validation checklist
 
-**Skill check (gate).** Identify the technologies/patterns this task uses. MUST read
-`.dev_flow/skills/_index.yaml` and load matching skills BEFORE writing code or doing
-research. If research is still needed, save consolidated results to `.dev_flow/skills/`
-after the task. See [skill phase](skill.md).
+**Skill check (gate).** Identify the technologies/patterns this task uses. MUST read `.dev_flow/skills/_index.yaml` and load matching skills BEFORE writing code or doing research. If research is still needed, save consolidated results to `.dev_flow/skills/` after the task. See [skill phase](skill.md).
 
-**Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml`
-and load rules for the area being modified. New code MUST comply (`must` = blocks). See
-[rule phase](rule.md) and [Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding).
+**Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml` and load rules for the area being modified. New code MUST comply (`must` = blocks). See [rule phase](rule.md) and [Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding).
 
-**Resource check.** Before fetching a design export or external document (e.g. via the
-Figma MCP) for this implementation, check `.dev_flow/cache/_index.yaml` and reuse a cached
-copy; save an expensive new fetch back to the cache. See [Resource Cache](../references/cache.md).
+**Resource check.** Before fetching a design export or external document (e.g. via the Figma MCP) for this implementation, check `.dev_flow/cache/_index.yaml` and reuse a cached copy; save an expensive new fetch back to the cache. See [Resource Cache](../references/cache.md).
 
-**Role check:** If you'll delegate any step (run tests, verify, a wide search) to a
-subagent, check `.dev_flow/roles/_index.yaml` first and reuse a fitting base role or
-project overlay instead of re-deriving one. See [Roles](../references/roles.md).
+**Role check:** If you'll delegate any step (run tests, verify, a wide search) to a subagent, check `.dev_flow/roles/_index.yaml` first and reuse a fitting base role or project overlay instead of re-deriving one. See [Roles](../references/roles.md).
 
 ## Implementation Workflow
 
@@ -73,26 +59,17 @@ project overlay instead of re-deriving one. See [Roles](../references/roles.md).
 
 ## Delegation for focus
 
-Steps 6, 8, and 10 (run tests, review, verify) flood the context with output that
-*writing the code* never needs. Keep the implementation here — it needs the full plan and
-spec — but delegate those verification steps to a subagent and take back only the verdict.
-See **[Delegation for Focus](../references/delegation.md)**.
+Steps 6, 8, and 10 (run tests, review, verify) flood the context with output that *writing the code* never needs. Keep the implementation here — it needs the full plan and spec — but delegate those verification steps to a subagent and take back only the verdict. See **[Delegation for Focus](../references/delegation.md)**.
 
 ## When the Spec Pushes Back
 
-"Code must satisfy the spec" assumes the spec is right. If implementation surfaces
-evidence it is not — two defensible readings of a contract, a constraint that cannot
-hold, a plan technology decision that does not work as assumed — do **not** pick a
-reading silently and do not bend the code to a document you have evidence is wrong.
-Stop the affected work item and escalate to the owning document:
-see **[Upstream Escalation](../references/escalation.md)**.
+"Code must satisfy the spec" assumes the spec is right. If implementation surfaces evidence it is not — two defensible readings of a contract, a constraint that cannot hold, a plan technology decision that does not work as assumed — do **not** pick a reading silently and do not bend the code to a document you have evidence is wrong. Stop the affected work item and escalate to the owning document: see **[Upstream Escalation](../references/escalation.md)**.
 
 ## Anti-Patterns
 
 - Writing code before the spec is complete
 - Implementing only the "happy path" and ignoring spec error cases
-- Silently choosing one of two defensible spec readings instead of escalating
-  (see [Upstream Escalation](../references/escalation.md))
+- Silently choosing one of two defensible spec readings instead of escalating (see [Upstream Escalation](../references/escalation.md))
 - Skipping traceable ID comments
 - Not updating plan status after completion
 - Adding features not described in the specification

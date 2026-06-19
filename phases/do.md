@@ -2,12 +2,9 @@
 
 ## Purpose
 
-Accept any natural-language request and route it to the appropriate dev-flow phase.
-The agent interprets intent from context, asks clarifying questions when needed,
-and executes the correct phase sequence automatically.
+Accept any natural-language request and route it to the appropriate dev-flow phase. The agent interprets intent from context, asks clarifying questions when needed, and executes the correct phase sequence automatically.
 
-This is the **default command** — any invocation of `/dev-flow` without a recognized
-phase keyword falls through to `do`.
+This is the **default command** — any invocation of `/dev-flow` without a recognized phase keyword falls through to `do`.
 
 ## Command
 
@@ -30,42 +27,30 @@ phase keyword falls through to `do`.
 
 ## Role Responsible
 
-This command is handled by **DevFlowOrchestrator**:
-[roles/dev-flow-orchestrator.ai.md](../roles/dev-flow-orchestrator.ai.md)
+This command is handled by **DevFlowOrchestrator**: [roles/dev-flow-orchestrator.ai.md](../roles/dev-flow-orchestrator.ai.md)
 
 ## Procedure
 
 ### Step 1: Load context
 
-1. Read `.dev_flow/active_context.md` (the dashboard) if it exists. Identify
-   which task this request relates to:
-   - User said "continue" → resume the most recently updated active task that
-     already lists your session in `Contributors`. If only one active task
-     exists, resume it.
+1. Read `.dev_flow/active_context.md` (the dashboard) if it exists. Identify which task this request relates to:
+   - User said "continue" → resume the most recently updated active task that already lists your session in `Contributors`. If only one active task exists, resume it.
    - User described a specific item → match against active task titles/IDs.
-   - No match → this is a new task; a new `tasks/task_<ID>.md` will be created
-     in Step 6.
+   - No match → this is a new task; a new `tasks/task_<ID>.md` will be created in Step 6.
 
 2. For the chosen task (continuation), read its file `.dev_flow/tasks/task_<ID>.md`:
    - Current Work Item (document, phase, traceable ID)
    - Description
-   - **Your own Subtask block** (if you are already a Contributor) — pick up
-     from its `Next` step. If you are not yet a contributor on this task, you
-     will add a new Subtask block in Step 6.
+   - **Your own Subtask block** (if you are already a Contributor) — pick up from its `Next` step. If you are not yet a contributor on this task, you will add a new Subtask block in Step 6.
    - Other contributors' Subtask blocks — read for shared context, do not edit.
    - Recent Coordination Notes — anything addressed to you or that changes the picture.
    - Any open Blocking Issues.
 
-3. If neither the dashboard nor any task file exists, note this — the orchestrator
-   will ask the user to describe the goal from scratch.
+3. If neither the dashboard nor any task file exists, note this — the orchestrator will ask the user to describe the goal from scratch.
 
-4. **Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml`; load matching skills
-   before routing and pass them as context to the executing phase. Save new research to
-   `.dev_flow/skills/` after completion. See [skill phase](skill.md).
+4. **Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml`; load matching skills before routing and pass them as context to the executing phase. Save new research to `.dev_flow/skills/` after completion. See [skill phase](skill.md).
 
-5. **Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml`
-   and load rules for the request area; pass them to the executing phase, which MUST comply
-   (`must` = blocks). See [rule phase](rule.md).
+5. **Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml` and load rules for the request area; pass them to the executing phase, which MUST comply (`must` = blocks). See [rule phase](rule.md).
 
 ### Step 2: Interpret the request
 
@@ -88,18 +73,13 @@ Analyze the freeform request against the loaded context to determine:
 | **Research / investigate** | "research", "дослідити", "spike", "compare approaches", "порівняй підходи", "не знаю, який підхід", "what's the best way to" — answer needs external sources, measurements, or an unexplored solution space | research |
 | **Plan only** | "plan", "сплануй", no code changes mentioned | plan |
 
-When the intent is **ambiguous**, ask 1–2 targeted clarifying questions before routing.
-Do **not** start executing before the intent is clear.
+When the intent is **ambiguous**, ask 1–2 targeted clarifying questions before routing. Do **not** start executing before the intent is clear.
 
-If the request requires knowledge nobody has yet (unfamiliar domain, unverified
-library capability, unknown solution space) — route through [research](research.md)
-*first*, then continue to the design phases with the findings.
+If the request requires knowledge nobody has yet (unfamiliar domain, unverified library capability, unknown solution space) — route through [research](research.md) *first*, then continue to the design phases with the findings.
 
 ### Change Classes
 
-For change requests (not questions/research), classify the change **before** routing —
-this is what scales the pipeline ceremony to the size of the change, in one explicit
-decision instead of per-phase skip rules:
+For change requests (not questions/research), classify the change **before** routing — this is what scales the pipeline ceremony to the size of the change, in one explicit decision instead of per-phase skip rules:
 
 | Class | What it is | Route |
 |-------|-----------|-------|
@@ -108,26 +88,19 @@ decision instead of per-phase skip rules:
 | **Architectural** | New capability, new entity, changed mechanism or boundary | concept → spec → plan → implement → full pipeline |
 | **Internal refactor** | Structure changes, contracts identical | [Refactoring Protocol](plan.md#refactoring-protocol) (plan-only workflow) |
 
-When unsure between two classes, take the heavier one — under-classifying is how
-drift starts. When the class hinges on how far the change reaches, run the
-[Impact Walk](../references/impact.md) — the radius (docs / code bindings / active
-tasks) is the evidence. The [propagation matrix](propagate.md#change-type-propagation-matrix)
-remains the per-document authority on what must be updated; change classes decide
-where the route *starts*.
+When unsure between two classes, take the heavier one — under-classifying is how drift starts. When the class hinges on how far the change reaches, run the [Impact Walk](../references/impact.md) — the radius (docs / code bindings / active tasks) is the evidence. The [propagation matrix](propagate.md#change-type-propagation-matrix) remains the per-document authority on what must be updated; change classes decide where the route *starts*.
 
 ### Step 3: Ask clarifying questions (if needed)
 
-Only ask questions that are genuinely blocking routing or execution.
-Use prior context to fill obvious gaps silently.
+Only ask questions that are genuinely blocking routing or execution. Use prior context to fill obvious gaps silently.
 
 **Question patterns:**
-- Scope: "Does this change an existing feature or is it new?" 
+- Scope: "Does this change an existing feature or is it new?"
 - Document: "Do you have an existing concept/spec for this? (e.g., `auth.concept.md`)"
 - Breaking change: "Is this a breaking change to an existing API/contract?"
 - Priority: "Should this go into the current plan phase or start a new plan?"
 
-Limit to **maximum 3 questions** per invocation. If still ambiguous — propose the
-most reasonable interpretation and ask for confirmation:
+Limit to **maximum 3 questions** per invocation. If still ambiguous — propose the most reasonable interpretation and ask for confirmation:
 > "I'll treat this as: updating `auth.sp.md` and creating a new plan phase for
 > the Skip button. Does that sound right?"
 
@@ -168,16 +141,12 @@ After confirming intent, invoke the appropriate dev-flow phase(s) in order:
 
 ### Step 5: Check documentation impact
 
-After code changes are implemented (in Scenarios A, B, or C), verify whether
-related documentation artifacts need updating:
+After code changes are implemented (in Scenarios A, B, or C), verify whether related documentation artifacts need updating:
 
-1. **Specifications** — does the change alter behavior described in any `*.sp.md`?
-   (new fields, changed contracts, different error handling, new UI interactions).
-2. **Concepts** — does the change affect architectural assumptions in any `*.concept.md`?
-   (new integration points, changed mechanisms, expanded scope).
+1. **Specifications** — does the change alter behavior described in any `*.sp.md`? (new fields, changed contracts, different error handling, new UI interactions).
+2. **Concepts** — does the change affect architectural assumptions in any `*.concept.md`? (new integration points, changed mechanisms, expanded scope).
 3. **Plans** — does the change complete or invalidate tasks in any `*.plan.md`?
-4. **Tests** — do existing tests need updating, or should new test cases be added
-   to cover the new/changed behavior?
+4. **Tests** — do existing tests need updating, or should new test cases be added to cover the new/changed behavior?
 
 If updates are needed:
 - For small doc changes — apply them as part of the current phase.
@@ -187,40 +156,27 @@ If updates are needed:
 ### Step 6: Update context
 
 After every phase step, in `.dev_flow/tasks/task_<ID>.md`:
-- In **your own Subtask block** (the one whose `Author` is your session):
-  check off completed steps in Progress, set the next step, append a one-line
-  entry to that block's Activity bullet list.
+- In **your own Subtask block** (the one whose `Author` is your session): check off completed steps in Progress, set the next step, append a one-line entry to that block's Activity bullet list.
 - In the **task header**: refresh `Last updated` (targeted Edit on that field).
 
 If this step also crosses a **phase boundary** (e.g. spec completed, plan starts):
 - Update your Subtask's `Status` (e.g. `done`, `review-pending`).
-- Targeted Edit on `.dev_flow/active_context.md` and `.dev_flow/tasks/_index.md`
-  to update your task's row (Phase, Status, Contributors, Updated).
+- Targeted Edit on `.dev_flow/active_context.md` and `.dev_flow/tasks/_index.md` to update your task's row (Phase, Status, Contributors, Updated).
 - Append a Shared Activity Log entry tagged `[your-id] — <event>`.
 
-Re-read each index file immediately before editing it — see
-[status phase: Targeted-edit safety](status.md#targeted-edit-safety).
+Re-read each index file immediately before editing it — see [status phase: Targeted-edit safety](status.md#targeted-edit-safety).
 
-Never rewrite another contributor's Subtask block or their tagged entries in
-shared sections. To respond to or build on another contributor's work, add
-your own Coordination Note tagged with your session id.
+Never rewrite another contributor's Subtask block or their tagged entries in shared sections. To respond to or build on another contributor's work, add your own Coordination Note tagged with your session id.
 
 ### Step 7: Session wrap-up
 
 If the user ends the session (or after completing a full phase chain):
-1. In **your own Subtask block** — set `Status` (`review-pending` / `done` /
-   `blocked`), append a wrap-up entry to its Activity list. Optionally add a
-   Coordination Note about hand-off (`[your-id] — stepping away, anyone may
-   pick up from <here>`).
-2. In the task **header** — refresh `Last updated`. If all Subtasks across all
-   contributors are `done`, set the task-level `Status: done`.
+1. In **your own Subtask block** — set `Status` (`review-pending` / `done` / `blocked`), append a wrap-up entry to its Activity list. Optionally add a Coordination Note about hand-off (`[your-id] — stepping away, anyone may pick up from <here>`).
+2. In the task **header** — refresh `Last updated`. If all Subtasks across all contributors are `done`, set the task-level `Status: done`.
 3. Targeted Edit on the dashboard and catalog:
-   - If task-level `Status: done` → move your task's row from "Active Tasks"
-     to "Recently Completed".
+   - If task-level `Status: done` → move your task's row from "Active Tasks" to "Recently Completed".
    - Otherwise → update Status / Updated columns in place.
-4. Run hygiene checks (Shared Activity Log cap, per-subtask Activity cap, file
-   size) and archive overflow to `.dev_flow/session_history/` if triggered —
-   see [status phase](status.md).
+4. Run hygiene checks (Shared Activity Log cap, per-subtask Activity cap, file size) and archive overflow to `.dev_flow/session_history/` if triggered — see [status phase](status.md).
 
 ## Routing Decision Tree
 
@@ -266,5 +222,4 @@ User request received
 
 ## Language Policy
 
-The orchestrator responds in the **same language** the user used in their request.
-It does not impose a language — if the user writes in Ukrainian, respond in Ukrainian.
+The orchestrator responds in the **same language** the user used in their request. It does not impose a language — if the user writes in Ukrainian, respond in Ukrainian.

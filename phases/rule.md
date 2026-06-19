@@ -2,9 +2,7 @@
 
 ## Purpose
 
-Add, edit, or remove coding rules in `.dev_flow/rules/`. Rules define naming conventions,
-code structure patterns, architectural constraints, and style requirements that all new
-code must follow. The review phase validates code against these rules.
+Add, edit, or remove coding rules in `.dev_flow/rules/`. Rules define naming conventions, code structure patterns, architectural constraints, and style requirements that all new code must follow. The review phase validates code against these rules.
 
 ## Command
 
@@ -12,8 +10,7 @@ code must follow. The review phase validates code against these rules.
 /dev-flow rule <request>
 ```
 
-The request is a freeform description in any language. Interpret the intent and apply
-the appropriate changes to `.dev_flow/rules/`.
+The request is a freeform description in any language. Interpret the intent and apply the appropriate changes to `.dev_flow/rules/`.
 
 ### Examples
 
@@ -42,9 +39,7 @@ the appropriate changes to `.dev_flow/rules/`.
 
 4. **Find code examples** — search the codebase for 1-2 real examples matching the rule.
 
-4a. **Index format:** `.dev_flow/rules/_index.yaml` is YAML (not Markdown).
-    If the file is still in Markdown from an older onboard, convert it on first edit.
-    Move the "Key Patterns Quick Reference" section to `.dev_flow/rules/quick-reference.md`.
+4a. **Index format:** `.dev_flow/rules/_index.yaml` is YAML (not Markdown). If the file is still in Markdown from an older onboard, convert it on first edit. Move the "Key Patterns Quick Reference" section to `.dev_flow/rules/quick-reference.md`.
 
 5. **Write the rule** to `.dev_flow/rules/{category}.md` using the standard template:
 
@@ -77,16 +72,13 @@ the appropriate changes to `.dev_flow/rules/`.
 {Why this rule exists.}
 ```
 
-6. **Update `_index.yaml`** — add/update the rule entry in `categories[].rules`
-   (see [Index Format](#index-format) below for the canonical schema).
+6. **Update `_index.yaml`** — add/update the rule entry in `categories[].rules` (see [Index Format](#index-format) below for the canonical schema).
 
 7. **Confirm** — report what was done: rule name, category, severity, action taken.
 
 ## Index Format
 
-`.dev_flow/rules/_index.yaml` is grouped by category. Each category entry carries the
-backing `file` and a `summary`; each rule under it carries `name`, `severity`, and a
-one-line `summary`:
+`.dev_flow/rules/_index.yaml` is grouped by category. Each category entry carries the backing `file` and a `summary`; each rule under it carries `name`, `severity`, and a one-line `summary`:
 
 ```yaml
 categories:
@@ -132,8 +124,7 @@ Additional categories (created on demand when rules don't fit standard ones):
 | ui | `ui.md` | View patterns, layouts, animations, accessibility |
 | data | `data.md` | DB operations, ORM, queries, migrations |
 
-New category files are created automatically when the first rule for that category
-is added. Each file follows the same header format as standard categories.
+New category files are created automatically when the first rule for that category is added. Each file follows the same header format as standard categories.
 
 ## Severity Levels
 
@@ -145,10 +136,8 @@ is added. Each file follows the same header format as standard categories.
 
 ## Initialization
 
-If `.dev_flow/rules/` does not exist, create the directory with empty category files
-and `_index.yaml` before proceeding.
+If `.dev_flow/rules/` does not exist, create the directory with empty category files and `_index.yaml` before proceeding.
 
 ## Rules Are Living Documents
 
-Rules apply to **new code only** — no retroactive refactoring required.
-Updated during: onboard, implement, review, or by user request.
+Rules apply to **new code only** — no retroactive refactoring required. Updated during: onboard, implement, review, or by user request.

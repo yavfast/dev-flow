@@ -2,12 +2,9 @@
 
 ## Purpose
 
-Analyze an existing project (takeover scenario) and generate a complete set of
-concept, specification, and plan documents from existing code and documentation.
-This is a **reverse-engineering** procedure: Code → Concepts → Specs → Plans.
+Analyze an existing project (takeover scenario) and generate a complete set of concept, specification, and plan documents from existing code and documentation. This is a **reverse-engineering** procedure: Code → Concepts → Specs → Plans.
 
-This phase is optional — it is needed only once, when adopting dev-flow
-for a project that already has code but no dev-flow documentation.
+This phase is optional — it is needed only once, when adopting dev-flow for a project that already has code but no dev-flow documentation.
 
 ## Command
 
@@ -20,8 +17,7 @@ for a project that already has code but no dev-flow documentation.
 
 ## Working Directory
 
-All intermediate artifacts are stored in `.dev_flow/onboard/`.
-This directory persists across sessions, enabling incremental progress.
+All intermediate artifacts are stored in `.dev_flow/onboard/`. This directory persists across sessions, enabling incremental progress.
 
 ```
 .dev_flow/onboard/
@@ -61,8 +57,7 @@ This directory persists across sessions, enabling incremental progress.
    - **Layer N:** Modules that depend on layers 0..N-1.
    - **Circular dependencies:** Flag and list in `issues.md` for manual resolution.
 4. Write `dependency_graph.md` and `layers.md`.
-5. Generate `queue.yaml` — ordered list of modules, Layer 0 first, then Layer 1, etc.
-   Within a layer, modules are independent and **can be analyzed in parallel**.
+5. Generate `queue.yaml` — ordered list of modules, Layer 0 first, then Layer 1, etc. Within a layer, modules are independent and **can be analyzed in parallel**.
 6. Update `state.yaml`: `step: layers_built`.
 
 ### Step 4: Analyze modules (bottom-up, layer by layer)
@@ -82,14 +77,11 @@ For each module in `queue.yaml`, starting from Layer 0:
 5. **Update `queue.yaml`:** mark module as `analyzed`.
 6. **Update `state.yaml`:** increment `modules_analyzed` counter.
 
-**Parallelization:** Modules within the same layer have no cross-dependencies
-and can be analyzed by separate subagents simultaneously.
+**Parallelization:** Modules within the same layer have no cross-dependencies and can be analyzed by separate subagents simultaneously.
 
 ### Step 5: Extract project rules
 
-After analyzing all modules, extract coding rules, patterns, and style conventions
-into `.dev_flow/rules/`. This step uses cross-module analysis to identify consistent
-patterns across the codebase.
+After analyzing all modules, extract coding rules, patterns, and style conventions into `.dev_flow/rules/`. This step uses cross-module analysis to identify consistent patterns across the codebase.
 
 1. Read existing linting/formatting configs (`.editorconfig`, `.eslintrc`, `.prettierrc`, `ruff.toml`, `checkstyle.xml`, `.golangci.yml`, etc.).
 2. Analyze 5-10 representative files per module layer for recurring patterns.
@@ -115,28 +107,21 @@ patterns across the codebase.
 7. Flag inconsistencies (same pattern done differently in different modules) in `issues.md`.
 8. Update `state.yaml`: `step: rules_extracted`.
 
-**Important:** Rules apply to **new code only** — do not require refactoring existing code.
-Rules documents are living documents — they are updated during implement, review,
-and propagate phases when new patterns are discovered.
+**Important:** Rules apply to **new code only** — do not require refactoring existing code. Rules documents are living documents — they are updated during implement, review, and propagate phases when new patterns are discovered.
 
 **Role:** [onboard-rules-extractor.ai.md](../roles/onboard-rules-extractor.ai.md)
 
 ### Step 5a: Initialize skills knowledge base
 
-After extracting rules, establish the domain knowledge hierarchy in `.dev_flow/skills/`.
-Skills capture project-specific expertise about technologies and patterns — distinct from rules
-(which govern code style) and from docs (which describe the system itself).
+After extracting rules, establish the domain knowledge hierarchy in `.dev_flow/skills/`. Skills capture project-specific expertise about technologies and patterns — distinct from rules (which govern code style) and from docs (which describe the system itself).
 
-1. **Identify domains** — from `layers.md`, `project_structure.md`, and module analyses,
-   determine which technology areas require project-specific knowledge:
+1. **Identify domains** — from `layers.md`, `project_structure.md`, and module analyses, determine which technology areas require project-specific knowledge:
    - Which third-party SDKs, APIs, or frameworks have project-specific configuration?
    - Which architectural patterns are non-obvious and specific to this project?
    - Which build/CI/tooling decisions are non-standard?
-2. **Create directory hierarchy** under `.dev_flow/skills/` based on identified domains.
-   Create `_index.yaml` for each directory — initially empty skill lists.
+2. **Create directory hierarchy** under `.dev_flow/skills/` based on identified domains. Create `_index.yaml` for each directory — initially empty skill lists.
 3. **Create root `_index.yaml`** listing all domains with their `topics` keywords.
-4. **Populate initial skills** — for any non-trivial pattern already discovered during
-   module analysis that passes the non-triviality filter:
+4. **Populate initial skills** — for any non-trivial pattern already discovered during module analysis that passes the non-triviality filter:
    - Required external research to understand
    - Not obvious to a senior dev new to the project
    - Likely to be needed again in future tasks
@@ -147,22 +132,16 @@ Skills capture project-specific expertise about technologies and patterns — di
 - Patterns already fully described in `onboard/analysis/` docs
 - Information derivable by reading the codebase directly
 
-**Format:** All `_index.yaml` files in `.dev_flow/skills/` use YAML.
-See [skill phase](skill.md) for the exact schema.
+**Format:** All `_index.yaml` files in `.dev_flow/skills/` use YAML. See [skill phase](skill.md) for the exact schema.
 
 ### Step 5b: Extract project glossary
 
-Using the cross-module analysis, extract the project's **canonical domain vocabulary**
-into `docs/_glossary.md`. This gives the doc-generation step (Step 6) one agreed term
-per concept, so the same referent is named the same way across all generated documents.
+Using the cross-module analysis, extract the project's **canonical domain vocabulary** into `docs/_glossary.md`. This gives the doc-generation step (Step 6) one agreed term per concept, so the same referent is named the same way across all generated documents.
 
-> Runs **after** Step 4 (all modules analyzed) so the vocabulary is drawn from the
-> complete module set; running it earlier would miss terms from unanalyzed modules.
+Runs **after** Step 4 (all modules analyzed) so the vocabulary is drawn from the complete module set; running it earlier would miss terms from unanalyzed modules.
 
-1. Collect domain nouns recurring across modules (entities, key value objects, core
-   events) — **domain terms only**, not general tech (timeouts, DI, interceptors).
-2. Where several words denote one concept, pick the canonical term and list the rest as
-   `_Avoid_` aliases; where a term is used two ways, record it under *Flagged ambiguities*.
+1. Collect domain nouns recurring across modules (entities, key value objects, core events) — **domain terms only**, not general tech (timeouts, DI, interceptors).
+2. Where several words denote one concept, pick the canonical term and list the rest as `_Avoid_` aliases; where a term is used two ways, record it under *Flagged ambiguities*.
 3. Write `docs/_glossary.md` in the [Glossary](../references/glossary.md) format.
 4. Update `state.yaml`: `step: glossary_extracted`.
 
@@ -170,8 +149,7 @@ per concept, so the same referent is named the same way across all generated doc
 
 For each analyzed module, starting from Layer 0:
 
-> **Note:** When generating docs, reference applicable rules from `.dev_flow/rules/`
-> in the specification's Constraints section and in the plan's Technology Decisions.
+**Note:** When generating docs, reference applicable rules from `.dev_flow/rules/` in the specification's Constraints section and in the plan's Technology Decisions.
 
 1. **Generate concept** (`docs/{module_name}.concept.md`):
    - Derive philosophy from code purpose and patterns.
@@ -192,16 +170,13 @@ For each analyzed module, starting from Layer 0:
    - Status: `completed` (code already implemented).
    - Technology decisions extracted from actual code choices.
    - All phases marked `[DONE]` — the code exists.
-   - **Backlog section:** Include any TODOs, FIXMEs, or improvement opportunities
-     discovered during code analysis.
+   - **Backlog section:** Include any TODOs, FIXMEs, or improvement opportunities discovered during code analysis.
    - Changelog entry: `Initialized from existing codebase via onboard procedure`.
 
 4. **Update `queue.yaml`:** mark module as `docs_generated`.
 5. **Update `state.yaml`:** increment `modules_documented` counter.
 
-**Important:** When generating docs for Layer N modules, reference
-concepts and specs from Layer 0..N-1 that were generated in previous iterations.
-This ensures cross-references (`Depends on`, `Used by`) are accurate.
+**Important:** When generating docs for Layer N modules, reference concepts and specs from Layer 0..N-1 that were generated in previous iterations. This ensures cross-references (`Depends on`, `Used by`) are accurate.
 
 ### Step 7: Generate index and epics
 
@@ -242,8 +217,7 @@ The procedure is designed for **incremental execution across multiple sessions:*
 - Every step updates `state.yaml` with the current progress.
 - `queue.yaml` tracks per-module status: `pending → analyzed → docs_generated`.
 - On `--resume`, the procedure reads state and skips completed work.
-- Analysis files in `.dev_flow/onboard/analysis/` persist raw extraction results,
-  so doc generation can be re-run without re-reading all code.
+- Analysis files in `.dev_flow/onboard/analysis/` persist raw extraction results, so doc generation can be re-run without re-reading all code.
 
 ## Parallelization Strategy
 
@@ -303,8 +277,7 @@ layers:
 
 ## Monorepo / Workspace Support
 
-Projects with multiple packages or apps (e.g., pnpm workspaces, cargo workspaces,
-Python namespace packages, turborepo) require a modified approach.
+Projects with multiple packages or apps (e.g., pnpm workspaces, cargo workspaces, Python namespace packages, turborepo) require a modified approach.
 
 ### Detection (Step 2)
 
@@ -327,8 +300,7 @@ For workspaces, build layers at **two levels**:
 Processing order:
 - Layer packages first (leaf packages with no internal dependencies = Layer 0).
 - Within each package, layer modules as usual.
-- A module in package B that imports from package A creates a cross-package dependency —
-  package B is in a higher layer than package A.
+- A module in package B that imports from package A creates a cross-package dependency — package B is in a higher layer than package A.
 
 ### Doc Generation (Step 6)
 
@@ -353,12 +325,8 @@ packages:
 
 ## Anti-Patterns
 
-- Trying to analyze the entire project in one pass without layers — leads to
-  inaccurate cross-references and missed dependencies.
-- Generating specs before concepts — concepts establish boundaries and philosophy
-  that specs must respect.
-- Skipping the analysis step and writing docs directly from code — analysis files
-  serve as checkpoints and make doc generation reproducible.
+- Trying to analyze the entire project in one pass without layers — leads to inaccurate cross-references and missed dependencies.
+- Generating specs before concepts — concepts establish boundaries and philosophy that specs must respect.
+- Skipping the analysis step and writing docs directly from code — analysis files serve as checkpoints and make doc generation reproducible.
 - Not persisting state — large projects may require multiple sessions.
-- Generating plan with `[TODO]` status for existing code — if the code works,
-  the plan is `completed` with phases `[DONE]`.
+- Generating plan with `[TODO]` status for existing code — if the code works, the plan is `completed` with phases `[DONE]`.

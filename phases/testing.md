@@ -2,15 +2,11 @@
 
 ## Purpose
 
-After code changes, run **functional tests** (unit + mock) covering the changed code
-to catch regressions quickly. This phase runs only tests relevant to the modified area —
-not the full test suite.
+After code changes, run **functional tests** (unit + mock) covering the changed code to catch regressions quickly. This phase runs only tests relevant to the modified area — not the full test suite.
 
-Integration and live tests are handled separately in the [Verify phase](verify.md),
-which runs after Review.
+Integration and live tests are handled separately in the [Verify phase](verify.md), which runs after Review.
 
-The `test` command is flexible — it can create new tests, edit existing ones,
-run tests, or execute complex test scenarios.
+The `test` command is flexible — it can create new tests, edit existing ones, run tests, or execute complex test scenarios.
 
 ## Activation Condition
 
@@ -37,8 +33,7 @@ The target is optional. Without it, tests are determined from the current active
 /dev-flow test update rate limiter      # Update existing rate limiter tests
 ```
 
-> Integration and live tests are **not** run here — they belong to the
-> [Verify phase](verify.md) (`/dev-flow verify integration …`, `/dev-flow verify live …`).
+Integration and live tests are **not** run here — they belong to the [Verify phase](verify.md) (`/dev-flow verify integration …`, `/dev-flow verify live …`).
 
 ## Test Categories (This Phase)
 
@@ -49,22 +44,16 @@ This phase covers **functional tests only** — fast, isolated checks of the cha
 | 1 | **Unit tests** | Verify individual functions/methods in isolation | Always — after any code change |
 | 2 | **Functional / Mock tests** | Verify behavior with mocked dependencies | When code interacts with external services or complex subsystems |
 
-**Integration and live tests** (levels 3-4) are handled in the [Verify phase](verify.md),
-which runs after Review.
+**Integration and live tests** (levels 3-4) are handled in the [Verify phase](verify.md), which runs after Review.
 
-**Rule:** Run only the tests that cover the changed code. Do not run the full test suite —
-that is the job of regression testing in the Verify phase.
+**Rule:** Run only the tests that cover the changed code. Do not run the full test suite — that is the job of regression testing in the Verify phase.
 
 ## Rules
 
-1. **Test every spec contract.** Each operation from the specification's Contracts section
-   must have at least one test verifying its input/output behavior.
-2. **Test all error cases.** Every row in the spec's Errors tables must have a corresponding
-   test that triggers the condition and verifies the expected error code/behavior.
-3. **Test invariants.** Each invariant listed in the spec's Data Structures section must be
-   verified (e.g., immutability constraints, state transition rules).
-4. **Use the project's existing test conventions.** Do not introduce a new test framework
-   or test structure — follow what the project already uses.
+1. **Test every spec contract.** Each operation from the specification's Contracts section must have at least one test verifying its input/output behavior.
+2. **Test all error cases.** Every row in the spec's Errors tables must have a corresponding test that triggers the condition and verifies the expected error code/behavior.
+3. **Test invariants.** Each invariant listed in the spec's Data Structures section must be verified (e.g., immutability constraints, state transition rules).
+4. **Use the project's existing test conventions.** Do not introduce a new test framework or test structure — follow what the project already uses.
 5. **Reference traceable IDs in test names or docstrings:**
    ```python
    def test_acquire_token_rate_limited():
@@ -73,14 +62,11 @@ that is the job of regression testing in the Verify phase.
 
 ## Context Loading
 
-Loading project knowledge is a **gate** (see
-[Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding)):
+Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding)):
 
-**Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml` and load skills for the
-tested functionality — their pitfalls and edge cases MUST be covered by the tests. See [skill phase](skill.md).
+**Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml` and load skills for the tested functionality — their pitfalls and edge cases MUST be covered by the tests. See [skill phase](skill.md).
 
-**Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml`
-and load testing rules (naming, assertion patterns, mocking); new tests MUST comply. See [rule phase](rule.md).
+**Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml` and load testing rules (naming, assertion patterns, mocking); new tests MUST comply. See [rule phase](rule.md).
 
 ## Gate Check (Code -> Test)
 
@@ -109,8 +95,7 @@ Before running tests, verify:
 6. All functional tests pass → proceed to Review phase
 ```
 
-**Note:** Do NOT run integration or live tests at this stage. Those are handled
-in the [Verify phase](verify.md) after Review passes.
+**Note:** Do NOT run integration or live tests at this stage. Those are handled in the [Verify phase](verify.md) after Review passes.
 
 ### Creating and Updating Tests
 
@@ -141,8 +126,7 @@ After running tests, report:
 
 - Writing tests that verify implementation details instead of spec contracts
 - Skipping error case tests ("happy path only")
-- Modifying the spec to match failing code instead of fixing the code
-  (a genuine spec defect goes through [Upstream Escalation](../references/escalation.md), not a silent edit)
+- Modifying the spec to match failing code instead of fixing the code (a genuine spec defect goes through [Upstream Escalation](../references/escalation.md), not a silent edit)
 - Introducing a new test framework when the project already has one
 - Writing tests without traceable ID references
 - Running the full test suite when only a small area changed (wastes time)

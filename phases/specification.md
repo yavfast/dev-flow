@@ -2,67 +2,40 @@
 
 ## Purpose
 
-Define data structures, contracts, validation rules, and processing logic.
-A specification answers "what exactly", not "how to implement in language X".
+Define data structures, contracts, validation rules, and processing logic. A specification answers "what exactly", not "how to implement in language X".
 
 ## Language Independence
 
-Specifications MUST NOT reference specific programming languages, frameworks, or libraries.
-Use abstract type notation and pseudocode. Implementation language is chosen in the plan.
+Specifications MUST NOT reference specific programming languages, frameworks, or libraries. Use abstract type notation and pseudocode. Implementation language is chosen in the plan.
 
 ## Key Rules
 
-- **No final code:** Specs do NOT contain implementation code.
-  They may contain abstract pseudocode, data structures, contract signatures, and validation rules.
+- **No final code:** Specs do NOT contain implementation code. They may contain abstract pseudocode, data structures, contract signatures, and validation rules.
 - **Data structures are detailed:** Describe every field with type, constraints, default, and purpose.
 - **Structure over prose:** Avoid vague descriptions. Define concrete fields, methods, and constraints.
-- **Isolation and modularity:** Each spec is strictly isolated. Changes in one must not affect others
-  unless explicitly defined in contracts.
-- **Single Source of Truth:** Once created, source code becomes a derived artifact.
-  All changes start in the specification first.
-- **Follow the glossary:** `docs/_glossary.md` is loaded with `docs/_index.md`; name every
-  entity, field, and contract with its canonical term (not an `_Avoid_` alias). If the spec
-  introduces a genuinely new domain term, add it to the glossary. Term *formation* is mainly
-  a concept-phase job — here you consume the canonical vocabulary. See [Glossary](../references/glossary.md).
+- **Isolation and modularity:** Each spec is strictly isolated. Changes in one must not affect others unless explicitly defined in contracts.
+- **Single Source of Truth:** Once created, source code becomes a derived artifact. All changes start in the specification first.
+- **Follow the glossary:** `docs/_glossary.md` is loaded with `docs/_index.md`; name every entity, field, and contract with its canonical term (not an `_Avoid_` alias). If the spec introduces a genuinely new domain term, add it to the glossary. Term *formation* is mainly a concept-phase job — here you consume the canonical vocabulary. See [Glossary](../references/glossary.md).
 
 ## Context Loading
 
-Loading project knowledge is a **gate** (see
-[Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding)) — a spec
-authored blind to project constraints fails at the Plan gate at the earliest, in
-code at the latest:
+Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding)) — a spec authored blind to project constraints fails at the Plan gate at the earliest, in code at the latest:
 
-**Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml` and load skills matching
-the spec's domain — known pitfalls and platform constraints shape contracts and error
-models. See [skill phase](skill.md).
+**Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml` and load skills matching the spec's domain — known pitfalls and platform constraints shape contracts and error models. See [skill phase](skill.md).
 
-**Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml`
-and load rules for the spec'd area; the spec MUST NOT define contracts that violate a
-`must` rule (e.g. an error-handling pattern the project forbids). See [rule phase](rule.md).
+**Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml` and load rules for the spec'd area; the spec MUST NOT define contracts that violate a `must` rule (e.g. an error-handling pattern the project forbids). See [rule phase](rule.md).
 
 ## Interview Mode for Design Decisions
 
-Specs are where a concept's choices get pinned to concrete data shapes and
-contracts — and a buried choice here (a field's type, an error model, a state
-transition, a sync strategy) is even harder to reverse than in the concept, because
-consumers bind to it. When authoring surfaces **two or more materially different
-ways to model or contract something**, do not pick one silently. Stop and run an
-interview: present the fork with 2–4 options and your **recommended answer**, reach
-a consensus, and record the outcome.
+Specs are where a concept's choices get pinned to concrete data shapes and contracts — and a buried choice here (a field's type, an error model, a state transition, a sync strategy) is even harder to reverse than in the concept, because consumers bind to it. When authoring surfaces **two or more materially different ways to model or contract something**, do not pick one silently. Stop and run an interview: present the fork with 2–4 options and your **recommended answer**, reach a consensus, and record the outcome.
 
-See **[Interview Mode](../references/interview-mode.md)** for the full procedure.
-Record every resolved or open decision in the spec's **Design Decisions** section.
+See **[Interview Mode](../references/interview-mode.md)** for the full procedure. Record every resolved or open decision in the spec's **Design Decisions** section.
 
-> **Interview vs Banned Phrases.** A documented **open** decision (options +
-> trade-offs + a resolution trigger) is *not* a banned "TBD". The banned phrases
-> below are *undocumented* deferrals with no owner and no trigger. An open decision
-> records the alternatives and the concrete event/date that closes it — that is the
-> sanctioned way to leave something open (e.g. for research work).
+**Interview vs Banned Phrases.** A documented **open** decision (options + trade-offs + a resolution trigger) is *not* a banned "TBD". The banned phrases below are *undocumented* deferrals with no owner and no trigger. An open decision records the alternatives and the concrete event/date that closes it — that is the sanctioned way to leave something open (e.g. for research work).
 
 ## Banned Phrases
 
-Reject or flag the following phrases in any specification. They signal incomplete design
-that will propagate ambiguity into the implementation:
+Reject or flag the following phrases in any specification. They signal incomplete design that will propagate ambiguity into the implementation:
 
 | Phrase | Problem | What to write instead |
 |--------|---------|----------------------|
@@ -261,16 +234,13 @@ decision:
 
 ## Changelog Requirement
 
-Every specification must include a Changelog table at the bottom. Record significant changes:
-added/removed fields, changed contracts, modified validation rules, changed state transitions.
-This is critical for tracing when and why a contract was modified.
+Every specification must include a Changelog table at the bottom. Record significant changes: added/removed fields, changed contracts, modified validation rules, changed state transitions. This is critical for tracing when and why a contract was modified.
 
 ## Explicit Cross-References
 
 If a specification uses entities or contracts from another specification:
 
-1. **In metadata:** list in the `Depends on` field (same-type references — a spec
-   depends on specs; the `Concept:` field carries the cross-type link).
+1. **In metadata:** list in the `Depends on` field (same-type references — a spec depends on specs; the `Concept:` field carries the cross-type link).
 2. **In body:** reference specific sections:
    ```
    > Uses [SP_ENT_01_03](./entity.sp.md#SP_ENT_01_03) AgentState structure.

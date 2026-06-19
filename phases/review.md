@@ -2,26 +2,19 @@
 
 ## Purpose
 
-Validate pipeline gates, detect conflicts between documents, manage deprecation,
-ensure the documentation-code alignment is maintained, and perform pre-commit
-code review of changes.
+Validate pipeline gates, detect conflicts between documents, manage deprecation, ensure the documentation-code alignment is maintained, and perform pre-commit code review of changes.
 
 ## Pre-Commit Code Review
 
-**Before any commit**, a code review of the changes MUST be performed.
-This review should be executed by a **subagent with a clean context** to ensure
-an unbiased, fresh perspective on the changes.
+**Before any commit**, a code review of the changes MUST be performed. This review should be executed by a **subagent with a clean context** to ensure an unbiased, fresh perspective on the changes.
 
 ### Why a clean-context subagent?
 
-The agent that wrote the code has accumulated assumptions and context that may
-blind it to issues. A fresh subagent sees only the diff and the spec — the same
-perspective a human reviewer would have.
+The agent that wrote the code has accumulated assumptions and context that may blind it to issues. A fresh subagent sees only the diff and the spec — the same perspective a human reviewer would have.
 
 ### Pre-Commit Review Procedure
 
-1. **Launch a reviewer subagent** (role: [reviewer.ai.md](../roles/reviewer.ai.md))
-   with a clean context containing only:
+1. **Launch a reviewer subagent** (role: [reviewer.ai.md](../roles/reviewer.ai.md)) with a clean context containing only:
    - The git diff of all staged/unstaged changes
    - The relevant specification (`*.sp.md`) for contract verification
    - The relevant plan (`*.plan.md`) for completeness verification
@@ -67,9 +60,7 @@ perspective a human reviewer would have.
 
 ## After Review: Verify Phase
 
-After the review passes, proceed to the [Verify phase](verify.md) for regression,
-integration, and live testing. Do NOT commit directly after review — verification
-must pass first.
+After the review passes, proceed to the [Verify phase](verify.md) for regression, integration, and live testing. Do NOT commit directly after review — verification must pass first.
 
 ### Review -> Verify Gate
 
@@ -104,9 +95,7 @@ Run gate checks before advancing to the next pipeline stage.
 
 ## Hallucination-Risk Heuristics
 
-Since the primary consumer of specifications is an LLM (AI agent), specs must be
-precise enough to prevent hallucinated implementations. During review, check each
-specification against these heuristics:
+Since the primary consumer of specifications is an LLM (AI agent), specs must be precise enough to prevent hallucinated implementations. During review, check each specification against these heuristics:
 
 ### Red Flags (block — must fix before advancing to plan)
 
@@ -140,9 +129,7 @@ During the **Specification → Plan** gate check:
 
 ### Precision Test
 
-Ask yourself: *"If I gave this spec to a different LLM with no access to the codebase,
-would it generate the same data structures and contracts?"*
-If the answer is "probably not" — the spec is too vague.
+Ask yourself: *"If I gave this spec to a different LLM with no access to the codebase, would it generate the same data structures and contracts?"* If the answer is "probably not" — the spec is too vague.
 
 ## Project Rules Compliance
 
@@ -189,13 +176,9 @@ A conflict exists when:
 - A specification contradicts another specification it depends on.
 - A new concept requires changes to an existing concept that others depend on.
 
-When the conflict is not doc ↔ doc but **evidence ↔ doc** — review findings show a
-spec'd contract is ambiguous or cannot hold in reality — that is an upstream defect,
-not a resolution-priority question: route it through
-[Upstream Escalation](../references/escalation.md).
+When the conflict is not doc ↔ doc but **evidence ↔ doc** — review findings show a spec'd contract is ambiguous or cannot hold in reality — that is an upstream defect, not a resolution-priority question: route it through [Upstream Escalation](../references/escalation.md).
 
-To enumerate a document's dependents and code bindings when checking a conflict or
-a deprecation, run the [Impact Walk](../references/impact.md).
+To enumerate a document's dependents and code bindings when checking a conflict or a deprecation, run the [Impact Walk](../references/impact.md).
 
 ### Resolution Process
 
@@ -211,8 +194,7 @@ a deprecation, run the [Impact Walk](../references/impact.md).
 
 ### Changelog Audit
 
-During review, verify that all concepts, specifications, and plans have up-to-date
-Changelog tables reflecting significant changes since their creation.
+During review, verify that all concepts, specifications, and plans have up-to-date Changelog tables reflecting significant changes since their creation.
 
 ## Deprecation & Removal
 

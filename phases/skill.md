@@ -2,17 +2,12 @@
 
 ## Purpose
 
-Add, find, update, or remove skills in `.dev_flow/skills/`. Skills are consolidated
-project-specific knowledge about technologies, APIs, patterns, and tools — acquired
-through external research, user explanations, or implementation discoveries — that
-must be preserved across sessions.
+Add, find, update, or remove skills in `.dev_flow/skills/`. Skills are consolidated project-specific knowledge about technologies, APIs, patterns, and tools — acquired through external research, user explanations, or implementation discoveries — that must be preserved across sessions.
 
 Skills differ from rules and from the cache:
 - **Rules** (`.dev_flow/rules/`) — how to write code in this project (naming, style, architecture)
 - **Skills** (`.dev_flow/skills/`) — what you need to know about a technology or pattern to do a task well
-- **Cache** (`.dev_flow/cache/`) — fetched artifacts (design exports, downloaded documents,
-  baselines): skills capture what you *learned*, the cache keeps what you *fetched*.
-  A skill may link cache entries. See [Resource Cache](../references/cache.md)
+- **Cache** (`.dev_flow/cache/`) — fetched artifacts (design exports, downloaded documents, baselines): skills capture what you *learned*, the cache keeps what you *fetched*. A skill may link cache entries. See [Resource Cache](../references/cache.md)
 
 ## Command
 
@@ -20,8 +15,7 @@ Skills differ from rules and from the cache:
 /dev-flow skill <request>
 ```
 
-The request is a freeform description in any language. Interpret the intent and apply
-the appropriate action to `.dev_flow/skills/`.
+The request is a freeform description in any language. Interpret the intent and apply the appropriate action to `.dev_flow/skills/`.
 
 ### Examples
 
@@ -45,8 +39,7 @@ Skills are created or updated automatically — without an explicit command — 
 | Bug traced to API/SDK misuse | Add "Pitfalls" entry to relevant skill |
 | `onboard` reverse-engineers a non-trivial pattern | Create skill for it |
 
-**Always check for an existing skill BEFORE doing external research.** If a skill exists
-and is current — use it. If outdated — research and update it.
+**Always check for an existing skill BEFORE doing external research.** If a skill exists and is current — use it. If outdated — research and update it.
 
 ## Non-Triviality Filter
 
@@ -170,14 +163,11 @@ If no domain matches at Step 2 — stop. Cost: one small file read.
 
 ## Initialization
 
-If `.dev_flow/skills/` does not exist, create the directory structure with empty
-`_index.yaml` files before proceeding. See [onboard phase](onboard.md) for the full
-initialization procedure that runs during project onboard.
+If `.dev_flow/skills/` does not exist, create the directory structure with empty `_index.yaml` files before proceeding. See [onboard phase](onboard.md) for the full initialization procedure that runs during project onboard.
 
 ## Skills Are Living Documents
 
 - Skills apply to the task at hand; there is no retroactive obligation.
-- Update when: research reveals new information, implementation finds new pitfalls,
-  library version changes, user corrects existing knowledge.
+- Update when: research reveals new information, implementation finds new pitfalls, library version changes, user corrects existing knowledge.
 - If new research contradicts an existing skill — update the skill and add a note in "Pitfalls".
 - Skills may reference related rules (e.g., a skill about message bus → rule `MessageBusForCrossLayerCommunication`).
