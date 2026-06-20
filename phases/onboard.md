@@ -34,6 +34,8 @@ All intermediate artifacts are stored in `.dev_flow/onboard/`. This directory pe
 
 ## Procedure Steps
 
+> **Shared walk (single-source).** Steps 2–4 below — map structure → build dependency layers → walk modules bottom-up extracting entities/contracts/deps — are onboard's binding of the one **[Shared Bottom-Up Analysis](../references/code-audit.md#shared-bottom-up-analysis)** procedure, which the `audit code` scope reuses (SP_CAU_02_06, DEC_08). The canonical walk lives in that reference; onboard does not keep a second copy of it — these steps describe only how onboard *consumes* the walk's output (the `onboard/` checkpoints and doc generation). A lens subagent consumes the same walk to *audit* against existing docs; onboard consumes it to *generate* them.
+
 ### Step 1: Initialize workspace
 
 1. Create `.dev_flow/onboard/` if it does not exist.
@@ -49,33 +51,22 @@ All intermediate artifacts are stored in `.dev_flow/onboard/`. This directory pe
 
 ### Step 3: Analyze dependencies and build layers
 
-1. For each source module, extract imports and references to other project modules.
-2. Build a directed dependency graph (A imports B → A depends on B).
-3. Compute **dependency layers**:
-   - **Layer 0:** Leaf modules — no dependencies on other project modules (utilities, constants, types).
-   - **Layer 1:** Modules that depend only on Layer 0.
-   - **Layer N:** Modules that depend on layers 0..N-1.
-   - **Circular dependencies:** Flag and list in `issues.md` for manual resolution.
-4. Write `dependency_graph.md` and `layers.md`.
-5. Generate `queue.yaml` — ordered list of modules, Layer 0 first, then Layer 1, etc. Within a layer, modules are independent and **can be analyzed in parallel**.
-6. Update `state.yaml`: `step: layers_built`.
+Run the dependency-layering of the [Shared Bottom-Up Analysis](../references/code-audit.md#shared-bottom-up-analysis) (build the directed import graph; compute Layer 0 = leaf modules, Layer N = depends on 0..N-1; flag circular dependencies — the canonical definitions live there). Onboard's binding then persists the result:
+
+1. Write `dependency_graph.md` and `layers.md`; record circular dependencies in `issues.md` for manual resolution.
+2. Generate `queue.yaml` — modules ordered Layer 0 first, then Layer 1, etc. Within a layer, modules are independent and **can be analyzed in parallel**.
+3. Update `state.yaml`: `step: layers_built`.
+
+(Monorepo two-level layering is detailed under [Monorepo / Workspace Support](#monorepo--workspace-support).)
 
 ### Step 4: Analyze modules (bottom-up, layer by layer)
 
-For each module in `queue.yaml`, starting from Layer 0:
+For each module in `queue.yaml`, starting from Layer 0, run the per-module step of the [Shared Bottom-Up Analysis](../references/code-audit.md#shared-bottom-up-analysis) — it yields the module's key entities, public contracts (inputs/outputs), validation rules and invariants, state transitions, error-handling patterns, and integration points. Onboard's binding adds doc-generation specifics:
 
-1. **Read the module code** — all source files in the module.
-2. **Read existing documentation** — README, docstrings, comments, related docs.
-3. **Extract:**
-   - Key entities (classes, data structures, enums, constants)
-   - Public contracts (functions, methods, API endpoints) with inputs/outputs
-   - Validation rules and constraints (assertions, type checks, value ranges)
-   - State transitions (if any lifecycle is present)
-   - Error handling patterns (exceptions, error codes, fallbacks)
-   - Integration points — how this module connects to others
-4. **Write analysis file** `analysis/{module_name}.md` with extracted information.
-5. **Update `queue.yaml`:** mark module as `analyzed`.
-6. **Update `state.yaml`:** increment `modules_analyzed` counter.
+1. **Read existing documentation** alongside the code — README, docstrings, comments, related docs (onboard *generates* docs, so it reconciles the walk's findings with any prose that already exists).
+2. **Write analysis file** `analysis/{module_name}.md` with the extracted information — the checkpoint that makes doc generation (Step 6) reproducible without re-reading all code.
+3. **Update `queue.yaml`:** mark module as `analyzed`.
+4. **Update `state.yaml`:** increment `modules_analyzed` counter.
 
 **Parallelization:** Modules within the same layer have no cross-dependencies and can be analyzed by separate subagents simultaneously.
 

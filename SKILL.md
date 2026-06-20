@@ -48,7 +48,7 @@ Each transition includes a validation gate to prevent drift.
 | — | `/dev-flow rule <request>` | Add, edit, or remove coding rules (freeform) | Updated `.dev_flow/rules/` |
 | — | `/dev-flow skill <request>` | Find, add, update, or remove project knowledge skills | Updated `.dev_flow/skills/` |
 | — | `/dev-flow status` | Show current state, resume previous session | Status summary |
-| — | `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — reconcile task state with reality, trim context, compact closed tasks, groom rules/skills/cache, check docs integrity (index/statuses/refs) | Audit report + cleaned context |
+| — | `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — reconcile task state with reality, trim context, compact closed tasks, groom rules/skills/cache, check docs integrity (index/statuses/refs); opt-in `code` scope audits the whole codebase → refactoring plan | Audit report + cleaned context (or, for `code`, a refactoring plan) |
 | — | `/dev-flow ask <question>` | Read-only Q&A about code or feasibility — no changes | Answer + optional next-step suggestion |
 | — | `/dev-flow subtask <task>` | Delegate a secondary task to a subagent — a full dev-flow participant that assembles its own context, runs any phase (fix, test, research, etc.), and can converse with its initiator | Full subtask report |
 | — | `/dev-flow do <request>` | Freeform routing — interpret intent and run the right phases | Phase output + updated context |
@@ -61,7 +61,7 @@ Each transition includes a validation gate to prevent drift.
 
 **Resource cache (not a phase):** `.dev_flow/cache/` is the durable, indexed store for expensive-to-reacquire resources (Figma exports, downloaded documents, baseline screenshots). Every phase checks its `_index.yaml` before an expensive re-fetch and saves new fetches back; anything linked from docs or task files lives here, never in `/tmp`. Transient artifacts go to the project workspace `/tmp/{project-slug}/` with timestamped names. Freeform cache requests ("збережи цей макет", "find the cached RFC") route through `do` and are applied inline. See [Resource Cache](references/cache.md).
 
-**Audit command:** Use `/dev-flow audit` for the periodic revision of `.dev_flow/` and the `docs/` documentation set — it reconciles every task's recorded state against reality (linked docs + git), trims the dashboard, compacts/reflects on closed tasks (archiving noise, harvesting lessons into rules/skills), grooms the `rules/`, `skills/`, and `cache/` catalogues, and reconciles `docs/` integrity (index, statuses, cross-references, glossary, drift). Where [status](phases/status.md) *reports* drift, `audit` *resolves* it. Supports `--dry-run` (report only) and a `scope` (`context` / `tasks` / `rules` / `skills` / `cache` / `docs` / `all`).
+**Audit command:** Use `/dev-flow audit` for the periodic revision of `.dev_flow/` and the `docs/` documentation set — it reconciles every task's recorded state against reality (linked docs + git), trims the dashboard, compacts/reflects on closed tasks (archiving noise, harvesting lessons into rules/skills), grooms the `rules/`, `skills/`, and `cache/` catalogues, and reconciles `docs/` integrity (index, statuses, cross-references, glossary, drift). Where [status](phases/status.md) *reports* drift, `audit` *resolves* it. Supports `--dry-run` (report only) and a `scope` (`context` / `tasks` / `rules` / `skills` / `cache` / `docs` / `all`). A separate, opt-in **`code`** scope (`/dev-flow audit code <free-form intent>`, excluded from `all`) extends the same idea to source code: it audits the whole codebase through parallel lenses (architecture / SOLID / DRY / security / …) and emits a prioritized refactoring **plan** + a `docs/_framework.md` map update — read-only, stopping at the Plan→Code gate and handing off to the standard pipeline (it never commits). See [Code Audit](references/code-audit.md).
 
 **Phase 0 (Onboard):** Optional. Run once when adopting dev-flow for an existing project. Analyzes code bottom-up (utilities first), generates concepts, specs, and plans. Supports `--resume` for continuation across sessions. See [onboard phase](phases/onboard.md).
 
@@ -212,6 +212,7 @@ All documents live in `docs/` directories. One concept = one file set:
 | Epic | `*.epic.md` | `access_management.epic.md` |
 | Index | `_index.md` | `docs/_index.md` |
 | Glossary | `_glossary.md` | `docs/_glossary.md` |
+| Framework map | `_framework.md` | `docs/_framework.md` |
 
 **Spike** is an optional pre-concept investigation artifact, produced by the [research phase](phases/research.md) (`/dev-flow research`). Use it when the problem domain is unclear and you need to explore approaches before committing to a concept. Spikes do not pass through the pipeline gates.
 
@@ -222,6 +223,8 @@ When `docs/` has more than 5 documents, maintain an `_index.md` catalog.
 **Index format convention:** machine-read catalogues (`.dev_flow/rules/`, `.dev_flow/skills/`, `.dev_flow/roles/`, `.dev_flow/cache/`) use `_index.yaml` — structured entries agents match against. Human-browsed catalogues (`docs/`, `.dev_flow/tasks/`) use `_index.md`. Apply the same split to any new collection.
 
 `docs/_glossary.md` is the project's canonical domain vocabulary (term → definition + aliases to avoid). It is created lazily (during onboard, or when the first cross-concept term is resolved) and, whenever present, is **loaded into context alongside `_index.md`** (independent of the >5-doc threshold that gates `_index.md`) — so authoring uses one canonical term per concept. See [Glossary](references/glossary.md).
+
+`docs/_framework.md` is the project's living **architectural map** (core abstractions · layers · extension points · shared utilities · conventions) — an overview that links *down* to the `.dev_flow/rules/` and `.dev_flow/skills/` holding the enforceable detail; it inlines none of it. It is created/maintained by onboard and by the [`audit code` scope](phases/audit.md#step-9--code-scope-the-whole-codebase-audit) (never hand-authored as part of a feature), and, whenever present, is **loaded into context alongside `_index.md`** on code-touch phases — so implementation and review see the architecture spine. See [Code Audit](references/code-audit.md).
 
 ## Git Workflow Integration
 
@@ -377,7 +380,8 @@ Severity levels: **must** (blocks review) | **should** (warning) | **prefer** (a
 - [Rule phase](phases/rule.md) *(add/edit/remove coding rules)*
 - [Skill phase](phases/skill.md) *(manage project knowledge skills)*
 - [Status phase](phases/status.md) | Templates: [task_context](templates/task_context.md), [active_context (dashboard)](templates/active_context.md), [tasks_index](templates/tasks_index.md)
-- [Audit phase](phases/audit.md) *(full `.dev_flow/` + `docs/` revision — reconcile, trim, compact + reflect, groom rules/skills, check docs integrity)*
+- [Audit phase](phases/audit.md) *(full `.dev_flow/` + `docs/` revision — reconcile, trim, compact + reflect, groom rules/skills, check docs integrity; opt-in `code` scope = whole-codebase audit → refactoring plan)*
+- [Code Audit](references/code-audit.md) *(the `audit code` scope's detail — lens registry + per-lens checklists, the bottom-up walk shared with onboard, SOLID/DRY heuristics, antipattern catalogue, refactoring playbook)*
 - [Ask phase](phases/ask.md) *(read-only Q&A, no file changes)*
 - [Subtask phase](phases/subtask.md) *(delegate secondary tasks to subagent)*
 - [Do phase](phases/do.md) *(default fallback for freeform requests)*

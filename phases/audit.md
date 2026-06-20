@@ -6,7 +6,9 @@ Context rots. As work proceeds, `.dev_flow/` accumulates drift: the dashboard fi
 
 Audit is the periodic **whole-directory sweep** that brings `.dev_flow/` back in line with reality. It reconciles every task's recorded state against ground truth, trims the dashboard down to what is actually active, compacts and reflects on closed work so its lessons survive while its noise is archived, and grooms the `rules/`, `skills/`, and `cache/` catalogues — and reconciles the integrity of the `docs/` documentation set itself (index, statuses, cross-references, orphans, glossary, and docs↔code drift) through the `docs` scope. It is the write-heavy cousin of [status](status.md): `status` *reports* drift, `audit` *resolves* it.
 
-Audit composes existing phases rather than reinventing them — it leans on the [status](status.md) regeneration procedure for the indexes, the [rule](rule.md) and [skill](skill.md) phases for catalogue edits, and [propagate](propagate.md) when a reconciliation reveals that docs and code disagree.
+A separate, opt-in **`code` scope** ([Step 9](#step-9--code-scope-the-whole-codebase-audit)) extends the same "reconcile the project to reality" idea to the *source code itself*: it audits the whole codebase through parallel lenses (architecture / SOLID / DRY / security / …), consolidates the findings, and emits a prioritized **refactoring plan** plus a `docs/_framework.md` map update. Like every other scope it is **non-committing** — it stops at the Plan→Code gate and hands the plan off to the standard pipeline; it never edits source or commits (concept [C_CAU](../docs/code_audit.concept.md) · spec [SP_CAU](../docs/code_audit.sp.md)).
+
+Audit composes existing phases rather than reinventing them — it leans on the [status](status.md) regeneration procedure for the indexes, the [rule](rule.md) and [skill](skill.md) phases for catalogue edits, [propagate](propagate.md) when a reconciliation reveals that docs and code disagree, and (for the `code` scope) the [implement](implement.md)/[review](review.md)/[verify](verify.md) phases to *execute* the refactoring plan it produces.
 
 ## Command
 
@@ -14,12 +16,13 @@ Audit composes existing phases rather than reinventing them — it leans on the 
 /dev-flow audit [scope] [--dry-run]
 ```
 
-- `scope` (optional) — limit the sweep to one area. One of: `context` (dashboard + task reconciliation + compaction), `tasks` (reconcile + compact task files only), `rules`, `skills`, `cache`, `docs` (documentation integrity — index · statuses · cross-refs · orphans · glossary · drift), or `all` (default). `all` runs every scope below — the `.dev_flow/` workspace scopes **and** `docs`.
+- `scope` (optional) — limit the sweep to one area. One of: `context` (dashboard + task reconciliation + compaction), `tasks` (reconcile + compact task files only), `rules`, `skills`, `cache`, `docs` (documentation integrity — index · statuses · cross-refs · orphans · glossary · drift), `code` (whole-codebase architecture/SOLID/DRY/security audit → refactoring plan), or `all` (default). `all` runs every workspace + `docs` scope below; **`code` is opt-in and excluded from `all`** — it is the heavy, periodic scope and is invoked explicitly (DEC_04).
+- The `code` scope takes **free-form intent**, not flags: `/dev-flow audit code <description of intent>`. The `--dry-run` flag below applies to the workspace/`docs` scopes; `code` expresses "report only, no hand-off" in its intent text (e.g. "preview plan") — see [Step 9](#step-9--code-scope-the-whole-codebase-audit).
 - `--dry-run` — produce the audit report only; make no changes on disk.
 
 ### Scope → steps
 
-Each scope runs a defined subset of the [procedure](#procedure); `all` runs them all, in order. Skip steps outside the requested scope.
+Each scope runs a defined subset of the [procedure](#procedure); `all` runs the workspace + `docs` steps in order (it does **not** run `code`). Skip steps outside the requested scope.
 
 | Scope | Steps | Reconciles |
 |-------|-------|------------|
@@ -29,18 +32,23 @@ Each scope runs a defined subset of the [procedure](#procedure); `all` runs them
 | `skills` | 7 | `.dev_flow/skills/` catalogue |
 | `cache` | 7d | `.dev_flow/cache/` index ↔ disk |
 | `docs` | 7a · 7b · 7c · 7e | `docs/` — glossary, open decisions/backlogs/spikes, docs↔code drift, **index · statuses · cross-refs · orphans · freshness** |
-| `all` (default) | 1–8 | everything above (workspace **and** docs) |
+| `all` (default) | 1–8 | everything in the workspace **and** docs (**not** `code`) |
+| `code` (opt-in, separate) | 9 | the **whole project codebase** — architecture/SOLID/DRY/security/… via lens fan-out → prioritized refactoring plan + `docs/_framework.md` update (read-only; hands off to the pipeline, never commits) |
 
 ### Examples
 
 ```
-/dev-flow audit                  # full sweep — workspace + docs
+/dev-flow audit                  # full sweep — workspace + docs (not code)
 /dev-flow audit --dry-run        # show what would change, touch nothing
 /dev-flow audit context          # only reconcile/trim context, skip rules & skills
 /dev-flow audit rules            # only groom .dev_flow/rules/
 /dev-flow audit skills           # only groom .dev_flow/skills/
 /dev-flow audit cache            # only groom .dev_flow/cache/
 /dev-flow audit docs             # only check docs/ integrity (index, statuses, refs, glossary, drift)
+/dev-flow audit code             # whole-codebase audit → refactoring plan (all base lenses)
+/dev-flow audit code модуль auth, фокус на architecture та DRY   # scoped + lens-focused (free-form)
+/dev-flow audit code focus security                              # security-lens sweep
+/dev-flow audit code лише зміни з останнього релізу, прев'ю-план  # incremental + preview-only (no hand-off)
 ```
 
 ## When to Run
@@ -51,6 +59,7 @@ Each scope runs a defined subset of the [procedure](#procedure); `all` runs them
 - Before a new contributor or a fresh session needs a trustworthy picture.
 - After a burst of commits, when several tasks closed but their headers were never moved to `done`.
 - After a batch of document edits — when a doc's `Status` lags reality (a plan whose phases are all `[DONE]` but still `in-progress`), `docs/_index.md` has drifted from the files, or `Depends on` / `Used by` links broke.
+- **(`code` scope)** Periodically on a longer cadence than the workspace sweep — at a milestone, before a release, or after a burst of changes that each passed `review` locally but may have drifted the system (layer erosion, accreting duplication, an abstraction that never got extracted). The codebase must already be `onboard`-ed (documented architecture/rules) for the full conformance lenses; without them the run drops to **reduced mode** (the conformance lenses — `standards`/`architecture`/`specifications` — are dropped; SOLID/DRY/antipatterns/security/correctness/performance/tests still run) and recommends `onboard` first.
 
 ## Guiding Principles
 
@@ -171,6 +180,51 @@ Apply the derived/index fixes directly; **propose** status changes, reciprocal-l
 
 Always end with a structured report (and in `--dry-run`, this is the *only* output — nothing is written). Apply the safe/derived changes directly; list the judgement calls as proposals awaiting confirmation. **Never commit** — present the changes and follow the standard approval rule.
 
+### Step 9 — `code` scope: the whole-codebase audit
+
+The opt-in `code` scope is its **own multi-stage procedure**, not a subset of Steps 1–8 — it audits *source code*, where the rest of audit reconciles the `.dev_flow/` + `docs/` workspace. It owns three read-only stages — **RunAnalysis → Consolidate → ProducePlan** — preceded by **ParseIntent** (step 0), and stops at the Plan→Code gate; execution is the standard pipeline (**HandOff**). The full lens menu, per-lens checklists, the shared bottom-up walk, the SOLID/DRY heuristics, the antipattern catalogue, and the refactoring playbook live in **[references/code-audit.md](../references/code-audit.md)** (DEC_08) — this step is the orchestration; that reference is the detail.
+
+**Scope guiding constraints** (layered on audit's *non-committing* character — they are the [SP_CAU validation rules](../docs/code_audit.sp.md#SP_CAU_03_01)):
+
+- **Read-only w.r.t. source through the plan.** ParseIntent + the three stages touch no source file and never commit. Code change happens only in HandOff, via the standard gated pipeline. (`git status` shows no source change after ProducePlan.)
+- **Conclusions, not dumps.** A lens subagent returns [Findings](../docs/code_audit.sp.md#SP_CAU_01_03) — a one-line `conclusion` + `file:line` locations. Raw search hits/traces/logs stay in the workspace, referenced by path, never inlined ([Delegation](../references/delegation.md)).
+- **No silent truncation.** If cost/scope narrows the run (sampled, top-N, incremental), the report names what was excluded.
+- **Reduced mode is honest.** Without documented architecture/rules, drop the conformance lenses (`standards`/`architecture`/`specifications`) and say so; recommend `onboard`. Never fabricate a conformance baseline.
+- **Respect settled decisions & document faults.** A finding contradicting a settled `DEC_NN` cites it, never proposes blind reversal. A finding tracing to a *wrong document* routes to [Upstream Escalation](../references/escalation.md), not into the refactoring plan.
+- **Free-form intent, no flags.** Unparsed fields default and the assumption is reported back.
+
+#### Step 9.0 — ParseIntent + context gates ([SP_CAU_02_01](../docs/code_audit.sp.md#SP_CAU_02_01))
+
+1. Parse the free-form intent text into working parameters — `scope` (path/glob, or `whole`), `lenses` (default: all base lenses), `depth` (`quick`/`standard`/`deep`), `mode` (`full`/`incremental` + `baseline`), `preview_only`. **Never prompt for flags**; an absent/unparseable field takes its default and the assumption is stated back in the result.
+2. **`scope` resolving to nothing is an error (NO_SCOPE)** — state what was looked for; do **not** silently fall back to the whole codebase.
+3. Run the standard gates (skill / rule / glossary / cache). Load `docs/_framework.md` (if present), the architecture concepts, `.dev_flow/rules/architecture.md`, and the [SOLID reference](../references/solid-architecture.md) as the conformance baseline (project rules override generic guidance). If none of these exist → mark the run **REDUCED**.
+4. **Cost gate** (research-style) for a large `scope`/`deep` depth — may narrow to incremental or sampled (the narrowing is logged in the report). Create/Resume **AuditState** in `.dev_flow/audit/` (L2, mirrors onboard's `.dev_flow/onboard/`): `status`, `scope`/`lenses`/`mode`, `units {done,total}`, timestamps. A free-form "audit code continue" resumes from this state instead of re-analyzing settled units.
+
+#### Step 9.1 — RunAnalysis (lens fan-out, parallel, read-only) ([SP_CAU_02_02](../docs/code_audit.sp.md#SP_CAU_02_02))
+
+Fan out **one read-only subagent per lens** (the [code-audit-lens role](../roles/code-audit-lens.ai.md)), in parallel — `standards` / `architecture` / `specifications` / `patterns` / `duplication` / `security` / `correctness` / `performance` / `tests` / … (per the parsed `lenses`). Each applies the **[Shared Bottom-Up Analysis](../references/code-audit.md#shared-bottom-up-analysis)** walk through its one [checklist](../references/code-audit.md#per-lens-checklists) and returns `Finding[]` — **conclusions, not raw output**. No lens sees another's picture; that is what Consolidate is for. If `intent.lenses` parses empty, fall back to the base set — **never run zero lenses** (NO_LENS). The `security` lens audits *statically* (no exploit execution). Persist AuditState (`analyzing → consolidating`) as lenses return.
+
+#### Step 9.2 — Consolidate (barrier — needs all Findings) ([SP_CAU_02_03](../docs/code_audit.sp.md#SP_CAU_02_03))
+
+One agent (single writer) merges every lens's Findings into [ConsolidatedFindings](../docs/code_audit.sp.md#SP_CAU_01_04): dedup by normalized location + type; cluster cross-module duplication into a `duplication-cluster` / `abstraction-candidate`; detect docs↔code architecture drift (`docs-code-drift`); surface **cross-lens conflicts** (e.g. `standards` vs `architecture`) as their own `cross-lens-conflict` kind — **preserved, never averaged away**. For each, compute `blast_radius` via [Impact Walk](../references/impact.md) and `priority = f(severity, blast_radius, effort)`; return sorted by priority. This is a **barrier** — it needs the whole picture.
+
+#### Step 9.3 — ProducePlan (the scope stops here) ([SP_CAU_02_04](../docs/code_audit.sp.md#SP_CAU_02_04))
+
+1. Split consolidated findings into **top-N by priority** (plan items) and the **backlog** (each with a return trigger) — **nothing dropped silently**; the report names anything deferred or excluded.
+2. Emit a standard **`docs/<scope>.plan.md`** (`Status: in-progress`) — each item carries its change-class (`trivial`/`standard`/`architectural`), affected files, rationale, and **links to ≥1 ConsolidatedFinding** (no orphan refactors). See the [refactoring playbook](../references/code-audit.md#refactoring-playbook).
+3. Update **`docs/_framework.md`** from the abstraction-candidates — overview + links to the `.dev_flow/rules/`/`.dev_flow/skills/` that hold the enforceable detail; **no enforceable detail inlined** (DEC_04).
+4. Harvest **proposed** rules/skills ([Experience Capture](../references/experience-capture.md) — *propose, never apply*). Route any finding that is really a *wrong document* to [Upstream Escalation](../references/escalation.md), not into the plan.
+5. **Fast-track security:** an **exploitable `must`-severity** `security` finding is surfaced for an immediate [fix](fix.md)/escalation, **not** parked in the backlog. Persist AuditState (`planning`).
+6. **No source change, no commit.** The developer approves the plan at the **Plan→Code gate** — that approval is what authorizes execution.
+
+#### Step 9.4 — HandOff (execution = the standard pipeline) ([SP_CAU_02_05](../docs/code_audit.sp.md#SP_CAU_02_05))
+
+If `preview_only`: **stop** — report the plan, no hand-off. Otherwise, on developer approval, run each plan item (by priority) through the standard gated phases for its change-class — [implement](implement.md) → [review](review.md) (clean-context) → [verify](verify.md) → commit (with approval). Audit may *orchestrate/offer* the chain but **edits no source and commits nothing itself** — each back-half stage is its own gated phase. Persist AuditState (`handed-off`).
+
+#### Empty / trivial result
+
+If consolidation yields no actionable findings, the plan is empty, HandOff is a no-op, and the run stays a safe read-only pass — report it as clean.
+
 ## Report Structure
 
 Use this template so the result is scannable:
@@ -215,6 +269,34 @@ Use this template so the result is scannable:
 ✔️ Clean — no action: <areas with nothing to do>
 ```
 
+For the **`code` scope** (Step 9) the output is the refactoring plan itself, summarized:
+
+```
+━━━ /dev-flow audit code — <scope> <(preview)?> ━━━
+
+🔍 Run
+   • Scope <scope> · lenses {<list>} · depth <d> · mode <full|incremental> · <REDUCED mode? recommend onboard>
+   • Assumptions (defaulted, not prompted): <field=value, …>
+   • Excluded / sampled (no silent truncation): <what + why>
+
+📋 Refactoring plan → docs/<scope>.plan.md (in-progress)
+   • Top-<N> items (priority desc): <id> <one-line> [<change-class>] → <affected> (from <finding-ids>)
+   • Backlog: <m> items, each with a return trigger
+   • cross-lens-conflict(s): <preserved as explicit decision input>
+
+🗺️ Framework map → docs/_framework.md
+   • <abstractions added / links updated> (overview only — detail stays in rules/skills)
+
+🚨 Fast-tracked (not in backlog)
+   • Security <vuln:class> at <file:line> (must, exploitable) → immediate fix/escalation
+
+🔁 Harvested (proposed, not applied)
+   • rule <Name> (<category>/<severity>) / skill <domain/Name>
+   • Upstream escalation: <doc> appears wrong (code diverged because the spec is stale)
+
+⏭️ Next: developer approves the plan at the Plan→Code gate → standard pipeline executes (audit commits nothing).
+```
+
 ## Safety & Contention
 
 - Audit may run alongside other contributors. It freely rewrites **derived** files (`active_context.md`, `tasks/_index.md`) and **closed** task files, but on **live** task files it makes only targeted header/status edits and appends Coordination Notes — it never rewrites another contributor's Subtask block or tagged entries.
@@ -224,6 +306,8 @@ Use this template so the result is scannable:
 ## Dry-Run
 
 `--dry-run` performs Steps 1–7e as analysis only and emits the Step 8 report without touching disk. Use it to preview a sweep, to review proposed merges and removals before committing to them, or to audit a shared `.dev_flow/` you do not want to mutate. The report distinguishes what *would* be applied from what would be proposed.
+
+The **`code` scope** is read-only w.r.t. source through the plan regardless of any flag — its `--dry-run` equivalent is **preview-only intent** (e.g. "audit code … preview plan"), which runs ParseIntent + RunAnalysis + Consolidate + ProducePlan and then *stops* without offering the hand-off. (ProducePlan still writes the plan + framework map; those are derived design artifacts, not source.)
 
 ## Relation to Other Phases
 
@@ -235,4 +319,7 @@ Use this template so the result is scannable:
 | [cache](../references/cache.md) | Step 7d reconciles the resource cache index ↔ disk and flags unreferenced/stale entries; the cache index is data (carries `source`), never regenerated. |
 | [propagate](propagate.md) | When reconciliation reveals docs and code disagree, route the doc fix through propagate. Step 7c runs its drift detection algorithm as part of the sweep. |
 | [research](research.md) | The proposed closing route for expired open-decision triggers whose missing information is researchable, and for stale spikes. |
-| [review](review.md) | The `docs` scope (Step 7e) reconciles in bulk what review enforces per-change — Document Index Maintenance and Deprecation hygiene; review checks them on each change, audit periodically across the whole `docs/` set. |
+| [review](review.md) | The `docs` scope (Step 7e) reconciles in bulk what review enforces per-change — Document Index Maintenance and Deprecation hygiene; review checks them on each change, audit periodically across the whole `docs/` set. The `code` scope (Step 9) reuses review's check catalogue as lenses (the Security check → the `security` lens) and review itself as a back-half execution stage. |
+| [onboard](onboard.md) | The `code` scope shares onboard's bottom-up layered module walk — both call the single [Shared Bottom-Up Analysis](../references/code-audit.md#shared-bottom-up-analysis); onboard consumes it to *generate* docs, a lens to *audit* against them. |
+| [implement](implement.md) / [verify](verify.md) | The back half of the `code` scope: the refactoring plan it produces is *executed* by the standard implement → review → verify → commit pipeline (audit hands off at the Plan→Code gate and changes no code itself). |
+| [research](research.md) | The `code` scope borrows research's cost gate for large/deep runs and its perspective-panel shape for the parallel lens fan-out + single-writer consolidation. |

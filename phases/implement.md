@@ -38,6 +38,8 @@ Before writing code, verify:
 
 **Role check:** If you'll delegate any step (run tests, verify, a wide search) to a subagent, check `.dev_flow/roles/_index.yaml` first and reuse a fitting base role or project overlay instead of re-deriving one. See [Roles](../references/roles.md).
 
+**Framework check.** When `docs/_framework.md` exists, load it alongside `docs/_index.md` — it is the project's architectural map (core abstractions · layers · extension points · shared utilities · conventions, maintained by onboard and the [`audit code` scope](audit.md#step-9--code-scope-the-whole-codebase-audit)). New code MUST respect the layer boundaries and extension points it records; the map links down to the `.dev_flow/rules/` that carry the enforceable detail. No-op while the file is absent.
+
 ## Implementation Workflow
 
 ```

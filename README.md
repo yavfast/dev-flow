@@ -46,6 +46,7 @@ Additional commands:
 | `/dev-flow subtask <task>` | Delegate a secondary task to a subagent — a full dev-flow participant that builds its own context and reports fully |
 | `/dev-flow status` | Show current state, resume previous session |
 | `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — reconcile state, trim context, compact closed tasks, groom rules/skills/cache, check docs integrity (index/statuses/refs) |
+| `/dev-flow audit code <intent>` | Opt-in whole-codebase audit (architecture/SOLID/DRY/security via parallel lenses) → prioritized refactoring plan + framework map; read-only, hands off to the pipeline |
 | `/dev-flow <anything>` | Freeform — auto-routes to the right phase |
 
 ## Installation
@@ -338,7 +339,7 @@ dev-flow/
 │   ├── status.md
 │   ├── subtask.md
 │   └── audit.md
-├── roles/                # 17 AI-DSL subagent roles
+├── roles/                # 18 AI-DSL subagent roles
 │   ├── researcher.ai.md
 │   ├── concept-author.ai.md
 │   ├── spec-author.ai.md
@@ -355,7 +356,8 @@ dev-flow/
 │   ├── onboard-docgen.ai.md
 │   ├── onboard-rules-extractor.ai.md
 │   ├── subtask-executor.ai.md
-│   └── auditor.ai.md
+│   ├── auditor.ai.md
+│   └── code-audit-lens.ai.md   # read-only per-lens subagent for `audit code`
 ├── templates/            # Document templates
 │   ├── concept.md
 │   ├── specification.md
@@ -373,6 +375,7 @@ dev-flow/
 │   ├── cache.md                 # Resource cache + /tmp workspace discipline
 │   ├── roles.md                 # Base vs project-overlay roles
 │   ├── glossary.md              # Project domain vocabulary
+│   ├── code-audit.md            # `audit code` lens registry + shared walk + refactoring playbook
 │   └── solid-architecture.md
 └── examples/             # End-to-end walkthrough
     └── rate-limiter.md

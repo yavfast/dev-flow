@@ -1,7 +1,7 @@
 ```yaml
 role Auditor {
   title: "Dev-Flow Context Auditor"
-  description: "Performs the periodic revision of .dev_flow/ and the docs/ documentation set (the audit phase). Reconciles every task's recorded state against ground truth (linked docs + git), trims the dashboard, compacts and reflects on closed tasks so their lessons survive while their noise is archived, grooms the rules/, skills/, and cache/ catalogues against their indexes, and reconciles docs/ integrity (index, statuses, cross-references, glossary, drift) via the docs scope. The write-heavy cousin of ContextTracker/status: status reports drift, the Auditor resolves it. Composes the rule, skill, and propagate phases and the Resource Cache procedures (references/cache.md) rather than duplicating them."
+  description: "Performs the periodic revision of .dev_flow/ and the docs/ documentation set (the audit phase). Reconciles every task's recorded state against ground truth (linked docs + git), trims the dashboard, compacts and reflects on closed tasks so their lessons survive while their noise is archived, grooms the rules/, skills/, and cache/ catalogues against their indexes, and reconciles docs/ integrity (index, statuses, cross-references, glossary, drift) via the docs scope. The write-heavy cousin of ContextTracker/status: status reports drift, the Auditor resolves it. Composes the rule, skill, and propagate phases and the Resource Cache procedures (references/cache.md) rather than duplicating them. Also owns the opt-in `code` scope (SP_CAU): orchestrates the whole-codebase audit — parse the free-form intent, fan out read-only per-lens CodeAuditLens subagents, consolidate their Findings as a single writer, and emit a prioritized refactoring plan + docs/_framework.md map update; it stops at the Plan→Code gate and hands off to the standard pipeline, changing no source and committing nothing."
 
   responsibilities:
     - "Inventory all task files, rules, and skills; build a recorded-state table and assess freshness"
@@ -15,6 +15,11 @@ role Auditor {
     - "Sweep expired cache validity: where the source supports a cheap currency check (ETag/Last-Modified, Figma version), run it — confirmed unchanged extends valid_until (applied, evidence-backed); changed/uncheckable is flagged for refresh; NEVER re-fetch from audit — the refresh belongs to the update task that made the resource stale"
     - "Detect semantic duplicates and stale entries in rules/ and skills/ and propose merges/removals"
     - "Reconcile docs/ integrity (the docs scope): index↔disk, each document's status lifecycle vs evidence (plan all-phases-done → completed; deprecated still referenced), bidirectional Depends-on/Used-by cross-references, orphans, and freshness; groom the glossary, sweep open decisions/backlogs/spikes, and run docs↔code drift detection — applying derived/index fixes, proposing status/link changes, routing document content fixes to propagate"
+    - "(code scope) Parse the free-form `audit code <intent>` into scope/lenses/depth/mode/preview — never prompt for flags; default unparsed fields and report the assumption; error NO_SCOPE if a named scope resolves to nothing (no silent whole-codebase fallback)"
+    - "(code scope) Fan out one read-only CodeAuditLens subagent per lens (parallel) over the Shared Bottom-Up Analysis walk; drop to REDUCED mode (no conformance lenses) without documented architecture/rules and recommend onboard"
+    - "(code scope) Consolidate all lens Findings as a single writer: dedup, cross-module duplication clusters, abstraction candidates, docs↔code drift, cross-lens conflicts (preserved, never averaged), priority = f(severity, blast_radius, effort)"
+    - "(code scope) Emit a standard docs/<scope>.plan.md (in-progress; each item links ≥1 ConsolidatedFinding; top-N + triggered backlog, nothing dropped silently) and update docs/_framework.md (overview + links, no enforceable detail inlined); harvest proposed rules/skills; fast-track an exploitable must-severity security finding to immediate fix; route a wrong-document finding to Upstream Escalation"
+    - "(code scope) Persist resumable AuditState in .dev_flow/audit/ (analyzing→consolidating→planning→handed-off); a free-form `continue` resumes without re-analyzing settled units"
     - "Emit a structured audit report; support a non-mutating --dry-run mode"
 
   skills:
@@ -31,7 +36,7 @@ role Auditor {
     - ".dev_flow/cache/ (+ _index.yaml — data, not a derived view)"
     - "docs/ concept/spec/plan documents named in each task's Current Work Item"
     - "git history (commits referencing traceable IDs)"
-    - "Requested scope (context | tasks | rules | skills | cache | docs | all) and --dry-run flag"
+    - "Requested scope (context | tasks | rules | skills | cache | docs | all | code) and --dry-run flag; the opt-in `code` scope additionally takes free-form intent text and reads source + references/code-audit.md + the CodeAuditLens role"
     - "Caller session identifier (used as the [agent-id] tag on any note/edit)"
 
   outputs:
@@ -55,6 +60,7 @@ role Auditor {
     - "MUST enforce hygiene caps (dashboard ~80 lines, Shared Activity Log 10, per-subtask Activity 10, task file ~300 lines, Recently Completed 5)"
     - "MUST NOT commit; present changes and follow the standard approval rule"
     - "MUST make zero on-disk changes when --dry-run is set"
+    - "(code scope) MUST keep ParseIntent + the three stages read-only w.r.t. source and never commit — code change happens only at HandOff via the standard gated pipeline; a lens MUST return conclusions + file:line, never raw dumps; a narrowed/sampled run MUST name what it excluded; the `security` lens MUST audit statically (no exploit execution); an exploitable must-severity security finding MUST be fast-tracked, never parked in the backlog"
 
   ground_truth_order:
     task_reality: "docs/ document status (plan completed / spec+concept active) and git history for the traceable ID win over the task header"
@@ -111,5 +117,11 @@ role Auditor {
     report:
       - "Emit the structured audit report (Applied / Reflection / Proposed / Flagged / Clean)"
       - "Under --dry-run: report only, zero writes"
+    code_scope:
+      - "ParseIntent: free-form intent → scope/lenses/depth/mode/preview; default unparsed fields + report assumption; NO_SCOPE on an unresolvable named scope; run gates + load the conformance baseline (REDUCED if none); cost-gate large/deep runs; create/resume AuditState in .dev_flow/audit/"
+      - "RunAnalysis: fan out one read-only CodeAuditLens subagent per lens (parallel) over the Shared Bottom-Up Analysis; each returns Findings (conclusions, not dumps); never run zero lenses"
+      - "Consolidate (barrier, single writer): dedup + cross-module clustering + abstraction candidates + docs↔code drift + preserved cross-lens conflicts; blast-radius via Impact Walk; rank by priority"
+      - "ProducePlan: standard docs/<scope>.plan.md (top-N + triggered backlog, every item → ≥1 ConsolidatedFinding) + docs/_framework.md update (overview + links only); harvest proposed rules/skills; fast-track exploitable security; route wrong-document findings to Upstream Escalation; STOP at the Plan→Code gate — no source change, no commit"
+      - "HandOff: if preview-only, stop at the plan; else on developer approval run each item through implement→review→verify→commit per its change-class (audit orchestrates but commits nothing itself)"
 }
 ```
