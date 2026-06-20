@@ -4,8 +4,9 @@
 > **Created:** YYYY-MM-DD
 > **Updated:** YYYY-MM-DD
 > **Author:** {author}
-> **Time-box:** {budget, e.g., "2 hours", "1 session", "10 sources max"}
+> **Time-box:** {budget, e.g., "2 hours", "1 session", "10 sources max" — in panel mode this is the per-perspective box; total cost ≈ N× across lenses}
 > **Scope:** {codebase / external / prototype — combine as needed}
+> **Mode:** single | panel *(panel = parallel perspective researchers; list the lenses)*
 >
 > **Target concept:** [C_XXX](./name.concept.md) *(or "to be created")*
 > **Serves:** {open decision this spike must close, e.g. C_XXX_DEC_NN — or "—"}
@@ -16,6 +17,12 @@
 {Why this spike is needed. What is unclear or risky about the upcoming concept.}
 
 ## Exploration Log
+
+<!-- single mode: numbered entries below.
+     panel mode: one `### Perspective: <lens>` sub-section per lens (theoretical / practical /
+     conservative / progressive / analogues / user / designer / …), written by the main agent from each
+     researcher's returned conclusion (parallel researchers don't write this file themselves);
+     the main agent then synthesizes them into Alternatives Considered + Conclusion. -->
 
 ### Entry 1 — {Date} — {Topic}
 
@@ -59,6 +66,9 @@
 **Recommendations for the concept:**
 - {what the concept should include based on this spike}
 - {what the concept should explicitly exclude or defer}
+
+**Cross-perspective tensions** *(panel mode — omit for single)*:
+- {where lenses disagreed, e.g. conservative vs progressive — carried to the interview/concept as a decision input, not resolved here}
 
 **Artifacts to keep:**
 - {staged files promoted to `.dev_flow/cache/` — cache path + what it is, or "—"}

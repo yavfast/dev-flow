@@ -61,7 +61,7 @@ A quick reference for the recurring steps. "Delegate?" is a default, not a law �
 | Build / verify run (verify) | Yes | pass/fail + failures that matter, log path | fast / cheap |
 | Regression / integration / live (verify) | Yes | verdict + failures, artifact paths | fast / cheap |
 | Diagnosis: reproduce + instrument (fix) | Yes | confirmed cause + evidence, log path | fast / cheap |
-| Spike investigation (research) | Yes | verdict + findings + recommendation; raw material stays in the spike file | standard / strong — weighing sources and trade-offs needs judgment |
+| Spike investigation (research) — one researcher, or a parallel **panel** (one per perspective) for a many-sided topic | Yes | verdict + findings + recommendation; raw material stays in the spike file. A panel fans the same questions across lenses; each returns conclusion-not-dump and the main agent synthesizes — see [research Step 2b](../phases/research.md#step-2b-perspective-panel-optional) | standard / strong — weighing sources and trade-offs needs judgment |
 | Broad code search ("where is X used?") | Yes | findings + file:line list | fast / cheap |
 | Distill a closing segment at a checkpoint (experience capture) | Yes | segment summary + any proposed lessons | standard — judging what's durable |
 | Pre-commit review | Yes (clean ctx) | blocking issues + warnings | standard / strong |

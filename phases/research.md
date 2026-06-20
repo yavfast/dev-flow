@@ -30,7 +30,7 @@ Research is **not** a numbered pipeline stage. It is an on-demand service phase,
 
 Investigation is delegated to **Researcher**: [roles/researcher.ai.md](../roles/researcher.ai.md)
 
-The main agent frames the spike, receives the conclusion, persists durable knowledge, and updates decision records. The researcher subagent does the noisy exploration — see [Delegation for Focus](../references/delegation.md).
+The main agent frames the spike, receives the conclusion, persists durable knowledge, and updates decision records. The researcher subagent does the noisy exploration — see [Delegation for Focus](../references/delegation.md). For a complex, many-sided topic the framing fans the same questions out to a **panel** of Researcher instances, one per perspective, and the main agent synthesizes their conclusions into one spike (Steps 2b–2c).
 
 ## Entry Points
 
@@ -65,11 +65,13 @@ Research can sink unbounded time and tokens. Before starting, frame it explicitl
 1. **Questions** — 1–3 specific questions the spike must answer. Not "learn about X" but "can X do Y under constraint Z?".
 2. **Scope** — which sources are in bounds: `codebase` (read existing code/docs), `external` (web, package registries, official docs), `prototype` (throwaway code in a scratch area). Combine as needed.
 3. **Time-box** — the budget ("2 hours", "1 session", "10 sources max"). When the box is spent, the spike concludes with whatever it has — `concluded` or `inconclusive`, honestly.
+4. **Mode** — `single` (one investigation) or `panel` (a fan-out of parallel perspective researchers — see [Step 2b](#step-2b-perspective-panel-optional)). A narrow, factual question is `single`; a broad or contested topic where the *right answer depends on which lens you look through* (theoretical vs practical, conservative vs progressive, user vs operational) is where a `panel` earns its multiplied cost. Default to `single` and escalate to `panel` only when the topic is genuinely many-sided.
 
 When the expected cost is non-trivial, present the fork instead of silently sinking effort:
 
 ```
-A) Run the spike — {questions}, scope: {scope}, time-box: {box}   (Recommended: {why})
+A) Run the spike — {questions}, scope: {scope}, time-box: {box}, mode: {single|panel}   (Recommended: {why})
+   (for panel: name the {N} perspectives and the per-perspective time-box — cost is ≈ N× single)
 B) Proceed without research — record the assumption as an open Design Decision
    with a resolution trigger
 C) You provide the missing information directly (doc, measurement, prior art)
@@ -79,18 +81,39 @@ C) You provide the missing information directly (doc, measurement, prior art)
 
 ### Step 1: Frame the spike
 
-Apply the cost gate above. Create `docs/{name}.spike.md` from the [spike template](../templates/spike.md): questions, context, scope, time-box, target concept (or "to be created"), or the open `DEC_NN` it serves.
+Apply the cost gate above. Create `docs/{name}.spike.md` from the [spike template](../templates/spike.md): questions, context, scope, time-box, mode (`single`/`panel`), target concept (or "to be created"), or the open `DEC_NN` it serves.
 
 ### Step 2: Investigate (delegated)
 
-Spawn the [Researcher](../roles/researcher.ai.md) subagent with the spike file as its brief. The researcher:
+For a `single`-mode spike, spawn one [Researcher](../roles/researcher.ai.md) subagent with the spike file as its brief. The researcher:
 - exhausts cheap sources first (codebase evidence → existing docs → external sources → prototype only if scoped),
 - logs each exploration entry in the spike file (what was tried, findings, open questions),
 - stages fetched artifacts (downloads, design exports) under the project workspace `/tmp/{project-slug}/downloads/` and lists their paths in the report (see [Resource Cache](../references/cache.md) — helper subagents never write `.dev_flow/`; the agent running this phase persists),
 - fills the Alternatives Considered table,
 - concludes with a verdict and returns **the conclusion, not the dump**.
 
-For trivially small lookups, the main agent may run Step 2 inline — but any investigation that would flood the context (multiple sources, prototype runs) goes through the subagent.
+For trivially small lookups, the main agent may run Step 2 inline — but any investigation that would flood the context (multiple sources, prototype runs) goes through the subagent. When the cost gate chose `panel` mode, run **Step 2b** instead of this single spawn, then **Step 2c**.
+
+### Step 2b: Perspective panel (optional)  {#step-2b-perspective-panel-optional}
+
+When the cost gate chose `panel` mode, the same investigation is fanned out across **parallel perspective researchers** — one Researcher subagent per lens, each examining the *same* framed questions through a *different* viewpoint. This is the [Delegation for Focus](../references/delegation.md) fan-out: the panel spends its context on the breadth; the main agent keeps only each lens's conclusion.
+
+1. **Choose the perspectives — topic-dependent, never a fixed list.** Pick the 2–5 lenses through which this topic's answer genuinely differs. Common lenses: **theoretical** (what the literature/spec says is correct), **practical** (what works in production, with the rough edges), **conservative** (lowest-risk, proven, reversible), **progressive** (newer/bolder approaches and where they pay off), **analogues** (alternative or related approaches — how comparable or adjacent problems are solved elsewhere; prior art and sibling techniques worth borrowing or explicitly ruling out), **user** (the consumer's experience and expectations), **designer** (interaction/ergonomics/aesthetics), plus topic-specific ones — **security**, **operational/SRE**, **cost**, **performance**, **maintenance**, **regulatory**. Choose lenses that will *actually disagree* on this topic; drop any that would just restate another.
+2. **Brief each researcher with its lens** — the shared framed questions + scope + a per-perspective time-box, plus the instruction to investigate and report *from that perspective only* (its strongest case, its preferred option, what it considers a dealbreaker). Each is the standard read-only [Researcher](../roles/researcher.ai.md); only the lens in the brief differs. **Time-box:** each lens carries its *own* box and they run concurrently, so the panel's wall-clock is one box but its total cost is their sum (≈ N× a single spike) — this is the multiplied cost the Cost Gate surfaced. A lens that spends its box concludes on its own, independent of the others.
+3. **Spawn the panel in parallel** and pick each subagent's model by the nature of its lens (a measurement-heavy lens may want a stronger model than a survey lens) — never a hardcoded name; see [Delegation for Focus](../references/delegation.md#fit-the-model-to-the-task--by-its-nature-not-its-name).
+4. **Each researcher returns its lens conclusion** — **the conclusion, not the dump** (lens-specific findings, candidate option, dealbreakers), staging any raw material in the workspace by path. The **main agent** writes each into a labelled `### Perspective: <lens>` sub-section of the spike's Exploration Log: the parallel researchers do **not** write the shared spike file themselves, which would mean N subagents clobbering one `docs/*.spike.md` concurrently (the spike file has no multi-contributor write tolerance). Collecting-then-writing keeps assembly single-writer, in the agent that owns the synthesis.
+
+A panel of one is just a `single` spike — do not dress a narrow factual lookup as a panel (see Anti-Patterns).
+
+### Step 2c: Synthesize the panel  {#step-2c-synthesize-the-panel}
+
+The panel produces N partial views; the **main agent owns the synthesis** — this is the "main agent forms the unified report" half of the design and it is *not* delegated. From the returned conclusions:
+
+- **Merge and dedupe** findings into the spike's single Alternatives Considered table — one row per distinct approach, annotated with which perspective(s) favour or reject it.
+- **Surface contradictions, do not flatten them.** Where lenses genuinely disagree (conservative vs progressive, user vs operational), record the conflict explicitly as a **decision input** — the trade-off is itself the finding, and it feeds the [interview](../references/interview-mode.md)/concept rather than being silently resolved inside the spike.
+- **Convergence is also a finding.** When lenses chosen to disagree instead *agree*, say so — cross-perspective consensus is a strong, low-risk signal for the concept, not a wasted panel. (If they agreed because they were never going to differ, that is the lens-theater anti-pattern, caught at framing, not here.)
+- **Spot-check load-bearing conclusions.** A panel conclusion is two hops from the evidence; before a cross-lens verdict drives the concept, spot-check the *specific* claim it turns on against primary evidence (per [Delegation for Focus](../references/delegation.md#the-habit-that-makes-it-pay-off)).
+- Write **one unified Conclusion** (Step 3) covering all perspectives — the spike has a single verdict, with the per-lens recommendations and unresolved tensions visible beneath it.
 
 ### Step 3: Conclude the spike
 
@@ -141,6 +164,8 @@ Report: verdict per question, recommended next phase (`concept` ready / more res
 - Making the design decision inside the spike instead of bringing options back to the interview
 - Burying findings in the spike file without persisting the durable part to `.dev_flow/skills/`
 - An `inconclusive` verdict with no record of *what* is still missing and what would close it
+- Running a **perspective panel** on a narrow factual question — N researchers paying N× to return the same answer; a panel is for genuinely many-sided topics (Step 2b)
+- **Lens theater** — picking perspectives that don't disagree on *this* topic, so the synthesis is just concatenation; or, conversely, **flattening** real cross-lens contradictions into one tidy verdict instead of surfacing the trade-off as a decision input
 
 ## Language Policy
 
