@@ -40,6 +40,8 @@ Before writing code, verify:
 
 **Framework check.** When `docs/_framework.md` exists, load it alongside `docs/_index.md` — it is the project's architectural map (core abstractions · layers · extension points · shared utilities · conventions, maintained by onboard and the [`audit code` scope](audit.md#step-9--code-scope-the-whole-codebase-audit)). New code MUST respect the layer boundaries and extension points it records; the map links down to the `.dev_flow/rules/` that carry the enforceable detail. No-op while the file is absent.
 
+**Forecast check (advisory).** Before a material implementation decision, forecast at *implement altitude* — the blast-radius of this change and the results of the next step or two (incl. tool calls) — and route each anticipation through the YAGNI-gate. The gate is **strict** here: speculative future-proofing in code with no near-term trigger defaults to `drop + record`, not `build now`. Keep the free one-step check on every non-trivial action — *does the inevitable next step undo or absorb this one?* See [Consequence Forecasting](../references/consequence-forecasting.md).
+
 ## Implementation Workflow
 
 ```

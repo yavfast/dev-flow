@@ -27,6 +27,8 @@ The plan is where technology is chosen — language, framework, library, persist
 
 A rule, an existing concept, or a documented convention that already settles a choice is **not** a decision point — follow it and cite it. Interview only the genuinely open technology forks. See **[Interview Mode](../references/interview-mode.md)**.
 
+**Forecast check (advisory).** Before fixing phase order or a structural choice, forecast at *plan altitude* — which phase unblocks which, and the cost a later structural change would force — and route each anticipation through the YAGNI-gate (`build now` / `seam+flag` / `drop+record`); a deferred phase goes to the backlog with a return trigger, never dropped silently. See [Consequence Forecasting](../references/consequence-forecasting.md).
+
 ## Structure
 
 ```markdown

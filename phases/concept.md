@@ -68,6 +68,8 @@ See **[Interview Mode](../references/interview-mode.md)** for the full procedure
 
 **Interview vs Banned Phrases.** A documented **open** decision (options + trade-offs + a resolution trigger) is *not* a banned deferral. The phrases below ("temporarily", "for now", …) are *undocumented* deferrals with no owner and no trigger; an open decision records the alternatives and the concrete event/date that closes it — the sanctioned way to leave something open (e.g. for research work).
 
+**Forecast check (advisory).** Before settling a material design fork, forecast its consequences at *concept altitude* — the future intents, consumers, and use-areas it shapes — and route each anticipation through the YAGNI-gate (`build now` / `seam+flag` / `drop+record`). At this altitude forecasting is cheap and encouraged, but it yields *direction and seams*, not speculative machinery with no stated consumer; a genuinely uncertain build-vs-defer fork becomes an interview above. See [Consequence Forecasting](../references/consequence-forecasting.md).
+
 ## Banned Phrases
 
 Reject or flag the following phrases in any concept. They signal deferred decisions that become permanent technical debt:

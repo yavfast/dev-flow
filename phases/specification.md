@@ -33,6 +33,8 @@ See **[Interview Mode](../references/interview-mode.md)** for the full procedure
 
 **Interview vs Banned Phrases.** A documented **open** decision (options + trade-offs + a resolution trigger) is *not* a banned "TBD". The banned phrases below are *undocumented* deferrals with no owner and no trigger. An open decision records the alternatives and the concrete event/date that closes it — that is the sanctioned way to leave something open (e.g. for research work).
 
+**Forecast check (advisory).** Before pinning a data shape or contract, forecast at *spec altitude* — who will consume this contract and what must not break as it evolves — and route each anticipation through the YAGNI-gate (`build now` / `seam+flag` / `drop+record`); prefer a versioning seam over a speculative field with no stated consumer (Minimality). See [Consequence Forecasting](../references/consequence-forecasting.md).
+
 ## Banned Phrases
 
 Reject or flag the following phrases in any specification. They signal incomplete design that will propagate ambiguity into the implementation:

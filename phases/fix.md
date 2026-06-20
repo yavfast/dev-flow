@@ -134,6 +134,8 @@ A bug fix hides two forks that are easy to resolve silently and expensive to get
 - Fix **changes a contract** → it propagates (Step 5) to the affected `*.sp.md` / `*.concept.md`; record the decision in that document's **Design Decisions** section.
 - **Code-only** fix → record it in the **fix report** (Step 4) and the fix's **task file** under `.dev_flow/tasks/`. An OPEN decision's resolution trigger MUST become a tracked item (a plan/backlog entry, a rule, or a Blocking Issue in the task context) so it cannot quietly expire.
 
+**Forecast check (advisory).** Forecast the consequences of the fix at *implement/fix altitude* — what else this change touches — and keep the free one-step check on the diagnosis loop (does the next probe/edit undo the last?). The gate is **strict**: expanding the fix's scope to speculative nearby improvements with no trigger defaults to `drop + record` (a backlog note), not into this fix. See [Consequence Forecasting](../references/consequence-forecasting.md).
+
 ## Rule Detection
 
 When the problem description contains an explicit coding directive — not just a bug symptom — automatically extract it as a project rule.

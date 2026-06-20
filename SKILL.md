@@ -368,6 +368,7 @@ Severity levels: **must** (blocks review) | **should** (warning) | **prefer** (a
 - [Delegation for Focus](references/delegation.md) *(cross-cutting sub-procedure of implement/fix/verify — delegate noisy work to a subagent, keep only the conclusion)*
 - [Experience Capture](references/experience-capture.md) *(cross-cutting sub-procedure of all phases — Transition Checkpoint: distill a closing segment into a pinned summary, demote raw turns, propose durable lessons; factual Response Trailer; tiered context-pressure response)*
 - [Impact Walk](references/impact.md) *(cross-cutting sub-procedure of ask/do/propagate/review — blast radius of a change: docs, code bindings, active tasks)*
+- [Consequence Forecasting](references/consequence-forecasting.md) *(cross-cutting sub-procedure of concept/spec/plan/implement/fix — forecast future needs at the phase's altitude, then YAGNI-gate each: build now / seam+flag / drop+record; advisory, composes Impact Walk + Minimality, routes to Interview/Escalation)*
 - [Resource Cache](references/cache.md) *(cross-cutting — durable resource store `.dev_flow/cache/` with trust levels + `/tmp` workspace discipline; every phase checks it before expensive fetches)*
 - [Roles](references/roles.md) *(base vs project-overlay subagent roles — reuse what exists, create new under .dev_flow/roles/ via inherits)*
 - [Glossary](references/glossary.md) *(`docs/_glossary.md` — canonical domain vocabulary; created at onboard/concept, loaded with `_index.md`)*

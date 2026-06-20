@@ -372,6 +372,7 @@ dev-flow/
 │   ├── escalation.md            # Upstream escalation (doc wrong, not code)
 │   ├── delegation.md            # Delegation for focus (subagents)
 │   ├── impact.md                # Impact Walk — blast radius of a change
+│   ├── consequence-forecasting.md  # Phase-scaled lookahead + YAGNI-gate (forecast → build/seam/drop)
 │   ├── cache.md                 # Resource cache + /tmp workspace discipline
 │   ├── roles.md                 # Base vs project-overlay roles
 │   ├── glossary.md              # Project domain vocabulary
