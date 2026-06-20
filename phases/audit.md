@@ -1,10 +1,10 @@
-# Phase: Audit — Full `.dev_flow` Revision & Housekeeping
+# Phase: Audit — Full `.dev_flow/` + `docs/` Revision & Housekeeping
 
 ## Purpose
 
 Context rots. As work proceeds, `.dev_flow/` accumulates drift: the dashboard fills with narratives of tasks that are long since committed, task headers lag behind the real state of their documents and the git history, finished tasks keep their verbose activity logs, and `rules/` and `skills/` grow duplicate or stale entries faster than their indexes are updated. None of this is caught by the normal phases, because each phase only touches the slice of context it owns.
 
-Audit is the periodic **whole-directory sweep** that brings `.dev_flow/` back in line with reality. It reconciles every task's recorded state against ground truth, trims the dashboard down to what is actually active, compacts and reflects on closed work so its lessons survive while its noise is archived, and grooms the `rules/`, `skills/`, and `cache/` catalogues — plus the one doc-side artifact it owns for hygiene, the `docs/_glossary.md` vocabulary. It is the write-heavy cousin of [status](status.md): `status` *reports* drift, `audit` *resolves* it.
+Audit is the periodic **whole-directory sweep** that brings `.dev_flow/` back in line with reality. It reconciles every task's recorded state against ground truth, trims the dashboard down to what is actually active, compacts and reflects on closed work so its lessons survive while its noise is archived, and grooms the `rules/`, `skills/`, and `cache/` catalogues — and reconciles the integrity of the `docs/` documentation set itself (index, statuses, cross-references, orphans, glossary, and docs↔code drift) through the `docs` scope. It is the write-heavy cousin of [status](status.md): `status` *reports* drift, `audit` *resolves* it.
 
 Audit composes existing phases rather than reinventing them — it leans on the [status](status.md) regeneration procedure for the indexes, the [rule](rule.md) and [skill](skill.md) phases for catalogue edits, and [propagate](propagate.md) when a reconciliation reveals that docs and code disagree.
 
@@ -14,18 +14,33 @@ Audit composes existing phases rather than reinventing them — it leans on the 
 /dev-flow audit [scope] [--dry-run]
 ```
 
-- `scope` (optional) — limit the sweep to one area. One of: `context` (dashboard + task reconciliation + compaction), `tasks` (reconcile + compact task files only), `rules`, `skills`, `cache`, or `all` (default). `all` additionally grooms `docs/_glossary.md`, sweeps open Design Decisions / plan backlogs / stale spikes, and runs docs ↔ code drift detection.
+- `scope` (optional) — limit the sweep to one area. One of: `context` (dashboard + task reconciliation + compaction), `tasks` (reconcile + compact task files only), `rules`, `skills`, `cache`, `docs` (documentation integrity — index · statuses · cross-refs · orphans · glossary · drift), or `all` (default). `all` runs every scope below — the `.dev_flow/` workspace scopes **and** `docs`.
 - `--dry-run` — produce the audit report only; make no changes on disk.
+
+### Scope → steps
+
+Each scope runs a defined subset of the [procedure](#procedure); `all` runs them all, in order. Skip steps outside the requested scope.
+
+| Scope | Steps | Reconciles |
+|-------|-------|------------|
+| `context` | 1–4 | dashboard + task reconciliation + compaction |
+| `tasks` | 1–3 | task files only (reconcile + compact) |
+| `rules` | 6 | `.dev_flow/rules/` catalogue |
+| `skills` | 7 | `.dev_flow/skills/` catalogue |
+| `cache` | 7d | `.dev_flow/cache/` index ↔ disk |
+| `docs` | 7a · 7b · 7c · 7e | `docs/` — glossary, open decisions/backlogs/spikes, docs↔code drift, **index · statuses · cross-refs · orphans · freshness** |
+| `all` (default) | 1–8 | everything above (workspace **and** docs) |
 
 ### Examples
 
 ```
-/dev-flow audit                  # full sweep of .dev_flow/
+/dev-flow audit                  # full sweep — workspace + docs
 /dev-flow audit --dry-run        # show what would change, touch nothing
 /dev-flow audit context          # only reconcile/trim context, skip rules & skills
 /dev-flow audit rules            # only groom .dev_flow/rules/
 /dev-flow audit skills           # only groom .dev_flow/skills/
 /dev-flow audit cache            # only groom .dev_flow/cache/
+/dev-flow audit docs             # only check docs/ integrity (index, statuses, refs, glossary, drift)
 ```
 
 ## When to Run
@@ -35,6 +50,7 @@ Audit composes existing phases rather than reinventing them — it leans on the 
 - When `active_context.md` has grown past its hygiene cap (~80 lines — caps defined in [status phase → Context Hygiene](status.md#context-hygiene)) or carries per-task narratives that belong in the task files.
 - Before a new contributor or a fresh session needs a trustworthy picture.
 - After a burst of commits, when several tasks closed but their headers were never moved to `done`.
+- After a batch of document edits — when a doc's `Status` lags reality (a plan whose phases are all `[DONE]` but still `in-progress`), `docs/_index.md` has drifted from the files, or `Depends on` / `Used by` links broke.
 
 ## Guiding Principles
 
@@ -112,13 +128,13 @@ Regenerate `tasks/_index.md` from the task headers: Active and Recently Complete
 
 ### Step 7a — Groom `docs/_glossary.md` (if present)
 
-Runs under `all`. Keep the project glossary lean and true (see [Glossary](../references/glossary.md)):
+Runs under scope `docs` (and `all`). Steps 7a–7c and 7e together constitute the **`docs` scope**. Keep the project glossary lean and true (see [Glossary](../references/glossary.md)):
 
 1. **Duplicates** — merge terms that denote the same concept under different names; keep the canonical one, fold the rest into its `_Avoid_` list. Do not auto-delete — propose the merge.
 2. **Stale ambiguities** — for each entry under *Flagged ambiguities*, check whether the conflict is now settled in the documents; if so, resolve it (canonical term + `_Avoid_`) and drop the flag.
 3. **Boundary** — strip any implementation detail, contract, or relationship-as-behavior that crept in (those belong to a concept, not the glossary), and remove general tech terms that are not project domain vocabulary.
 
-### Step 7b — Sweep open decisions, backlogs & spikes (under `all`)
+### Step 7b — Sweep open decisions, backlogs & spikes (scope `docs` / under `all`)
 
 Open deferrals are sanctioned only while their trigger lives — this step is what keeps them from quietly becoming permanent (see [Interview Mode → open decisions](../references/interview-mode.md)):
 
@@ -127,7 +143,7 @@ Open deferrals are sanctioned only while their trigger lives — this step is wh
 2. **Plan backlogs** — flag backlog items that carry no return trigger/owner or whose trigger has expired; propose converting each to an open `DEC_NN` with a trigger, scheduling it into a plan phase, or dropping it explicitly.
 3. **Spikes** — flag `docs/*.spike.md` stuck in `in-progress` beyond their time-box; propose concluding them (`concluded` / `inconclusive` / `abandoned`).
 
-### Step 7c — Docs ↔ code drift detection (under `all`)
+### Step 7c — Docs ↔ code drift detection (scope `docs` / under `all`)
 
 Run the [drift detection algorithm](propagate.md#drift-detection-algorithm) from the propagate phase: collect traceable IDs from code and docs, cross-reference, check freshness by dates. Findings (orphaned references, unreferenced sections, stale documents, broken `Depends on`/`Used by` links) go into the report; actual doc fixes are routed through [propagate](propagate.md) as proposals — audit reports the drift, it does not rewrite design documents.
 
@@ -138,6 +154,18 @@ Run the [drift detection algorithm](propagate.md#drift-detection-algorithm) from
 3. **Expired validity** — for entries whose `valid_until` has passed (date) or whose named event has visibly occurred: run a **cheap currency check** where the source supports it (ETag/Last-Modified, Figma version metadata). Confirmed unchanged → extend `valid_until` (evidence-backed — applied directly and reported). Changed or uncheckable → flag for refresh; **audit never re-fetches** — the refresh belongs to the update task that made the resource stale (especially for `reacquire: manual / paid` entries).
 4. **Trust & safety** — flag entries missing a `trust` level, and `trust: public` entries missing `checked` (saved without the safety check — see [Resource Cache → Trust & Safety](../references/cache.md)). Audit flags; the check itself runs when the resource is next touched, not from audit.
 5. **Hygiene** — flag `/tmp`-style transients that crept in (logs, build output), missing `summary`/`source` fields, and domains grown disproportionately large; propose pruning oldest unreferenced entries first (cheapest `reacquire` first).
+
+### Step 7e — Revise `docs/` integrity (scope `docs` / under `all`)
+
+Grouped with Steps 7a–7c as the **`docs` scope**. Where 7a–7c groom the glossary, sweep deferrals, and detect docs↔code drift, 7e reconciles the documentation set itself. `docs/_index.md` is a **derived** view (regenerable per the [status regeneration procedure](status.md#regeneration-procedure)); the documents are the source of truth.
+
+1. **Index ↔ disk** — reconcile `docs/_index.md` against the actual `docs/*.concept.md|*.sp.md|*.plan.md|*.epic.md`: add missing entries, drop entries for files that no longer exist, fix stale one-line descriptions and a wrong `Status` column. Below the >5-doc threshold where no `_index.md` is required (see [SKILL.md → File Organization](../SKILL.md#file-organization)), skip. The index is derived, so regenerate it freely when it has drifted.
+2. **Status lifecycle reconciliation** — flag documents whose recorded `Status` disagrees with evidence (mirrors Step 2 for tasks, using the [status vocabulary](../SKILL.md#document-status-vocabulary)): a plan `in-progress` whose phases are all `[DONE]` → propose `completed`; a concept/spec long `draft` with active dependents → flag; a `deprecated` doc still named in an active document's `Depends on`, or still referenced by live code IDs → flag the incomplete migration. **Propose** status changes (they are judgement calls); only the index `Status`-column fix that follows an evidence-backed task/plan reconciliation is applied directly.
+3. **Cross-reference integrity** — check that `Depends on` / `Used by` resolve and are **bidirectional** (if A depends on B, B lists A under `Used by`), that header links (`Specification:`, `Plan:`, `Spike:`) resolve, and that inline `[C_XXX]` / `[SP_XXX]` / `[PL_XXX]` references point at existing documents/sections. Flag dangling or one-directional links; propose the reciprocal fix.
+4. **Orphans & completeness** — flag a concept with no spec or plan where one is expected, a spec with no parent concept, a doc file absent from `_index.md`, and an epic referencing a missing concept.
+5. **Freshness** — flag active concepts/specs/plans with significant edits but no matching `Changelog` row, an `Updated` date older than commits that touched the document's IDs, and lingering [banned phrases](concept.md#banned-phrases) in an `active` concept/spec.
+
+Apply the derived/index fixes directly; **propose** status changes, reciprocal-link fixes, and removals (per *apply-safe / propose-judgement*). Document *content* fixes route through [propagate](propagate.md) — audit reports the drift, it does not rewrite design documents.
 
 ### Step 8 — Report
 
@@ -159,6 +187,7 @@ Use this template so the result is scannable:
    • skills indexes: +<a>/−<b>
    • cache: extended valid_until on <n> entries (cheap check confirmed unchanged)
    • docs/_glossary.md: merged <a> duplicate terms, resolved <b> stale ambiguities
+   • docs/_index.md: rebuilt (+<a>/−<b> entries, fixed <c> status columns)
 
 🔁 Reflection harvested
    • From <closed-task>: proposed rule <Name> (<category>/<severity>)
@@ -171,6 +200,8 @@ Use this template so the result is scannable:
    • Close <DocID>_DEC_NN — trigger expired (<trigger>); route: research / interview
    • Backlog item "<item>" in <plan> has no return trigger; convert to DEC / schedule / drop
    • Re-grade <task>: pin ratio implausibly high (<n> pins) — propose demoting the stale ones
+   • Reconcile <doc> status <X> → <Y> (evidence: plan phases all done / active dependents)
+   • Fix one-directional ref <A> → <B> (B missing <A> under Used by)
 
 ⚠️ Flagged (evidence insufficient — left unchanged)
    • <task> header says <X> but <Y>; cannot resolve from docs/git
@@ -179,6 +210,7 @@ Use this template so the result is scannable:
    • Spike <name.spike.md> in-progress beyond its time-box
    • Cache: <a> files without index entry / <b> entries with missing files (cannot invent `source`)
    • Cache: <file> expired (<valid_until>), source changed or uncheckable — refresh belongs to its update task
+   • Docs: orphan <doc> (no spec/plan) / deprecated <doc> still in active Depends on / banned phrase in active <doc>
 
 ✔️ Clean — no action: <areas with nothing to do>
 ```
@@ -191,7 +223,7 @@ Use this template so the result is scannable:
 
 ## Dry-Run
 
-`--dry-run` performs Steps 1–7d as analysis only and emits the Step 8 report without touching disk. Use it to preview a sweep, to review proposed merges and removals before committing to them, or to audit a shared `.dev_flow/` you do not want to mutate. The report distinguishes what *would* be applied from what would be proposed.
+`--dry-run` performs Steps 1–7e as analysis only and emits the Step 8 report without touching disk. Use it to preview a sweep, to review proposed merges and removals before committing to them, or to audit a shared `.dev_flow/` you do not want to mutate. The report distinguishes what *would* be applied from what would be proposed.
 
 ## Relation to Other Phases
 
@@ -203,3 +235,4 @@ Use this template so the result is scannable:
 | [cache](../references/cache.md) | Step 7d reconciles the resource cache index ↔ disk and flags unreferenced/stale entries; the cache index is data (carries `source`), never regenerated. |
 | [propagate](propagate.md) | When reconciliation reveals docs and code disagree, route the doc fix through propagate. Step 7c runs its drift detection algorithm as part of the sweep. |
 | [research](research.md) | The proposed closing route for expired open-decision triggers whose missing information is researchable, and for stale spikes. |
+| [review](review.md) | The `docs` scope (Step 7e) reconciles in bulk what review enforces per-change — Document Index Maintenance and Deprecation hygiene; review checks them on each change, audit periodically across the whole `docs/` set. |

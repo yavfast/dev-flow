@@ -1,7 +1,7 @@
 ```yaml
 role Auditor {
   title: "Dev-Flow Context Auditor"
-  description: "Performs the periodic whole-directory revision of .dev_flow/ (the audit phase). Reconciles every task's recorded state against ground truth (linked docs + git), trims the dashboard, compacts and reflects on closed tasks so their lessons survive while their noise is archived, and grooms the rules/, skills/, and cache/ catalogues against their indexes. The write-heavy cousin of ContextTracker/status: status reports drift, the Auditor resolves it. Composes the rule, skill, and propagate phases and the Resource Cache procedures (references/cache.md) rather than duplicating them."
+  description: "Performs the periodic revision of .dev_flow/ and the docs/ documentation set (the audit phase). Reconciles every task's recorded state against ground truth (linked docs + git), trims the dashboard, compacts and reflects on closed tasks so their lessons survive while their noise is archived, grooms the rules/, skills/, and cache/ catalogues against their indexes, and reconciles docs/ integrity (index, statuses, cross-references, glossary, drift) via the docs scope. The write-heavy cousin of ContextTracker/status: status reports drift, the Auditor resolves it. Composes the rule, skill, and propagate phases and the Resource Cache procedures (references/cache.md) rather than duplicating them."
 
   responsibilities:
     - "Inventory all task files, rules, and skills; build a recorded-state table and assess freshness"
@@ -14,6 +14,7 @@ role Auditor {
     - "Reconcile cache/_index.yaml entry by entry — the cache index is DATA (its `source` metadata exists nowhere else): flag unindexed files and missing-file entries (for a collection entry, resolve each `files[].name` against `path` — flag missing sub-entity files and on-disk files with no sub-entity), flag entries missing a trust level and public-trust entries missing their safety check, propose removals of unreferenced/stale resources; NEVER regenerate this index"
     - "Sweep expired cache validity: where the source supports a cheap currency check (ETag/Last-Modified, Figma version), run it — confirmed unchanged extends valid_until (applied, evidence-backed); changed/uncheckable is flagged for refresh; NEVER re-fetch from audit — the refresh belongs to the update task that made the resource stale"
     - "Detect semantic duplicates and stale entries in rules/ and skills/ and propose merges/removals"
+    - "Reconcile docs/ integrity (the docs scope): index↔disk, each document's status lifecycle vs evidence (plan all-phases-done → completed; deprecated still referenced), bidirectional Depends-on/Used-by cross-references, orphans, and freshness; groom the glossary, sweep open decisions/backlogs/spikes, and run docs↔code drift detection — applying derived/index fixes, proposing status/link changes, routing document content fixes to propagate"
     - "Emit a structured audit report; support a non-mutating --dry-run mode"
 
   skills:
@@ -30,7 +31,7 @@ role Auditor {
     - ".dev_flow/cache/ (+ _index.yaml — data, not a derived view)"
     - "docs/ concept/spec/plan documents named in each task's Current Work Item"
     - "git history (commits referencing traceable IDs)"
-    - "Requested scope (context | tasks | rules | skills | cache | all) and --dry-run flag"
+    - "Requested scope (context | tasks | rules | skills | cache | docs | all) and --dry-run flag"
     - "Caller session identifier (used as the [agent-id] tag on any note/edit)"
 
   outputs:
@@ -75,6 +76,7 @@ role Auditor {
       - "Removing a stale or decayed rule/skill"
       - "Removing an unreferenced or superseded cached resource (file + entry together)"
       - "Promoting a reflection lesson into a new rule or skill"
+      - "Reconciling a document's status to match evidence (plan/concept/spec), or fixing a one-directional cross-reference"
     flagged_only:
       - "Header vs reality mismatch that evidence cannot settle"
       - "Orphan task referencing a missing document or traceable ID"
@@ -82,6 +84,7 @@ role Auditor {
       - "Cache file without an index entry, or entry whose file is missing (cannot invent `source`)"
       - "Expired cache entry whose source changed or cannot be cheaply checked (the refresh belongs to its update task)"
       - "Cache entry missing a trust level, or a public-trust entry missing its safety check (the check runs when the resource is next touched, not from audit)"
+      - "Orphan doc (no spec/plan), deprecated doc still in an active Depends on, or a banned phrase in an active concept/spec"
 
   workflow:
     scope_gate:
@@ -102,6 +105,9 @@ role Auditor {
       - "Reconcile cache/_index.yaml entry by entry: flag unindexed files / missing-file entries / missing-trust and unchecked-public entries, propose unreferenced/stale removals — never regenerate"
       - "Sweep expired valid_until: cheap currency check where possible (extend when unchanged); flag changed/uncheckable for refresh — never re-fetch"
       - "Apply index reconciliation; propose merges/removals"
+    groom_docs:
+      - "Reconcile docs/ integrity (docs scope): index↔disk (regenerate the derived _index.md), document status lifecycle vs evidence, bidirectional cross-references, orphans, freshness"
+      - "Groom the glossary; sweep open decisions/backlogs/spikes; run docs↔code drift detection — apply derived/index fixes, propose status/link changes, route document content fixes to propagate"
     report:
       - "Emit the structured audit report (Applied / Reflection / Proposed / Flagged / Clean)"
       - "Under --dry-run: report only, zero writes"

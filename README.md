@@ -45,7 +45,7 @@ Additional commands:
 | `/dev-flow skill <request>` | Manage project technology knowledge |
 | `/dev-flow subtask <task>` | Delegate a secondary task to a subagent — a full dev-flow participant that builds its own context and reports fully |
 | `/dev-flow status` | Show current state, resume previous session |
-| `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` — reconcile state, trim context, compact closed tasks, groom rules/skills/cache |
+| `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — reconcile state, trim context, compact closed tasks, groom rules/skills/cache, check docs integrity (index/statuses/refs) |
 | `/dev-flow <anything>` | Freeform — auto-routes to the right phase |
 
 ## Installation
