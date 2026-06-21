@@ -235,10 +235,10 @@ The plan keeps the **top-N by priority** as active items; the remainder goes to 
 
 ### Provenance & hand-off
 
-- Each plan item links its source ConsolidatedFinding(s) — the plan is a standard `*.plan.md` with audit provenance (DEC_02), created `Status: in-progress`.
+- Each plan item links its source ConsolidatedFinding(s) — the plan is a standard `*.plan.md` with audit provenance (DEC_02), created `Status: in-progress`. It is written **under `.dev_flow/audit/`** as `<scope>_<YYYYMMDD_HHMMSS>.plan.md`, alongside a persisted run report `code-audit_<ts>.report.md` — not into `docs/` (SP_CAU_DEC_05).
 - A `cross-lens-conflict` is preserved as an **explicit decision input** in the plan, never averaged away (SP_CAU_01_04 invariant) — the developer resolves it at the gate.
 - A finding tracing to a **wrong document** routes to [Upstream Escalation](escalation.md), not into the plan; a finding contradicting a **settled `DEC_NN`** cites it rather than proposing blind reversal (SP_CAU_03_01).
 - Recurring patterns and tech gotchas surfaced during the audit are harvested as **proposed** rules/skills via [Experience Capture](experience-capture.md) — *propose, never apply*.
-- The plan also carries the `docs/_framework.md` update (abstraction-candidates → map overview + links to rules/skills; overview only, no enforceable detail inlined — DEC_04).
+- The plan also carries the `docs/_framework.md` update (abstraction-candidates → map overview + links to rules/skills; overview only, no enforceable detail inlined — DEC_04). The map **stays in `docs/`** (loaded as code-touch context, unlike the plan/report).
 
 Execution (refactor → review → verify → commit) is the standard gated pipeline on this plan; **audit itself changes no code and never commits** (SP_CAU_03_01, DEC_05).

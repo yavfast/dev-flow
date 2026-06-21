@@ -6,7 +6,7 @@ Context rots. As work proceeds, `.dev_flow/` accumulates drift: the dashboard fi
 
 Audit is the periodic **whole-directory sweep** that brings `.dev_flow/` back in line with reality. It reconciles every task's recorded state against ground truth, trims the dashboard down to what is actually active, compacts and reflects on closed work so its lessons survive while its noise is archived, and grooms the `rules/`, `skills/`, and `cache/` catalogues — and reconciles the integrity of the `docs/` documentation set itself (index, statuses, cross-references, orphans, glossary, and docs↔code drift) through the `docs` scope. It is the write-heavy cousin of [status](status.md): `status` *reports* drift, `audit` *resolves* it.
 
-A separate, opt-in **`code` scope** ([Step 9](#step-9--code-scope-the-whole-codebase-audit)) extends the same "reconcile the project to reality" idea to the *source code itself*: it audits the whole codebase through parallel lenses (architecture / SOLID / DRY / security / …), consolidates the findings, and emits a prioritized **refactoring plan** plus a `docs/_framework.md` map update. Like every other scope it is **non-committing** — it stops at the Plan→Code gate and hands the plan off to the standard pipeline; it never edits source or commits (concept [C_CAU](../docs/code_audit.concept.md) · spec [SP_CAU](../docs/code_audit.sp.md)).
+A separate, opt-in **`code` scope** ([Step 9](#step-9--code-scope-the-whole-codebase-audit)) extends the same "reconcile the project to reality" idea to the *source code itself*: it audits the whole codebase through parallel lenses (architecture / SOLID / DRY / security / …), consolidates the findings, and emits a prioritized **refactoring plan** plus a run report — written under `.dev_flow/audit/` with a timestamped name (not into `docs/`) — plus a `docs/_framework.md` map update. Like every other scope it is **non-committing** — it stops at the Plan→Code gate and hands the plan off to the standard pipeline; it never edits source or commits (concept [C_CAU](../docs/code_audit.concept.md) · spec [SP_CAU](../docs/code_audit.sp.md)).
 
 Audit composes existing phases rather than reinventing them — it leans on the [status](status.md) regeneration procedure for the indexes, the [rule](rule.md) and [skill](skill.md) phases for catalogue edits, [propagate](propagate.md) when a reconciliation reveals that docs and code disagree, and (for the `code` scope) the [implement](implement.md)/[review](review.md)/[verify](verify.md) phases to *execute* the refactoring plan it produces.
 
@@ -33,7 +33,7 @@ Each scope runs a defined subset of the [procedure](#procedure); `all` runs the 
 | `cache` | 7d | `.dev_flow/cache/` index ↔ disk |
 | `docs` | 7a · 7b · 7c · 7e | `docs/` — glossary, open decisions/backlogs/spikes, docs↔code drift, **index · statuses · cross-refs · orphans · freshness** |
 | `all` (default) | 1–8 | everything in the workspace **and** docs (**not** `code`) |
-| `code` (opt-in, separate) | 9 | the **whole project codebase** — architecture/SOLID/DRY/security/… via lens fan-out → prioritized refactoring plan + `docs/_framework.md` update (read-only; hands off to the pipeline, never commits) |
+| `code` (opt-in, separate) | 9 | the **whole project codebase** — architecture/SOLID/DRY/security/… via lens fan-out → prioritized refactoring plan + run report (timestamped, in `.dev_flow/audit/`) + `docs/_framework.md` update (read-only; hands off to the pipeline, never commits) |
 
 ### Examples
 
@@ -211,8 +211,10 @@ One agent (single writer) merges every lens's Findings into [ConsolidatedFinding
 #### Step 9.3 — ProducePlan (the scope stops here) ([SP_CAU_02_04](../docs/code_audit.sp.md#SP_CAU_02_04))
 
 1. Split consolidated findings into **top-N by priority** (plan items) and the **backlog** (each with a return trigger) — **nothing dropped silently**; the report names anything deferred or excluded.
-2. Emit a standard **`docs/<scope>.plan.md`** (`Status: in-progress`) — each item carries its change-class (`trivial`/`standard`/`architectural`), affected files, rationale, and **links to ≥1 ConsolidatedFinding** (no orphan refactors). See the [refactoring playbook](../references/code-audit.md#refactoring-playbook).
-3. Update **`docs/_framework.md`** from the abstraction-candidates — overview + links to the `.dev_flow/rules/`/`.dev_flow/skills/` that hold the enforceable detail; **no enforceable detail inlined** (DEC_04).
+2. Stamp the run once (`ts = YYYYMMDD_HHMMSS`) and emit, **under `.dev_flow/audit/` — not `docs/`** (SP_CAU_DEC_05):
+   - the plan **`.dev_flow/audit/<scope>_<ts>.plan.md`** (`Status: in-progress`) — each item carries its change-class (`trivial`/`standard`/`architectural`), affected files, rationale, and **links to ≥1 ConsolidatedFinding** (no orphan refactors). See the [refactoring playbook](../references/code-audit.md#refactoring-playbook).
+   - the run report **`.dev_flow/audit/code-audit_<ts>.report.md`** — the [Report Structure](#report-structure) block, persisted (conclusions only; links its sibling plan).
+3. Update **`docs/_framework.md`** from the abstraction-candidates — overview + links to the `.dev_flow/rules/`/`.dev_flow/skills/` that hold the detail; **no enforceable detail inlined** (DEC_04). The map stays in `docs/` (loaded as code-touch context).
 4. Harvest **proposed** rules/skills ([Experience Capture](../references/experience-capture.md) — *propose, never apply*). Route any finding that is really a *wrong document* to [Upstream Escalation](../references/escalation.md), not into the plan.
 5. **Fast-track security:** an **exploitable `must`-severity** `security` finding is surfaced for an immediate [fix](fix.md)/escalation, **not** parked in the backlog. Persist AuditState (`planning`).
 6. **No source change, no commit.** The developer approves the plan at the **Plan→Code gate** — that approval is what authorizes execution.
@@ -279,12 +281,14 @@ For the **`code` scope** (Step 9) the output is the refactoring plan itself, sum
    • Assumptions (defaulted, not prompted): <field=value, …>
    • Excluded / sampled (no silent truncation): <what + why>
 
-📋 Refactoring plan → docs/<scope>.plan.md (in-progress)
+📋 Refactoring plan → .dev_flow/audit/<scope>_<ts>.plan.md (in-progress)
    • Top-<N> items (priority desc): <id> <one-line> [<change-class>] → <affected> (from <finding-ids>)
    • Backlog: <m> items, each with a return trigger
    • cross-lens-conflict(s): <preserved as explicit decision input>
 
-🗺️ Framework map → docs/_framework.md
+📝 Run report → .dev_flow/audit/code-audit_<ts>.report.md  (this summary, persisted)
+
+🗺️ Framework map → docs/_framework.md  (stays in docs/ — loaded as code-touch context)
    • <abstractions added / links updated> (overview only — detail stays in rules/skills)
 
 🚨 Fast-tracked (not in backlog)
@@ -307,7 +311,7 @@ For the **`code` scope** (Step 9) the output is the refactoring plan itself, sum
 
 `--dry-run` performs Steps 1–7e as analysis only and emits the Step 8 report without touching disk. Use it to preview a sweep, to review proposed merges and removals before committing to them, or to audit a shared `.dev_flow/` you do not want to mutate. The report distinguishes what *would* be applied from what would be proposed.
 
-The **`code` scope** is read-only w.r.t. source through the plan regardless of any flag — its `--dry-run` equivalent is **preview-only intent** (e.g. "audit code … preview plan"), which runs ParseIntent + RunAnalysis + Consolidate + ProducePlan and then *stops* without offering the hand-off. (ProducePlan still writes the plan + framework map; those are derived design artifacts, not source.)
+The **`code` scope** is read-only w.r.t. source through the plan regardless of any flag — its `--dry-run` equivalent is **preview-only intent** (e.g. "audit code … preview plan"), which runs ParseIntent + RunAnalysis + Consolidate + ProducePlan and then *stops* without offering the hand-off. (ProducePlan still writes the plan + report to `.dev_flow/audit/` and updates the framework map; those are derived artifacts, not source.)
 
 ## Relation to Other Phases
 
