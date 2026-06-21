@@ -12,6 +12,8 @@ Validate pipeline gates, detect conflicts between documents, manage deprecation,
 
 The agent that wrote the code has accumulated assumptions and context that may blind it to issues. A fresh subagent sees only the diff and the spec — the same perspective a human reviewer would have.
 
+This clean-context review also **realizes the `sampled-verifier` tier** of [Application Enforcement](../references/application-enforcement.md): for a high-stakes procedure, the fresh, cross-model reviewer judging conformance to the documented procedure (as a rubric) is exactly the external verifier that the acting agent's self-attestation can never be.
+
 ### Pre-Commit Review Procedure
 
 1. **Launch a reviewer subagent** (role: [reviewer.ai.md](../roles/reviewer.ai.md)) with a clean context containing only:

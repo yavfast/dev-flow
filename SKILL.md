@@ -86,10 +86,10 @@ Loading `.dev_flow/rules/` and `.dev_flow/skills/` is a mandatory gate at the st
   - `must` — violation **blocks**: fix it or surface the conflict and stop.
   - `should` — violation needs a recorded justification.
   - `prefer` — follow unless there is a stated local reason not to.
-- **Skills (`.dev_flow/skills/`)** — check `_index.yaml` and load matching skills BEFORE external research; a skill's "Pitfalls"/"Usage in This Project" override generic knowledge.
+- **Skills (`.dev_flow/skills/`)** — check `_index.yaml` and load matching skills BEFORE external research; a skill's "Pitfalls"/"Usage in This Project" override generic knowledge. Skills are distilled **procedural** memory: a *current* matching skill outranks the model's general prior, while a *stale* one (tool/framework version or context drifted) is demoted and must be re-grounded before it can override fresh research. See [Procedural Skills](references/procedural-skills.md).
 - **Precedence** — project rules override generic guidance (incl. the [SOLID reference](references/solid-architecture.md)); project skills override generic technology knowledge. On conflict: project wins, or surface it.
 
-If the directory is absent, the gate is a no-op. Each relevant phase restates this as its "Skill check" / "Rule check" — gates, not reminders.
+If the directory is absent, the gate is a no-op. Each relevant phase restates this as its "Skill check" / "Rule check" — gates, not reminders. The gate is also **re-triggered at the moment of action** — the relevant set is re-surfaced per action burst beside the work (a pointer-only Pre-Action Marker), not only once at phase start, because loaded ≠ applied in a long session. See [Application Enforcement](references/application-enforcement.md).
 
 ## Validation Gates
 
@@ -369,6 +369,8 @@ Severity levels: **must** (blocks review) | **should** (warning) | **prefer** (a
 - [Experience Capture](references/experience-capture.md) *(cross-cutting sub-procedure of all phases — Transition Checkpoint: distill a closing segment into a pinned summary, demote raw turns, propose durable lessons; factual Response Trailer; tiered context-pressure response)*
 - [Impact Walk](references/impact.md) *(cross-cutting sub-procedure of ask/do/propagate/review — blast radius of a change: docs, code bindings, active tasks)*
 - [Consequence Forecasting](references/consequence-forecasting.md) *(cross-cutting sub-procedure of concept/spec/plan/implement/fix — forecast future needs at the phase's altitude, then YAGNI-gate each: build now / seam+flag / drop+record; advisory, composes Impact Walk + Minimality, routes to Interview/Escalation)*
+- [Procedural Skills](references/procedural-skills.md) *(cross-cutting refinement of the skill subsystem — skills are procedural memory with a mandatory applicability boundary + freshness stamp; a current skill outranks the prior, a stale one is re-grounded first; candidate→established promotion; audit curation)*
+- [Application Enforcement](references/application-enforcement.md) *(cross-cutting sub-procedure of implement/fix/testing/verify — re-trigger the knowledge gate per action burst via a pointer-only Pre-Action Marker; conformance tripwire + advisory/interface-gate/sampled-verifier tiers; clean-context review realizes the verifier tier; self-attestation banned; runtime-conditional, degrades to advisory)*
 - [Resource Cache](references/cache.md) *(cross-cutting — durable resource store `.dev_flow/cache/` with trust levels + `/tmp` workspace discipline; every phase checks it before expensive fetches)*
 - [Roles](references/roles.md) *(base vs project-overlay subagent roles — reuse what exists, create new under .dev_flow/roles/ via inherits)*
 - [Glossary](references/glossary.md) *(`docs/_glossary.md` — canonical domain vocabulary; created at onboard/concept, loaded with `_index.md`)*

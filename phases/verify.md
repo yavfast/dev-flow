@@ -63,6 +63,8 @@ Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../S
 
 **Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml` and load testing rules (test environments, CI conventions); verification MUST follow them. See [rule phase](rule.md).
 
+**Knowledge activation (per-burst).** Re-trigger the gate above at the moment of action — before each verification burst (live run, integration scenario) re-surface the applicable rules/skills with a pointer-only Pre-Action Marker; a long verify session drifts from what was loaded. Prefer a deterministic tripwire on a non-model signal (exit code / log / diff) over self-report, and escalate high-stakes conformance to a sampled cross-model verifier where the runtime allows. Self-attestation is never the control. See [Application Enforcement](../references/application-enforcement.md).
+
 ## Safe Testing Principle
 
 Integration and live tests operate on real data and real services. The primary rule: **never damage or delete user data during verification.**

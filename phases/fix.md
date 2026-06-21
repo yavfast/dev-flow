@@ -134,6 +134,8 @@ A bug fix hides two forks that are easy to resolve silently and expensive to get
 - Fix **changes a contract** → it propagates (Step 5) to the affected `*.sp.md` / `*.concept.md`; record the decision in that document's **Design Decisions** section.
 - **Code-only** fix → record it in the **fix report** (Step 4) and the fix's **task file** under `.dev_flow/tasks/`. An OPEN decision's resolution trigger MUST become a tracked item (a plan/backlog entry, a rule, or a Blocking Issue in the task context) so it cannot quietly expire.
 
+**Knowledge activation (per-burst).** Re-trigger the skill/rule gate at the moment of action — before each fix/diagnosis burst re-surface the applicable rules/skills (a relevant skill's pitfalls, the violated invariant's rule) with a pointer-only Pre-Action Marker, rather than relying on a phase-start load that has since drifted. For a high-stakes change escalate to a deterministic tripwire or sampled cross-model verifier where the runtime allows; self-attestation is never the control. See [Application Enforcement](../references/application-enforcement.md).
+
 **Forecast check (advisory).** Forecast the consequences of the fix at *implement/fix altitude* — what else this change touches — and keep the free one-step check on the diagnosis loop (does the next probe/edit undo the last?). The gate is **strict**: expanding the fix's scope to speculative nearby improvements with no trigger defaults to `drop + record` (a backlog note), not into this fix. See [Consequence Forecasting](../references/consequence-forecasting.md).
 
 ## Rule Detection

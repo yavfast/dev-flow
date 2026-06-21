@@ -68,6 +68,8 @@ Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../S
 
 **Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml` and load testing rules (naming, assertion patterns, mocking); new tests MUST comply. See [rule phase](rule.md).
 
+**Knowledge activation (per-burst).** Re-trigger the gate above at the moment of action — before a test-writing or test-run burst, re-surface the applicable rules/skills (esp. a procedure with a sanctioned runner) with a pointer-only Pre-Action Marker; for a high-stakes procedure prefer a deterministic tripwire (non-model signal: exit code / captured command) or a sampled cross-model verifier where the runtime allows. Self-attestation is never the control. See [Application Enforcement](../references/application-enforcement.md).
+
 ## Gate Check (Code -> Test)
 
 Before running tests, verify:

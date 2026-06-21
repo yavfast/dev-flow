@@ -131,9 +131,13 @@ Regenerate `tasks/_index.md` from the task headers: Active and Recently Complete
 
 ### Step 7 — Revise `skills/`
 
+Curation of **procedural skills** (C_SPM) — edit **incrementally, never a bulk rewrite** of the catalogue (avoids context-collapse / brevity-bias rot); see [Procedural Skills → Curation](../references/procedural-skills.md):
+
 1. **Index ↔ disk** — reconcile the root and per-domain `_index.yaml` against the actual skill files (add missing, remove orphaned entries, fix `topics`/`file` fields) using the [skill](skill.md) phase's index format.
 2. **Semantic duplicates / overlap** — flag skills covering the same topic or bleeding across domains; propose a merge into the better-placed file.
 3. **Staleness** — flag skills whose `updated` date is old, that reference removed code/APIs, or that have decayed into general knowledge no longer worth keeping (re-apply the non-triviality filter). Propose removals; do not auto-delete.
+4. **Freshness re-stamp** — where a procedural skill's `written_against` has drifted past the current tool/framework version, mark it `stale` (or re-stamp `current` if re-grounded). This restamp/incremental edit is **applied**; `prune`/`merge` stay **proposed** (destructive → review).
+5. **Conflicts** — two skills prescribing different procedures for one surface are **surfaced as an explicit decision**, never silently resolved by picking one. Flag an implausibly high `candidate` ratio for re-grading (advisory).
 
 ### Step 7a — Groom `docs/_glossary.md` (if present)
 

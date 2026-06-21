@@ -112,6 +112,16 @@ updated: {YYYY-MM-DD}
 {Only if external sources were used — library docs, API references.}
 ```
 
+## Procedural Skills (C_SPM)
+
+A skill is distilled **procedural** memory (*how to use X here / how to do Y here*), and its retrieval carries **precedence** over the model's general prior. See [Procedural Skills](../references/procedural-skills.md) for the full discipline; the contract:
+
+- **Additive fields** over the template: `kind: procedural`; a `## Applicability Boundary` body section (**mandatory** — `when_to_use` / `when_not` / `version_or_context_scope`; a skill without one is rejected); a freshness stamp (`written_against` version/context + `state: current|stale`, optional for a pure-process skill); `promotion: candidate|established` (+ a scope note while `candidate`).
+- **Retrieval precedence:** a *current* matching skill outranks the general prior; a *stale* one must be re-grounded + re-stamped before it can override fresh research; **no match never blocks** (fall back to prior + research); a `candidate` applied outside its scope falls back (no forced reuse).
+- **Promotion (structural, never a self-score):** one hard case → `candidate` (scoped); a 2nd convergent use → `established` + generalized boundary (N≥2).
+
+Creation/update is auto-harvested by [Experience Capture](../references/experience-capture.md) (no permission prompt); curation (prune/merge/restamp, surface conflicts) runs in [audit](audit.md)'s `skills` scope.
+
 ## `_index.yaml` Format (YAML)
 
 Root `_index.yaml` (`.dev_flow/skills/_index.yaml`):
@@ -170,4 +180,5 @@ If `.dev_flow/skills/` does not exist, create the directory structure with empty
 - Skills apply to the task at hand; there is no retroactive obligation.
 - Update when: research reveals new information, implementation finds new pitfalls, library version changes, user corrects existing knowledge.
 - If new research contradicts an existing skill — update the skill and add a note in "Pitfalls".
+- A tool/framework **version drift** past the skill's freshness stamp demotes it to `stale`: re-ground and re-stamp before relying on it (see [Procedural Skills](../references/procedural-skills.md)).
 - Skills may reference related rules (e.g., a skill about message bus → rule `MessageBusForCrossLayerCommunication`).

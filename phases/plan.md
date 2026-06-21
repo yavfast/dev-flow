@@ -10,6 +10,7 @@ Break the specification into actionable phases with concrete technology choices,
 - **Always track progress:** Every phase must have a status: `[DONE]`, `[IN PROGRESS]`, `[TODO]`, or `[BACKLOG]`.
 - **Top-level progress summary:** The plan must have a checkbox summary showing overall progress at a glance.
 - **Backlog section:** Out-of-scope items go to the backlog at the bottom. Each item names the **trigger** that returns it to scope (event or date) or an owner who decides — an untriggered backlog item is a hidden "later" ([audit](audit.md) flags them).
+- **Declare Required Knowledge:** list the rules/skills this plan's work must apply, plus any skill *use / create / update* as tracked work items. This is the source of truth for the per-burst [Knowledge Activation](../references/application-enforcement.md) — re-surfaced beside each implementation burst, not just loaded once.
 - **No orphaned phases:** Every phase must reference which spec sections it implements.
 - **Pseudocode, not production code:** Include short sketches to clarify intent, but do not write full implementation.
 
@@ -56,6 +57,16 @@ Brief statement of what will be achieved when this plan is complete.
 |----------|--------|-----------|
 | Language | Python 3.12 | Project standard |
 | Serialization | dataclass + JSON | Lightweight, native |
+
+## Required Knowledge
+
+Rules/skills this plan's work must apply — the source of truth for the per-burst [Knowledge Activation](../references/application-enforcement.md). Skill *use / create / update* are tracked items, not left implicit. Omit if nothing applies.
+
+| Kind | Ref | Applies to | Note |
+|------|-----|-----------|------|
+| rule | NamingConvention | Phase 2 | parser identifiers |
+| skill (apply) | RateLimitingPatterns | Phase 3 | current — outranks the prior |
+| skill (create) | — | Phase 3 | capture the retry-backoff procedure if it passes the non-triviality filter |
 
 ## Progress
 

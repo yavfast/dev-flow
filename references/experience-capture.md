@@ -70,6 +70,8 @@ Between checkpoints, an individual response can still carry salience and signal 
 
 **Factual fields only.** A subjective numeric self-score — confidence %, quality N/10 — is **not permitted**; it is the unreliable signal the whole design avoids. The durable copy is the **task-file entry**; a *visible* footer is optional and reserved for semantically complex responses (it need not appear on every turn).
 
+**Pre-action sibling.** The same fact-only, pointer-only idiom runs *forward* as well as back: [Application Enforcement](application-enforcement.md)'s **Pre-Action Marker** re-surfaces the applicable rules/skills (+ their freshness) *before* an action burst, where this trailer reports *after* one. Same format, opposite direction — one machinery, no new format.
+
 ## Context pressure — a tiered, proxy-driven trigger
 
 A checkpoint can also fire because the context is filling up — but assessed by **proxy, never by introspection, and never by riding the harness's own compaction**:

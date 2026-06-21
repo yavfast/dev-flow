@@ -34,6 +34,8 @@ Before writing code, verify:
 
 **Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml` and load rules for the area being modified. New code MUST comply (`must` = blocks). See [rule phase](rule.md) and [Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding).
 
+**Knowledge activation (per-burst).** The skill/rule gate above is **re-triggered at the moment of action**, not only here at phase start: before each action burst, re-surface the applicable rules/skills beside the work with a pointer-only Pre-Action Marker — a long session drifts from what was loaded. For a high-stakes burst, escalate to the matching tier (deterministic tripwire / interface-gate / sampled cross-model verifier) where the runtime can observe the action; self-attestation is never the control. See [Application Enforcement](../references/application-enforcement.md).
+
 **Resource check.** Before fetching a design export or external document (e.g. via the Figma MCP) for this implementation, check `.dev_flow/cache/_index.yaml` and reuse a cached copy; save an expensive new fetch back to the cache. See [Resource Cache](../references/cache.md).
 
 **Role check:** If you'll delegate any step (run tests, verify, a wide search) to a subagent, check `.dev_flow/roles/_index.yaml` first and reuse a fitting base role or project overlay instead of re-deriving one. See [Roles](../references/roles.md).
