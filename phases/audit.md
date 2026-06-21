@@ -104,8 +104,8 @@ A task is **closed** when every subtask is `done` and its deliverable is committ
 - Order eviction by **effective salience**, not pure age (see [Salience Markers](status.md#salience-markers)): `noise`/`superseded` entries are archived first; a `pin` is retained while its task is still active and goes inert once the task closes — **Reflect** (below) harvests its lesson *before* that demotion, so nothing durable is lost when the pin expires. Flag any task — active or closing — whose `pin` ratio is implausibly high and propose a re-grade (advisory, no hard cap).
 - Leave behind a short outcome summary (1 short paragraph) plus links to the commit(s) and the archived history. The task file should read as "what this was and how it ended", not as a journal.
 
-**Reflect** — harvest lessons before they are buried. This is the task-close **Transition Checkpoint** of [Experience Capture](../references/experience-capture.md) — the same propose-not-apply reflection, not a parallel path; its *harvest-before-demote* ordering is why it runs before any salience demotion on the closing task:
-- Distill what the closed task *taught* that is not already captured. A reusable coding constraint or convention → propose a rule (apply the [rule](rule.md) phase's category/severity model). Project-specific technology knowledge, gotchas, or research results → propose a skill (apply the [skill](skill.md) phase's non-triviality filter — only what a senior dev arriving fresh would not already know). A blocker that recurred → note it so the same class is prevented.
+**Reflect** — harvest lessons before they are buried. This is the task-close **Transition Checkpoint** of [Experience Capture](../references/experience-capture.md) — the same auto-apply reflection, not a parallel path; its *harvest-before-demote* ordering is why it runs before any salience demotion on the closing task:
+- Distill what the closed task *taught* that is not already captured. A reusable coding constraint or convention → write a rule automatically (apply the [rule](rule.md) phase's category/severity model; default `should`, never auto-`must`). Project-specific technology knowledge, gotchas, or research results → write/update a skill (apply the [skill](skill.md) phase's non-triviality filter — only what a senior dev arriving fresh would not already know). A would-be `must`, or a rule/skill that contradicts an existing one, routes to an independent clean-context review first. A blocker that recurred → note it so the same class is prevented.
 - Feed durable insights **forward** into `rules/`/`skills/` so the knowledge outlives the task; let the rest be archived.
 - **Optional `/dream` delegation:** if a reflection/`dream` skill is installed in this environment, delegate the reflection to it for a deeper retrospective; if not, perform the inline distillation above. Audit does not depend on `/dream`.
 
@@ -154,7 +154,7 @@ Open deferrals are sanctioned only while their trigger lives — this step is wh
 
 ### Step 7c — Docs ↔ code drift detection (scope `docs` / under `all`)
 
-Run the [drift detection algorithm](propagate.md#drift-detection-algorithm) from the propagate phase: collect traceable IDs from code and docs, cross-reference, check freshness by dates. Findings (orphaned references, unreferenced sections, stale documents, broken `Depends on`/`Used by` links) go into the report; actual doc fixes are routed through [propagate](propagate.md) as proposals — audit reports the drift, it does not rewrite design documents.
+Run the [drift detection algorithm](propagate.md#drift-detection-algorithm) from the propagate phase: collect traceable IDs from code and docs, cross-reference, check freshness by dates. **Obvious mechanical defects are auto-fixed in place** per [propagate → Auto-fix obvious defects](propagate.md#auto-fix-obvious-defects-no-permission-prompt) (broken `Depends on`/`Used by` links, dangling references/anchors, wrong-format IDs, stale dates) — no permission prompt. Findings that would **change meaning** (rewriting a design document, a substantive status call) are not rewritten — they go into the report and route through [propagate](propagate.md) / [Upstream Escalation](../references/escalation.md); an uncertain case goes to independent review.
 
 ### Step 7d — Revise `cache/` (scope `cache` / under `all`)
 
@@ -169,7 +169,7 @@ Run the [drift detection algorithm](propagate.md#drift-detection-algorithm) from
 Grouped with Steps 7a–7c as the **`docs` scope**. Where 7a–7c groom the glossary, sweep deferrals, and detect docs↔code drift, 7e reconciles the documentation set itself. `docs/_index.md` is a **derived** view (regenerable per the [status regeneration procedure](status.md#regeneration-procedure)); the documents are the source of truth.
 
 1. **Index ↔ disk** — reconcile `docs/_index.md` against the actual `docs/*.concept.md|*.sp.md|*.plan.md|*.epic.md`: add missing entries, drop entries for files that no longer exist, fix stale one-line descriptions and a wrong `Status` column. Below the >5-doc threshold where no `_index.md` is required (see [SKILL.md → File Organization](../SKILL.md#file-organization)), skip. The index is derived, so regenerate it freely when it has drifted.
-2. **Status lifecycle reconciliation** — flag documents whose recorded `Status` disagrees with evidence (mirrors Step 2 for tasks, using the [status vocabulary](../SKILL.md#document-status-vocabulary)): a plan `in-progress` whose phases are all `[DONE]` → propose `completed`; a concept/spec long `draft` with active dependents → flag; a `deprecated` doc still named in an active document's `Depends on`, or still referenced by live code IDs → flag the incomplete migration. **Propose** status changes (they are judgement calls); only the index `Status`-column fix that follows an evidence-backed task/plan reconciliation is applied directly.
+2. **Status lifecycle reconciliation** — reconcile documents whose recorded `Status` disagrees with evidence (mirrors Step 2 for tasks, using the [status vocabulary](../SKILL.md#document-status-vocabulary)). A status that **mechanically contradicts hard evidence** is an obvious defect and is **auto-fixed** (a plan `in-progress` whose phases are all `[DONE]` → `completed`; the index `Status`-column following an evidence-backed reconciliation). A status change that is a genuine **judgement call** (a concept/spec long `draft` with active dependents; a `deprecated` doc still named in an active `Depends on` or referenced by live code IDs → an incomplete migration) is **flagged**, not auto-changed; an uncertain case goes to independent review.
 3. **Cross-reference integrity** — check that `Depends on` / `Used by` resolve and are **bidirectional** (if A depends on B, B lists A under `Used by`), that header links (`Specification:`, `Plan:`, `Spike:`) resolve, and that inline `[C_XXX]` / `[SP_XXX]` / `[PL_XXX]` references point at existing documents/sections. Flag dangling or one-directional links; propose the reciprocal fix.
 4. **Orphans & completeness** — flag a concept with no spec or plan where one is expected, a spec with no parent concept, a doc file absent from `_index.md`, and an epic referencing a missing concept.
 5. **Freshness** — flag active concepts/specs/plans with significant edits but no matching `Changelog` row, an `Updated` date older than commits that touched the document's IDs, and lingering [banned phrases](concept.md#banned-phrases) in an `active` concept/spec.
@@ -215,7 +215,7 @@ One agent (single writer) merges every lens's Findings into [ConsolidatedFinding
    - the plan **`.dev_flow/audit/<scope>_<ts>.plan.md`** (`Status: in-progress`) — each item carries its change-class (`trivial`/`standard`/`architectural`), affected files, rationale, and **links to ≥1 ConsolidatedFinding** (no orphan refactors). See the [refactoring playbook](../references/code-audit.md#refactoring-playbook).
    - the run report **`.dev_flow/audit/code-audit_<ts>.report.md`** — the [Report Structure](#report-structure) block, persisted (conclusions only; links its sibling plan).
 3. Update **`docs/_framework.md`** from the abstraction-candidates — overview + links to the `.dev_flow/rules/`/`.dev_flow/skills/` that hold the detail; **no enforceable detail inlined** (DEC_04). The map stays in `docs/` (loaded as code-touch context).
-4. Harvest **proposed** rules/skills ([Experience Capture](../references/experience-capture.md) — *propose, never apply*). Route any finding that is really a *wrong document* to [Upstream Escalation](../references/escalation.md), not into the plan.
+4. Harvest rules/skills, auto-applied through the structural gate ([Experience Capture](../references/experience-capture.md) — no permission prompt; default `should`, never auto-`must`; would-be `must`/contradictions go to independent review). Route any finding that is really a *wrong document* to [Upstream Escalation](../references/escalation.md), not into the plan.
 5. **Fast-track security:** an **exploitable `must`-severity** `security` finding is surfaced for an immediate [fix](fix.md)/escalation, **not** parked in the backlog. Persist AuditState (`planning`).
 6. **No source change, no commit.** The developer approves the plan at the **Plan→Code gate** — that approval is what authorizes execution.
 
@@ -245,9 +245,9 @@ Use this template so the result is scannable:
    • docs/_glossary.md: merged <a> duplicate terms, resolved <b> stale ambiguities
    • docs/_index.md: rebuilt (+<a>/−<b> entries, fixed <c> status columns)
 
-🔁 Reflection harvested
-   • From <closed-task>: proposed rule <Name> (<category>/<severity>)
-   • From <closed-task>: proposed skill <domain/Name>
+🔁 Reflection harvested (auto-applied; ⚑ = sent to independent review)
+   • From <closed-task>: rule <Name> (<category>/<severity>)
+   • From <closed-task>: skill <domain/Name>
 
 🟡 Proposed (need your confirmation)
    • Merge rule <A> into <B> (same constraint: <reason>)
@@ -294,7 +294,7 @@ For the **`code` scope** (Step 9) the output is the refactoring plan itself, sum
 🚨 Fast-tracked (not in backlog)
    • Security <vuln:class> at <file:line> (must, exploitable) → immediate fix/escalation
 
-🔁 Harvested (proposed, not applied)
+🔁 Harvested (auto-applied; ⚑ = sent to independent review)
    • rule <Name> (<category>/<severity>) / skill <domain/Name>
    • Upstream escalation: <doc> appears wrong (code diverged because the spec is stale)
 

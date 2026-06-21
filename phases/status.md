@@ -154,7 +154,7 @@ If the user says **continue** — proceed as `/dev-flow do continue` on the chos
 
 Every dev-flow command MUST update context using this protocol. The goal is **tolerance to other contributors**: an agent's writes must not destroy state another contributor has written.
 
-**Working memory → durable (promote at a checkpoint).** Transient working state — the L1 notes / parameters / reminders — is *not* written to task files on every step. At a checkpoint (a phase or subtask boundary, or an [Experience Capture](../references/experience-capture.md) checkpoint) **promote** the durable part — a settled decision, a confirmed parameter, a harvested lesson — into the task file (or a proposed rule/skill). The rest stays L1 scratch, acceptably lost on restart. See [Resource Cache → Session Working Memory](../references/cache.md#session-working-memory-l1).
+**Working memory → durable (promote at a checkpoint).** Transient working state — the L1 notes / parameters / reminders — is *not* written to task files on every step. At a checkpoint (a phase or subtask boundary, or an [Experience Capture](../references/experience-capture.md) checkpoint) **promote** the durable part — a settled decision, a confirmed parameter, a harvested lesson — into the task file (or an auto-applied rule/skill). The rest stays L1 scratch, acceptably lost on restart. See [Resource Cache → Session Working Memory](../references/cache.md#session-working-memory-l1).
 
 ### When a phase starts on a task
 

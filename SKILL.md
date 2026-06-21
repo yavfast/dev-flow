@@ -338,11 +338,11 @@ When `.dev_flow/rules/` exists, all new code MUST comply (binding — see [Proje
 
 Severity levels: **must** (blocks review) | **should** (warning) | **prefer** (advisory). Rules apply to new code only — no retroactive refactoring required.
 
-**Auto-discovery of new rules:** During the `implement` and `fix` reflection checkpoints (see [Experience Capture](references/experience-capture.md)), if the implementation plan or fix analysis reveals a coding pattern, constraint, or convention that is not yet captured in `.dev_flow/rules/` — harvest it as a **proposed** rule. *Propose, never apply:* the proposal is confirmed and written only through the [rule phase](phases/rule.md) gate (developer accepts), never auto-written by the checkpoint. Specifically:
-- If a plan phase describes a new architectural constraint, naming convention, or error-handling pattern — propose creating or updating the corresponding rule file.
-- If a `fix` phase root-cause analysis identifies a violated invariant that has no matching rule — propose the rule so the same class of bug is prevented in the future.
-- Proposed rules default to severity **should** unless the plan/fix explicitly marks them as **must** or **prefer**.
-- Once the developer accepts, the rule phase writes the rule, updates `.dev_flow/rules/_index.yaml` (under its category's `rules` list — see [rule phase → Index Format](phases/rule.md#index-format)), and the new rule is mentioned in the commit message.
+**Auto-discovery of new rules (autonomous self-learning):** During the `implement` and `fix` reflection checkpoints (see [Experience Capture](references/experience-capture.md)), if the implementation plan or fix analysis reveals a coding pattern, constraint, or convention that is not yet captured in `.dev_flow/rules/` — harvest it and **write the rule automatically, without asking permission**. The gate is *structural, not a self-score* ([C_EXC_DEC_06](docs/experience_capture.concept.md#C_EXC_DEC_06)). Specifically:
+- If a plan phase describes a new architectural constraint, naming convention, or error-handling pattern — create or update the corresponding rule file automatically.
+- If a `fix` phase root-cause analysis identifies a violated invariant that has no matching rule — write the rule so the same class of bug is prevented in the future.
+- Auto-written rules default to severity **should** (use **prefer** for advisory). **Never auto-write a `must`** — a `must` blocks future code; if the lesson is genuinely `must`-strength, or it contradicts an existing rule, route it to an **independent clean-context review** ([Delegation for Focus](references/delegation.md)) and write only if confirmed.
+- The rule phase writes the rule, updates `.dev_flow/rules/_index.yaml` (under its category's `rules` list — see [rule phase → Index Format](phases/rule.md#index-format)), and the new rule is mentioned in the commit message. The developer reviews every auto-written rule in the **commit diff** — the [commit-approval gate](#git-workflow-integration) is untouched, so self-learning never bypasses developer oversight, it just moves it to commit time.
 
 ## Greenfield vs Takeover
 

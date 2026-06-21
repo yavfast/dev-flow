@@ -217,7 +217,7 @@ Raw data and artifacts do **not** belong here — they are the L1 *data cache* (
 - **Resolve (lazily)** — locate-or-create the `working_memory/` area under `/tmp/{project-slug}/sessions/{session-uuid}/` (or the runtime's session scratchpad) on first use.
 - **Write** — record a note or reminder (append), or set a parameter (replace by key). Reject a raw-data blob: that goes to the data cache.
 - **Read (re-attention)** — re-read the *whole* area to rebuild focus. Cheap, and called exactly **after a compaction, on a subtask switch, or on demand**. This is the re-attention move the [status read protocol](../phases/status.md#read-protocol) and [Experience Capture](experience-capture.md) lean on.
-- **Promote to durable** — at a checkpoint (Experience Capture) move anything that must outlive the session — a settled decision, a confirmed parameter, a harvested lesson — into `.dev_flow/` (the task file, or a proposed rule/skill). The remainder stays L1 scratch and is acceptably lost on restart.
+- **Promote to durable** — at a checkpoint (Experience Capture) move anything that must outlive the session — a settled decision, a confirmed parameter, a harvested lesson — into `.dev_flow/` (the task file, or an auto-applied rule/skill). The remainder stays L1 scratch and is acceptably lost on restart.
 
 Keep the area **small enough to re-read whole**: when it grows, summarise or promote — do not hoard.
 

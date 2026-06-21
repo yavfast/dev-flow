@@ -38,6 +38,19 @@ Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../S
 - The `Updated` date in metadata MUST be refreshed on every edit.
 - Stale documents are worse than no documents.
 
+## Auto-fix obvious defects (no permission prompt)
+
+An **obvious documentation defect** is a mechanical error with a single correct fix that does **not change meaning** — fix it automatically, without asking, the same way self-learning writes rules/skills ([C_EXC_DEC_06](../docs/experience_capture.concept.md#C_EXC_DEC_06)). The class is **structurally bounded**:
+
+- Broken or dangling cross-reference / anchor / link; a traceable ID written in the wrong format.
+- A derived index (`docs/_index.md`) or `Status` column out of sync with the documents on disk.
+- A `Status` that mechanically contradicts hard evidence (a plan all `[DONE]` still `in-progress`; an `Updated` date older than a later edit).
+- A renamed/retired domain term left inconsistent with `docs/_glossary.md`; a stale `Updated` date; a typo.
+
+**What is NOT an obvious defect — never auto-rewrite it:** anything that changes *meaning* — a contract, an invariant, a described behavior, a design decision, the substance of a concept/spec. Those go through the normal propagation pipeline (matrix below) or, if the document itself is wrong, [Upstream Escalation](../references/escalation.md).
+
+**Uncertain → independent review, not a permission prompt.** If you cannot tell whether a fix is a mechanical defect or a meaning change, route it to an **independent clean-context review** ([Delegation for Focus](../references/delegation.md)) and apply only what it confirms. Every auto-fix lands in the working tree and is visible to the developer at the commit-approval gate.
+
 ## Mandatory Metadata Updates
 
 Every edit to a concept, specification, or plan must update:

@@ -70,10 +70,10 @@ Steps 6, 8, and 10 (run tests, review, verify) flood the context with output tha
 
 At the phase/subtask boundary, before asking for commit approval, run the [Transition Checkpoint](../references/experience-capture.md) over the work item just closed. This is where the project's knowledge base improves automatically — implementation is the primary **rule auto-discovery** touchpoint:
 
-- **Rule from a recurring pattern.** If the plan phase or the code surfaced an architectural constraint, naming convention, or error-handling pattern not yet in `.dev_flow/rules/` — propose it as a rule (default severity `should` unless clearly `must`/`prefer`). See [Project Rules → Auto-discovery](../SKILL.md#project-rules) and the [rule phase](rule.md).
-- **Skill from non-trivial knowledge.** If research during the task produced broadly-useful, non-obvious technology knowledge — propose a skill through the [skill phase](skill.md) non-triviality filter, so the next task starts ahead.
+- **Rule from a recurring pattern.** If the plan phase or the code surfaced an architectural constraint, naming convention, or error-handling pattern not yet in `.dev_flow/rules/` — write it as a rule automatically (default severity `should`, or `prefer`). See [Project Rules → Auto-discovery](../SKILL.md#project-rules) and the [rule phase](rule.md).
+- **Skill from non-trivial knowledge.** If research during the task produced broadly-useful, non-obvious technology knowledge — write/update a skill through the [skill phase](skill.md) non-triviality filter, so the next task starts ahead.
 
-**Propose, never apply.** A harvested lesson starts `proposed` and is written to the catalogue only through the rule/skill gate (developer accepts) — the checkpoint never auto-writes. Then distill the segment into a pinned summary, demote its raw turns, and promote durable working-memory parts to the task file. See **[Experience Capture](../references/experience-capture.md)**.
+**Auto-apply, no permission prompt.** A harvested lesson is written to the catalogue automatically through the rule/skill gate (the gate is structural, not a self-score). **Never auto-write a `must`**, and route any rule that would contradict an existing one to an [independent clean-context review](../references/delegation.md) — write only if confirmed. Every write is visible to the developer in the commit diff. Then distill the segment into a pinned summary, demote its raw turns, and promote durable working-memory parts to the task file. See **[Experience Capture](../references/experience-capture.md)**.
 
 ## When the Spec Pushes Back
 
@@ -87,4 +87,4 @@ At the phase/subtask boundary, before asking for commit approval, run the [Trans
 - Skipping traceable ID comments
 - Not updating plan status after completion
 - Adding features not described in the specification
-- Closing a work item without reflecting — a recurring pattern left uncaptured as a proposed rule/skill (see [Reflection](#reflection--harvest-rules-and-skills))
+- Closing a work item without reflecting — a recurring pattern left uncaptured as an auto-applied rule/skill (see [Reflection](#reflection--harvest-rules-and-skills))

@@ -166,10 +166,10 @@ For integration and live tests that require setup:
 
 Once verification passes, run the [Transition Checkpoint](../references/experience-capture.md) before commit approval. Verify is where reality first tests the integrated system, so its lessons are about how things *break together*:
 
-- **Rule from a recurring failure mode.** A regression that a convention would have prevented, a flaky-test pattern, an integration contract that needed a guard — propose a rule (default `should`; testing-area rules live under `.dev_flow/rules/testing.md`). See [Project Rules → Auto-discovery](../SKILL.md#project-rules).
-- **Skill from a verification gotcha.** A non-obvious environment setup, a sandbox/seed-data trick, a known-pitfall in a live integration — propose a skill through the [skill phase](skill.md) non-triviality filter.
+- **Rule from a recurring failure mode.** A regression that a convention would have prevented, a flaky-test pattern, an integration contract that needed a guard — write a rule automatically (default `should`; testing-area rules live under `.dev_flow/rules/testing.md`). See [Project Rules → Auto-discovery](../SKILL.md#project-rules).
+- **Skill from a verification gotcha.** A non-obvious environment setup, a sandbox/seed-data trick, a known-pitfall in a live integration — write/update a skill through the [skill phase](skill.md) non-triviality filter.
 
-**Propose, never apply** — the rule/skill gate confirms. Then distill the segment (the noisy run output stays in the workspace, referenced by path), demote raw turns, and promote durable parts to the task file. See **[Experience Capture](../references/experience-capture.md)**.
+**Auto-apply, no permission prompt** — written through the structural rule/skill gate; **never auto-write a `must`**, and route a would-be `must` or a contradiction to an [independent clean-context review](../references/delegation.md) first. Every write is visible in the commit diff. Then distill the segment (the noisy run output stays in the workspace, referenced by path), demote raw turns, and promote durable parts to the task file. See **[Experience Capture](../references/experience-capture.md)**.
 
 ## Verification Result Reporting
 
@@ -191,7 +191,7 @@ Before proceeding to commit:
 - [ ] All integration tests pass (if applicable)
 - [ ] Live tests pass or manual verification completed by user
 - [ ] No fix cycles remain incomplete
-- [ ] Reflection checkpoint run — recurring failure modes harvested as proposed rules/skills (see [Reflection](#reflection--harvest-verification-lessons))
+- [ ] Reflection checkpoint run — recurring failure modes harvested and auto-applied as rules/skills (see [Reflection](#reflection--harvest-verification-lessons))
 - [ ] Ask the user for explicit commit approval
 
 ## Anti-Patterns

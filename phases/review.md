@@ -165,7 +165,7 @@ When updating rules:
 3. Update `.dev_flow/rules/_index.yaml` if a new rule was added.
 4. Existing code is NOT required to be retroactively fixed.
 
-**Reflection.** A reviewer finding that "this convention keeps being violated" is the review phase's [Experience Capture](../references/experience-capture.md) harvest: route it as a **proposed** rule (propose, never apply — the developer confirms via the [rule phase](rule.md)), rather than an ad-hoc note that evaporates with the review's clean context.
+**Reflection.** A reviewer finding that "this convention keeps being violated" is the review phase's [Experience Capture](../references/experience-capture.md) harvest: write it as a rule automatically through the [rule phase](rule.md) (default `should`; a would-be `must` or a contradiction routes to independent review first; the developer sees it in the commit diff), rather than an ad-hoc note that evaporates with the review's clean context.
 
 ## Conflict Resolution Protocol
 

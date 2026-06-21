@@ -124,7 +124,7 @@ After running tests, report:
 
 ## Reflection
 
-At the phase boundary, run the [Transition Checkpoint](../references/experience-capture.md): if writing tests surfaced a recurring assertion/mocking pattern or a coverage gap worth a convention, propose a testing rule (`.dev_flow/rules/testing.md`); if it produced a non-trivial fixture/harness technique, propose a skill. Propose, never apply — the [rule](rule.md)/[skill](skill.md) gate confirms. See **[Experience Capture](../references/experience-capture.md)**.
+At the phase boundary, run the [Transition Checkpoint](../references/experience-capture.md): if writing tests surfaced a recurring assertion/mocking pattern or a coverage gap worth a convention, write a testing rule (`.dev_flow/rules/testing.md`); if it produced a non-trivial fixture/harness technique, write/update a skill. Auto-apply through the structural [rule](rule.md)/[skill](skill.md) gate — no permission prompt; never auto-write a `must` (route those + contradictions to independent review); every write is visible in the commit diff. See **[Experience Capture](../references/experience-capture.md)**.
 
 ## Anti-Patterns
 

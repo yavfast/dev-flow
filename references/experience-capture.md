@@ -28,7 +28,7 @@ At a transition, run a **checkpoint** over the segment that is closing. This for
 1. **Distill** the closing segment — a noisy read, so delegate it (see [Delegation for Focus](delegation.md)) and keep only the conclusion.
 2. **Record a segment summary** as a Shared Activity Log entry tagged `{s:pin}` — a few lines of "what happened / what was decided", referencing any raw material by path, never inlining it (the no-large-blobs rule).
 3. **Demote the raw turns** of the segment — re-grade them `{s:noise}`, or `{s:superseded→<summary>}` when the summary replaces them.
-4. **Propose durable lessons** (next section) — proposed, never applied.
+4. **Apply durable lessons** (next section) — auto-written through structural gates; a doubtful write goes to independent review first.
 5. **Close the segment**, and **promote** the durable part of working memory to L2 (see [Relation to working memory](#relation-to-working-memory)).
 
 The pinned summary now survives a dev-flow compaction while the raw turns are evicted first — the signal kept, the noise shed.
@@ -37,15 +37,19 @@ The pinned summary now survives a dev-flow compaction while the raw turns are ev
 
 When a task **closes**, `DemoteOnTaskClose` makes its salience markers inert (a `pin` is task-scoped — see [Salience Markers](../phases/status.md#salience-markers)), re-grading the segment's still-pinned raw turns to effective `normal` and so making them eviction-eligible. The checkpoint that harvests the closing task's lesson MUST run **before** that demotion — reflect first, demote second — so reflection reads the segment's full, still-retained material before it can be evicted (and so the new summary's `pin` is recorded while the task is still active). The harvested lesson itself does not depend on the `pin` — it is routed out to a proposal — but the reflection that produces it must run while its source is still protected. (This task-close *demote* — inerting all the task's markers — is distinct from the intra-checkpoint *demote* in step 3, which re-grades the segment's raw turns to `noise`.)
 
-## Proposing experience — propose, never apply
+## Applying experience — auto-apply through structural gates
 
-A harvested lesson is routed to the owning knowledge phase as a **proposal**, never written into the catalogues by this procedure:
+Self-learning is a **standing, ungated process**: a harvested lesson is written to the owning catalogue **automatically, with no permission prompt** ([C_EXC_DEC_06](../docs/experience_capture.concept.md#C_EXC_DEC_06)). The gate is **structural, never a self-score**:
 
-- A **reusable constraint or convention** → propose a [rule](../phases/rule.md) (default severity `should` unless clearly `must`/`prefer`).
-- **Broadly-useful, non-trivial** project knowledge that passes the [skill](../phases/skill.md) non-triviality filter → propose a skill.
+- A **reusable constraint or convention** → write a [rule](../phases/rule.md). Auto-written rules default to **`should`**; a `prefer` is fine. **Never auto-write a `must`** — a `must` blocks future code, so it is treated as doubtful (below).
+- **Broadly-useful, non-trivial** project knowledge that passes the [skill](../phases/skill.md) non-triviality filter → write/update a skill. (Write the content as a falsifiable, evidence-scoped observation — never an absolute verdict.)
 - Anything narrow, trivial, or one-off → drop it.
 
-A proposal starts `proposed` and becomes `confirmed` only through the rule/skill phase's own gate (developer accepts) — Experience Capture never auto-writes. This is the single home for reflection in dev-flow: [audit](../phases/audit.md) Step 3 "reflect", implement/fix **rule auto-discovery**, and [research](../phases/research.md) Step 4 persistence are all **invocations of this procedure**, not parallel paths.
+**Doubtful → independent review (not suppression).** When a write is doubtful — a would-be `must`-severity rule, a **contradiction** with an existing rule/skill, or a **deletion** — do not skip it and do not write it blindly: route it to an **independent clean-context review** ([Delegation for Focus](delegation.md)). It lands only if the reviewer confirms. "Doubtful" is defined by these structural triggers, not by a self-rated confidence.
+
+**The developer's review moves to commit time, it does not disappear.** Every auto-write lands in the working tree and is surfaced in the diff under the standing commit-approval gate ([SKILL.md → Commit rules](../SKILL.md#git-workflow-integration)); mention auto-written rules/skills in the commit message and the Response Trailer so they are visible, never silent. Nothing here touches the commit gate.
+
+This is the single home for reflection in dev-flow: [audit](../phases/audit.md) Step 3 "reflect", implement/fix **rule auto-discovery**, and [research](../phases/research.md) Step 4 persistence are all **invocations of this procedure**, not parallel paths.
 
 ## The Response Trailer — response-granularity carrier
 
@@ -90,9 +94,9 @@ Experience Capture is what fires the L1→L2 movements of [session working memor
 | Phase / moment | How Experience Capture applies |
 |----------------|-------------------------------|
 | implement / fix / verify | Checkpoint at phase and subtask boundaries; trailer on complex responses; context-pressure assessed as the session grows |
-| [audit](../phases/audit.md) Step 3 (reflect) | The reflect step **is** a checkpoint invocation — harvest lessons from a closing task into proposed rules/skills |
-| [research](../phases/research.md) Step 4 | Persisting durable spike findings is the same propose-experience move |
-| Specialist end-of-burst | A project specialist accrues role-local heuristics **per call** (it self-writes its own memory, so the next call warm-starts on them); this per-call append is **ungated** (only the skill promotion below passes a gate), so — applying "trust structure, not self-assessment" to memory *content* — each heuristic is written as a *falsifiable, evidence-scoped observation*, never an absolute verdict (an over-stated one poisons later warm-starts). At **end-of-burst** this procedure harvests the burst's heuristics and *proposes* the broadly-useful ones as skills (hybrid store — role-local memory + skill proposals) |
+| [audit](../phases/audit.md) Step 3 (reflect) | The reflect step **is** a checkpoint invocation — harvest lessons from a closing task and auto-apply them as rules/skills through the structural gate |
+| [research](../phases/research.md) Step 4 | Persisting durable spike findings is the same harvest-and-auto-apply move |
+| Specialist end-of-burst | A project specialist accrues role-local heuristics **per call** (it self-writes its own memory, so the next call warm-starts on them); this per-call append is **ungated** (only the skill promotion below passes a gate), so — applying "trust structure, not self-assessment" to memory *content* — each heuristic is written as a *falsifiable, evidence-scoped observation*, never an absolute verdict (an over-stated one poisons later warm-starts). At **end-of-burst** this procedure harvests the burst's heuristics and *auto-applies* the broadly-useful ones as skills through the structural gate (hybrid store — role-local memory + skills) |
 | Optional `/dream` | If a reflection/`dream` skill is installed, delegate the distillation step to it for a deeper retrospective; otherwise distill inline. Experience Capture does not depend on `/dream`. |
 
 ## A note on these guidelines

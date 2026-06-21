@@ -91,10 +91,10 @@ When root-cause analysis shows the **document itself is defective** — the spec
 
 A fix is the highest-yield **rule auto-discovery** moment: a bug just proved a gap. At the close of the fix (the [Transition Checkpoint](../references/experience-capture.md)), harvest what the root cause taught so the same bug *class* is prevented next time:
 
-- **Rule from a violated invariant.** If the root cause was a violated invariant or convention with no matching rule in `.dev_flow/rules/` — propose the rule (default `should`), even when the problem text carried no explicit directive. (That explicit-directive path is Step 3's [Rule Detection](#rule-detection); this one fires on what the *analysis* revealed.) See [Project Rules → Auto-discovery](../SKILL.md#project-rules).
-- **Skill from a non-obvious diagnosis.** If diagnosis produced broadly-useful, non-trivial knowledge — a stack-specific pitfall, a debugging technique that paid off — propose a skill through the [skill phase](skill.md) non-triviality filter.
+- **Rule from a violated invariant.** If the root cause was a violated invariant or convention with no matching rule in `.dev_flow/rules/` — write the rule automatically (default `should`), even when the problem text carried no explicit directive. (That explicit-directive path is Step 3's [Rule Detection](#rule-detection); this one fires on what the *analysis* revealed.) See [Project Rules → Auto-discovery](../SKILL.md#project-rules).
+- **Skill from a non-obvious diagnosis.** If diagnosis produced broadly-useful, non-trivial knowledge — a stack-specific pitfall, a debugging technique that paid off — write/update a skill through the [skill phase](skill.md) non-triviality filter.
 
-**Propose, never apply** — the rule/skill gate confirms; the checkpoint never auto-writes. Then distill the segment, demote the raw diagnosis turns, and promote durable parts to the fix's task file. See **[Experience Capture](../references/experience-capture.md)**. (For a code-only fix, the proposal and any open decision are recorded as in [Interview Mode in Fix](#interview-mode-in-fix).)
+**Auto-apply, no permission prompt** — written through the structural rule/skill gate; **never auto-write a `must`**, and route a would-be `must` or a contradiction with an existing rule to an [independent clean-context review](../references/delegation.md) first. Every write is visible in the commit diff. Then distill the segment, demote the raw diagnosis turns, and promote durable parts to the fix's task file. See **[Experience Capture](../references/experience-capture.md)**. (For a code-only fix, the auto-written rule and any open decision are recorded as in [Interview Mode in Fix](#interview-mode-in-fix).)
 
 ## Diagnosis (optional)
 
