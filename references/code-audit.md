@@ -1,15 +1,15 @@
 # Code Audit — Lens Registry, Shared Analysis & Refactoring Playbook
 
-The committed reference behind the [`audit code` scope](../phases/audit.md#step-9--code-scope-the-whole-codebase-audit) (concept [C_CAU](../docs/code_audit.concept.md) · spec [SP_CAU](../docs/code_audit.sp.md), DEC_08). The phase doc carries the *procedure* (stages, gates, hand-off); this reference carries the *detail* — the full lens menu and per-lens checklists, the bottom-up module walk shared with onboard, the SOLID/DRY heuristics, the antipattern catalogue, and the refactoring playbook. It is loaded by the audit `code` scope and by onboard (for the shared walk); it is **not** a standalone pipeline stage.
+The committed reference behind the [`audit code` scope](../phases/audit.md#step-9--code-scope-the-whole-codebase-audit). The phase doc carries the *procedure* (stages, gates, hand-off); this reference carries the *detail* — the full lens menu and per-lens checklists, the bottom-up module walk shared with onboard, the SOLID/DRY heuristics, the antipattern catalogue, and the refactoring playbook. It is loaded by the audit `code` scope and by onboard (for the shared walk); it is **not** a standalone pipeline stage.
 
 Two things keep it honest:
 
-- **A lens is read-only and returns conclusions, not dumps.** Every checklist below produces [Findings](../docs/code_audit.sp.md#SP_CAU_01_03) — a `conclusion` + `file:line` locations. Raw search hits, traces, and logs stay in the workspace, referenced by path, never inlined (per [Delegation → conclusion-not-dump](delegation.md)).
-- **The registry is open.** The base lenses ship here; a project adds its own by appending a registry row + a checklist section in *this file* — no concept or spec edit needed (SP_CAU_01_02 invariant).
+- **A lens is read-only and returns conclusions, not dumps.** Every checklist below produces Findings — a `conclusion` + `file:line` locations. Raw search hits, traces, and logs stay in the workspace, referenced by path, never inlined (per [Delegation → conclusion-not-dump](delegation.md)).
+- **The registry is open.** The base lenses ship here; a project adds its own by appending a registry row + a checklist section in *this file* — no concept or spec edit needed.
 
 ## Lens Registry
 
-A lens is one audit projection: a `key`, a `focus`, a `source_of_truth`, and the checklist that follows. The base set is universal; the long tail and domain-specific lenses are an **intent-/project-selected menu** — a run pulls only what its intent and project type call for, never the whole list (DEC_09). Refinement angles fold into a base lens's checklist rather than standing alone.
+A lens is one audit projection: a `key`, a `focus`, a `source_of_truth`, and the checklist that follows. The base set is universal; the long tail and domain-specific lenses are an **intent-/project-selected menu** — a run pulls only what its intent and project type call for, never the whole list. Refinement angles fold into a base lens's checklist rather than standing alone.
 
 ### Base lenses (universal — the default set)
 
@@ -46,7 +46,7 @@ Domain-specific (added when the domain applies): `a11y` (accessibility), `i18n` 
 
 ### Sub-angle folding
 
-Many review angles are *sub-cases* of a base lens, not peers (DEC_09). They fold into the base lens's checklist instead of becoming their own lens:
+Many review angles are *sub-cases* of a base lens, not peers. They fold into the base lens's checklist instead of becoming their own lens:
 
 | sub-angle | folds into |
 |-----------|-----------|
@@ -60,7 +60,7 @@ Append a row to the menu table above and a checklist section below, both in this
 
 ## Per-Lens Checklists
 
-Each checklist is the "what to look for" for one lens. Findings carry a `type` from the lens's vocabulary (SP_CAU_01_03), a severity (`must` / `should` / `prefer`), and a blast-radius computed via [Impact Walk](impact.md).
+Each checklist is the "what to look for" for one lens. Findings carry a `type` from the lens's vocabulary, a severity (`must` / `should` / `prefer`), and a blast-radius computed via [Impact Walk](impact.md).
 
 ### `standards`
 
@@ -84,7 +84,7 @@ Each checklist is the "what to look for" for one lens. Findings carry a `type` f
 - Each `docs/*.sp.md` contract has a faithful implementation: inputs/outputs/error cases as specified.
 - Invariants stated in the spec are actually enforced in code.
 - Error tables match: every spec error case is raised; no undocumented error paths contradict the spec.
-- **Divergence direction matters** — if code is right and the spec is stale, that is a doc fault → route to [Upstream Escalation](escalation.md), *not* a refactoring item (SP_CAU_03_01).
+- **Divergence direction matters** — if code is right and the spec is stale, that is a doc fault → route to [Upstream Escalation](escalation.md), *not* a refactoring item.
 - Finding types: `spec-divergence`, `missing-contract`, `uncovered-invariant`, `undocumented-error`.
 
 ### `patterns`
@@ -99,12 +99,12 @@ Each checklist is the "what to look for" for one lens. Findings carry a `type` f
 - **Exact copy-paste** across files/modules (same logic, different home).
 - **Near-duplicates**: structurally similar code differing only in literals/types — an abstraction candidate.
 - Parallel maintenance smells: a change that would have to be made in N places.
-- Report as a **cluster** (one Finding spanning all member locations), not N separate Findings (Consolidate merges these — SP_CAU_02_03).
+- Report as a **cluster** (one Finding spanning all member locations), not N separate Findings (Consolidate merges these).
 - Finding types: `duplication`, `near-duplication`, `missing-abstraction`.
 
 ### `security`
 
-Static audit only — **never run or execute exploits** (SP_CAU_03_01). Mirrors [review](../phases/review.md)'s blocking Security check at codebase scale. An OWASP-style class sweep:
+Static audit only — **never run or execute exploits**. Mirrors [review](../phases/review.md)'s blocking Security check at codebase scale. An OWASP-style class sweep:
 
 - **Injection** — SQL/NoSQL/command/template injection; unparameterized queries; unsanitized input reaching an interpreter.
 - **SSRF / path traversal** — user-controlled URLs/paths reaching a fetch or file op without validation.
@@ -113,8 +113,8 @@ Static audit only — **never run or execute exploits** (SP_CAU_03_01). Mirrors 
 - **Secret/credential exposure** — keys, tokens, passwords in source, config, or logs.
 - **Missing authz** — an action/endpoint without an access check; broken object-level authorization.
 - **Unsafe defaults & error leakage** — permissive defaults, verbose errors leaking internals, missing input validation / output encoding.
-- **Auth/crypto sub-angles** fold in here (DEC_09).
-- **Fast-track rule:** an **exploitable `must`-severity** finding is *not* parked in the refactoring backlog — it is surfaced for an immediate [fix](../phases/fix.md) (or escalation). Security findings are never silently down-prioritized (SP_CAU_03_01).
+- **Auth/crypto sub-angles** fold in here.
+- **Fast-track rule:** an **exploitable `must`-severity** finding is *not* parked in the refactoring backlog — it is surfaced for an immediate [fix](../phases/fix.md) (or escalation). Security findings are never silently down-prioritized.
 - Finding types: `vuln:injection`, `vuln:ssrf`, `vuln:path-traversal`, `vuln:insecure-crypto`, `vuln:unsafe-deserialization`, `secret-exposure`, `missing-authz`, `unsafe-default`.
 
 ### `correctness`
@@ -152,7 +152,7 @@ Complexity- and resource-usage heuristics (measure where a profiler exists; othe
 
 ## Shared Bottom-Up Analysis
 
-The single, dependency-ordered module walk reused by **both** onboard (its module-analysis step) and `audit code` (RunAnalysis). Neither keeps a private copy — this is the one source (SP_CAU_02_06, invariant SP_CAU_05_02; DEC_08). The walk *produces a per-module analysis stream*; the caller decides what to do with it:
+The single, dependency-ordered module walk reused by **both** onboard (its module-analysis step) and `audit code` (RunAnalysis). Neither keeps a private copy — this is the one source. The walk *produces a per-module analysis stream*; the caller decides what to do with it:
 
 - **onboard** consumes the stream to **generate** docs (concept → spec → plan) where none exist.
 - **a lens subagent** consumes the same stream to **audit** the code against existing docs, through its one lens.
@@ -175,7 +175,7 @@ The single, dependency-ordered module walk reused by **both** onboard (its modul
 | Caller | Binds the stream to |
 |--------|---------------------|
 | onboard | doc generation — `analysis/{module}.md` checkpoints, then concept/spec/plan (onboard Steps 4 & 6) |
-| `audit code` RunAnalysis | one read-only lens subagent per lens, each applying its [checklist](#per-lens-checklists) over the walk and emitting Findings (SP_CAU_02_02) |
+| `audit code` RunAnalysis | one read-only lens subagent per lens, each applying its [checklist](#per-lens-checklists) over the walk and emitting Findings |
 
 ## SOLID / DRY Heuristics
 
@@ -217,7 +217,7 @@ How Consolidate and ProducePlan turn Findings into a prioritized, *executable* p
 
 ### Priority
 
-`priority = f(max severity, blast_radius, effort)` (SP_CAU_01_04). High-severity, high-blast, low-effort items rank first; low-severity, high-effort items sink toward the backlog. Blast-radius comes from an [Impact Walk](impact.md) over the affected files. **Security overrides ranking**: an exploitable `must` vuln fast-tracks past the queue to an immediate fix.
+`priority = f(max severity, blast_radius, effort)`. High-severity, high-blast, low-effort items rank first; low-severity, high-effort items sink toward the backlog. Blast-radius comes from an [Impact Walk](impact.md) over the affected files. **Security overrides ranking**: an exploitable `must` vuln fast-tracks past the queue to an immediate fix.
 
 ### Change-class → route
 
@@ -231,14 +231,14 @@ Each plan item carries a change-class that decides *how* it executes at hand-off
 
 ### Top-N vs backlog
 
-The plan keeps the **top-N by priority** as active items; the remainder goes to a **backlog**, each entry with a **return trigger** (a date, an event, or a condition that re-raises it). **Nothing is dropped silently** — a narrowed/sampled run names what it excluded (SP_CAU_03_01, no-silent-truncation). Every active item and backlog entry traces to ≥1 ConsolidatedFinding (no orphan refactors).
+The plan keeps the **top-N by priority** as active items; the remainder goes to a **backlog**, each entry with a **return trigger** (a date, an event, or a condition that re-raises it). **Nothing is dropped silently** — a narrowed/sampled run names what it excluded. Every active item and backlog entry traces to ≥1 ConsolidatedFinding (no orphan refactors).
 
 ### Provenance & hand-off
 
-- Each plan item links its source ConsolidatedFinding(s) — the plan is a standard `*.plan.md` with audit provenance (DEC_02), created `Status: in-progress`. It is written **under `.dev_flow/audit/`** as `<scope>_<YYYYMMDD_HHMMSS>.plan.md`, alongside a persisted run report `code-audit_<ts>.report.md` — not into `docs/` (SP_CAU_DEC_05).
-- A `cross-lens-conflict` is preserved as an **explicit decision input** in the plan, never averaged away (SP_CAU_01_04 invariant) — the developer resolves it at the gate.
-- A finding tracing to a **wrong document** routes to [Upstream Escalation](escalation.md), not into the plan; a finding contradicting a **settled `DEC_NN`** cites it rather than proposing blind reversal (SP_CAU_03_01).
+- Each plan item links its source ConsolidatedFinding(s) — the plan is a standard `*.plan.md` with audit provenance, created `Status: in-progress`. It is written **under `.dev_flow/audit/`** as `<scope>_<YYYYMMDD_HHMMSS>.plan.md`, alongside a persisted run report `code-audit_<ts>.report.md` — not into `docs/`.
+- A `cross-lens-conflict` is preserved as an **explicit decision input** in the plan, never averaged away — the developer resolves it at the gate.
+- A finding tracing to a **wrong document** routes to [Upstream Escalation](escalation.md), not into the plan; a finding contradicting a **settled `DEC_NN`** cites it rather than proposing blind reversal.
 - Recurring patterns and tech gotchas surfaced during the audit are harvested as rules/skills via [Experience Capture](experience-capture.md) — auto-applied through the structural gate (no permission prompt; would-be `must`/contradictions go to independent review).
-- The plan also carries the `docs/_framework.md` update (abstraction-candidates → map overview + links to rules/skills; overview only, no enforceable detail inlined — DEC_04). The map **stays in `docs/`** (loaded as code-touch context, unlike the plan/report).
+- The plan also carries the `docs/_framework.md` update (abstraction-candidates → map overview + links to rules/skills; overview only, no enforceable detail inlined). The map **stays in `docs/`** (loaded as code-touch context, unlike the plan/report).
 
-Execution (refactor → review → verify → commit) is the standard gated pipeline on this plan; **audit itself changes no code and never commits** (SP_CAU_03_01, DEC_05).
+Execution (refactor → review → verify → commit) is the standard gated pipeline on this plan; **audit itself changes no code and never commits**.

@@ -39,7 +39,7 @@ When a task **closes**, `DemoteOnTaskClose` makes its salience markers inert (a 
 
 ## Applying experience — auto-apply through structural gates
 
-Self-learning is a **standing, ungated process**: a harvested lesson is written to the owning catalogue **automatically, with no permission prompt** ([C_EXC_DEC_06](../docs/experience_capture.concept.md#C_EXC_DEC_06)). The gate is **structural, never a self-score**:
+Self-learning is a **standing, ungated process**: a harvested lesson is written to the owning catalogue **automatically, with no permission prompt**. The gate is **structural, never a self-score**:
 
 - A **reusable constraint or convention** → write a [rule](../phases/rule.md). Auto-written rules default to **`should`**; a `prefer` is fine. **Never auto-write a `must`** — a `must` blocks future code, so it is treated as doubtful (below).
 - **Broadly-useful, non-trivial** project knowledge that passes the [skill](../phases/skill.md) non-triviality filter → write/update a skill. (Write the content as a falsifiable, evidence-scoped observation — never an absolute verdict.)
@@ -77,7 +77,7 @@ Between checkpoints, an individual response can still carry salience and signal 
 A checkpoint can also fire because the context is filling up — but assessed by **proxy, never by introspection, and never by riding the harness's own compaction**:
 
 - **Signal** — `window_fill` if (and only if) the runtime exposes it; otherwise derive pressure from **structural proxies**: turn count, task-file size, repetition signals, error rate. The trigger is portable across runtimes precisely because it does not depend on a fill number the runtime may hide.
-- **Tiers** — the *pressure level* (left) names the input severity; [`AssessContextPressure`](../docs/experience_capture.sp.md#SP_EXC_02_06) returns the matching *response action* (in parentheses):
+- **Tiers** — the *pressure level* (left) names the input severity; `AssessContextPressure` returns the matching *response action* (in parentheses):
   - **ok** — nothing to do. *(action: `ok`)*
   - **moderate** — run a checkpoint now (distill + pin the summary, demote raw), stay lean. *(action: `checkpoint`)*
   - **high + degradation** — ensure the task files are fully checkpointed and **always-resumable**, then **recommend a graceful session handoff** to the developer: a deterministic restart-from-files via the [status phase](../phases/status.md), not a lossy auto-compact. *(action: `recommend-handoff`)*

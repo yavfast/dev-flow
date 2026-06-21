@@ -40,7 +40,7 @@ Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../S
 
 ## Auto-fix obvious defects (no permission prompt)
 
-An **obvious documentation defect** is a mechanical error with a single correct fix that does **not change meaning** — fix it automatically, without asking, the same way self-learning writes rules/skills ([C_EXC_DEC_06](../docs/experience_capture.concept.md#C_EXC_DEC_06)). The class is **structurally bounded**:
+An **obvious documentation defect** is a mechanical error with a single correct fix that does **not change meaning** — fix it automatically, without asking, the same way self-learning writes rules/skills. The class is **structurally bounded**:
 
 - Broken or dangling cross-reference / anchor / link; a traceable ID written in the wrong format.
 - A derived index (`docs/_index.md`) or `Status` column out of sync with the documents on disk.

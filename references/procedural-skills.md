@@ -1,14 +1,14 @@
 # Procedural Skills — Project Memory That Outranks a Stale Prior
 
-Cross-cutting refinement of the **skill subsystem** ([C_PHK](../docs/phases-knowledge.concept.md)) — concept [C_SPM](../docs/skills_as_procedural_memory.concept.md) · spec [SP_SPM](../docs/skills_as_procedural_memory.sp.md). Not a pipeline stage and no command: it shapes the *form* of a `.dev_flow/skills/` entry and the *precedence* its retrieval carries, inside the existing lazy [skill check](../phases/skill.md). Skills are still **advisory, lazy, on-demand** — this never adds a development gate.
+Cross-cutting refinement of the **skill subsystem**. Not a pipeline stage and no command: it shapes the *form* of a `.dev_flow/skills/` entry and the *precedence* its retrieval carries, inside the existing lazy [skill check](../phases/skill.md). Skills are still **advisory, lazy, on-demand** — this never adds a development gate.
 
 ## Why this exists
 
-An agent trusts its **training prior** over the project's reality — reaching for outdated practices, framework versions, and APIs even when the project already knows better. The fix is to let the project's own distilled experience win. But *forcing* all work through a skill backfires (confirmed by a [4-lens spike](../docs/skills_as_procedural_memory.spike.md)): mandatory, total, eager skill use breeds sprawl, a greenfield cold-start tax, retrieval bloat, and **cognitive entrenchment** (the agent rides a stored procedure and stops seeing a better one). So the lever is **structural pull, not a gate** — a *current* matching skill outranks the prior; a *stale* one is demoted until re-grounded.
+An agent trusts its **training prior** over the project's reality — reaching for outdated practices, framework versions, and APIs even when the project already knows better. The fix is to let the project's own distilled experience win. But *forcing* all work through a skill backfires (confirmed by a 4-lens spike): mandatory, total, eager skill use breeds sprawl, a greenfield cold-start tax, retrieval bloat, and **cognitive entrenchment** (the agent rides a stored procedure and stops seeing a better one). So the lever is **structural pull, not a gate** — a *current* matching skill outranks the prior; a *stale* one is demoted until re-grounded.
 
 ## The form: a skill is procedural memory
 
-A skill captures *how to use tool X here / how to do process Y here* — not a reference of facts derivable from the codebase (the [Non-Triviality Filter](../phases/skill.md#non-triviality-filter) stays the admission gate; **Minimality** stays — no skill without a stated future consumer). Additive fields on the skill file, over the C_PHK template:
+A skill captures *how to use tool X here / how to do process Y here* — not a reference of facts derivable from the codebase (the [Non-Triviality Filter](../phases/skill.md#non-triviality-filter) stays the admission gate; **Minimality** stays — no skill without a stated future consumer). Additive fields on the skill file, over the standard skill template:
 
 | Field | Meaning |
 |-------|---------|
@@ -32,14 +32,14 @@ The agent's declarative reasoning never switches off — a loaded skill **shifts
 
 ## Promotion & freshness (structural signals, never a self-score)
 
-- **Birth & promotion** (auto-harvested by [Experience Capture](experience-capture.md), C_EXC DEC_06 — no permission prompt): a hard fix / tool-or-process recurrence ≥N / research consolidation that passes Non-Triviality → write/update the skill. One hard case → `candidate` scoped to its context; a **second convergent use** → `established` + generalize the boundary. (One case is a *case*, not yet a *schema* — mirrors "auto-write defaults to `should`, never `must`".)
+- **Birth & promotion** (auto-harvested by [Experience Capture](experience-capture.md) — no permission prompt): a hard fix / tool-or-process recurrence ≥N / research consolidation that passes Non-Triviality → write/update the skill. One hard case → `candidate` scoped to its context; a **second convergent use** → `established` + generalize the boundary. (One case is a *case*, not yet a *schema* — mirrors "auto-write defaults to `should`, never `must`".)
 - **Freshness** drives demotion: on version/context drift the skill goes `stale` (loses precedence over fresh research) until re-grounded + re-stamped → `current`. A re-stale of an `established` skill demotes like any other; promotion is not reset.
 
 ## Curation (audit `skills` scope)
 
 [audit](../phases/audit.md) grooms the catalogue — **incrementally, never a bulk rewrite** (avoids the context-collapse / brevity-bias rot seen in prior art):
 
-- `prune` low-hit / stale-beyond-use, `merge` near-duplicates → **propose** (destructive, like skill deletion — goes through review, consistent with C_EXC autonomy).
+- `prune` low-hit / stale-beyond-use, `merge` near-duplicates → **propose** (destructive, like skill deletion — goes through review, consistent with [Experience Capture](experience-capture.md)'s autonomy policy).
 - `restamp` freshness, incremental edits → **apply**.
 - **Conflict** (two skills prescribe different procedures for one surface) → **surface as an explicit decision; never let retrieval silently pick a side** (the least-mitigated failure in prior art).
 
@@ -55,7 +55,7 @@ The agent's declarative reasoning never switches off — a loaded skill **shifts
 
 ## Boundaries
 
-- **Structural pull, not a gate.** "No matching skill" never blocks; the word *only* (as in "development only through skills") is explicitly rejected (C_SPM DEC_01).
+- **Structural pull, not a gate.** "No matching skill" never blocks; the word *only* (as in "development only through skills") is explicitly rejected.
 - **Boundary is mandatory content.** A skill without an applicability boundary is rejected at write time.
 - **Trust structure, not a self-rating.** Promotion/demotion follow observed recurrence and version/context drift — never a confidence number.
-- **Re-firing the precedence contract per action belongs to [Application Enforcement](application-enforcement.md).** This reference fixes the skill's *form* and *precedence*; that contract is front-loaded and fades without per-burst re-triggering — which C_AEN owns. The freshness state set here is carried in its Pre-Action Marker.
+- **Re-firing the precedence contract per action belongs to [Application Enforcement](application-enforcement.md).** This reference fixes the skill's *form* and *precedence*; that contract is front-loaded and fades without per-burst re-triggering — which that reference owns. The freshness state set here is carried in its Pre-Action Marker.

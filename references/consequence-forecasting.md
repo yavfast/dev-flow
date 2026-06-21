@@ -1,10 +1,10 @@
 # Consequence Forecasting — Phase-Scaled Lookahead + YAGNI-gate
 
-Cross-cutting sub-procedure for the **decision-making** phases — concept, spec, plan, implement, fix (concept [C_FOR](../docs/consequence_forecasting.concept.md) · spec [SP_FOR](../docs/consequence_forecasting.sp.md)). It is **not** a standalone pipeline stage and has no command — it is an **advisory** discipline invoked inside a phase whenever a *material* decision is about to be made. It does not add a new pass/fail gate; it informs the decision the phase was already making.
+Cross-cutting sub-procedure for the **decision-making** phases — concept, spec, plan, implement, fix. It is **not** a standalone pipeline stage and has no command — it is an **advisory** discipline invoked inside a phase whenever a *material* decision is about to be made. It does not add a new pass/fail gate; it informs the decision the phase was already making.
 
 ## Why this exists
 
-Agents decide locally-correct but future-blind: each step looks right alone, yet the sum drifts — either **myopically** (a need missed now, costly to retrofit later) or to the opposite extreme, **speculatively** (building for an imagined future with no trigger — gold-plating). This is measured, not assumed: a [research spike + live A/B verify](../docs/action_consequence_forecasting.spike.md) found consequence-forecasting helps **non-monotonically** — a bare "look ahead" instruction surfaced a genuinely missed need in one task and produced over-engineering in another (1–1, no clean win). The governing variable is **not how far you look but the discipline around it**: scale the look to the phase, and gate every anticipation so it becomes a *seam or a record*, not premature work.
+Agents decide locally-correct but future-blind: each step looks right alone, yet the sum drifts — either **myopically** (a need missed now, costly to retrofit later) or to the opposite extreme, **speculatively** (building for an imagined future with no trigger — gold-plating). This is measured, not assumed: a research spike + live A/B verify found consequence-forecasting helps **non-monotonically** — a bare "look ahead" instruction surfaced a genuinely missed need in one task and produced over-engineering in another (1–1, no clean win). The governing variable is **not how far you look but the discipline around it**: scale the look to the phase, and gate every anticipation so it becomes a *seam or a record*, not premature work.
 
 ## The discipline: forecast → YAGNI-gate → decide
 

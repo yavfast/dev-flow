@@ -34,7 +34,7 @@ All intermediate artifacts are stored in `.dev_flow/onboard/`. This directory pe
 
 ## Procedure Steps
 
-> **Shared walk (single-source).** Steps 2–4 below — map structure → build dependency layers → walk modules bottom-up extracting entities/contracts/deps — are onboard's binding of the one **[Shared Bottom-Up Analysis](../references/code-audit.md#shared-bottom-up-analysis)** procedure, which the `audit code` scope reuses (SP_CAU_02_06, DEC_08). The canonical walk lives in that reference; onboard does not keep a second copy of it — these steps describe only how onboard *consumes* the walk's output (the `onboard/` checkpoints and doc generation). A lens subagent consumes the same walk to *audit* against existing docs; onboard consumes it to *generate* them.
+> **Shared walk (single-source).** Steps 2–4 below — map structure → build dependency layers → walk modules bottom-up extracting entities/contracts/deps — are onboard's binding of the one **[Shared Bottom-Up Analysis](../references/code-audit.md#shared-bottom-up-analysis)** procedure, which the `audit code` scope reuses. The canonical walk lives in that reference; onboard does not keep a second copy of it — these steps describe only how onboard *consumes* the walk's output (the `onboard/` checkpoints and doc generation). A lens subagent consumes the same walk to *audit* against existing docs; onboard consumes it to *generate* them.
 
 ### Step 1: Initialize workspace
 

@@ -1,6 +1,6 @@
 ```yaml
 role CodeAuditLens {
-  description: "Read-only lens subagent for the `audit code` scope (SP_CAU_02_02). Audits the whole codebase through ONE projection (its assigned lens — standards / architecture / specifications / patterns / duplication / security / correctness / performance / tests / a menu or project lens) and returns Findings — conclusions, not dumps. One such subagent is fanned out per lens, in parallel; consolidation across lenses is the caller's job, not this role's."
+  description: "Read-only lens subagent for the `audit code` scope. Audits the whole codebase through ONE projection (its assigned lens — standards / architecture / specifications / patterns / duplication / security / correctness / performance / tests / a menu or project lens) and returns Findings — conclusions, not dumps. One such subagent is fanned out per lens, in parallel; consolidation across lenses is the caller's job, not this role's."
 
   inputs: [
     "lens key + its checklist section in references/code-audit.md",

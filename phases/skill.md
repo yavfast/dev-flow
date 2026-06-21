@@ -112,7 +112,7 @@ updated: {YYYY-MM-DD}
 {Only if external sources were used — library docs, API references.}
 ```
 
-## Procedural Skills (C_SPM)
+## Procedural Skills
 
 A skill is distilled **procedural** memory (*how to use X here / how to do Y here*), and its retrieval carries **precedence** over the model's general prior. See [Procedural Skills](../references/procedural-skills.md) for the full discipline; the contract:
 
