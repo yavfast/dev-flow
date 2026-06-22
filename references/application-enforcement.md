@@ -21,7 +21,7 @@ Per **action burst** — a series of calls of one action type (e.g. "test run"),
 |------|------|---------|
 | `advisory` | Default — re-trigger + marker. Enough for most actions. | **No** runtime needed (it is just a message). |
 | `interface-gate` | High-stakes **and** the procedure reduces to a sanctioned entry **and** the runtime can intercept/observe the action. Out-of-band action fails or is detected by the tripwire — converts a semantic (un-hookable) substitution into a structural, hookable one. Strongest lever *where available*; each reduced slice shrinks residue. | **Requires** a runtime that observes the action (hook / sanctioned runner). |
-| `sampled-verifier` | High-stakes where the gate does not reduce: a **fresh** agent judges conformance to the documented procedure as a **rubric**, **cross-model**, at a phase gate / sample / tripwire escalation. | Requires a fresh cross-model agent ([Delegation](delegation.md)). |
+| `sampled-verifier` | High-stakes where the gate does not reduce: a **fresh** agent judges conformance to the documented procedure as a **rubric**, **cross-model**, at a phase gate / sample / tripwire escalation. Fed the **artifact + contract only — never the acting agent's conclusion/justification**; prompted **adversarially** ("find what violates the procedure", not "is it good"). | Requires a fresh cross-model agent ([Delegation](delegation.md)). |
 
 **Self-attestation by the acting agent is excluded as a control** — "did I comply?" checked by the same drifting agent is theatre (Huang 2310.01798: self-correction without an external signal is unreliable; a same-family / free-form judge rubber-stamps drift). Verification is always a deterministic tripwire or a *fresh* cross-model rubric verifier, **never per-run**.
 
@@ -33,6 +33,8 @@ Per **action burst** — a series of calls of one action type (e.g. "test run"),
 
 Activation is fixed per-burst, but tripwire **sensitivity** and verifier **sampling** rise on structural drift signals — priority to the **first classic action** (the loop does not recover, so catch the first), then post-compaction, session growth, prior-divergence. Modulation only raises sample/sensitivity within the already-chosen tier; it adds no enforcement of its own, and is derived from deterministic events — never a "feels like I'm drifting" self-rating.
 
+A fifth signal targets the verifier itself — **verifier-rubber-stamp**: 2+ consecutive substantive reviews with zero actionable findings (a count, not a self-rating). A higher sample rate cannot fix a verifier that *is* the problem, so this one escalates — surface to the user; switch model if available.
+
 ## Where it is wired
 
 A terse **"Knowledge activation"** line sits in each knowledge-touch phase, pointing here:
@@ -40,7 +42,7 @@ A terse **"Knowledge activation"** line sits in each knowledge-touch phase, poin
 | Touchpoint | What it carries |
 |------------|-----------------|
 | [implement](../phases/implement.md) / [fix](../phases/fix.md) / [testing](../phases/testing.md) / [verify](../phases/verify.md) | A **"Knowledge activation"** gate-line — per-burst re-trigger + Pre-Action Marker; tripwire/tier where the burst is high-stakes |
-| [review](../phases/review.md) | The clean-context pre-commit review **realizes the `sampled-verifier` tier** — a fresh, cross-model agent judging conformance to documented procedure; it is the external verifier, not a drift site needing re-trigger |
+| [review](../phases/review.md) | The clean-context pre-commit review **realizes the `sampled-verifier` tier** (per its row above — artifact+contract, adversarial); it is the external verifier, not a drift site needing re-trigger |
 | [plan phase](../phases/plan.md) + [plan template](../templates/plan.md) | The **Required Knowledge** section — the source of truth for the activation set in the standard flow |
 | [SKILL.md → Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding) | The gate is re-triggered per burst at the moment of action, not once at phase start |
 | [Procedural Skills](procedural-skills.md) | The marker carries each skill's freshness state; the per-burst re-trigger is what keeps "current skill > prior" from fading |

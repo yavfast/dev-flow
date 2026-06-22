@@ -14,6 +14,8 @@ The agent that wrote the code has accumulated assumptions and context that may b
 
 This clean-context review also **realizes the `sampled-verifier` tier** of [Application Enforcement](../references/application-enforcement.md): for a high-stakes procedure, the fresh, cross-model reviewer judging conformance to the documented procedure (as a rubric) is exactly the external verifier that the acting agent's self-attestation can never be.
 
+A checkable guard on the reviewer itself: **2+ consecutive substantive diffs** (non-trivial change class) reviewed with **zero actionable findings** (blocking/should-fix, not nits) is a `verifier-rubber-stamp` tripwire. Re-running the same reviewer cannot fix itself — surface to the user; switch model if the harness has one.
+
 ### Pre-Commit Review Procedure
 
 1. **Launch a reviewer subagent** (role: [reviewer.ai.md](../roles/reviewer.ai.md)) with a clean context containing only:
@@ -23,6 +25,8 @@ This clean-context review also **realizes the `sampled-verifier` tier** of [Appl
    - Project rules (`.dev_flow/rules/`) if they exist — binding
    - Relevant project skills (`.dev_flow/skills/`) for the changed area, if they exist
    - SOLID architecture reference (`references/solid-architecture.md`)
+
+   **Pass the artifact + contract only — never the author's conclusion or self-assessment; frame the review adversarially** ("find what violates the spec/rules", not "is this good?"). Realizes the `sampled-verifier` contract ([Application Enforcement](../references/application-enforcement.md)).
 
 2. **The reviewer subagent checks:**
 
