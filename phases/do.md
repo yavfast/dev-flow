@@ -70,6 +70,7 @@ Analyze the freeform request against the loaded context to determine:
 | **Revise / housekeep context** | "ревізія", "audit", "почисти контекст", "синхронізуй задачі", "оновити індекси", "groom", "tidy up", "compact", "retrospective" | audit |
 | **Delegate side task** | "subtask", "delegate", "делегуй", "зроби паралельно", "offload", explicit secondary task during active work | subtask |
 | **Question (no changes)** | "how does", "як працює", "can we", "чи можливо", "where is", "де знаходиться", "is it feasible" — answerable from codebase + docs | ask |
+| **Capture for later** | "todo", "колись", "на майбутнє", "maybe later", "capture this idea", "потім" (deferred); or "виправити після поточної", "fix after this task", "помітив … але не зараз", "after this is done" (queued follow-up noticed mid-task, contexts overlap) — work to file, not execute now | todo |
 | **Research / investigate** | "research", "дослідити", "spike", "compare approaches", "порівняй підходи", "не знаю, який підхід", "what's the best way to" — answer needs external sources, measurements, or an unexplored solution space | research |
 | **Plan only** | "plan", "сплануй", no code changes mentioned | plan |
 
@@ -176,7 +177,8 @@ If the user ends the session (or after completing a full phase chain):
 3. Targeted Edit on the dashboard and catalog:
    - If task-level `Status: done` → move your task's row from "Active Tasks" to "Recently Completed".
    - Otherwise → update Status / Updated columns in place.
-4. Run hygiene checks (Shared Activity Log cap, per-subtask Activity cap, file size) and archive overflow to `.dev_flow/session_history/` if triggered — see [status phase](status.md).
+4. **Surface queued follow-ups.** If the task became `done`, scan `.dev_flow/todos/` and plan backlogs for `queued` records triggered `after task_<this ID>` (fixes deferred *because their context overlapped this task*). List each and offer to run it next via `/dev-flow do …` — a suggestion, not an auto-run; the executed work passes its own gates and commit approval. See [todo phase](todo.md).
+5. Run hygiene checks (Shared Activity Log cap, per-subtask Activity cap, file size) and archive overflow to `.dev_flow/session_history/` if triggered — see [status phase](status.md).
 
 ## Routing Decision Tree
 
@@ -209,6 +211,9 @@ User request received
 │   │   └─ ask
 │   └─ Needs external sources / experiments / unknown solution space
 │       └─ research (time-boxed spike)
+│
+├─ Work to file for later (deferred idea, or a fix noticed mid-task to run after it)
+│   └─ todo (find docs → assess feasibility → file a planning record with a trigger)
 │
 ├─ Knowledge missing to even start a concept
 │   └─ research → then concept with the findings

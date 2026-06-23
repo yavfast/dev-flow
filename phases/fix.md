@@ -138,6 +138,8 @@ A bug fix hides two forks that are easy to resolve silently and expensive to get
 
 **Forecast check (advisory).** Forecast the consequences of the fix at *implement/fix altitude* — what else this change touches — and keep the free one-step check on the diagnosis loop (does the next probe/edit undo the last?). The gate is **strict**: expanding the fix's scope to speculative nearby improvements with no trigger defaults to `drop + record` (a backlog note), not into this fix. See [Consequence Forecasting](../references/consequence-forecasting.md).
 
+**Spotted-defect reflex.** Root-causing routinely surfaces a *separate, unrelated* defect — distinct from scope-creep of *this* fix (forecast → `drop+record`) and from a defective spec (→ [Upstream Escalation](../references/escalation.md)). If it is out-of-scope here and deferrable, don't fold it in and don't lose it: file an agent-initiated [`todo`](todo.md) (cheap subagent, or inline if trivial). If it is urgent, surface it now instead.
+
 ## Rule Detection
 
 When the problem description contains an explicit coding directive — not just a bug symptom — automatically extract it as a project rule.

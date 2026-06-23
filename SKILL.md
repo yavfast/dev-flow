@@ -50,6 +50,7 @@ Each transition includes a validation gate to prevent drift.
 | — | `/dev-flow status` | Show current state, resume previous session | Status summary |
 | — | `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — reconcile task state with reality, trim context, compact closed tasks, groom rules/skills/cache, check docs integrity (index/statuses/refs); opt-in `code` scope audits the whole codebase → refactoring plan | Audit report + cleaned context (or, for `code`, a refactoring plan) |
 | — | `/dev-flow ask <question>` | Read-only Q&A about code or feasibility — no changes | Answer + optional next-step suggestion |
+| — | `/dev-flow todo <description>` | Capture future work — find relevant docs, assess feasibility, file a planning record with a return trigger (does not build) | Plan backlog item or `.dev_flow/todos/` entry |
 | — | `/dev-flow subtask <task>` | Delegate a secondary task to a subagent — a full dev-flow participant that assembles its own context, runs any phase (fix, test, research, etc.), and can converse with its initiator | Full subtask report |
 | — | `/dev-flow do <request>` | Freeform routing — interpret intent and run the right phases | Phase output + updated context |
 
@@ -58,6 +59,8 @@ Each transition includes a validation gate to prevent drift.
 **Ask command:** Use `/dev-flow ask <question>` for read-only questions about the codebase or feasibility of changes. No files are modified, no context is updated.
 
 **Research command:** Use `/dev-flow research <topic>` (alias: `spike`) when a concept/spec/plan cannot be confidently authored — unfamiliar domain, unverified library capability, unknown solution space — or to close an open Design Decision waiting on facts. Time-boxed and cost-gated; spikes pass through no validation gates. Produces `docs/*.spike.md` and persists durable findings to `.dev_flow/skills/`. See [research phase](phases/research.md).
+
+**Todo command:** Use `/dev-flow todo <description>` to capture work to do later. It finds the documentation the work would touch, assesses its execution prospect (feasibility + scope), and files a single planning record with a return trigger — into an owning plan's backlog if one exists, otherwise into `.dev_flow/todos/`. Two flavors: a **deferred** speculative idea (trigger = date/event, may be dropped), or a **queued follow-up** — a fix noticed *during* the current task that must wait until it finishes because the contexts overlap (trigger = `after task_<ID>`, never dropped; a parallel `subtask` can't cover it since contexts aren't disjoint). A queued follow-up is surfaced automatically when its task completes (offered, not auto-run). `todo` **infers** the flavor, urgency, and trigger from the state of the relevant plans/tasks — not from your wording (the description may carry no timing words) — and may even recommend doing the work now instead of deferring. It builds nothing and passes through no gates; a later `do`/`plan` run executes the record. An **agent can also file a `todo` itself** — when it spots an out-of-scope, deferrable defect mid-work it spawns a cheap subagent running the todo flow (or files a trivial one inline), so the finding is captured without derailing its current task. Completes the routing triad: `ask` analyzes and writes nothing, `todo` analyzes and files for later, `do` analyzes and acts now. See [todo phase](phases/todo.md).
 
 **Resource cache (not a phase):** `.dev_flow/cache/` is the durable, indexed store for expensive-to-reacquire resources (Figma exports, downloaded documents, baseline screenshots). Every phase checks its `_index.yaml` before an expensive re-fetch and saves new fetches back; anything linked from docs or task files lives here, never in `/tmp`. Transient artifacts go to the project workspace `/tmp/{project-slug}/` with timestamped names. Freeform cache requests ("збережи цей макет", "find the cached RFC") route through `do` and are applied inline. See [Resource Cache](references/cache.md).
 
@@ -259,6 +262,7 @@ dev-flow uses a **collaborative per-task context model** so multiple AI agents c
 │   ├── _index.md              # Catalog of task files (conventions + active/recent lists)
 │   ├── task_<ID>.md           # Per-task shared context — multiple contributors
 │   └── ...
+├── todos/                     # Deferred future work captured by `todo` (homeless ideas) + _index.md
 └── session_history/           # Archived completed tasks
 ```
 
@@ -278,7 +282,7 @@ dev-flow uses a **collaborative per-task context model** so multiple AI agents c
 - **Relevant Context** — table; each row tagged with the contributor who added it.
 - **Shared Activity Log** — task-level events (subtask added, contributor joined, status changed). Append-only, newest first.
 
-**`active_context.md`** is a lightweight dashboard listing active tasks with phase, status, contributors, and last-updated. **No per-task details live here.**
+**`active_context.md`** is a lightweight dashboard listing active tasks with phase, status, contributors, and last-updated, plus a thin **Deferred (todos)** pointer (counts + any todo bound to an already-closed plan/task, so a deferral filed by `todo` stays visible at the entry point). **No per-task details live here.**
 
 **Templates:**
 - [templates/task_context.md](templates/task_context.md) — task file
@@ -295,8 +299,9 @@ dev-flow uses a **collaborative per-task context model** so multiple AI agents c
 - After **completing a step**: in your own Subtask block, check off the Progress item, set the next item, append to your Activity bullet list. Refresh the task header's `Last updated`.
 - At a **phase boundary**: targeted Edit on the dashboard row (Phase / Status / Contributors / Updated).
 - At a **transition** (phase/subtask boundary, task switch) run a **Transition Checkpoint** — distill the closing segment into a `{s:pin}` summary, demote its raw entries, propose any durable lesson, and promote durable working-memory parts to the task file. See [Experience Capture](references/experience-capture.md).
+- **Spotted-defect reflex (while working).** If you notice a defect or problem that is **not part of your current task** and whose fix is **deferrable to a later session**, do not derail into it and do not lose it — file an **agent-initiated `todo`**: spawn a **cheap subagent** with the problem description (it runs the [todo phase](phases/todo.md) and reports what it filed), or for a trivial finding needing no analysis, file the register line inline. In-scope or urgent problems are not deferred — fix them or escalate.
 - When you **finish your subtask**: set your Subtask's `Status: done`. The task itself stays `in-progress` until all subtasks are done.
-- On **task completion** (all subtasks done): any contributor may set the task's overall `Status: done`, move its row from "Active" to "Recently Completed" in the dashboard, and update the catalog.
+- On **task completion** (all subtasks done): any contributor may set the task's overall `Status: done`, move its row from "Active" to "Recently Completed" in the dashboard, and update the catalog. Then **surface queued follow-ups**: scan `.dev_flow/todos/` (and plan backlogs) for `queued` records triggered `after task_<this ID>` and offer to run each next (`/dev-flow do …`) — a suggestion, not an auto-run; the executed work still passes its own gates and commit approval. This is how a fix deferred *because its context overlapped this task* gets picked up the moment the conflict is gone. See [todo phase](phases/todo.md).
 
 ### Multi-contributor tolerance
 
@@ -386,6 +391,7 @@ Severity levels: **must** (blocks review) | **should** (warning) | **prefer** (a
 - [Audit phase](phases/audit.md) *(full `.dev_flow/` + `docs/` revision — reconcile, trim, compact + reflect, groom rules/skills, check docs integrity; opt-in `code` scope = whole-codebase audit → refactoring plan)*
 - [Code Audit](references/code-audit.md) *(the `audit code` scope's detail — lens registry + per-lens checklists, the bottom-up walk shared with onboard, SOLID/DRY heuristics, antipattern catalogue, refactoring playbook)*
 - [Ask phase](phases/ask.md) *(read-only Q&A, no file changes)*
+- [Todo phase](phases/todo.md) *(capture future work — find docs, assess feasibility, file a planning record)* | Template: [todo_index](templates/todo_index.md)
 - [Subtask phase](phases/subtask.md) *(delegate secondary tasks to subagent)*
 - [Do phase](phases/do.md) *(default fallback for freeform requests)*
 - [End-to-end example](examples/rate-limiter.md)

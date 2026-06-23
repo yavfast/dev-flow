@@ -31,7 +31,7 @@ Each scope runs a defined subset of the [procedure](#procedure); `all` runs the 
 | `rules` | 6 | `.dev_flow/rules/` catalogue |
 | `skills` | 7 | `.dev_flow/skills/` catalogue |
 | `cache` | 7d | `.dev_flow/cache/` index ↔ disk |
-| `docs` | 7a · 7b · 7c · 7e | `docs/` — glossary, open decisions/backlogs/spikes, docs↔code drift, **index · statuses · cross-refs · orphans · freshness** |
+| `docs` | 7a · 7b · 7c · 7e | `docs/` — glossary, open decisions/backlogs/todos/spikes, docs↔code drift, **index · statuses · cross-refs · orphans · freshness** |
 | `all` (default) | 1–8 | everything in the workspace **and** docs (**not** `code`) |
 | `code` (opt-in, separate) | 9 | the **whole project codebase** — architecture/SOLID/DRY/security/… via lens fan-out → prioritized refactoring plan + run report (timestamped, in `.dev_flow/audit/`) + `docs/_framework.md` update (read-only; hands off to the pipeline, never commits) |
 
@@ -147,14 +147,20 @@ Runs under scope `docs` (and `all`). Steps 7a–7c and 7e together constitute th
 2. **Stale ambiguities** — for each entry under *Flagged ambiguities*, check whether the conflict is now settled in the documents; if so, resolve it (canonical term + `_Avoid_`) and drop the flag.
 3. **Boundary** — strip any implementation detail, contract, or relationship-as-behavior that crept in (those belong to a concept, not the glossary), and remove general tech terms that are not project domain vocabulary.
 
-### Step 7b — Sweep open decisions, backlogs & spikes (scope `docs` / under `all`)
+### Step 7b — Sweep open decisions, backlogs, todos & spikes (scope `docs` / under `all`)
 
 Open deferrals are sanctioned only while their trigger lives — this step is what keeps them from quietly becoming permanent (see [Interview Mode → open decisions](../references/interview-mode.md)):
 
 1. **Open Design Decisions** — scan `docs/*.concept.md|*.sp.md|*.plan.md` for
    `DEC_NN` records with `Status: open`. For each, check the **resolution trigger** against evidence (dates passed; the named event visible in git, docs, or task files). Trigger expired → flag it in the report and **propose the closing route**: a [research](research.md) run if the missing information is researchable, otherwise an interview with the developer. Never resolve a decision yourself; an open record with a still-live trigger is healthy — leave it.
 2. **Plan backlogs** — flag backlog items that carry no return trigger/owner or whose trigger has expired; propose converting each to an open `DEC_NN` with a trigger, scheduling it into a plan phase, or dropping it explicitly.
-3. **Spikes** — flag `docs/*.spike.md` stuck in `in-progress` beyond their time-box; propose concluding them (`concluded` / `inconclusive` / `abandoned`).
+3. **Todos register** — in `.dev_flow/todos/_index.md` (deferred work filed by [todo](todo.md)). A `candidate` simply sitting is a **normal** backlog state — do not nag it for age alone. Act on:
+   - **triggerless / expired-trigger** entries → propose re-triggering or explicit drop;
+   - **orphaned** entries whose relevant docs no longer exist, and `promoted` entries with no matching task → propose reconciling/dropping;
+   - **matured candidates** (stable, repeatedly skipped, clearly belongs somewhere durable) → propose **graduating into documentation** — a concept's future-work/scope section or the owning plan's backlog — so it leaves the transient register for its proper home;
+   - **fell-through queued follow-ups** — a `queued` record triggered `after task_<ID>` whose originating task is `done`/archived **or stale/abandoned** but was never picked up → surface for running or explicit drop (a deferred fix must not vanish when its task closed or stalled).
+   Same discipline as plan backlogs — "later" is never silent.
+4. **Spikes** — flag `docs/*.spike.md` stuck in `in-progress` beyond their time-box; propose concluding them (`concluded` / `inconclusive` / `abandoned`).
 
 ### Step 7c — Docs ↔ code drift detection (scope `docs` / under `all`)
 

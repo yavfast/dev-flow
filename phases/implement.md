@@ -44,6 +44,8 @@ Before writing code, verify:
 
 **Forecast check (advisory).** Before a material implementation decision, forecast at *implement altitude* — the blast-radius of this change and the results of the next step or two (incl. tool calls) — and route each anticipation through the YAGNI-gate. The gate is **strict** here: speculative future-proofing in code with no near-term trigger defaults to `drop + record`, not `build now`. Keep the free one-step check on every non-trivial action — *does the inevitable next step undo or absorb this one?* See [Consequence Forecasting](../references/consequence-forecasting.md).
 
+**Spotted-defect reflex.** Implementing routinely surfaces a *separate, unrelated* defect in neighbouring code — distinct from speculative future-proofing of *this* change (→ `drop+record`) and from a defective spec (→ [Upstream Escalation](../references/escalation.md)). If it is out-of-scope and deferrable, don't fold it in and don't lose it: file an agent-initiated [`todo`](todo.md) (cheap subagent, or inline if trivial). If it is urgent, surface it now instead.
+
 ## Implementation Workflow
 
 ```

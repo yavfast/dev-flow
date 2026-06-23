@@ -58,7 +58,7 @@ Rule of thumb: the moment delegated work outgrows one exchange — multi-step, m
 
 - The task **is** the main task — just do it directly
 - The task is mostly a conversation with the developer — escalation can relay single decisions, but work that is all dialogue belongs in the main context
-- The task modifies the same files the main context is actively editing (conflict risk)
+- The task modifies the same files the main context is actively editing (conflict risk) — if it is a fix to run *after* the current task, capture it as a `queued` follow-up via [todo](todo.md) instead of delegating it
 - The task is trivial (< 2 minutes of work) — the overhead of delegation is not worth it
 
 ## Delegated Rights & Boundaries

@@ -110,10 +110,15 @@ For `/dev-flow status` (no argument):
 🕘 Recently completed (last 5)
    • task_SP_RATE_LIMITER — done 2026-05-18 — Spec finalized
 
+📥 Deferred (todos) — 3 candidate
+   • .dev_flow/todos/ — run `/dev-flow audit docs` to groom
+
 ⚠️ Warnings
    • task_… — stale (>7 days)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+
+If `.dev_flow/todos/_index.md` exists, include the **Deferred (todos)** line with the count of `candidate` entries (omit the line when the register is absent or empty). `queued` follow-ups are not counted here — they surface at their originating task's completion, not in this view. It is a pointer, not a listing — `todo` files them, `audit` grooms them.
 
 For `/dev-flow status <task_id>`:
 
@@ -191,6 +196,7 @@ Every dev-flow command MUST update context using this protocol. The goal is **to
 1. **In the task file:** set the task-level `Status: done`. Append a final Shared Activity Log entry.
 2. **In the dashboard:** targeted `Edit` — move your task's row from "Active Tasks" to "Recently Completed". If that list now exceeds 5 entries, move the oldest into `session_history/session_YYYY-MM-DD.md` and remove the row from the dashboard.
 3. **In the catalog:** same — move from Active to Recently Completed.
+4. **Surface queued follow-ups:** scan `.dev_flow/todos/` and plan backlogs for `queued` records triggered `after task_<this ID>` and offer to run each next (`/dev-flow do …`) — a suggestion, not an auto-run; the executed work still passes its own gates and commit approval. See [todo phase](todo.md).
 
 ### Targeted-edit safety
 
@@ -222,6 +228,7 @@ When the indexes look wrong (missing rows, stale entries, conflict markers, file
 3. Rewrite `active_context.md`:
    - Active table from files with `Status` ∈ {in-progress, blocked, review-pending}.
    - Recently Completed from files with `Status: done`, sorted by Last updated desc, keeping the latest 5.
+   - **Deferred (todos)** section from `.dev_flow/todos/_index.md` + plan backlogs: counts of `candidate`/`queued`, plus a flag line for any record bound to an already-closed plan/task. Omit the section if there are no todos.
 4. Rewrite `tasks/_index.md` the same way.
 5. Append a regeneration entry to the Shared Activity Log of one of your active task files (`HH:MM [your-id] — regenerated indexes`), or to a coordination task if you have none.
 
