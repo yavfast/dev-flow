@@ -52,6 +52,8 @@ This command is handled by **DevFlowOrchestrator**: [roles/dev-flow-orchestrator
 
 5. **Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml` and load rules for the request area; pass them to the executing phase, which MUST comply (`must` = blocks). See [rule phase](rule.md).
 
+6. **Ticket check.** If the request **explicitly** names a tracker ticket (a `--ticket PROJ-123` flag, a "Jira PROJ-123"-style mention, or a ticket URL), run [Ticket Tracker Integration](../references/ticket-tracker.md): discover the project's tracker skill/MCP, pull the ticket to seed the task's real requirements, and write the `Ticket:` link into the task file's Current Work Item. A bare `KEY-123`-looking token does **not** activate it; every outward write to the tracker is confirmed first.
+
 ### Step 2: Interpret the request
 
 Analyze the freeform request against the loaded context to determine:

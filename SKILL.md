@@ -245,7 +245,7 @@ Pipeline artifacts map to git workflow as follows:
 1. **Never commit without explicit user approval.** After completing a phase, present the changes and ask: "Ready to commit?"
 2. **Run pre-commit review** by a clean-context subagent before asking for commit approval.
 3. Only commit after the review passes and the user confirms.
-4. Commit message must reference the traceable ID: `[C_XXX] / [SP_XXX] / [PL_XXX]`.
+4. Commit message must reference the traceable ID: `[C_XXX] / [SP_XXX] / [PL_XXX]`. When the task is tied to a tracker ticket, the ticket key joins the ID in the message (e.g. `[PROJ-123][SP_XXX] …`) and the tracker's commit-time conventions apply, **each outward write confirmed first**. See [Ticket Tracker Integration](references/ticket-tracker.md).
 
 ## Active Context & Session Continuity
 
@@ -275,7 +275,7 @@ dev-flow uses a **collaborative per-task context model** so multiple AI agents c
 
 **Each task file contains:**
 - Header: Task ID, Created, Last updated, Status, **Contributors** (list of agent IDs).
-- **Current Work Item** — shared metadata (Document, Phase, Traceable ID).
+- **Current Work Item** — shared metadata (Document, Phase, Traceable ID; optional `Ticket:` link when the task is tied to an external tracker — see [Ticket Tracker Integration](references/ticket-tracker.md)).
 - **Description** — shared, additive paragraphs signed by contributor.
 - **Subtasks** — one block per contributor; each block has Author/Status/Goal/ Progress checklist/Activity. The block's author is its sole editor.
 - **Coordination Notes** — append-only conversation between contributors.
@@ -374,6 +374,7 @@ Severity levels: **must** (blocks review) | **should** (warning) | **prefer** (a
 - [Delegation for Focus](references/delegation.md) *(cross-cutting sub-procedure of implement/fix/verify — delegate noisy work to a subagent, keep only the conclusion)*
 - [Experience Capture](references/experience-capture.md) *(cross-cutting sub-procedure of all phases — Transition Checkpoint: distill a closing segment into a pinned summary, demote raw turns, propose durable lessons; factual Response Trailer; tiered context-pressure response)*
 - [Impact Walk](references/impact.md) *(cross-cutting sub-procedure of ask/do/propagate/review — blast radius of a change: docs, code bindings, active tasks)*
+- [Ticket Tracker Integration](references/ticket-tracker.md) *(cross-cutting sub-procedure of do/fix/implement + commit — when a task is explicitly tied to a tracker ticket (Jira/Linear/…), discover the project's tracker skill/MCP and let it own the ticket conventions; read + link by default, every outward write confirmed)*
 - [Consequence Forecasting](references/consequence-forecasting.md) *(cross-cutting sub-procedure of concept/spec/plan/implement/fix — forecast future needs at the phase's altitude, then YAGNI-gate each: build now / seam+flag / drop+record; advisory, composes Impact Walk + Minimality, routes to Interview/Escalation)*
 - [Procedural Skills](references/procedural-skills.md) *(cross-cutting refinement of the skill subsystem — skills are procedural memory with a mandatory applicability boundary + freshness stamp; a current skill outranks the prior, a stale one is re-grounded first; candidate→established promotion; audit curation)*
 - [Application Enforcement](references/application-enforcement.md) *(cross-cutting sub-procedure of implement/fix/testing/verify — re-trigger the knowledge gate per action burst via a pointer-only Pre-Action Marker; conformance tripwire + advisory/interface-gate/sampled-verifier tiers; clean-context review realizes the verifier tier; self-attestation banned; runtime-conditional, degrades to advisory)*

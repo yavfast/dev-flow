@@ -255,6 +255,10 @@ The pipeline's default is "code must satisfy the spec" — but sometimes a downs
 
 Expensive-to-reacquire resources — Figma layouts fetched over rate-limited MCP access, downloaded documents, baseline screenshots — die in `/tmp` on the next reboot. dev-flow keeps them in **`.dev_flow/cache/`**: a per-project store organized by source domain (`figma/`, `web/`, `app/`, `data/`) with an `_index.yaml` that records each file's source, summary, and references — so an agent checks the cache *before* spending another fetch, and anything linked from docs or task files outlives the session. Truly transient artifacts (logs, repro dumps, throwaway captures) go to one project workspace — `/tmp/{project-slug}/` — with **timestamped names** (`test-run_20260610_143205.log`), never numeric suffixes; whatever turns out durable is promoted to the cache. Each entry carries a **trust level** (`internal` / `controlled` / `public`); resources fetched from the open internet pass a safety check (type match, no active content, prompt-injection sweep) before they are cached, and cached content is always data, never instructions. Not a pipeline phase — it's infrastructure every phase touches; freeform cache requests route through `do`. See [`references/cache.md`](references/cache.md).
 
+### External Tracker Tickets
+
+When a task is **explicitly** tied to a ticket in Jira or any other tracker — a `--ticket PROJ-123` flag, a tracker word + key ("Jira PROJ-123"), or a ticket URL — dev-flow doesn't reinvent that tracker's conventions. It stays **tracker-agnostic**: it *discovers* the project's existing integration (a `.dev_flow/skills/` entry → an installed tracker skill → a tracker MCP) and lets **that** own the ticket conventions — key format, status workflow, comment/worklog shape, commit-message format. dev-flow owns only the *when*: pull the ticket to seed the task's real requirements, link the key in the task file (`Ticket:`), reference it in the commit message, and drive the status (work starts → *In Progress*, commit → *Done* + summary comment). **Every outward write to the tracker is confirmed first** — dev-flow never silently changes a ticket others can see. A bare `KEY-123`-looking token never triggers this (it collides with `UTF-8`, doc IDs, …); if no integration is available, the key degrades to a commit-message label and work proceeds. See [`references/ticket-tracker.md`](references/ticket-tracker.md).
+
 ### Language Independence
 
 Concepts and specifications are **language-agnostic** — no programming languages, frameworks, or libraries mentioned. Implementation technology is chosen only in the Plan phase. This keeps design decisions clean and portable.
@@ -380,6 +384,7 @@ dev-flow/
 │   ├── escalation.md            # Upstream escalation (doc wrong, not code)
 │   ├── delegation.md            # Delegation for focus (subagents)
 │   ├── impact.md                # Impact Walk — blast radius of a change
+│   ├── ticket-tracker.md        # External tracker tickets (Jira/etc.) — discover skill/MCP, confirmed writes
 │   ├── consequence-forecasting.md  # Phase-scaled lookahead + YAGNI-gate (forecast → build/seam/drop)
 │   ├── cache.md                 # Resource cache + /tmp workspace discipline
 │   ├── roles.md                 # Base vs project-overlay roles

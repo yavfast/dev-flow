@@ -29,6 +29,8 @@ Before analyzing, MUST read `.dev_flow/skills/_index.yaml` and load any skill fo
 
 If you'll delegate the diagnosis loop or verification (see the **Delegation** note below) to a subagent, also check `.dev_flow/roles/_index.yaml` and reuse a fitting role rather than re-deriving one. See [Roles](../references/roles.md).
 
+**Ticket check.** If the problem report **explicitly** names a tracker ticket (a `--ticket PROJ-123` flag, a tracker word + key, or a ticket URL), run [Ticket Tracker Integration](../references/ticket-tracker.md) — discover the integration, pull the ticket for the real symptom/context, and link it in the task file (`Ticket:`). A bare `KEY-123`-looking token does not activate it.
+
 ### Step 1: Analyze
 
 1. **Understand the symptom** — parse the problem description.
