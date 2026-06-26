@@ -127,6 +127,7 @@ role Reviewer {
       - "Covers ALL spec sections"
       - "Technology decisions with rationale"
       - "Phase dependencies explicit"
+      - "Every phase declares a Verify field (spec SP_XXX_05_* criteria + any phase-local acceptance check)"
 
   rules_compliance:
     condition: ".dev_flow/rules/ directory exists"

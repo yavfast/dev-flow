@@ -196,13 +196,15 @@ Implement token-bucket rate limiting for per-agent LLM calls.
 
 ### Phase 1 — RateBucket (`engine/rate_limiter.py`) [TODO]
 **Implements:** [SP_RLM_01](./rate_limiter.sp.md#SP_RLM_01)
+**Verify:** [SP_RLM_05_02](./rate_limiter.sp.md#SP_RLM_05_02) invariants (tokens never exceed capacity)
 
 ### Phase 2 — LLMRouter Integration [TODO]
 **Depends on:** Phase 1
 **Implements:** [SP_RLM_02](./rate_limiter.sp.md#SP_RLM_02)
+**Verify:** [SP_RLM_05_01](./rate_limiter.sp.md#SP_RLM_05_01) (allow under limit, reject when empty) + [SP_RLM_05_03](./rate_limiter.sp.md#SP_RLM_05_03) integration scenario
 ```
 
-**Gate check:** Both spec sections covered. Dependencies stated. Proceed to code.
+**Gate check:** Both spec sections covered. Dependencies stated. Each phase names what to verify. Proceed to code.
 
 ---
 

@@ -98,6 +98,7 @@ Run gate checks before advancing to the next pipeline stage.
 - [ ] Does the plan cover ALL specification sections?
 - [ ] Are technology decisions documented with rationale?
 - [ ] Are phase dependencies explicitly stated?
+- [ ] Does every phase declare what to verify on completion (`Verify:` field → spec `SP_XXX_05_*` criteria + any phase-local acceptance check)?
 
 ## Hallucination-Risk Heuristics
 

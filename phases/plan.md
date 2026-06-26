@@ -12,6 +12,7 @@ Break the specification into actionable phases with concrete technology choices,
 - **Backlog section:** Out-of-scope items go to the backlog at the bottom. Each item names the **trigger** that returns it to scope (event or date) or an owner who decides — an untriggered backlog item is a hidden "later" ([audit](audit.md) flags them).
 - **Declare Required Knowledge:** list the rules/skills this plan's work must apply, plus any skill *use / create / update* as tracked work items. This is the source of truth for the per-burst [Knowledge Activation](../references/application-enforcement.md) — re-surfaced beside each implementation burst, not just loaded once.
 - **No orphaned phases:** Every phase must reference which spec sections it implements.
+- **Per-phase verification checklist:** Every phase carries a `Verify:` field beside `Implements:` — the spec Verification Criteria (`SP_XXX_05_*`) covering the contracts it implements, plus any phase-local acceptance check the spec does not carry. It is the phase's definition-of-done and the ready, reusable checklist that [Test](testing.md) and [Verify](verify.md) consume — so completing a phase yields a clear picture of what to check, not a re-derivation from the whole spec.
 - **Pseudocode, not production code:** Include short sketches to clarify intent, but do not write full implementation.
 
 ## Context Loading
@@ -81,6 +82,7 @@ Rules/skills this plan's work must apply — the source of truth for the per-bur
 
 **Depends on:** none
 **Implements:** [SP_XXX_01](./spec.sp.md#SP_XXX_01)
+**Verify:** [SP_XXX_05_02](./spec.sp.md#SP_XXX_05_02) invariants (`id` immutable) — all SP_XXX_01_01 fields present
 
 What to create:
 | Entity | Module | Purpose |
@@ -94,6 +96,7 @@ Notes:
 
 **Depends on:** Phase 1
 **Implements:** [SP_XXX_02](./spec.sp.md#SP_XXX_02)
+**Verify:** [SP_XXX_05_01](./spec.sp.md#SP_XXX_05_01) (happy path + malformed input) + [SP_XXX_05_04](./spec.sp.md#SP_XXX_05_04) edge cases — plus: rejects malformed input with line number
 
 What to implement:
 - Parse input format
@@ -109,6 +112,7 @@ Pseudocode sketch:
 
 **Depends on:** Phases 1, 2
 **Implements:** [SP_XXX_03](./spec.sp.md#SP_XXX_03)
+**Verify:** [SP_XXX_05_03](./spec.sp.md#SP_XXX_05_03) integration scenario (end-to-end)
 
 ...
 
@@ -181,6 +185,7 @@ When a code change restructures modules, files, or internal organization **witho
 **Type:** refactor (no spec changes)
 **Depends on:** {phases whose file paths will change}
 **Affects phases:** {list of phases that reference moved/renamed files}
+**Verify:** existing tests pass unchanged (contracts unchanged)
 
 Changes:
 | From | To | Reason |

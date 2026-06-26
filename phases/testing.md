@@ -81,7 +81,10 @@ Before running tests, verify:
 ## Testing Workflow
 
 ```
-1. Identify affected functionality from the code changes
+1. Identify affected functionality from the code changes — read the implemented
+   plan phase's `Verify:` field first: it names the spec Verification Criteria
+   (SP_XXX_05_*) and acceptance checks for exactly this phase (the ready checklist;
+   no re-derivation from the whole spec)
 2. Find existing unit and mock tests covering the changed code
 3. Check if new functional test cases (unit/mock) are needed — create them without
    asking (they are safe; see Anti-Patterns)

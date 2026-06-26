@@ -34,6 +34,7 @@
 
 **Depends on:** none
 **Implements:** [SP_XXX_01](./spec.sp.md#SP_XXX_01)
+**Verify:** {spec Verification Criteria SP_XXX_05_* for this phase's contracts, + any phase-local acceptance check}
 
 What to create:
 | Entity | Module | Purpose |
@@ -47,6 +48,7 @@ Notes:
 
 **Depends on:** Phase 1
 **Implements:** [SP_XXX_02](./spec.sp.md#SP_XXX_02)
+**Verify:** {spec Verification Criteria SP_XXX_05_* for this phase's contracts, + any phase-local acceptance check}
 
 What to implement:
 - {task 1}

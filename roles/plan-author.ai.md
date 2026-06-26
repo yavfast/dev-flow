@@ -37,6 +37,7 @@ role PlanAuthor {
     - "MUST include Progress section with checkboxes at the top"
     - "MUST assign status to every phase: [DONE], [IN PROGRESS], [TODO], [BACKLOG]"
     - "MUST reference which specification sections each phase implements"
+    - "MUST give every phase a Verify field — the spec Verification Criteria (SP_XXX_05_*) for its contracts + any phase-local acceptance check (the definition-of-done reused by Test/Verify)"
     - "MUST NOT have orphaned phases — every phase references a spec section"
     - "MUST NOT contain complete implementation code — only pseudocode sketches"
     - "MUST include Backlog section for deferred items"
@@ -50,5 +51,6 @@ role PlanAuthor {
       - "Every contested technology fork is resolved (consensus + rationale) or recorded as an open decision with a resolution trigger"
       - "Phase dependencies explicitly stated"
       - "No orphaned spec sections without a phase"
+      - "Every phase declares a Verify field (spec SP_XXX_05_* criteria + any phase-local acceptance check)"
 }
 ```

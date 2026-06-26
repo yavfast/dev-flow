@@ -28,6 +28,7 @@ Before writing code, verify:
 - [ ] The plan covers ALL specification sections
 - [ ] Technology decisions are documented with rationale
 - [ ] Phase dependencies are explicitly stated
+- [ ] The phase you're implementing declares a `Verify:` field (what to check on completion)
 - [ ] The specification passes its self-validation checklist
 
 **Skill check (gate).** Identify the technologies/patterns this task uses. MUST read `.dev_flow/skills/_index.yaml` and load matching skills BEFORE writing code or doing research. If research is still needed, save consolidated results to `.dev_flow/skills/` after the task. See [skill phase](skill.md).
@@ -49,9 +50,10 @@ Before writing code, verify:
 ## Implementation Workflow
 
 ```
-1. Read the plan phase you're implementing
+1. Read the plan phase you're implementing — incl. its `Verify:` field (the
+   definition-of-done: what Test/Verify will check on completion)
 2. Read the referenced specification sections
-3. Write code that satisfies ALL spec contracts
+3. Write code that satisfies ALL spec contracts and the phase's `Verify:` checklist
 4. Add traceable ID comments linking back to concept/spec
 5. Add/update tests covering spec's error cases and invariants — see [Test phase](testing.md)
 6. Run functional tests (unit → mock) covering the changed code

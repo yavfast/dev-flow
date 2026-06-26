@@ -97,7 +97,10 @@ When in doubt, treat the operation as destructive.
 ## Verification Workflow
 
 ```
-1. Determine which verification levels are needed based on the changes
+1. Determine which verification levels are needed based on the changes — start from
+   the implemented plan phase's `Verify:` field: it names the spec Verification
+   Criteria (SP_XXX_05_*) and acceptance checks for this phase, and is the reusable
+   basis for live scenarios and the manual checklist below
 2. Ask user permission before creating new integration/live test scenarios
 3. Run verification level by level (regression → integration → live)
 4. If any verification fails:

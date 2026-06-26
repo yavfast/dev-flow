@@ -122,6 +122,7 @@ If the directory is absent, the gate is a no-op. Each relevant phase restates th
 - Technology decisions documented with rationale
 - Contested technology forks resolved (consensus + rationale) or recorded as open decisions with a resolution trigger (see [Interview Mode](references/interview-mode.md))
 - Phase dependencies explicitly stated
+- Every phase declares what to verify on completion — a `Verify:` field naming the spec Verification Criteria (`SP_XXX_05_*`) for its contracts plus any phase-local acceptance check (the reusable checklist for [Test](phases/testing.md)/[Verify](phases/verify.md))
 
 **Code -> Test** (conditional — functional tests):
 - All spec contracts have corresponding test cases
