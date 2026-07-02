@@ -6,6 +6,7 @@ Break the specification into actionable phases with concrete technology choices,
 
 ## Key Rules
 
+- **Goal restates the intent:** The plan's Goal section restates the task's recorded intent (goal / target state / expected result — see [Task Intent](../references/task-intent.md)) for this plan's scope, so phases are checked against *why* the work exists, not only against the spec.
 - **Concrete technology choices:** This is the only document where you specify languages, frameworks, libraries, file paths, and module names.
 - **Always track progress:** Every phase must have a status: `[DONE]`, `[IN PROGRESS]`, `[TODO]`, or `[BACKLOG]`.
 - **Top-level progress summary:** The plan must have a checkbox summary showing overall progress at a glance.

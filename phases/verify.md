@@ -100,7 +100,9 @@ When in doubt, treat the operation as destructive.
 1. Determine which verification levels are needed based on the changes — start from
    the implemented plan phase's `Verify:` field: it names the spec Verification
    Criteria (SP_XXX_05_*) and acceptance checks for this phase, and is the reusable
-   basis for live scenarios and the manual checklist below
+   basis for live scenarios and the manual checklist below. Beside those criteria,
+   re-read the task file's `## Intent`: the bar is "the recorded expected result is
+   observable", not merely "tests pass" ([Task Intent](../references/task-intent.md))
 2. Ask user permission before creating new integration/live test scenarios
 3. Run verification level by level (regression → integration → live)
 4. If any verification fails:
@@ -187,6 +189,7 @@ After running verification, report:
 | Integration tests | Total count / passed / failed |
 | Live tests | Scenario descriptions + pass/fail |
 | Manual verification | Steps provided to user (if applicable) |
+| Intent verdict | Outcome vs the task's recorded expected result: `met / partially met / diverged (+why)` ([Task Intent](../references/task-intent.md)) |
 | Fix cycles | Number of fix → test → review → verify iterations |
 
 ## Gate Check (Verify -> Commit)

@@ -33,7 +33,7 @@ If you'll delegate the diagnosis loop or verification (see the **Delegation** no
 
 ### Step 1: Analyze
 
-1. **Understand the symptom** — parse the problem description.
+1. **Understand the symptom** — parse the problem description. Capture the [Task Intent](../references/task-intent.md) alongside it: the **expected behavior** the user actually wants (the fix's expected result), not just the symptom to silence — record it in the task file's `## Intent`. A fix that removes the symptom but not the user's problem is not done.
 2. **Locate the code** — use ai-search, grep, or read relevant files to find the area of the codebase where the problem likely originates.
 3. **Confirm the cause from the evidence** — `fix` is normally invoked with evidence already in hand (a description, screenshot, stack trace, error message). Trace the execution path and check whether that evidence **corroborates** a specific located cause (does the stack / screenshot line up with the code site?). The goal here is confirmation from what you already have — not reproduction.
 4. **Identify root cause** — distinguish root cause from symptoms. If the root cause is unclear, list hypotheses ranked by probability. If two or more hypotheses are *materially different* — they lead to different fixes — and the developer likely holds the deciding context, surface them as marked options instead of betting on the top-ranked one (see [Interview Mode in Fix](#interview-mode-in-fix)).
@@ -73,6 +73,7 @@ Verify runs on **every** fix — including the fast path that skipped Diagnosis.
    - Root cause (one sentence)
    - What was changed (files and methods)
    - Verification result (build/test status)
+   - Intent verdict — outcome vs the recorded expected behavior: `met / partially met / diverged (+why)` ([Task Intent](../references/task-intent.md))
    - Any remaining concerns or follow-up items
 
 ### Step 5: Check documentation impact

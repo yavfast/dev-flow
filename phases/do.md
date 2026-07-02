@@ -56,6 +56,8 @@ This command is handled by **DevFlowOrchestrator**: [roles/dev-flow-orchestrator
 
 ### Step 2: Interpret the request
 
+**Capture the intent first.** Before classifying, extract the [Task Intent](../references/task-intent.md) — the goal (why), target state, and expected result — from the request wording, active context, and any linked ticket. Distinguish the *requested action* from the *underlying goal*; mark inferred parts `(inferred)`. Record it in the task file's `## Intent` section (in Step 6 for a new task). Skip the record for trivial routes with self-evident intent.
+
 Analyze the freeform request against the loaded context to determine:
 
 | Intent type | Indicators | Routed to |
@@ -98,6 +100,7 @@ When unsure between two classes, take the heavier one — under-classifying is h
 Only ask questions that are genuinely blocking routing or execution. Use prior context to fill obvious gaps silently.
 
 **Question patterns:**
+- Goal: "What should this achieve / what problem does it solve?" — only when a material routing or design choice depends on an intent you cannot infer ([Task Intent](../references/task-intent.md))
 - Scope: "Does this change an existing feature or is it new?"
 - Document: "Do you have an existing concept/spec for this? (e.g., `auth.concept.md`)"
 - Breaking change: "Is this a breaking change to an existing API/contract?"
@@ -158,6 +161,8 @@ If updates are needed:
 
 ### Step 6: Update context
 
+For a **new task**, fill the task file's `## Intent` section with what Step 2 captured (goal / target state / expected result) — it is the reference every later check compares against ([Task Intent](../references/task-intent.md)). If the user restates the goal mid-task, update the section and re-check open work against it.
+
 After every phase step, in `.dev_flow/tasks/task_<ID>.md`:
 - In **your own Subtask block** (the one whose `Author` is your session): check off completed steps in Progress, set the next step, append a one-line entry to that block's Activity bullet list.
 - In the **task header**: refresh `Last updated` (targeted Edit on that field).
@@ -174,13 +179,14 @@ Never rewrite another contributor's Subtask block or their tagged entries in sha
 ### Step 7: Session wrap-up
 
 If the user ends the session (or after completing a full phase chain):
-1. In **your own Subtask block** — set `Status` (`review-pending` / `done` / `blocked`), append a wrap-up entry to its Activity list. Optionally add a Coordination Note about hand-off (`[your-id] — stepping away, anyone may pick up from <here>`).
-2. In the task **header** — refresh `Last updated`. If all Subtasks across all contributors are `done`, set the task-level `Status: done`.
-3. Targeted Edit on the dashboard and catalog:
+1. **Intent verdict (on completion).** When reporting the task done or requesting commit approval, compare the outcome to the task's `## Intent` (Expected result) and state `intent: met / partially met / diverged (+why)` in the report — a divergence is surfaced, never silently absorbed. Skip for a mid-task hand-off. See [Task Intent](../references/task-intent.md).
+2. In **your own Subtask block** — set `Status` (`review-pending` / `done` / `blocked`), append a wrap-up entry to its Activity list. Optionally add a Coordination Note about hand-off (`[your-id] — stepping away, anyone may pick up from <here>`).
+3. In the task **header** — refresh `Last updated`. If all Subtasks across all contributors are `done`, set the task-level `Status: done`.
+4. Targeted Edit on the dashboard and catalog:
    - If task-level `Status: done` → move your task's row from "Active Tasks" to "Recently Completed".
    - Otherwise → update Status / Updated columns in place.
-4. **Surface queued follow-ups.** If the task became `done`, scan `.dev_flow/todos/` and plan backlogs for `queued` records triggered `after task_<this ID>` (fixes deferred *because their context overlapped this task*). List each and offer to run it next via `/dev-flow do …` — a suggestion, not an auto-run; the executed work passes its own gates and commit approval. See [todo phase](todo.md).
-5. Run hygiene checks (Shared Activity Log cap, per-subtask Activity cap, file size) and archive overflow to `.dev_flow/session_history/` if triggered — see [status phase](status.md).
+5. **Surface queued follow-ups.** If the task became `done`, scan `.dev_flow/todos/` and plan backlogs for `queued` records triggered `after task_<this ID>` (fixes deferred *because their context overlapped this task*). List each and offer to run it next via `/dev-flow do …` — a suggestion, not an auto-run; the executed work passes its own gates and commit approval. See [todo phase](todo.md).
+6. Run hygiene checks (Shared Activity Log cap, per-subtask Activity cap, file size) and archive overflow to `.dev_flow/session_history/` if triggered — see [status phase](status.md).
 
 ## Routing Decision Tree
 

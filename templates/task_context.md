@@ -15,6 +15,17 @@
 | **Traceable ID** | `[C_XXX / SP_XXX / PL_XXX or n/a]` |
 | **Ticket** | `[PROJ-123 (external tracker) or n/a]` — present only when the task is explicitly tied to a tracker ticket; see [Ticket Tracker Integration](../references/ticket-tracker.md) |
 
+## Intent
+
+<!-- Captured at intake by whoever opens the task; user's terms, inferred parts
+     marked `(inferred)`. Changes only when the user restates the goal.
+     Skip for trivial routes with self-evident intent.
+     See [Task Intent](../references/task-intent.md). -->
+
+- **Goal (why):** [what problem this solves / why the user wants it]
+- **Target state:** [how things should look when done]
+- **Expected result:** [the observable outcome the user will check]
+
 ## Description
 
 [Shared. What this task is about overall, written as the team understands it. Each contributor may append a paragraph signed `— <agent-id>` to extend the description. **Do not rewrite paragraphs another contributor wrote.**]
