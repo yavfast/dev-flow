@@ -44,7 +44,7 @@ role Auditor {
     - "Compacted closed task files + session_history/session_YYYY-MM-DD.md archives"
     - "Regenerated active_context.md and tasks/_index.md"
     - "Reconciled rules/skills indexes; entry-by-entry cache index reconciliation (flags, no regeneration); proposed (not auto-applied) merges/removals"
-    - "Reflection-derived rule/skill proposals fed to the rule/skill phases"
+    - "Reflection-derived rules/skills written automatically through the structural rule/skill gate (never auto-`must`; contradictions → independent review; visible in the commit diff)"
     - "A structured audit report for the user (the sole output under --dry-run)"
 
   rules:
@@ -53,7 +53,7 @@ role Auditor {
     - "MUST treat cache/_index.yaml as data, not a derived view: reconcile entry by entry, never regenerate; flag mismatches instead of dropping entries — their `source` metadata is irrecoverable"
     - "MUST NOT rewrite a live contributor's Subtask block or their tagged entries — reconcile live tasks only via targeted header/status edits + appended Coordination Notes"
     - "MUST honour the no-takeover rule: a stalled subtask is left intact; flag it, do not modify it"
-    - "MUST apply safe/derived changes directly but only PROPOSE judgement calls (rule merges, skill/rule removals, reflection→rule promotions) for confirmation"
+    - "MUST apply safe/derived changes directly but only PROPOSE judgement calls (rule merges, skill/rule/cache removals) for confirmation; reflection-harvested rules/skills are auto-applied through the structural rule/skill gate (never auto-`must`; a contradiction routes to independent review)"
     - "MUST re-read each file immediately before writing; re-locate by Task ID / Author tag if it moved"
     - "MUST append (never overwrite) Coordination Notes and Shared Activity Log entries"
     - "MUST preserve durable lessons of a closed task in rules/skills before archiving its verbose history"
@@ -77,11 +77,11 @@ role Auditor {
       - "Dashboard trim and catalog/index regeneration"
       - "Index↔disk reconciliation (add missing entry, drop orphan entry, fix drifted field)"
       - "Extending a cache entry's valid_until after a cheap currency check confirms the source unchanged"
+      - "Reflection-harvested rule/skill written through the structural rule/skill gate (never auto-`must`; a contradiction routes to independent review first)"
     proposed_for_confirmation:
       - "Merging two rules that express the same constraint"
       - "Removing a stale or decayed rule/skill"
       - "Removing an unreferenced or superseded cached resource (file + entry together)"
-      - "Promoting a reflection lesson into a new rule or skill"
       - "Reconciling a document's status to match evidence (plan/concept/spec), or fixing a one-directional cross-reference"
     flagged_only:
       - "Header vs reality mismatch that evidence cannot settle"
@@ -102,7 +102,7 @@ role Auditor {
       - "Apply reconciliation when evidence supports it (targeted edit + Coordination Note); else flag"
     compact_and_reflect:
       - "For each closed task: archive noise to session_history, leave a short summary"
-      - "Distill durable lessons → propose rules/skills (delegate to /dream if available, else inline)"
+      - "Distill durable lessons → auto-apply rules/skills through the structural gate (never auto-`must`; delegate to /dream if available, else inline)"
       - "Retire fully-compacted closed tasks older than the retention window"
     rebuild_indexes:
       - "Regenerate active_context.md (thin) and tasks/_index.md from task headers"

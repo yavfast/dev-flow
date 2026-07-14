@@ -69,7 +69,7 @@ These shape every step below — read them first, they are the difference betwee
 2. **Non-destructive by default.** History is moved, never deleted. Overflow logs, completed subtask blocks, and closed task files go to `.dev_flow/session_history/`, not to `/dev/null`. Indexes are regenerable, so they may be rewritten freely — with one exception: **`cache/_index.yaml` is data, not a derived view** (its `source` metadata exists nowhere else), so it is only ever reconciled entry by entry, never regenerated (see [Resource Cache](../references/cache.md)). Task files and history are not regenerable either — they are only ever appended to or relocated intact.
 3. **Source-of-truth order.** Task files win over the dashboard and catalog (those are derived). For task *reality*, `docs/` document status and git win over the task header. For rules/skills, the files on disk win over their `_index.yaml`. For the cache, disk decides *existence* (a missing file orphans its entry) but the index owns *metadata* (`source`/`summary` cannot be rebuilt from disk) — flag mismatches, never drop or regenerate entries wholesale (Step 7d).
 4. **Safe under contention.** Audit may run while other contributors hold open subtasks. It may fully rewrite *derived* indexes and *closed* task files, but it must never rewrite a live contributor's Subtask block or their tagged entries in shared sections — those are reconciled only with targeted edits, and only the header/status fields. Re-read immediately before each write.
-5. **Apply the safe, propose the judgement.** Derived/reversible changes (index regen, dashboard trim, archival of done work, header reconciliation backed by git) are applied directly and reported. Judgement calls (merging two rules, deleting a skill, promoting a reflection into a new rule) are **proposed for confirmation**, never auto-applied. This mirrors the rule/skill phases, where removal requires explicit intent.
+5. **Apply the safe, propose the judgement.** Derived/reversible changes (index regen, dashboard trim, archival of done work, header reconciliation backed by git) are applied directly and reported. Judgement calls (merging two rules, deleting a skill, removing a cached resource) are **proposed for confirmation** — this mirrors the rule/skill phases, where removal requires explicit intent. Reflection-harvested lessons follow their own gate instead: written **automatically** through the structural [rule](rule.md)/[skill](skill.md) gate (never an auto-`must`; a contradiction routes to independent review), visible in the commit diff — see Step 3.
 
 ## Procedure
 
@@ -252,7 +252,8 @@ Use this template so the result is scannable:
    • rules/_index.yaml: +<a> entries, −<b> orphans, fixed <c> summaries
    • skills indexes: +<a>/−<b>
    • cache: extended valid_until on <n> entries (cheap check confirmed unchanged)
-   • docs/_glossary.md: merged <a> duplicate terms, resolved <b> stale ambiguities
+   • docs/_glossary.md: resolved <b> stale ambiguities (flags dropped)
+   • docs: auto-fixed <n> mechanical statuses (plan all-[DONE] → completed)
    • docs/_index.md: rebuilt (+<a>/−<b> entries, fixed <c> status columns)
 
 🔁 Reflection harvested (auto-applied; ⚑ = sent to independent review)
@@ -261,12 +262,13 @@ Use this template so the result is scannable:
 
 🟡 Proposed (need your confirmation)
    • Merge rule <A> into <B> (same constraint: <reason>)
+   • Merge glossary term <A> into <B> (same concept; fold into _Avoid_)
    • Remove stale skill <domain/Name> (references deleted <X>)
    • Remove cached <domain/file> (unreferenced since <date> / superseded by <newer>)
    • Close <DocID>_DEC_NN — trigger expired (<trigger>); route: research / interview
    • Backlog item "<item>" in <plan> has no return trigger; convert to DEC / schedule / drop
    • Re-grade <task>: pin ratio implausibly high (<n> pins) — propose demoting the stale ones
-   • Reconcile <doc> status <X> → <Y> (evidence: plan phases all done / active dependents)
+   • Reconcile <doc> status <X> → <Y> (judgement: long-draft with active dependents / deprecated still referenced)
    • Fix one-directional ref <A> → <B> (B missing <A> under Used by)
 
 ⚠️ Flagged (evidence insufficient — left unchanged)
