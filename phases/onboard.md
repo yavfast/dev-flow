@@ -169,12 +169,13 @@ For each analyzed module, starting from Layer 0:
 
 **Important:** When generating docs for Layer N modules, reference concepts and specs from Layer 0..N-1 that were generated in previous iterations. This ensures cross-references (`Depends on`, `Used by`) are accurate.
 
-### Step 7: Generate index and epics
+### Step 7: Generate index, framework map, and epics
 
 1. If the project has more than 5 documented modules, create `docs/_index.md`.
-2. If 3+ closely related concepts form a logical feature group, create an epic.
-3. Update all `Used by` reverse references across all generated documents.
-4. Update `state.yaml`: `step: index_generated`.
+2. Generate `docs/_framework.md` — the architectural map (core abstractions · layers · extension points · shared utilities · conventions) distilled from the layer analysis: overview + links down to `.dev_flow/rules/` and `.dev_flow/skills/`, no enforceable detail inlined (see [SKILL.md → File Organization](../SKILL.md#file-organization)).
+3. If 3+ closely related concepts form a logical feature group, create an epic.
+4. Update all `Used by` reverse references across all generated documents.
+5. Update `state.yaml`: `step: index_generated`.
 
 ### Step 8: Validation and report
 

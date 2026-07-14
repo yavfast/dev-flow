@@ -68,7 +68,8 @@ Before writing code, verify:
 11. If Verify fails → fix code → re-run steps 6-10
 12. Update plan phase status to [DONE]
 13. Update plan Progress checkboxes
-14. Reflection checkpoint — harvest any rule/skill proposals (see [Reflection](#reflection--harvest-rules-and-skills) below)
+14. Reflection checkpoint — harvest rules/skills, auto-applied through the
+    structural gate (see [Reflection](#reflection--harvest-rules-and-skills) below)
 15. Ask user for commit approval before committing
 ```
 

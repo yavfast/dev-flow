@@ -30,6 +30,7 @@ role OnboardCoordinator {
     - .dev_flow/onboard/report.md
     - .dev_flow/rules/ (project coding rules extracted from codebase)
     - docs/_glossary.md (canonical domain vocabulary extracted in Step 5b)
+    - docs/_framework.md (architectural map generated in Step 7)
     - Dispatched subagent tasks for analysis, rules extraction, and doc generation
 
   skills:
@@ -54,7 +55,7 @@ role OnboardCoordinator {
                - Dispatch OnboardDocGen subagents for all analyzed modules in the layer (parallel)
                - Wait for all doc-gen to complete
                - Update state.yaml, proceed to next layer"
-    step_7: "Generate index and epics"
+    step_7: "Generate index, docs/_framework.md (architectural map: overview + links, no enforceable detail), and epics"
     step_8: "Dispatch a validation reviewer — roles/reviewer.ai.md scoped to the generated docs (gate criteria, cross-references, rules compliance)"
     step_9: "Generate report.md, set status: completed"
 

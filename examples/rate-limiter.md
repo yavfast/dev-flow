@@ -66,6 +66,8 @@ Exceeding the limit causes the call to be delayed, not rejected.
 > **Updated:** 2026-03-24
 >
 > **Concept:** [C_RLM](./rate_limiter.concept.md)
+> **Depends on:** —
+> **Used by:** —
 > **Plan:** [rate_limiter.plan.md](./rate_limiter.plan.md)
 
 ## 01. Data Structures  {#SP_RLM_01}
@@ -212,12 +214,12 @@ Implement token-bucket rate limiting for per-agent LLM calls.
 
 ### Phase 1 — RateBucket (`engine/rate_limiter.py`) [TODO]
 **Depends on:** none
-**Implements:** [SP_RLM_01](./rate_limiter.sp.md#SP_RLM_01)
+**Implements:** [SP_RLM_01](./rate_limiter.sp.md#SP_RLM_01) + [SP_RLM_03](./rate_limiter.sp.md#SP_RLM_03) (validation lives with the model)
 **Verify:** [SP_RLM_05_02](./rate_limiter.sp.md#SP_RLM_05_02) invariants (tokens never exceed capacity)
 
 ### Phase 2 — LLMRouter Integration [TODO]
 **Depends on:** Phase 1
-**Implements:** [SP_RLM_02](./rate_limiter.sp.md#SP_RLM_02)
+**Implements:** [SP_RLM_02](./rate_limiter.sp.md#SP_RLM_02) + [SP_RLM_04](./rate_limiter.sp.md#SP_RLM_04) (transitions realized by acquire/refill)
 **Verify:** [SP_RLM_05_01](./rate_limiter.sp.md#SP_RLM_05_01) (allow under limit, reject when empty) + [SP_RLM_05_03](./rate_limiter.sp.md#SP_RLM_05_03) integration scenario
 
 ## Changelog
@@ -227,13 +229,13 @@ Implement token-bucket rate limiting for per-agent LLM calls.
 | 2026-03-24 | Initial version |
 ```
 
-**Gate check:** Both implementable spec sections covered. Technology decisions with rationale; no contested forks. Dependencies stated. Each phase names what to verify. `Status` → `in-progress` as coding starts. Proceed to code.
+**Gate check:** All spec sections covered (§01+§03 → Phase 1, §02+§04 → Phase 2; §05 is the `Verify:` source, §06 has no code surface). Technology decisions with rationale; no contested forks. Dependencies stated. Each phase names what to verify. `Status` → `in-progress` as coding starts. Proceed to code.
 
 ---
 
 ## Step 4 — Code
 
-Implement `engine/rate_limiter.py` following the plan (Phase 1 `[TODO]` → `[IN PROGRESS]`). Add `# [C_RLM_02_01]` comments to link code back to concept sections. Follow SOLID principles (see [solid-architecture reference](../references/solid-architecture.md)) unless project rules define alternatives.
+Implement `engine/rate_limiter.py` following the plan, phase by phase (each phase `[TODO]` → `[IN PROGRESS]` when started). Add `# [C_RLM_02_01]` comments to link code back to concept sections. Follow SOLID principles (see [solid-architecture reference](../references/solid-architecture.md)) unless project rules define alternatives.
 
 ```python
 # engine/rate_limiter.py
@@ -281,7 +283,7 @@ class RateLimiter:
         return wait
 ```
 
-Update plan after the phase's Verify checklist passes (Steps 5-7): Phase 1 `[IN PROGRESS]` → `[DONE]`, tick its Progress checkbox.
+Update plan after each phase's Verify checklist passes (Steps 5-7): Phase 1 and Phase 2 `[IN PROGRESS]` → `[DONE]`, tick their Progress checkboxes.
 
 ---
 

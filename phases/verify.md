@@ -113,7 +113,7 @@ When in doubt, treat the operation as destructive.
    c. Re-run functional tests (Test phase) on the fix
    d. Re-run code review (Review phase) on the fix
    e. Re-run the failed verification level and all subsequent levels
-5. All verification passes → reflect (harvest rule/skill proposals, see Reflection below) → proceed to commit approval
+5. All verification passes → reflect (harvest rules/skills, auto-applied through the structural gate — see Reflection below) → proceed to commit approval
 ```
 
 ### Fix Cycle
