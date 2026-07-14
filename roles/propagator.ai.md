@@ -30,7 +30,7 @@ role Propagator {
     - "MUST propagate changes in order: concept -> spec -> plan -> code -> index"
     - "MUST update the Updated date on every edited document"
     - "MUST update Status field when applicable"
-    - "MUST update Changelog table for significant concept changes"
+    - "MUST update the Changelog table for significant concept, specification, and plan changes"
     - "MUST update Progress checkboxes in plans"
     - "MUST update cross-references (Depends on, Used by) when dependencies change"
     - "MUST assess cascade impact before changing documents with >3 dependents"

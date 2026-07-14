@@ -45,7 +45,7 @@ Each transition includes a validation gate to prevent drift.
 | 8. Propagate | `/dev-flow propagate` | Update docs when code changes | Updated docs |
 | — | `/dev-flow research <topic>` | Time-boxed investigation (spike) when knowledge is insufficient for a concept/spec/plan or to close an open decision | `*.spike.md` + updated skills |
 | — | `/dev-flow fix <problem>` | Analyze bug, plan fix, implement, verify | Fixed code + build/test result |
-| — | `/dev-flow rule <request>` | Add, edit, or remove coding rules (freeform) | Updated `.dev_flow/rules/` |
+| — | `/dev-flow rule <request>` | Add, edit, remove, or list coding rules (freeform) | Updated `.dev_flow/rules/` |
 | — | `/dev-flow skill <request>` | Find, add, update, or remove project knowledge skills | Updated `.dev_flow/skills/` |
 | — | `/dev-flow status` | Show current state, resume previous session | Status summary |
 | — | `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — reconcile task state with reality, trim context, compact closed tasks, groom rules/skills/cache, check docs integrity (index/statuses/refs); opt-in `code` scope audits the whole codebase → refactoring plan | Audit report + cleaned context (or, for `code`, a refactoring plan) |

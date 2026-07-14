@@ -59,8 +59,8 @@ role Tester {
       when: "Integration points or configurations change"
 
   phase_scope:
-    test_phase: "Run ONLY levels 1-2 (unit + functional_mock). Integration and live tests are NOT in scope."
-    verify_phase: "Run ONLY levels 3-4 (integration + live). Unit and mock tests are NOT in scope."
+    test_phase: "Run ONLY levels 1-2 (unit + functional_mock), scoped to the changed code. Integration and live tests are NOT in scope."
+    verify_phase: "Run regression — re-run levels 1-2 at full-suite or broader-than-changed breadth to catch regressions (no new unit/mock authoring here; that is Test-phase scope) — plus levels 3-4 (integration + live)."
 
   workflow:
     step_1: "Identify affected functionality from code changes (read git diff)"

@@ -29,6 +29,7 @@ role OnboardCoordinator {
     - .dev_flow/onboard/issues.md
     - .dev_flow/onboard/report.md
     - .dev_flow/rules/ (project coding rules extracted from codebase)
+    - docs/_glossary.md (canonical domain vocabulary extracted in Step 5b)
     - Dispatched subagent tasks for analysis, rules extraction, and doc generation
 
   skills:
@@ -48,12 +49,13 @@ role OnboardCoordinator {
                - Update state.yaml, proceed to next layer"
     step_5: "After all modules analyzed — dispatch OnboardRulesExtractor to extract coding rules into .dev_flow/rules/"
     step_5a: "Initialize skills knowledge base in .dev_flow/skills/ — identify technology domains from layers and analyses, create _index.yaml hierarchy, populate initial skills for non-trivial patterns"
+    step_5b: "Extract the project glossary into docs/_glossary.md (canonical domain terms + _Avoid_ aliases + flagged ambiguities) — runs after Step 4 so vocabulary covers all analyzed modules (see phases/onboard.md Step 5b)"
     step_6: "For each layer (0, 1, 2, ...):
                - Dispatch OnboardDocGen subagents for all analyzed modules in the layer (parallel)
                - Wait for all doc-gen to complete
                - Update state.yaml, proceed to next layer"
     step_7: "Generate index and epics"
-    step_8: "Dispatch OnboardReviewer for validation (including rules compliance)"
+    step_8: "Dispatch a validation reviewer — roles/reviewer.ai.md scoped to the generated docs (gate criteria, cross-references, rules compliance)"
     step_9: "Generate report.md, set status: completed"
 
   state_management:

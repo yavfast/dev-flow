@@ -140,7 +140,7 @@ Runs **after** Step 4 (all modules analyzed) so the vocabulary is drawn from the
 
 For each analyzed module, starting from Layer 0:
 
-**Note:** When generating docs, reference applicable rules from `.dev_flow/rules/` in the specification's Constraints section and in the plan's Technology Decisions.
+**Note:** When generating docs, reference applicable rules from `.dev_flow/rules/` in the specification (field `Constraints` columns / §03 Validation Rules) and in the plan's Technology Decisions.
 
 1. **Generate concept** (`docs/{module_name}.concept.md`):
    - Derive philosophy from code purpose and patterns.
@@ -233,7 +233,7 @@ Recommended subagent allocation:
 status: initialized | in_progress | completed
 started: 2026-03-24
 updated: 2026-03-24
-current_step: structure_mapped | layers_built | analyzing | rules_extracted | skills_initialized | glossary_extracted | generating_docs | index_generated | validating | completed
+step: structure_mapped | layers_built | analyzing | rules_extracted | skills_initialized | glossary_extracted | generating_docs | index_generated | validating | completed
 total_modules: 0
 modules_analyzed: 0
 modules_documented: 0

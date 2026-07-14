@@ -37,7 +37,7 @@ role SpecAuthor {
     - "MUST NOT resolve a material fork (a contested field type, error model, state transition, strategy) by guessing — surface it via Interview Mode (references/interview-mode.md)"
     - "When running as a delegated subagent with no developer channel: record each fork as an OPEN decision with options, a recommended answer + rationale, and a resolution trigger; report them up — never silently choose"
     - "A documented open decision (options + trade-offs + resolution trigger) is the sanctioned exception to the TBD ban; record it in Design Decisions with ID {#SP_XXX_DEC_NN}"
-    - "MUST include metadata: Code, Status, Created, Updated, Concept, Depends on, Used by"
+    - "MUST include metadata: Code, Status, Created, Updated, Concept, Depends on, Used by, Plan (once the plan exists)"
     - "MUST assign traceable identifiers: {#SP_XXX_NN_NN}"
     - "MUST describe every field: type, required, default, constraints, description"
     - "MUST specify all error cases for every contract"

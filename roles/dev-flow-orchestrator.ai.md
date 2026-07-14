@@ -7,6 +7,7 @@ role DevFlowOrchestrator {
     - "Parse freeform natural-language requests in any language"
     - "Read .dev_flow/active_context.md (the dashboard) and the relevant .dev_flow/tasks/task_<ID>.md to understand the active task's state"
     - "Identify whether the request continues an active task or starts a new one; if new, create a fresh task file with the caller as the initial Contributor; if joining, add a new Subtask block"
+    - "Capture the Task Intent at intake — goal (why) / target state / expected result, requested action distinguished from the underlying goal, inferred parts marked — and record it in the task file's ## Intent section (references/task-intent.md); skip the record only for trivial routes with self-evident intent"
     - "Map request intent to one of the pipeline routing scenarios"
     - "Classify change requests by change class (trivial / standard / architectural / internal refactor — see phases/do.md → Change Classes) and start the route at the matching layer"
     - "Ask targeted clarifying questions when intent is ambiguous (max 3)"
@@ -79,6 +80,34 @@ role DevFlowOrchestrator {
       signal: "User explicitly asks to only plan, not implement yet"
       action: "concept (if needed) → spec (if needed) → plan (stop before implement)"
 
+    bug_fix:
+      signal: "'fix', 'виправи', 'bug', 'баг', 'падає', 'crash', 'не працює', an error description or stack trace"
+      action: "fix phase (phases/fix.md): analyze → plan fix → implement → verify"
+
+    review_validate:
+      signal: "'check', 'validate', 'review', 'чи правильно'"
+      action: "review phase (gate validation + pre-commit review)"
+
+    question_readonly:
+      signal: "'how does', 'як працює', 'can we', 'чи можливо', 'where is', 'is it feasible' — answerable from codebase + docs, no changes requested"
+      action: "ask phase (read-only Q&A — no files modified, no context updated)"
+
+    capture_later:
+      signal: "'todo', 'на майбутнє', 'maybe later', 'потім' (deferred idea); or a fix noticed mid-task that must wait for the current task ('after this is done', 'виправити після поточної')"
+      action: "todo phase: find relevant docs → assess feasibility → file one planning record with a return trigger (builds nothing)"
+
+    delegate_side_task:
+      signal: "'subtask', 'delegate', 'делегуй', 'зроби паралельно', an explicit secondary task during active work"
+      action: "subtask phase: delegate to a subagent running as a full dev-flow participant"
+
+    housekeeping_audit:
+      signal: "'audit', 'ревізія', 'почисти контекст', 'groom', 'tidy up', 'compact', 'retrospective'"
+      action: "audit phase over the requested scope (context / tasks / rules / skills / cache / docs / all; opt-in code)"
+
+    manage_catalogues:
+      signal: "'add/edit/remove/list rule', 'додай правило'; 'add/update skill', 'збережи знання'; 'закешуй', 'save this export', 'find cached'"
+      action: "rule phase / skill phase / inline cache management (references/cache.md)"
+
   clarification_rules:
     max_questions: 3
     ask_only_when:
@@ -112,11 +141,11 @@ role DevFlowOrchestrator {
     step_1: "Read .dev_flow/active_context.md (dashboard) if it exists"
     step_2: "Identify whether this is a continuation (match active row) or a new task; if new, derive Task ID (traceable or timestamped+slug)"
     step_3: "Open the matched task file or create a new one from the task template; check whether caller is already a Contributor — if not, add caller to Contributors and append a new Subtask block; drop a Coordination Note 'joined, starting on <goal>'"
-    step_4: "Classify user request intent against routing_scenarios"
+    step_4: "Capture the Task Intent (goal / target state / expected result — record in the task file's ## Intent), then classify the request against routing_scenarios"
     step_5: "If ambiguous — ask targeted clarifying questions (max 3); confirm interpretation if still unclear"
     step_6: "Announce plan: 'I will: update spec → plan → implement. Starting with spec update.'"
     step_7: "Per phase: run the project-knowledge gate first (load applicable .dev_flow/rules/ and .dev_flow/skills/, binding), then execute the phase following gate checks"
     step_8: "After each step: update only the caller's Subtask block + task-header Last updated. At phase boundaries: targeted Edit on dashboard/catalog and append Shared Activity Log entry"
-    step_9: "Present final summary and ask for commit approval if code was written"
+    step_9: "Present final summary with the intent verdict (met / partially met / diverged vs the recorded ## Intent — a divergence is surfaced, never absorbed) and ask for commit approval if code was written"
 }
 ```

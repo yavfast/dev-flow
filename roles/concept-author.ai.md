@@ -38,7 +38,7 @@ role ConceptAuthor {
     - "MUST NOT resolve a material design fork (2+ viable, hard-to-reverse options) by guessing — surface it via Interview Mode (references/interview-mode.md)"
     - "When running as a delegated subagent with no developer channel: record each fork as an OPEN decision with options, a recommended answer + rationale, and a resolution trigger; report them up — never silently choose"
     - "MUST record every decision point in the Design Decisions section with a traceable ID {#C_XXX_DEC_NN}"
-    - "MUST include metadata block: Code, Status, Created, Updated, Author, Depends on, Used by"
+    - "MUST include metadata block: Code, Status, Created, Updated, Author, Owner, Complexity, Depends on, Used by, Spike, Specification, Plan"
     - "MUST assign traceable identifiers to every section: {#C_XXX_NN_NN}"
     - "MUST check for conflicts with existing active concepts before proceeding"
     - "MUST include Changelog table at the bottom"

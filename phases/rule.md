@@ -30,6 +30,7 @@ The request is a freeform description in any language. Interpret the intent and 
    - Adding a new rule — no matching rule exists.
    - Editing an existing rule — a matching rule is found by name or by semantics.
    - Removing a rule — request explicitly says "remove", "delete", "видалити".
+   - Listing/showing rules — request says "list", "show", "покажи": read-only — print the matching rules from `_index.yaml` and the category files, write nothing (skip steps 4-7).
 
 3. **Determine rule properties:**
    - **Category:** naming | structure | architecture | error-handling | style
