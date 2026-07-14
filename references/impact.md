@@ -4,9 +4,7 @@ Shared sub-procedure for the **Ask**, **Do**, **Propagate**, **Review**, and **T
 
 ## Why this exists
 
-"What does this change touch?" is the most repeated question in the pipeline: ask answers it for feasibility, do for change classes, propagate for cascades, review for conflicts and deprecation. Done by hand, every phase re-derives the answer by reading documents into context — and hand walks reliably miss edges: `Used by` is maintained by hand and drifts, and code bindings (traceable ID comments) are invisible from the documents. The result is the classic failure the skill exists to prevent: a spec changes, and a module bound to it surfaces broken at Verify — or in production.
-
-The Impact Walk makes the answer deterministic and cheap: one bidirectional walk over metadata that already exists — `Depends on` / `Used by`, cross-type fields, `Implements:` references, traceable IDs in code — returning the **radius, not the documents**.
+"What does this change touch?" is the pipeline's most repeated question, and hand-walks reliably miss edges (`Used by` drifts; code bindings are invisible from documents). The walk makes the answer deterministic and cheap: one bidirectional pass over metadata that already exists — `Depends on` / `Used by`, cross-type fields, `Implements:` references, traceable IDs in code — returning the **radius, not the documents**.
 
 ## Input
 

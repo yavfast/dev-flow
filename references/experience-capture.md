@@ -4,14 +4,12 @@ Cross-cutting sub-procedure for every phase. Like [Delegation for Focus](delegat
 
 ## Why this exists
 
-Compaction is where context is lost, and dev-flow archives by **age** — the oldest turns go first, whether or not they still matter. A long session pays for this twice: the raw back-and-forth of solving something is bulky and mostly noise once solved, yet the *lesson* inside it is exactly what you want to survive. Left alone, the summary keeps the noise and drops the signal.
-
-Two design commitments shape the cure, both learned the hard way (and confirmed by prior art — Generative Agents, Reflexion, Voyager, MemGPT, MemoryBank):
+Compaction archives by **age** — the bulky raw turns of a solved problem survive while the lesson inside them is lost. Two design commitments:
 
 - **Store the distillation, not the transcript.** What survives is a short summary plus any durable lesson — never the raw turns, which are referenced by path if kept at all.
 - **Trust structure, not self-assessment.** An agent's numeric self-rating ("importance 8/10", "confidence 90%") is unreliable. So reflection fires on **deterministic structural events** dev-flow already logs, and salience is recorded with the **discrete markers** of [Salience Markers](../phases/status.md#salience-markers) — never a self-scored number.
 
-The north star behind all of it: keep durable task state **complete in L2** (`.dev_flow/`) so the transcript becomes disposable and a fresh session can restart from files deterministically — which beats riding a lossy context-summary (see the [memory tiers](cache.md#memory--data-tiers-l0l1l2)).
+North star: durable task state stays **complete in L2** (`.dev_flow/`) so the transcript is disposable and a fresh session restarts from files deterministically (see the [memory tiers](cache.md#memory--data-tiers-l0l1l2)).
 
 ## The unit: a segment
 

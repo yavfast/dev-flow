@@ -6,11 +6,7 @@ Shared sub-procedure for the **Implement**, **Fix**, and **Verify** phases (and 
 
 ## Why this exists
 
-The main agent is the conductor. It holds the plan, the specification, and the task state, and it makes the calls at the gates. That working focus is the scarce resource — the thing that lets it write code that actually matches the spec and notice when something drifts.
-
-Focus erodes when secondary, noisy work shares the same context: full test output, build logs, screenshots, wide code searches, reproduction traces. None of it is wrong to *produce* — but most of it doesn't need to *stay*. A thousand lines of passing-test output buys one bit of information ("they passed") while pushing the plan and the half-written change out of view. By the time the context is thick with logs, the agent is reconstructing what it was doing instead of doing it.
-
-The cure is to hand that work to a subagent with its own context and keep only the conclusion. The subagent spends its context on the noise; the main agent gets the one bit that mattered and stays on task. This is the same instinct as `handle-uncertainty` and Interview Mode — protect the expensive thing (here, attention) from the cheap thing (here, volume).
+Main-context focus — the plan, the spec, the task state — is the scarce resource, and noisy secondary output (full test logs, builds, screenshots, wide searches, reproduction traces) erodes it: a thousand lines of passing-test output buys one bit of information. Hand that work to a subagent with its own context and keep only the conclusion.
 
 ## Where the line falls
 
@@ -32,7 +28,7 @@ Handing these off hands off the focus itself — there's nothing left to protect
 
 A delegated subagent returns the **conclusion, not the dump**: a verdict plus what's actionable, with the full log written to a file and referenced by path — under the project workspace `/tmp/{project-slug}/` with a timestamped name, per the [Resource Cache](cache.md) workspace discipline. In this focus shape, anything durable among the artifacts is promoted to `.dev_flow/cache/` by the calling agent — the helper only stages. (A task-delegated subagent persists per the phase protocol itself; see the [subtask phase](../phases/subtask.md).)
 
-Skip this and the win evaporates — the noise simply relocates from the tool output into the subagent's report, and the main context is flooded just the same, now with an extra hop. The discipline is the whole point: *the report is the conclusion, not the transcript.*
+*The report is the conclusion, not the transcript* — otherwise the noise simply relocates into the subagent's report and the main context floods just the same, now with an extra hop.
 
 There is a flip side to keeping only the conclusion: you deliberately did **not** read the raw material, so the helper's framing is all you have — and a plausible-but-wrong verdict rides that trust straight into your work. So when a delegated conclusion is **load-bearing** — it will drive a code change, block a fix, or land in a document — spot-check the *specific* claim against primary evidence before acting: open the one file the verdict turns on, re-derive the one number. That is cheap and targeted, not a re-read of the dump — and it is what stands between a wrong conclusion and a real defect, especially across a **nested** hop where the conclusion is now two levels removed from anyone who saw the evidence.
 

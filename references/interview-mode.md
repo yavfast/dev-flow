@@ -4,13 +4,7 @@ Shared sub-procedure for the **Concept**, **Specification**, **Plan**, and **Fix
 
 ## Why this exists
 
-Concept and specification documents get large. When an author silently picks one of several viable approaches and buries that choice three levels deep in a 300-line document, the reviewer almost never catches it — there is too much text, and the choice doesn't *look* like a choice anymore, it looks like a fact. The decision then ossifies into code, and by the time anyone notices, reversing it is expensive.
-
-The author (you, the AI) is **not** the right party to make architectural choices unilaterally. The developer holds the full project context — business constraints, roadmap, team skills, things never written down — and carries responsibility for the outcome. Your job at a fork is not to guess well; it is to make the fork **visible** and bring the person who owns the decision into it, with enough framing that they can decide in seconds rather than reverse-engineering your reasoning later.
-
-So: when authoring surfaces two or more materially different ways forward, **stop and run an interview** instead of choosing silently. Cheap question now versus expensive mistake later.
-
-This complements the `handle-uncertainty` principle: silent guesses are the most expensive class of agent mistake. Interview mode is where that principle gets operationalised for design documents.
+A silently-picked option buried in a large document stops looking like a choice and ossifies into code before anyone catches it. The developer owns the consequences and holds context you don't (roadmap, business constraints, team) — at a material fork your job is to make the fork **visible** with a framed recommendation, not to guess well: a cheap question now beats an expensive reversal later.
 
 ## When to trigger
 

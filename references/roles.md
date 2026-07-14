@@ -4,7 +4,7 @@ Cross-cutting reference for how dev-flow's subagent roles are organized, found, 
 
 ## Why this exists
 
-A role is the reusable description of *who* does a piece of work — its responsibilities, its capabilities, and the contract for what it returns. Writing that once and reusing it keeps behavior consistent (every tester returns its results the same way) and keeps shared protocols — like "return the conclusion, not the dump" — in one place instead of re-stated in every prompt. It mirrors Skill-First Execution: inspect what already exists, reuse it, and persist what you learn so the next run starts ahead.
+A role is the reusable description of *who* does a piece of work — responsibilities, capabilities, and the contract for what it returns. Writing it once keeps behavior and shared protocols ("conclusion, not the dump") consistent instead of re-stated in every prompt, and what a run teaches persists so the next one starts ahead.
 
 ## Two layers
 

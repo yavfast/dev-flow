@@ -235,7 +235,7 @@ Working memory only pays off if you write to it *as you work*; an empty area hel
 
 Then re-read the whole area (re-attention) whenever you've lost the thread — after a compaction, on a subtask switch, or any "where was I?" moment — *before* re-reading docs or task files.
 
-**Why bother:** the transcript (L0) is exactly what a compaction takes from you; working memory is the cheap insurance that survives it. Two lines written now save re-reading several files later, and a parameter set now means you never re-derive "which segment / file / id was I on." Used as a habit this is what keeps a long, multi-topic session sharp instead of drifting; left empty, the whole L1 tier is dead weight.
+Two lines written now save re-reading several files after a compaction; left empty, the whole L1 tier is dead weight.
 
 ## Temporary Workspace (`/tmp`) Discipline
 

@@ -4,12 +4,7 @@ Shared sub-procedure for the **Implement**, **Test**, **Review**, **Verify**, an
 
 ## Why this exists
 
-The pipeline's working rule is "code must satisfy the spec, not the other way around" — and for code bugs that is exactly right. But the rule has a blind spot: sometimes the downstream phase is the first place where reality pushes back on the *document*. A live test shows a spec'd limit is unworkable; implementation reveals two defensible readings of a contract; a plan's technology decision turns out infeasible. Without a sanctioned path, an agent in that position does one of two bad things:
-
-- **bends the code** to a spec it has evidence is wrong (correct per document, broken per reality), or
-- **silently edits the spec** to match the code — exactly the drift the pipeline exists to prevent.
-
-Escalation is the third path: stop, fix the owning document through its own discipline, re-pass its gate, then resume. [Propagate](../phases/propagate.md) flows an *already-made* decision top-down; escalation is the bottom-up route that *creates* that decision mid-pipeline. The two compose: escalate up, then propagate down.
+"Code must satisfy the spec" is right for code bugs — but sometimes a downstream phase is where reality falsifies the *document*, and without a sanctioned path an agent either **bends the code** to a spec it has evidence is wrong or **silently edits the spec** to match the code (the exact drift the pipeline exists to prevent). Escalation is the third path: stop, fix the owning document through its own discipline, re-pass its gate, resume. [Propagate](../phases/propagate.md) flows an *already-made* decision top-down; escalation *creates* that decision bottom-up mid-pipeline — escalate up, then propagate down.
 
 ## When to trigger
 

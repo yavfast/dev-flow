@@ -4,7 +4,7 @@ Cross-cutting sub-procedure for the **decision-making** phases — concept, spec
 
 ## Why this exists
 
-Agents decide locally-correct but future-blind: each step looks right alone, yet the sum drifts — either **myopically** (a need missed now, costly to retrofit later) or to the opposite extreme, **speculatively** (building for an imagined future with no trigger — gold-plating). This is measured, not assumed: a research spike + live A/B verify found consequence-forecasting helps **non-monotonically** — a bare "look ahead" instruction surfaced a genuinely missed need in one task and produced over-engineering in another (1–1, no clean win). The governing variable is **not how far you look but the discipline around it**: scale the look to the phase, and gate every anticipation so it becomes a *seam or a record*, not premature work.
+Locally-correct decisions drift either **myopically** (a need missed now, costly retrofit later) or **speculatively** (building for an imagined future with no trigger). Live A/B verification showed lookahead helps **non-monotonically** — the lever is not how far you look but the discipline around it: scale the look to the phase, and gate every anticipation into a *seam or a record*, never premature work.
 
 ## The discipline: forecast → YAGNI-gate → decide
 

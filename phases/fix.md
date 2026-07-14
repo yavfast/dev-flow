@@ -101,9 +101,7 @@ A fix is the highest-yield **rule auto-discovery** moment: a bug just proved a g
 
 ## Diagnosis (optional)
 
-An optional sub-step of **Step 1**, entered only when the confidence gate fails — you have no confident, evidence-corroborated cause. It imports the discipline of the `diagnose` skill, but **gated**: most fixes arrive with enough evidence to skip it.
-
-**Why optional.** An earlier mandatory pre-diagnosis step was removed because reproduction was sometimes costlier than the fix. So diagnosis is opt-in — skipping it is the default, *entering* it is the justified choice.
+An optional sub-step of **Step 1**, entered only when the confidence gate fails — you have no confident, evidence-corroborated cause. Most fixes arrive with enough evidence to skip it: reproduction is often costlier than the fix, so skipping is the default and *entering* is the justified choice.
 
 **Before diagnosing — get context and a plan.** Do not start reproducing blindly. First gather the context the diagnosis needs and decide *how* you will obtain a pass/fail signal and roughly what it will cost. Then apply the cost gate.
 
@@ -112,7 +110,7 @@ An optional sub-step of **Step 1**, entered only when the confidence gate fails 
 - `B` — **Fix on the best hypothesis** and rely on Step 4 Verify — when reproduction is clearly costlier than the fix and the top hypothesis is well-supported.
 - `C` — **Request an artifact** from the developer — repro steps, a HAR/log/crash dump, a timestamped screen recording, or environment access — rather than reconstructing it. (For a manual/UI repro, a structured human-in-the-loop script keeps the signal usable.)
 
-**The diagnosis loop (path A)** — adapted from `diagnose`:
+**The diagnosis loop (path A):**
 1. **Build a feedback loop** — a fast, deterministic pass/fail signal for the bug. It need **not** be a unit test: a failing test, a CLI/curl diff, a replayed trace, a throwaway harness, or — where a human must act — an adb/live check are all valid. Build the right loop and the bug is most of the way fixed.
 2. **Reproduce** — run the loop; confirm it shows the **user's** symptom, not a nearby one (wrong bug → wrong fix). For flaky bugs, raise the reproduction *rate* until it is debuggable rather than chasing a clean repro.
 3. **Falsifiable hypotheses** — 3–5, ranked, each stating a prediction ("if X is the cause, changing Y makes it disappear"). A hypothesis with no prediction is a vibe — sharpen or drop it. Show the ranked list to the developer when they hold deciding context (a cheap checkpoint); proceed on your ranking if they are away.

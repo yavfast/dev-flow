@@ -6,11 +6,7 @@ Validate pipeline gates, detect conflicts between documents, manage deprecation,
 
 ## Pre-Commit Code Review
 
-**Before any commit**, a code review of the changes MUST be performed. This review should be executed by a **subagent with a clean context** to ensure an unbiased, fresh perspective on the changes.
-
-### Why a clean-context subagent?
-
-The agent that wrote the code has accumulated assumptions and context that may blind it to issues. A fresh subagent sees only the diff and the spec — the same perspective a human reviewer would have.
+**Before any commit**, a code review of the changes MUST be performed by a **subagent with a clean context** — it sees only the diff and the spec, without the implementer's accumulated assumptions.
 
 This clean-context review also **realizes the `sampled-verifier` tier** of [Application Enforcement](../references/application-enforcement.md): for a high-stakes procedure, the fresh, cross-model reviewer judging conformance to the documented procedure (as a rubric) is exactly the external verifier that the acting agent's self-attestation can never be.
 

@@ -269,27 +269,15 @@ Concepts and specifications are **language-agnostic** — no programming languag
 
 ### Session Continuity
 
-Work state is persisted in a **collaborative per-task** model so multiple AI
-agents can work on the same task in parallel without conflicts:
+Work state is persisted in a **collaborative per-task** model so multiple AI agents can work on the same task in parallel without conflicts:
 
-- `.dev_flow/tasks/task_<ID>.md` — one file per task (source of truth). Shared
-  between contributors. Holds Current Work Item, Description (shared), per-
-  contributor Subtask blocks, Coordination Notes, Blocking Issues, Relevant
-  Context, and a Shared Activity Log.
-- `.dev_flow/active_context.md` — lightweight dashboard listing active tasks
-  and recently completed ones (links to the task files).
+- `.dev_flow/tasks/task_<ID>.md` — one file per task (source of truth). Shared between contributors. Holds Current Work Item, Intent (goal / target state / expected result), Description (shared), per-contributor Subtask blocks, Coordination Notes, Blocking Issues, Relevant Context, and a Shared Activity Log.
+- `.dev_flow/active_context.md` — lightweight dashboard listing active tasks and recently completed ones (links to the task files).
 - `.dev_flow/tasks/_index.md` — directory catalog with conventions and lists.
 
-Resume anytime with `/dev-flow status` (lists active tasks) or
-`/dev-flow status <task_id>` (details for one task).
+Resume anytime with `/dev-flow status` (lists active tasks) or `/dev-flow status <task_id>` (details for one task).
 
-**Collaboration rules:** each contributor owns its own **Subtask block** inside
-a task file and its own tagged entries in shared sections. Contributors may
-add new entries but never rewrite another contributor's content. Shared files
-(dashboard, catalog, task headers) use **targeted edits** (single row/field)
-and can be rebuilt from the task files when they drift. There is no
-time-based ownership takeover — if a subtask stalls, add a new subtask block
-referencing the original instead of editing it.
+**Collaboration rules:** each contributor owns its own **Subtask block** inside a task file and its own tagged entries in shared sections. Contributors may add new entries but never rewrite another contributor's content. Shared files (dashboard, catalog, task headers) use **targeted edits** (single row/field) and can be rebuilt from the task files when they drift. There is no time-based ownership takeover — if a subtask stalls, add a new subtask block referencing the original instead of editing it.
 
 ## File Structure
 
