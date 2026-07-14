@@ -14,13 +14,25 @@
 
 ## Goal
 
-{Brief statement of what will be achieved when this plan is complete.}
+{What will be achieved when this plan is complete — restate the task's recorded intent (goal / target state / expected result) for this plan's scope.}
 
 ## Technology Decisions
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
 | {decision} | {choice} | {why} |
+
+## Required Knowledge
+
+<!-- Rules/skills this plan's work must apply — the source of truth for the
+     per-burst Knowledge Activation (references/application-enforcement.md).
+     Skill use / create / update are tracked items. Delete the section only
+     if nothing applies. -->
+
+| Kind | Ref | Applies to | Note |
+|------|-----|-----------|------|
+| rule | {RuleName} | Phase {N} | {what it constrains} |
+| skill (apply) | {SkillName} | Phase {N} | {current — outranks the prior / stale — re-ground first} |
 
 ## Progress
 
