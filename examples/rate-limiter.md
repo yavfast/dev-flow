@@ -1,11 +1,6 @@
 # End-to-End Example: Rate Limiter
 
-A minimal walkthrough showing the **core** concept-driven development pipeline
-(Concept → … → Commit → Propagate). To stay focused it omits the on-demand and
-cross-cutting flows — [research](../phases/research.md) spikes,
-[Interview Mode](../references/interview-mode.md), [Upstream Escalation](../references/escalation.md),
-the [resource cache](../references/cache.md) gate, and the per-task
-[context model](../phases/status.md) — each documented in its own phase/reference.
+A minimal walkthrough showing the **core** concept-driven development pipeline (Concept → … → Commit → Propagate). To stay focused it omits the on-demand and cross-cutting flows — [research](../phases/research.md) spikes, [Interview Mode](../references/interview-mode.md), [Upstream Escalation](../references/escalation.md), the [resource cache](../references/cache.md) gate, and the per-task [context model](../phases/status.md) — each documented in its own phase/reference.
 
 ## Step 1 — Concept (`docs/rate_limiter.concept.md`)
 
@@ -13,13 +8,16 @@ the [resource cache](../references/cache.md) gate, and the per-task
 # Rate Limiter  {#C_RLM}
 
 > **Code:** C_RLM
-> **Status:** active
+> **Status:** draft
 > **Created:** 2026-03-24
 > **Updated:** 2026-03-24
 > **Author:** developer
+> **Owner:** engine team
+> **Complexity:** low
 >
 > **Depends on:** [C_ACS](./access_control.concept.md)
 > **Used by:** —
+> **Spike:** —
 > **Specification:** [SP_RLM](./rate_limiter.sp.md)
 > **Plan:** [rate_limiter.plan.md](./rate_limiter.plan.md)
 >
@@ -53,7 +51,7 @@ Exceeding the limit causes the call to be delayed, not rejected.
 | 2026-03-24 | Initial version |
 ```
 
-**Gate check:** No conflicts with existing concepts. C_ACS dependency valid. Scope clear. Proceed to spec.
+**Gate check:** No conflicts with existing concepts. C_ACS dependency valid. Scope clear. No banned phrases; minimal; no open decision points. `Status` → `active`. Proceed to spec.
 
 ---
 
@@ -63,11 +61,12 @@ Exceeding the limit causes the call to be delayed, not rejected.
 # Rate Limiter — Specification  {#SP_RLM}
 
 > **Code:** SP_RLM
-> **Status:** active
+> **Status:** draft
 > **Created:** 2026-03-24
 > **Updated:** 2026-03-24
 >
 > **Concept:** [C_RLM](./rate_limiter.concept.md)
+> **Plan:** [rate_limiter.plan.md](./rate_limiter.plan.md)
 
 ## 01. Data Structures  {#SP_RLM_01}
 
@@ -160,9 +159,26 @@ Transition rules:
 | Max capacity | capacity = 1000 | 1000 calls before throttling |
 | Min refill rate | refill_rate = 0.1 | 10 seconds to refill 1 token |
 | Concurrent agents | 100 agents simultaneously | Each has independent bucket, no cross-interference |
+
+## 06. Reversibility  {#SP_RLM_06}
+
+### 06_01. Rollback Strategy  {#SP_RLM_06_01}
+
+| Aspect | Rollback approach |
+|--------|-------------------|
+| Data/state changes | Buckets are in-memory only — dropping the limiter loses no data |
+| Artifacts | Remove `engine/rate_limiter.py` + its tests; no config or migrations |
+| Dependent modules | Only LLMRouter calls AcquireToken — one injection point to detach |
+| External contracts | None published — the limiter is transparent to agents |
+
+## Changelog
+
+| Date | Change |
+|------|--------|
+| 2026-03-24 | Initial version |
 ```
 
-**Gate check:** All fields typed. Contract has input/output. Pseudocode clear. Verification criteria defined. Proceed to plan.
+**Gate check:** All fields typed. Contract has input/output + errors. Verification criteria defined. Rollback documented (§06). No banned phrases; minimal; no open decision points (Design Decisions omitted — none surfaced). `Status` → `active`. Proceed to plan.
 
 ---
 
@@ -172,7 +188,7 @@ Transition rules:
 # Implementation Plan: Rate Limiter  {#PL_RLM}
 
 > **Code:** PL_RLM
-> **Status:** in-progress
+> **Status:** draft
 > **Created:** 2026-03-24
 > **Updated:** 2026-03-24
 >
@@ -195,6 +211,7 @@ Implement token-bucket rate limiting for per-agent LLM calls.
 ## Phases
 
 ### Phase 1 — RateBucket (`engine/rate_limiter.py`) [TODO]
+**Depends on:** none
 **Implements:** [SP_RLM_01](./rate_limiter.sp.md#SP_RLM_01)
 **Verify:** [SP_RLM_05_02](./rate_limiter.sp.md#SP_RLM_05_02) invariants (tokens never exceed capacity)
 
@@ -202,18 +219,21 @@ Implement token-bucket rate limiting for per-agent LLM calls.
 **Depends on:** Phase 1
 **Implements:** [SP_RLM_02](./rate_limiter.sp.md#SP_RLM_02)
 **Verify:** [SP_RLM_05_01](./rate_limiter.sp.md#SP_RLM_05_01) (allow under limit, reject when empty) + [SP_RLM_05_03](./rate_limiter.sp.md#SP_RLM_05_03) integration scenario
+
+## Changelog
+
+| Date | Change |
+|------|--------|
+| 2026-03-24 | Initial version |
 ```
 
-**Gate check:** Both spec sections covered. Dependencies stated. Each phase names what to verify. Proceed to code.
+**Gate check:** Both implementable spec sections covered. Technology decisions with rationale; no contested forks. Dependencies stated. Each phase names what to verify. `Status` → `in-progress` as coding starts. Proceed to code.
 
 ---
 
 ## Step 4 — Code
 
-Implement `engine/rate_limiter.py` following the plan.
-Add `# [C_RLM_02_01]` comments to link code back to concept sections.
-Follow SOLID principles (see [solid-architecture reference](../references/solid-architecture.md))
-unless project rules define alternatives.
+Implement `engine/rate_limiter.py` following the plan (Phase 1 `[TODO]` → `[IN PROGRESS]`). Add `# [C_RLM_02_01]` comments to link code back to concept sections. Follow SOLID principles (see [solid-architecture reference](../references/solid-architecture.md)) unless project rules define alternatives.
 
 ```python
 # engine/rate_limiter.py
@@ -261,7 +281,7 @@ class RateLimiter:
         return wait
 ```
 
-Update plan: Phase 1 `[TODO]` → `[DONE]`.
+Update plan after the phase's Verify checklist passes (Steps 5-7): Phase 1 `[IN PROGRESS]` → `[DONE]`, tick its Progress checkbox.
 
 ---
 
@@ -308,6 +328,7 @@ Launch a reviewer subagent with a clean context. The subagent receives:
 - `rate_limiter.sp.md` (spec)
 - `rate_limiter.plan.md` (plan)
 - `.dev_flow/rules/` (if exists)
+- Relevant `.dev_flow/skills/` entries for the changed area (if exist)
 - `references/solid-architecture.md` (SOLID principles)
 
 ```
@@ -337,8 +358,7 @@ One minor suggestion about making the storage interface explicit.
 
 ## Step 7 — Verify (Regression / Integration / Live)
 
-After review passes, run broader verification. Ask user permission before
-creating new integration or live test scenarios.
+After review passes, run broader verification. Ask user permission before creating new integration or live test scenarios.
 
 ### Regression
 
@@ -352,8 +372,7 @@ No regressions introduced.
 
 ### Integration (if applicable)
 
-If `RateLimiter` integrates with a real LLM router — verify the integration
-using a test account or sandbox environment:
+If `RateLimiter` integrates with a real LLM router — verify the integration using a test account or sandbox environment:
 
 ```
 $ pytest tests/integration/test_llm_router.py -v -k rate_limit
@@ -411,10 +430,7 @@ git commit -m "[SP_RLM] Implement token-bucket rate limiter with per-agent limit
 
 ## Step 9 — Propagate (`/dev-flow propagate`)
 
-Code landed → keep the docs in sync. The plan's phases are marked `[DONE]` and its
-`Status` moves to `completed`; the concept/spec stay `active`. An
-[Impact Walk](../references/impact.md) confirms nothing else references the changed
-contracts (e.g. `LLMRouter` integration).
+Code landed → keep the docs in sync. The plan's phases are marked `[DONE]` and its `Status` moves to `completed`; the concept/spec stay `active`. An [Impact Walk](../references/impact.md) confirms nothing else references the changed contracts (e.g. `LLMRouter` integration).
 
 ```
 Propagation check for [SP_RLM]:
