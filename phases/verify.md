@@ -195,10 +195,11 @@ After running verification, report:
 ## Gate Check (Verify -> Commit)
 
 Before proceeding to commit:
-- [ ] All regression tests pass (if applicable)
-- [ ] All integration tests pass (if applicable)
+- [ ] Regression tests pass (if applicable)
+- [ ] Integration tests pass (if applicable)
 - [ ] Live tests pass or manual verification completed by user
-- [ ] No fix cycles remain incomplete
+- [ ] If Verify found issues → fix → re-run Test (if exists) → Review → Verify — no fix cycle left incomplete
+- [ ] A failure that traces to the spec/plan itself is escalated upstream, not coded around (see [Upstream Escalation](../references/escalation.md))
 - [ ] Reflection checkpoint run — recurring failure modes harvested and auto-applied as rules/skills (see [Reflection](#reflection--harvest-verification-lessons))
 - [ ] Ask the user for explicit commit approval
 

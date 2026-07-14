@@ -76,7 +76,7 @@ Before running tests, verify:
 - [ ] All spec contracts have corresponding test cases
 - [ ] All error cases from spec's Errors tables are tested
 - [ ] All invariants from spec are verified in tests
-- [ ] Tests use the project's existing conventions and runners
+- [ ] Only tests covering the changed code are selected to run (unit + mock)
 
 ## Testing Workflow
 

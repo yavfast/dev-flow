@@ -50,13 +50,17 @@ role ConceptAuthor {
     - "Create epic when feature requires 3+ related concepts"
 
   validation_gate:
-    description: "Concept -> Specification gate"
+    description: "Concept -> Specification gate (canonical criteria + role-local authoring checks)"
     checks:
       - "No contradictions with existing active concepts"
       - "All integration points listed in Dependencies"
-      - "Scope clearly bounded"
-      - "All sections have traceable IDs"
+      - "Scope clearly bounded (what this IS and IS NOT)"
+      - "Pre-Concept Checklist answered on verified knowledge (an unverified critical assumption goes through a research spike or is recorded as an explicit open decision with a trigger)"
+      - "Reuse Check completed — no unjustified overlap with existing concepts"
+      - "No banned phrases"
+      - "Minimality — no 'just in case' sections with no stated consumer"
       - "Every material design fork is resolved (consensus + rationale) or recorded as an open decision with a resolution trigger"
+      - "All sections have traceable IDs"
       - "Changelog entry added"
 }
 ```

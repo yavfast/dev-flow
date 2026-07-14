@@ -46,11 +46,10 @@ role PlanAuthor {
   validation_gate:
     description: "Plan -> Code gate"
     checks:
-      - "Plan covers ALL specification sections"
+      - "Plan covers ALL specification sections (no orphaned spec sections without a phase)"
       - "Technology decisions documented with rationale"
       - "Every contested technology fork is resolved (consensus + rationale) or recorded as an open decision with a resolution trigger"
       - "Phase dependencies explicitly stated"
-      - "No orphaned spec sections without a phase"
       - "Every phase declares a Verify field (spec SP_XXX_05_* criteria + any phase-local acceptance check)"
 }
 ```

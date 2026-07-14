@@ -77,28 +77,7 @@ After the review passes, proceed to the [Verify phase](verify.md) for regression
 
 ## Validation Gates
 
-Run gate checks before advancing to the next pipeline stage.
-
-### Concept -> Specification Gate
-
-- [ ] Does the concept contradict any existing active concepts?
-- [ ] Are all integration points listed in Dependencies?
-- [ ] Is the scope clearly bounded (what this IS and IS NOT)?
-
-### Specification -> Plan Gate
-
-- [ ] Do all fields have data types defined?
-- [ ] Are error handling responses specified?
-- [ ] Is the spec precise enough to prevent hallucinations during code generation?
-- [ ] Are all constraints and invariants explicitly stated?
-- [ ] Are state transitions documented with conditions and side effects?
-
-### Plan -> Code Gate
-
-- [ ] Does the plan cover ALL specification sections?
-- [ ] Are technology decisions documented with rationale?
-- [ ] Are phase dependencies explicitly stated?
-- [ ] Does every phase declare what to verify on completion (`Verify:` field → spec `SP_XXX_05_*` criteria + any phase-local acceptance check)?
+Run gate checks before advancing to the next pipeline stage. The canonical, complete criteria for every gate live in [SKILL.md → Validation Gates](../SKILL.md#validation-gates) — run that full checklist, never a from-memory subset. Review-phase supplements: the [Hallucination-Risk Heuristics](#hallucination-risk-heuristics) below extend the Specification → Plan gate; [Project Rules Compliance](#project-rules-compliance) extends the pre-commit code review.
 
 ## Hallucination-Risk Heuristics
 
@@ -144,7 +123,7 @@ When `.dev_flow/rules/` exists, review new or modified code against the project 
 
 ### Rules Compliance Check
 
-During the **Plan → Code** gate and any code review:
+During the pre-commit code review of new or modified code:
 
 1. Read `.dev_flow/rules/_index.yaml` to identify applicable rule categories.
 2. For each category relevant to the changed files, read the rules document.
@@ -215,7 +194,7 @@ During review, verify that all concepts, specifications, and plans have up-to-da
    > **Status:** deprecated
    > **Deprecated-reason:** Replaced by [C_XXX_V2](./new.concept.md)
    ```
-3. Update `_index.yaml` to reflect deprecated status.
+3. Update `_index.md` to reflect deprecated status.
 4. Update all `Used by` references — dependents should migrate.
 
 ### Behavior of Draft and Deprecated Documents

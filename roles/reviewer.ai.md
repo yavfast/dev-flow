@@ -116,16 +116,27 @@ role Reviewer {
   gate_checks:
     concept_to_spec:
       - "No contradictions with existing active concepts"
-      - "All integration points in Dependencies"
-      - "Scope clearly bounded"
+      - "All integration points listed in Dependencies"
+      - "Scope clearly bounded (what this IS and IS NOT)"
+      - "Pre-Concept Checklist answered on verified knowledge (an unverified critical assumption went through a research spike or is an explicit open decision with a trigger)"
+      - "Reuse Check completed — no unjustified overlap with existing concepts"
+      - "No banned phrases"
+      - "Minimality — no 'just in case' sections with no stated consumer"
+      - "Every material design fork resolved (consensus + rationale) or recorded as an open decision with a resolution trigger"
     spec_to_plan:
-      - "All fields have data types"
-      - "Error handling responses specified"
-      - "Constraints and invariants explicit"
-      - "State transitions documented"
+      - "All data structures fully defined with types, constraints, invariants"
+      - "All contracts specified with inputs, outputs, error cases"
+      - "Verification criteria defined for all contracts (expected outcomes, edge cases)"
+      - "Integration scenarios described for cross-module interactions"
+      - "Rollback strategy documented (Section 06)"
+      - "No banned phrases"
+      - "Minimality — no contracts or entities without a stated consumer"
+      - "Spec self-validation checklist passes"
+      - "Every material design fork resolved (consensus + rationale) or recorded as an open decision with a resolution trigger"
     plan_to_code:
       - "Covers ALL spec sections"
       - "Technology decisions with rationale"
+      - "Contested technology forks resolved (consensus + rationale) or recorded as open decisions with a resolution trigger"
       - "Phase dependencies explicit"
       - "Every phase declares a Verify field (spec SP_XXX_05_* criteria + any phase-local acceptance check)"
 

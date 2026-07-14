@@ -51,13 +51,24 @@ role SpecAuthor {
     - "Spec precise enough to prevent hallucinations during code generation"
     - "All constraints and invariants explicitly stated"
     - "State transitions documented with conditions and side effects"
+    - "Verification criteria defined for all contracts (expected outcomes, edge cases)"
+    - "Integration scenarios described for cross-module interactions"
+    - "Rollback strategy documented (Section 06)"
+    - "No banned phrases"
+    - "Minimality — no 'just in case' contracts with no stated consumer"
+    - "Every material design fork resolved (consensus + rationale) or recorded as an open decision with a resolution trigger (Design Decisions)"
 
   validation_gate:
-    description: "Specification -> Plan gate"
+    description: "Specification -> Plan gate (canonical criteria + role-local check)"
     checks:
+      - "All data structures fully defined with types, constraints, invariants"
+      - "All contracts specified with inputs, outputs, error cases"
+      - "Verification criteria defined for all contracts (expected outcomes, edge cases)"
+      - "Integration scenarios described for cross-module interactions"
+      - "Rollback strategy documented (Section 06)"
+      - "No banned phrases"
+      - "Minimality — no contracts or entities without a stated consumer"
       - "Self-validation checklist passes"
-      - "All data structures fully defined"
-      - "All contracts specified with inputs, outputs, errors"
       - "Every material design fork is resolved (consensus + rationale) or recorded as an open decision with a resolution trigger"
       - "Concept reference is valid and consistent"
 }

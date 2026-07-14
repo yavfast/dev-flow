@@ -141,10 +141,12 @@ If the directory is absent, the gate is a no-op. Each relevant phase restates th
 - If no automated verification is possible — provide manual verification steps
 
 **Verify -> Commit:**
+- Regression tests pass (if applicable)
 - Integration tests pass (if applicable)
 - Live tests pass or manual verification completed (app/service launched, scenario checked)
-- If Verify finds issues → fix code → re-run Test (if exists) → re-run Review → re-run Verify
+- If Verify finds issues → fix code → re-run Test (if exists) → re-run Review → re-run Verify — no fix cycle left incomplete
 - If a failure traces to the spec/plan itself (not the code) — do not bend the code: escalate upstream first (see [Upstream Escalation](references/escalation.md))
+- Reflection checkpoint run — durable lessons harvested (see [Experience Capture](references/experience-capture.md))
 - Ask the user for explicit commit approval before committing
 
 ## Document Status Vocabulary
