@@ -1,6 +1,6 @@
 # Upstream Escalation — When the Document Is Wrong, Not the Code
 
-Shared sub-procedure for the **Implement**, **Test**, **Review**, **Verify**, and **Fix** phases. It is **not** a standalone pipeline stage — it runs *inside* a downstream phase the moment evidence shows the defect lives in an upstream document (spec, plan, concept) rather than in the code.
+Shared sub-procedure for the **Implement**, **Test**, **Review**, **Verify**, and **Fix** phases; [audit](../phases/audit.md) routes wrong-document findings here, and it applies unchanged inside delegated [subtasks](../phases/subtask.md). It is **not** a standalone pipeline stage — it runs *inside* a downstream phase the moment evidence shows the defect lives in an upstream document (spec, plan, concept) rather than in the code.
 
 ## Why this exists
 

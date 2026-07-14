@@ -19,7 +19,7 @@ Write code following the implementation plan. Code is a derived artifact from th
 6. **Implement all error cases** from the spec's Errors tables.
 7. **Update the plan status** after completing each phase:
    - Change `[TODO]` to `[IN PROGRESS]` when starting
-   - Change `[IN PROGRESS]` to `[DONE]` when tests pass
+   - Change `[IN PROGRESS]` to `[DONE]` when the phase's verification passes (workflow steps 6-11)
    - Update the checkbox in the Progress section
 
 ## Gate Check Before Starting

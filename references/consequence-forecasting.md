@@ -1,6 +1,6 @@
 # Consequence Forecasting — Phase-Scaled Lookahead + YAGNI-gate
 
-Cross-cutting sub-procedure for the **decision-making** phases — concept, spec, plan, implement, fix. It is **not** a standalone pipeline stage and has no command — it is an **advisory** discipline invoked inside a phase whenever a *material* decision is about to be made. It does not add a new pass/fail gate; it informs the decision the phase was already making.
+Cross-cutting sub-procedure for the **decision-making** phases — concept, spec, plan, implement, fix — plus [todo](../phases/todo.md)'s at-capture YAGNI-gate. It is **not** a standalone pipeline stage and has no command — it is an **advisory** discipline invoked inside a phase whenever a *material* decision is about to be made. It does not add a new pass/fail gate; it informs the decision the phase was already making.
 
 ## Why this exists
 
@@ -59,6 +59,7 @@ An advisory **"Forecast check"** line sits in each decision-making phase, pointi
 | [plan](../phases/plan.md) | phase ordering and the cost of a structural change |
 | [implement](../phases/implement.md) | blast-radius of the change + tool-call results; speculative future-proofing dropped |
 | [fix](../phases/fix.md) | consequences of the fix; the one-step check on the diagnosis loop |
+| [todo](../phases/todo.md) | the at-capture verdict on a deferral — trigger choice and whether to file at all (YAGNI-gate) |
 
 **Not** review or verify: those are *checking* phases, not decision phases — adding a forecast there is the scope creep this discipline teaches you to `drop`.
 

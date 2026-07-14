@@ -48,7 +48,7 @@ Additional commands:
 | `/dev-flow status` | Show current state, resume previous session |
 | `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — reconcile state, trim context, compact closed tasks, groom rules/skills/cache, check docs integrity (index/statuses/refs) |
 | `/dev-flow audit code <intent>` | Opt-in whole-codebase audit (architecture/SOLID/DRY/security via parallel lenses) → prioritized refactoring plan + run report (timestamped, in `.dev_flow/audit/`) + framework map; read-only, hands off to the pipeline |
-| `/dev-flow <anything>` | Freeform — auto-routes to the right phase |
+| `/dev-flow do <request>` / `/dev-flow <anything>` | Freeform — interprets intent and auto-routes to the right phase (the default command) |
 
 ## Installation
 
@@ -298,10 +298,14 @@ dev-flow creates the following structure in your project:
 ```
 your-project/
 ├── docs/
+│   ├── feature_name.spike.md      # Research output (optional, pre-concept)
 │   ├── feature_name.concept.md    # Phase 1 output
 │   ├── feature_name.sp.md         # Phase 2 output
 │   ├── feature_name.plan.md       # Phase 3 output
-│   └── feature_group.epic.md      # Coordinates 3+ related concepts
+│   ├── feature_group.epic.md      # Coordinates 3+ related concepts
+│   ├── _index.md                  # Catalog (when >5 documents)
+│   ├── _glossary.md               # Canonical domain vocabulary (lazy)
+│   └── _framework.md              # Architectural map (onboard / audit code)
 │
 └── .dev_flow/
     ├── active_context.md           # Dashboard of active tasks
@@ -310,6 +314,8 @@ your-project/
     │   ├── task_C_AUTH.md
     │   ├── task_20260520_143022_refactor-login.md
     │   └── ...
+    ├── todos/                      # Deferred future work filed by `todo`
+    │   └── _index.md
     ├── session_history/            # Archived completed tasks
     ├── rules/                      # Project coding rules
     │   ├── _index.yaml
@@ -320,6 +326,8 @@ your-project/
     │   ├── _index.yaml
     │   └── {domain}/
     │       └── {skill}.md
+    ├── roles/                      # Project role overlays & specialists (optional)
+    │   └── _index.yaml
     └── cache/                      # Durable resources (gitignore by default)
         ├── _index.yaml
         ├── figma/                  # Design exports
@@ -391,6 +399,9 @@ dev-flow/
 │   ├── task-intent.md           # Task Intent — capture the goal/expected result, check work against it
 │   ├── ticket-tracker.md        # External tracker tickets (Jira/etc.) — discover skill/MCP, confirmed writes
 │   ├── consequence-forecasting.md  # Phase-scaled lookahead + YAGNI-gate (forecast → build/seam/drop)
+│   ├── experience-capture.md    # Transition Checkpoint — distill, demote, promote; auto-applied lessons
+│   ├── application-enforcement.md  # Per-burst knowledge re-activation (loaded ≠ applied)
+│   ├── procedural-skills.md     # Skills as procedural memory — freshness, promotion, curation
 │   ├── cache.md                 # Resource cache + /tmp workspace discipline
 │   ├── roles.md                 # Base vs project-overlay roles
 │   ├── glossary.md              # Project domain vocabulary

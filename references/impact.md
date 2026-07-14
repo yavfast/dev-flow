@@ -1,6 +1,6 @@
 # Impact Walk — Blast Radius of a Change
 
-Shared sub-procedure for the **Ask**, **Do**, **Propagate**, and **Review** phases (with optional uses in audit and interviews). It is **not** a standalone pipeline stage and has no command — invoke it from inside a phase whenever a decision needs to know *what a change would touch*. The natural user entry is `/dev-flow ask` ("what breaks if …?").
+Shared sub-procedure for the **Ask**, **Do**, **Propagate**, **Review**, and **Todo** phases, for [Consequence Forecasting](consequence-forecasting.md) (an anticipation's blast-radius) and for the [`audit code` scope](../phases/audit.md#step-9--code-scope-the-whole-codebase-audit) (finding blast-radius) — with optional uses in audit's task-overlap check and interviews. It is **not** a standalone pipeline stage and has no command — invoke it from inside a phase whenever a decision needs to know *what a change would touch*. The natural user entry is `/dev-flow ask` ("what breaks if …?").
 
 ## Why this exists
 
@@ -58,7 +58,9 @@ The counts feed the consuming phase's thresholds (propagate's ">3 documents" bou
 | [do](../phases/do.md) | Evidence for Change Classes when trivial/standard/architectural is unclear |
 | [propagate](../phases/propagate.md) | Cascade Impact Assessment; the dependents to-do list for versioning and deprecation |
 | [review](../phases/review.md) | Enumerating dependents during conflict detection and deprecation checks |
-| [audit](../phases/audit.md) | *Optional:* intersecting two active tasks' radii to flag overlapping work |
+| [todo](../phases/todo.md) | Bounding what a captured idea would touch (placement + at-capture feasibility snapshot) |
+| [Consequence Forecasting](consequence-forecasting.md) | Blast-radius estimate for an anticipation at the YAGNI-gate |
+| [audit](../phases/audit.md) | **`code` scope:** `blast_radius` input to finding priority; *optional:* intersecting two active tasks' radii to flag overlapping work |
 | [Interview Mode](interview-mode.md) | *Optional:* numbers for an option's Consequence line when a fork's cost is its blast radius |
 
 ## Boundaries

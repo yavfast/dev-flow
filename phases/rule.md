@@ -33,7 +33,7 @@ The request is a freeform description in any language. Interpret the intent and 
    - Listing/showing rules — request says "list", "show", "покажи": read-only — print the matching rules from `_index.yaml` and the category files, write nothing (skip steps 4-7).
 
 3. **Determine rule properties:**
-   - **Category:** naming | structure | architecture | error-handling | style
+   - **Category:** naming | structure | architecture | error-handling | style — or an additional category (concurrency / performance / security / testing / ui / data; see Categories below)
    - **Severity:** must | should | prefer (infer from wording: "заборона"/"never" → must, "рекомендується"/"should" → should, "бажано"/"prefer"/"краще"/"advisory" → prefer)
    - **Rule name:** PascalCase, concise (e.g., `NoMPrefixForFields`, `EnumOverConstants`)
    - If ambiguous, ask the user (max 2 questions).

@@ -3,10 +3,16 @@ name: dev-flow
 description: >
   Feature development workflow following concept-spec-plan-implementation pipeline
   with traceable IDs. Use when: creating concept/spec/plan files, planning new features,
-  modifying existing functionality, propagating changes across concept-spec-plan-code,
-  reviewing documentation pipeline, assessing impact of architectural changes,
+  modifying existing functionality, fixing bugs (analyze, fix, verify),
+  propagating changes across concept-spec-plan-code, reviewing the documentation
+  pipeline or code before commit, assessing impact of architectural changes,
   asking questions about the codebase or feasibility of changes (read-only),
   researching unknowns before committing to a design (spike),
+  capturing future work as todos, delegating secondary tasks to subagents,
+  onboarding an existing codebase (reverse-engineer docs from code),
+  resuming a previous session or checking status, auditing and grooming
+  project context (.dev_flow/, docs/) or the whole codebase,
+  managing project coding rules and knowledge skills,
   or working with concept/spec documents.
 user-invocable: true
 argument-hint: "[phase] [target]"
@@ -179,7 +185,7 @@ For **non-breaking changes** (adding fields, extending contracts, fixing descrip
 
 ## When Modifying Existing Functionality
 
-Scale the ceremony to the change class first (see [do phase → Change Classes](phases/do.md#change-classes)): a **trivial** change takes the short route, a **standard** change starts at the spec, an **architectural** change runs the full pipeline below.
+Scale the ceremony to the change class first (see [do phase → Change Classes](phases/do.md#change-classes)): a **trivial** change takes the short route, a **standard** change starts at the spec, an **architectural** change runs the full pipeline below, an **internal refactor** (contracts unchanged) takes the plan-only [Refactoring Protocol](phases/plan.md#refactoring-protocol).
 
 1. Update the **concept** — what changed in the idea or architecture?
 2. Update the **specification** — what data structures or contracts changed?
@@ -199,6 +205,7 @@ Every section has a unique, immutable identifier:
 | Concept | `C_XXX_NN_NN` | `C_ACS_01_01` |
 | Specification | `SP_XXX_NN_NN` | `SP_ACS_01_01` |
 | Plan | `PL_XXX` | `PL_ACS` |
+| Epic | `E_XXX` | `E_ACM` |
 | Design decision | `<DocID>_DEC_NN` | `C_ACS_DEC_01`, `SP_ACS_DEC_02`, `PL_ACS_DEC_01` |
 
 The `_DEC_NN` form identifies a record in a document's **Design Decisions** section (see [Interview Mode](references/interview-mode.md)); the `_DEC` segment is reserved and never used as a numeric section number.
@@ -226,7 +233,7 @@ All documents live in `docs/` directories. One concept = one file set:
 
 When `docs/` has more than 5 documents, maintain an `_index.md` catalog.
 
-**Index format convention:** machine-read catalogues (`.dev_flow/rules/`, `.dev_flow/skills/`, `.dev_flow/roles/`, `.dev_flow/cache/`) use `_index.yaml` — structured entries agents match against. Human-browsed catalogues (`docs/`, `.dev_flow/tasks/`) use `_index.md`. Apply the same split to any new collection.
+**Index format convention:** machine-read catalogues (`.dev_flow/rules/`, `.dev_flow/skills/`, `.dev_flow/roles/`, `.dev_flow/cache/`) use `_index.yaml` — structured entries agents match against. Human-browsed catalogues (`docs/`, `.dev_flow/tasks/`, `.dev_flow/todos/`) use `_index.md`. Apply the same split to any new collection.
 
 `docs/_glossary.md` is the project's canonical domain vocabulary (term → definition + aliases to avoid). It is created lazily (during onboard, or when the first cross-concept term is resolved) and, whenever present, is **loaded into context alongside `_index.md`** (independent of the >5-doc threshold that gates `_index.md`) — so authoring uses one canonical term per concept. See [Glossary](references/glossary.md).
 
@@ -296,7 +303,7 @@ dev-flow uses a **collaborative per-task context model** so multiple AI agents c
 
 ### Rules for all phases
 
-- **Project-knowledge gate (first).** Read `.dev_flow/rules/_index.yaml` and `.dev_flow/skills/_index.yaml`, load what's relevant to the area you touch, and obey it — see [Project Knowledge Is Binding].
+- **Project-knowledge gate (first).** Read `.dev_flow/rules/_index.yaml` and `.dev_flow/skills/_index.yaml`, load what's relevant to the area you touch, and obey it — see [Project Knowledge Is Binding](#project-knowledge-is-binding).
 - **Resource gate.** Before an expensive external fetch (Figma export, web document), check `.dev_flow/cache/_index.yaml` and reuse a cached copy (no-op while the directory is absent); an entry past its `valid_until` gets a cheap currency check (ETag, Figma version) before any re-fetch. After an expensive fetch, save the artifact back — a focus-delegated helper *stages* it in the workspace and reports (a task-delegated subagent writes the cache itself per the protocol — see [subtask phase](phases/subtask.md)). A resource fetched from the open internet is saved with `trust: public` and goes through the safety check first. Transient artifacts follow the workspace discipline — `/tmp/{project-slug}/` with timestamped names. See [Resource Cache](references/cache.md).
 - At the **start** of any phase:
   - **Continuation** — locate the task via `active_context.md`. If your own Subtask block exists, resume it. If you have no block in this task yet, add a new `### Subtask:` block (you become a Contributor).
@@ -333,7 +340,7 @@ See [status phase](phases/status.md) for the full read/write protocol, regenerat
 
 ## Project Rules
 
-When `.dev_flow/rules/` exists, all new code MUST comply (binding — see [Project Knowledge Is Binding]). Rules are extracted during onboard and updated during implement/review phases.
+When `.dev_flow/rules/` exists, all new code MUST comply (binding — see [Project Knowledge Is Binding](#project-knowledge-is-binding)). Rules are extracted during onboard and updated during implement/review phases.
 
 ```
 .dev_flow/rules/

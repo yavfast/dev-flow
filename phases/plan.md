@@ -26,7 +26,7 @@ Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../S
 
 ## Interview Mode for Technology Decisions
 
-The plan is where technology is chosen — language, framework, library, persistence, concurrency model — and these are precisely forks with two or more viable, hard-to- reverse options. The Technology Decisions table records *what* was chosen; when a choice is genuinely contested (e.g. two libraries that both fit, a build-vs-buy call, a sync strategy), do not pick silently. Run an interview: present 2–4 options with your **recommended answer**, reach consensus with the developer, and capture the *why* in **Design Decisions** so the Technology Decisions row has a traceable rationale behind it.
+The plan is where technology is chosen — language, framework, library, persistence, concurrency model — and these are precisely forks with two or more viable, hard-to-reverse options. The Technology Decisions table records *what* was chosen; when a choice is genuinely contested (e.g. two libraries that both fit, a build-vs-buy call, a sync strategy), do not pick silently. Run an interview: present 2–4 options with your **recommended answer**, reach consensus with the developer, and capture the *why* in **Design Decisions** so the Technology Decisions row has a traceable rationale behind it.
 
 A rule, an existing concept, or a documented convention that already settles a choice is **not** a decision point — follow it and cite it. Interview only the genuinely open technology forks. See **[Interview Mode](../references/interview-mode.md)**.
 

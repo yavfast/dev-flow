@@ -112,7 +112,7 @@ When the `test` command targets test creation or modification:
    - Mirror spec structure: one test group per contract/entity.
    - Cover happy path, error cases, and edge cases.
    - Include traceable ID references.
-5. **Run the new/updated tests** to verify they pass.
+4. **Run the new/updated tests** to verify they pass.
 
 ## Test Result Reporting
 
