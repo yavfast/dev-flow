@@ -31,6 +31,8 @@ Before creating a new concept, answer these questions. If any answer is unclear 
 
 If reuse check reveals that the problem is already covered — extend the existing concept instead.
 
+This is the design-altitude, once-per-concept check. Its code-altitude counterpart — searching for an existing function/class before writing a new one, and building for reuse — is [Code Reuse](../references/code-reuse.md), applied per action burst in implement/fix.
+
 ## Context Loading
 
 Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding)):

@@ -78,6 +78,9 @@ role Reviewer {
       solid_compliance:
         description: "Code structure follows SOLID and pluggability principles (references/solid-architecture.md) unless overridden by project rules"
         severity: "warns"
+      code_reuse:
+        description: "New code reuses existing functions/classes instead of re-implementing them; a new reuse seam has a real consumer, not speculative generality (references/code-reuse.md). Resist over-DRY — do not flag look-alikes that change for different reasons"
+        severity: "warns"
       no_regressions:
         description: "Changes don't break existing functionality"
         severity: "blocks"

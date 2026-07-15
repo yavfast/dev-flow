@@ -387,6 +387,7 @@ dev-flow/
 │   ├── task-intent.md           # Task Intent — capture the goal/expected result, check work against it
 │   ├── ticket-tracker.md        # External tracker tickets (Jira/etc.) — discover skill/MCP, confirmed writes
 │   ├── consequence-forecasting.md  # Phase-scaled lookahead + YAGNI-gate (forecast → build/seam/drop)
+│   ├── code-reuse.md            # Search before create + build for reuse (code-altitude, YAGNI-gated)
 │   ├── experience-capture.md    # Transition Checkpoint — distill, demote, promote; auto-applied lessons
 │   ├── application-enforcement.md  # Per-burst knowledge re-activation (loaded ≠ applied)
 │   ├── procedural-skills.md     # Skills as procedural memory — freshness, promotion, curation
