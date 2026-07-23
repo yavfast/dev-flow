@@ -15,6 +15,7 @@ Break the specification into actionable phases with concrete technology choices,
 - **No orphaned phases:** Every phase must reference which spec sections it implements.
 - **Per-phase verification checklist:** Every phase carries a `Verify:` field beside `Implements:` — the spec Verification Criteria (`SP_XXX_05_*`) covering the contracts it implements, plus any phase-local acceptance check the spec does not carry. It is the phase's definition-of-done and the ready, reusable checklist that [Test](testing.md) and [Verify](verify.md) consume — so completing a phase yields a clear picture of what to check, not a re-derivation from the whole spec.
 - **Pseudocode, not production code:** Include short sketches to clarify intent, but do not write full implementation.
+- **Formatting:** Follow [Documentation Formatting](../references/formatting.md) — no hard line wraps inside sentences or paragraphs; one paragraph = one logical line.
 
 ## Context Loading
 

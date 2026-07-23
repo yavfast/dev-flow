@@ -170,3 +170,5 @@ Report: verdict per question, recommended next phase (`concept` ready / more res
 ## Language Policy
 
 Frame the spike and report findings in the **same language** the user used. Spike file section headers stay as the template defines them.
+
+**Formatting.** The spike file follows [Documentation Formatting](../references/formatting.md) — no hard line wraps inside sentences or paragraphs.

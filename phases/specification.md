@@ -16,6 +16,7 @@ Specifications MUST NOT reference specific programming languages, frameworks, or
 - **Isolation and modularity:** Each spec is strictly isolated. Changes in one must not affect others unless explicitly defined in contracts.
 - **Single Source of Truth:** Once created, source code becomes a derived artifact. All changes start in the specification first.
 - **Follow the glossary:** `docs/_glossary.md` is loaded with `docs/_index.md`; name every entity, field, and contract with its canonical term (not an `_Avoid_` alias). If the spec introduces a genuinely new domain term, add it to the glossary. Term *formation* is mainly a concept-phase job — here you consume the canonical vocabulary. See [Glossary](../references/glossary.md).
+- **Formatting:** Follow [Documentation Formatting](../references/formatting.md) — no hard line wraps inside sentences or paragraphs; one paragraph = one logical line.
 
 ## Context Loading
 

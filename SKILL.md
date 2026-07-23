@@ -205,7 +205,7 @@ In code, reference these as comments: `# [C_ACS_03_01] PermissionInterceptor`
 
 ## File Organization
 
-All documents live in `docs/` directories. One concept = one file set:
+All documents live in `docs/` directories. Every generated doc file follows the [Documentation Formatting](references/formatting.md) conventions — in particular, **no hard line wraps inside sentences or paragraphs** (one paragraph = one logical line). One concept = one file set:
 
 | File | Extension | Example |
 |------|-----------|---------|
@@ -384,6 +384,7 @@ Severity levels: **must** (blocks review) | **should** (warning) | **prefer** (a
 - [Resource Cache](references/cache.md) *(cross-cutting — durable resource store `.dev_flow/cache/` with trust levels + `/tmp` workspace discipline; every phase checks it before expensive fetches)*
 - [Roles](references/roles.md) *(base vs project-overlay subagent roles — reuse what exists, create new under .dev_flow/roles/ via inherits)*
 - [Glossary](references/glossary.md) *(`docs/_glossary.md` — canonical domain vocabulary; created at onboard/concept, loaded with `_index.md`)*
+- [Documentation Formatting](references/formatting.md) *(cross-cutting — formatting conventions for all generated documentation files; no hard line wraps inside sentences/paragraphs, one list item / table row per line, no wholesale reformatting of existing files)*
 - [Implement phase](phases/implement.md)
 - [Test phase](phases/testing.md) *(conditional — functional tests: unit + mock)*
 - [Review phase](phases/review.md) *(pre-commit review by clean-context subagent)*

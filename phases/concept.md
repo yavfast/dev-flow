@@ -56,6 +56,7 @@ Boundary: the glossary says *what a word means*; this concept's Domain Model (§
 - **Diagrams over prose:** Use ASCII diagrams, mermaid, or structured tables to show relationships, hierarchies, and flows.
 - **Explicit boundaries:** State what this concept IS and IS NOT.
 - **Cross-references:** Link to related concepts with `[C_XXX]` identifiers.
+- **Formatting:** Follow [Documentation Formatting](../references/formatting.md) — no hard line wraps inside sentences or paragraphs; one paragraph = one logical line.
 - **Changelog:** Every concept ends with a `## Changelog` table recording significant changes.
 
 ## Interview Mode for Design Decisions
