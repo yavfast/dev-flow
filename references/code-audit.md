@@ -60,7 +60,7 @@ Append a row to the menu table above and a checklist section below, both in this
 
 ## Per-Lens Checklists
 
-Each checklist is the "what to look for" for one lens. Findings carry a `type` from the lens's vocabulary, a severity (`must` / `should` / `prefer`), and a blast-radius computed via [Impact Walk](impact.md).
+Each checklist is the "what to look for" for one lens. Findings carry an `id`, the raising `lens`, a `type` from that lens's vocabulary, `locations`, a severity (`must` / `should` / `prefer`), a `blast_radius` computed via [Impact Walk](impact.md), a `suggested_change_class`, and a one-line `conclusion`.
 
 ### `standards`
 

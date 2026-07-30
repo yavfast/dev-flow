@@ -1,8 +1,8 @@
 # Evidence Discipline — Name What Fired, Not What Exists
 
-Cross-cutting sub-procedure of [audit](../phases/audit.md) (`rules`/`skills` scopes), the harvest step of [Experience Capture](experience-capture.md), which runs in every phase, and the reports of [test](../phases/testing.md) / [verify](../phases/verify.md) / [review](../phases/review.md) / [audit](../phases/audit.md). Not a pipeline stage and no command. It supplies one vocabulary — **evidence state** — plus the consumers that speak it (`C_EVD_03_01`).
+Cross-cutting sub-procedure of [audit](../phases/audit.md) (`rules`/`skills` scopes), the harvest step of [Experience Capture](experience-capture.md), which runs in every phase, and the reports of [test](../phases/testing.md) / [verify](../phases/verify.md) / [review](../phases/review.md) / [audit](../phases/audit.md). Not a pipeline stage and no command. It supplies one vocabulary — **evidence state** — plus the consumers that speak it.
 
-Advisory throughout — no consumer adds a blocking gate (`C_EVD_DEC_02`).
+Advisory throughout — no consumer adds a blocking gate.
 
 ## Evidence state
 
@@ -16,7 +16,7 @@ Discrete values on a project-knowledge artifact (rule, skill), ordered by streng
 | `exercised` | It fired and a result was retained | `tripwire` by-product · `gate-result` · a skill's `check` applied |
 | `outcome-supported` | A later comparable window confirmed the benefit | `improved` verdict from ledger reconciliation |
 
-Record fields: `state` · `source` · `observed_at` · `ref` — `source` is one token of `catalogue-write` \| `pre-action-marker` \| `tripwire` \| `gate-result` \| `skill-check` \| `ledger-verdict`. A state other than `unobserved` **requires** non-empty `source` + `ref` (`SP_EVD_03_06`).
+Record fields: `state` · `source` · `observed_at` · `ref` — `source` is one token of `catalogue-write` \| `pre-action-marker` \| `tripwire` \| `gate-result` \| `skill-check` \| `ledger-verdict`. A state other than `unobserved` **requires** non-empty `source` + `ref`.
 
 Never lower a state; `RecordEvidence` returns unwritten instead. Ageing belongs to `freshness` in [Procedural Skills](procedural-skills.md). `outcome-supported` is reachable only from reconciliation.
 
@@ -31,19 +31,19 @@ Orthogonal to `promotion`/`freshness` in [Procedural Skills](procedural-skills.m
 
 Runs inside [Experience Capture](experience-capture.md)'s harvest, before a durable artifact is written. Rungs: **covered** (name the covering artifact) → **extend** (an existing artifact absorbs it) → **create** → **needs-evidence**.
 
-Directive, not blocking: it recommends and requires a recorded reason; the caller may still create the artifact (`C_EVD_DEC_02`). `covered` without a named covering artifact is invalid.
+Directive, not blocking: it recommends and requires a recorded reason; the caller may still create the artifact. `covered` without a named covering artifact is invalid.
 
-Owner menu (`SP_EVD_03_04`): `rule` · `skill` · `drop` · `none` (covered) · `needs-evidence`. The first three mirror `SP_EXC_01_04.kind` plus its DROP branch; the last two are non-targets. **Narrowest durable owner wins; defaulting to `skill` is forbidden** — a `rule` carries a constraint, a `skill` a procedure, `drop` a narrow one-off.
+Owner menu: `rule` · `skill` · `drop` · `none` (covered) · `needs-evidence`. The first three mirror the harvest's own owner choice plus its drop branch; the last two are non-targets. **Narrowest durable owner wins; defaulting to `skill` is forbidden** — a `rule` carries a constraint, a `skill` a procedure, `drop` a narrow one-off.
 
 ## Consumer 2 — the skill `check` field
 
-Additive **optional** field on a procedural skill, beside the [Procedural Skills](procedural-skills.md) set: **`check`** — the signal that proves the procedure fired (command, check result, observable artifact). It is the only source of `exercised` for a skill; without it that state stays out of reach (`C_EVD_DEC_07`).
+Additive **optional** field on a procedural skill, beside the [Procedural Skills](procedural-skills.md) set: **`check`** — the signal that proves the procedure fired (command, check result, observable artifact). It is the only source of `exercised` for a skill; without it that state stays out of reach.
 
-**No invented evidence** (`SP_EVD_03_03`). A command, path, port, version, flag, or filename in `check` is admissible only when its source was **opened in this session** or **explicitly supplied by the user**. Otherwise record an explicit no-evidence marker, never an ecosystem default (`npm test`, `pytest`, `make build`). An L1 working-memory note counts when it records the opening with a reference; a bare mention of the name does not.
+**No invented evidence.** A command, path, port, version, flag, or filename in `check` is admissible only when its source was **opened in this session** or **explicitly supplied by the user**. Otherwise record an explicit no-evidence marker, never an ecosystem default (`npm test`, `pytest`, `make build`). An L1 working-memory note counts when it records the opening with a reference; a bare mention of the name does not.
 
 ## Consumer 3 — the intervention ledger
 
-`.dev_flow/evidence/ledger.yaml` (`SP_EVD_DEC_01`). One entry per harvest that created a durable artifact: `id` · `lesson` · `artifact` · `owner_kind` · `problem_class` · `trigger` · `state` · `verdicts` (append-only).
+`.dev_flow/evidence/ledger.yaml`. One entry per harvest that created a durable artifact: `id` · `lesson` · `artifact` · `owner_kind` · `problem_class` · `trigger` · `state` · `verdicts` (append-only).
 
 An entry with empty `verdicts` is **dormant** — it supports no claim of benefit. A ledger restored in a new session preserves continuity, never synthesizes a verdict. Opening an entry requires a named `trigger`; a second open entry for the same `artifact` + `problem_class` is rejected.
 
@@ -53,12 +53,12 @@ Absent `.dev_flow/evidence/` the reconcile step is a no-op.
 
 ## Consumer 4 — the report ceiling
 
-Applies to a phase report — [test](../phases/testing.md), [verify](../phases/verify.md), [review](../phases/review.md), [audit](../phases/audit.md) (`SP_EVD_03_07`).
+Applies to a phase report — [test](../phases/testing.md), [verify](../phases/verify.md), [review](../phases/review.md), [audit](../phases/audit.md).
 
 - **A claim never exceeds its state.** "Covered" / "verified" / "clean" / "safe" require `exercised` or stronger **for the thing claimed**; at `unobserved` the strongest admissible wording is "not verified in this environment". Checked against the achieved state, not against a fixed phrase list — the evidence-conditional counterpart of [Banned Phrases](../phases/concept.md#banned-phrases).
 - **`unobserved` is written, with a named reason.** A conditional phase that did not activate, and a criterion this environment cannot verify, produce a report line `unobserved` naming what is missing (no test harness, no CI, no service access, no credentials). The reason is mandatory on the same logic as `source` + `ref`; repeated identical reasons collapse into one. Silence about an unverified criterion never reads as passed.
 
-**Not a gate verdict.** Gate criteria sets are unchanged and nothing here blocks — a form requirement at report-write time (`C_EVD_DEC_09`).
+**Not a gate verdict.** Gate criteria sets are unchanged and nothing here blocks — a form requirement at report-write time.
 
 ## Degradation
 
@@ -81,5 +81,5 @@ Opening a ledger entry can fail (`EVD_NO_TRIGGER`, `EVD_DUPLICATE_ENTRY`) inside
 
 - **No numeric scores.** States are discrete; a confidence or maturity number is rejected.
 - **One owner for the vocabulary.** Defined here, cited everywhere; never redefined locally.
-- **Scoped to the delta** (`C_EVD_DEC_03`).
+- **Scoped to the delta** — each consumer covers only what no existing discipline already does.
 - **Same-window validation proves repair state, never later effectiveness.**

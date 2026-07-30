@@ -13,7 +13,7 @@ North star: durable task state stays **complete in L2** (`.dev_flow/`) so the tr
 
 ## The unit: a segment
 
-A **segment** is a coherent stretch of work on one topic or task, bounded by two transitions — e.g. "spec-SP_SAL" from opening the spec to finishing it. It has a short label, an owning task, and a lifecycle of exactly `open → closed` (closed once, by the transition that ends it). The label is what a response's trailer names; the checkpoint at its closing boundary is what distills it.
+A **segment** is a coherent stretch of work on one topic or task, bounded by two transitions — e.g. "spec-SP_XXX" from opening the spec to finishing it. It has a short label, an owning task, and a lifecycle of exactly `open → closed` (closed once, by the transition that ends it). The label is what a response's trailer names; the checkpoint at its closing boundary is what distills it.
 
 ## Transition Checkpoint — the primary cadence
 
@@ -39,7 +39,7 @@ When a task **closes**, `DemoteOnTaskClose` makes its salience markers inert (a 
 
 Self-learning is a **standing, ungated process**: a harvested lesson is written to the owning catalogue **automatically, with no permission prompt**. The gate is **structural, never a self-score**.
 
-**First, the coverage rung** ([Evidence Discipline](evidence-discipline.md)) — *covered* (name the covering artifact) → *extend* → *create* → *needs-evidence*, choosing the **narrowest durable owner**: `rule` for a constraint, `skill` for a procedure, `drop` for a narrow one-off; defaulting to `skill` is forbidden. Directive, not blocking: record the reason and proceed. On *create*, open a dormant intervention-ledger entry (`lesson`/`artifact`/`owner_kind`/`problem_class`/`trigger`); a ledger failure skips the entry, never the write. Then:
+**First, the coverage rung** ([Evidence Discipline](evidence-discipline.md)) — *covered* (name the covering artifact) → *extend* → *create* → *needs-evidence*, choosing the **narrowest durable owner** from `rule` · `skill` · `drop` · `none` (already covered) · `needs-evidence`: `rule` for a constraint, `skill` for a procedure, `drop` for a narrow one-off; defaulting to `skill` is forbidden. Directive, not blocking: record the reason and proceed. On *create*, open a dormant intervention-ledger entry (`lesson`/`artifact`/`owner_kind`/`problem_class`/`trigger`); a ledger failure skips the entry, never the write. Then:
 
 - A **reusable constraint or convention** → write a [rule](../phases/rule.md). Auto-written rules default to **`should`**; a `prefer` is fine. **Never auto-write a `must`** — a `must` blocks future code, so it is treated as doubtful (below).
 - **Broadly-useful, non-trivial** project knowledge that passes the [skill](../phases/skill.md) non-triviality filter → write/update a skill. (Write the content as a falsifiable, evidence-scoped observation — never an absolute verdict.)

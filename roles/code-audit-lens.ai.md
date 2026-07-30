@@ -10,7 +10,7 @@ role CodeAuditLens {
   ]
 
   outputs: [
-    "Finding[] for this lens — each: { id, lens, type (from the lens checklist vocabulary), locations (file:line / symbol), severity (must|should|prefer), blast_radius (low|med|high), suggested_change_class (trivial|standard|architectural), conclusion (one line) }",
+    "Finding[] for this lens — each: { id, lens, type (from the lens checklist vocabulary), locations (file:line / symbol), severity (must|should|prefer), blast_radius (low|medium|high), suggested_change_class (trivial|standard|architectural), conclusion (one line) }",
     "Any raw artifact (search hits, traces) staged in the /tmp project workspace and referenced BY PATH — never inlined into a Finding"
   ]
 

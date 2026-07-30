@@ -10,7 +10,7 @@ Shared sub-procedure for the **Ask**, **Do**, **Propagate**, **Review**, and **T
 
 One starting point:
 
-- a **traceable ID** (`C_XXX[_NN_NN]`, `SP_XXX[_NN_NN]`, `PL_XXX`) — most precise;
+- a **traceable ID** (`C_XXX[_NN_NN]`, `SP_XXX[_NN_NN]`, `PL_XXX`, `E_XXX`) — most precise;
 - a **document path** — resolves to its `Code:` ID;
 - a **code file** — resolves to the IDs in its traceable comments.
 
@@ -53,7 +53,7 @@ The counts feed the consuming phase's thresholds (propagate's ">3 documents" bou
 | Consumer | Use |
 |----------|-----|
 | [ask](../phases/ask.md) | The procedure behind the "Impact assessment" question type — and the natural user entry ("what breaks if …?") |
-| [do](../phases/do.md) | Evidence for Change Classes when trivial/standard/architectural is unclear |
+| [do](../phases/do.md) | Evidence for Change Classes when the class (trivial / standard / architectural / internal refactor) is unclear |
 | [propagate](../phases/propagate.md) | Cascade Impact Assessment; the dependents to-do list for versioning and deprecation |
 | [review](../phases/review.md) | Enumerating dependents during conflict detection and deprecation checks |
 | [todo](../phases/todo.md) | Bounding what a captured idea would touch (placement + at-capture feasibility snapshot) |

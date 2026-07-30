@@ -44,7 +44,7 @@ This phase covers **functional tests only** — fast, isolated checks of the cha
 | 1 | **Unit tests** | Verify individual functions/methods in isolation | Always — after any code change |
 | 2 | **Functional / Mock tests** | Verify behavior with mocked dependencies | When code interacts with external services or complex subsystems |
 
-**Integration and live tests** (levels 3-4) are handled in the [Verify phase](verify.md), which runs after Review.
+**Integration and live tests** are handled in the [Verify phase](verify.md), which runs after Review.
 
 **Rule:** Run only the tests that cover the changed code. Do not run the full test suite — that is the job of regression testing in the Verify phase.
 
