@@ -37,7 +37,7 @@ This phase activates when **at least one** of the following is true:
 2. The project can be launched locally (dev server, app build, service start).
 3. The changes affect user-facing behavior, external integrations, or configurations.
 
-If none apply — skip directly to commit approval.
+If none apply — skip directly to commit approval, recording the skip as `unobserved` with the reason (nothing to verify against in this environment), never as a clean result — see [Evidence Discipline](../references/evidence-discipline.md).
 
 ## Verification Categories
 
@@ -193,8 +193,11 @@ After running verification, report:
 | Integration tests | Total count / passed / failed |
 | Live tests | Scenario descriptions + pass/fail |
 | Manual verification | Steps provided to user (if applicable) |
+| Unobserved | Levels/criteria this environment could not verify + the missing observation boundary (no CI, no service access, no credentials, no device) |
 | Intent verdict | Outcome vs the task's recorded expected result: `met / partially met / diverged (+why)` ([Task Intent](../references/task-intent.md)) |
 | Fix cycles | Number of fix → test → review → verify iterations |
+
+No claim outruns its evidence — "verified" / "clean" only for what actually ran; everything else is `unobserved` with a named reason. See [Evidence Discipline](../references/evidence-discipline.md).
 
 ## Gate Check (Verify -> Commit)
 

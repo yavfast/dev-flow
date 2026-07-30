@@ -1,6 +1,6 @@
 # Evidence Discipline — Name What Fired, Not What Exists
 
-Cross-cutting sub-procedure of [audit](../phases/audit.md) (`rules`/`skills` scopes) and the harvest step of [Experience Capture](experience-capture.md), which runs in every phase. Not a pipeline stage and no command. It supplies one vocabulary — **evidence state** — plus the consumers that speak it (`C_EVD_03_01`).
+Cross-cutting sub-procedure of [audit](../phases/audit.md) (`rules`/`skills` scopes), the harvest step of [Experience Capture](experience-capture.md), which runs in every phase, and the reports of [test](../phases/testing.md) / [verify](../phases/verify.md) / [review](../phases/review.md) / [audit](../phases/audit.md). Not a pipeline stage and no command. It supplies one vocabulary — **evidence state** — plus the consumers that speak it (`C_EVD_03_01`).
 
 Advisory throughout — no consumer adds a blocking gate (`C_EVD_DEC_02`).
 
@@ -51,9 +51,18 @@ An entry with empty `verdicts` is **dormant** — it supports no claim of benefi
 
 Absent `.dev_flow/evidence/` the reconcile step is a no-op.
 
+## Consumer 4 — the report ceiling
+
+Applies to a phase report — [test](../phases/testing.md), [verify](../phases/verify.md), [review](../phases/review.md), [audit](../phases/audit.md) (`SP_EVD_03_07`).
+
+- **A claim never exceeds its state.** "Covered" / "verified" / "clean" / "safe" require `exercised` or stronger **for the thing claimed**; at `unobserved` the strongest admissible wording is "not verified in this environment". Checked against the achieved state, not against a fixed phrase list — the evidence-conditional counterpart of [Banned Phrases](../phases/concept.md#banned-phrases).
+- **`unobserved` is written, with a named reason.** A conditional phase that did not activate, and a criterion this environment cannot verify, produce a report line `unobserved` naming what is missing (no test harness, no CI, no service access, no credentials). The reason is mandatory on the same logic as `source` + `ref`; repeated identical reasons collapse into one. Silence about an unverified criterion never reads as passed.
+
+**Not a gate verdict.** Gate criteria sets are unchanged and nothing here blocks — a form requirement at report-write time (`C_EVD_DEC_09`).
+
 ## Degradation
 
-Where the runtime cannot observe an action, no source for `exercised` exists and the state stays `unobserved`; never simulate the observation ([Application Enforcement](application-enforcement.md) degrades the same way). A conditional phase that never activated is not an observation either: the artifacts it would have exercised stay `unobserved`, never read as clean.
+Where the runtime cannot observe an action, no source for `exercised` exists and the state stays `unobserved`; never simulate the observation ([Application Enforcement](application-enforcement.md) degrades the same way). A conditional phase that never activated is not an observation either: the artifacts it would have exercised stay `unobserved`, and its report says so per Consumer 4 — never read as clean.
 
 Opening a ledger entry can fail (`EVD_NO_TRIGGER`, `EVD_DUPLICATE_ENTRY`) inside a harvest that is otherwise ungated: on either, skip the ledger entry and let the harvest write proceed — the write is never blocked by ledger bookkeeping.
 
@@ -66,6 +75,7 @@ Opening a ledger entry can fail (`EVD_NO_TRIGGER`, `EVD_DUPLICATE_ENTRY`) inside
 | [Application Enforcement](application-enforcement.md) | Its tripwire by-product is the primary `exercised` source |
 | [rule phase](../phases/rule.md) · [skill phase](../phases/skill.md) index format | The optional `evidence:` key |
 | [audit](../phases/audit.md) `rules`/`skills` scope | Ledger reconciliation and prune candidates |
+| [test](../phases/testing.md) · [verify](../phases/verify.md) · [review](../phases/review.md) · [audit](../phases/audit.md) reports | The report ceiling and the written `unobserved` |
 
 ## Boundaries
 

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-`.dev_flow/` accumulates drift the normal phases never catch (each touches only the slice it owns): stale dashboard rows, task headers lagging documents and git, verbose closed tasks, duplicate or stale rules/skills. Audit is the periodic **whole-directory sweep** that reconciles every task's recorded state against ground truth, trims the dashboard to what is actually active, compacts and reflects on closed work so its lessons survive while its noise is archived, grooms the `rules/`, `skills/`, and `cache/` catalogues — and reconciles the integrity of the `docs/` set itself (index, statuses, cross-references, orphans, glossary, docs↔code drift) through the `docs` scope. It is the write-heavy cousin of [status](status.md): `status` *reports* drift, `audit` *resolves* it.
+`.dev_flow/` accumulates drift the normal phases never catch (each touches only the slice it owns): stale dashboard rows, task headers lagging documents and git, verbose closed tasks, duplicate or stale rules/skills. Audit is the periodic **whole-directory sweep** that reconciles every task's recorded state against ground truth, trims the dashboard to what is actually active, compacts and reflects on closed work so its lessons survive while its noise is archived, grooms the `rules/`, `skills/`, and `cache/` catalogues — and reconciles the integrity of the `docs/` set itself (index, statuses, cross-references, orphans, glossary, duplicated value sets, docs↔code drift) through the `docs` scope. It is the write-heavy cousin of [status](status.md): `status` *reports* drift, `audit` *resolves* it.
 
 A separate, opt-in **`code` scope** ([Step 9](#step-9--code-scope-the-whole-codebase-audit)) extends the same "reconcile the project to reality" idea to the *source code itself*: it audits the whole codebase through parallel lenses (architecture / SOLID / DRY / security / …), consolidates the findings, and emits a prioritized **refactoring plan** plus a run report — written under `.dev_flow/audit/` with a timestamped name (not into `docs/`) — plus a `docs/_framework.md` map update. Like every other scope it is **non-committing** — it stops at the Plan→Code gate and hands the plan off to the standard pipeline; it never edits source or commits.
 
@@ -14,7 +14,7 @@ Audit composes existing phases rather than reinventing them — it leans on the 
 /dev-flow audit [scope] [--dry-run]
 ```
 
-- `scope` (optional) — limit the sweep to one area. One of: `context` (dashboard + task reconciliation + compaction), `tasks` (reconcile + compact task files only), `rules`, `skills`, `cache`, `docs` (documentation integrity — index · statuses · cross-refs · orphans · glossary · drift), `code` (whole-codebase architecture/SOLID/DRY/security audit → refactoring plan), or `all` (default). `all` runs every workspace + `docs` scope below; **`code` is opt-in and excluded from `all`** — it is the heavy, periodic scope and is invoked explicitly.
+- `scope` (optional) — limit the sweep to one area. One of: `context` (dashboard + task reconciliation + compaction), `tasks` (reconcile + compact task files only), `rules`, `skills`, `cache`, `docs` (documentation integrity — index · statuses · cross-refs · orphans · glossary · duplicated sets · drift), `code` (whole-codebase architecture/SOLID/DRY/security audit → refactoring plan), or `all` (default). `all` runs every workspace + `docs` scope below; **`code` is opt-in and excluded from `all`** — it is the heavy, periodic scope and is invoked explicitly.
 - The `code` scope takes **free-form intent**, not flags: `/dev-flow audit code <description of intent>`. The `--dry-run` flag below applies to the workspace/`docs` scopes; `code` expresses "report only, no hand-off" in its intent text (e.g. "preview plan") — see [Step 9](#step-9--code-scope-the-whole-codebase-audit).
 - `--dry-run` — produce the audit report only; make no changes on disk.
 
@@ -29,7 +29,7 @@ Each scope runs a defined subset of the [procedure](#procedure); `all` runs the 
 | `rules` | 6 | `.dev_flow/rules/` catalogue |
 | `skills` | 7 | `.dev_flow/skills/` catalogue |
 | `cache` | 7d | `.dev_flow/cache/` index ↔ disk |
-| `docs` | 7a · 7b · 7c · 7e | `docs/` — glossary, open decisions/backlogs/todos/spikes, docs↔code drift, **index · statuses · cross-refs · orphans · freshness** |
+| `docs` | 7a · 7b · 7c · 7e | `docs/` — glossary, open decisions/backlogs/todos/spikes, docs↔code drift, **index · statuses · cross-refs · orphans · freshness · duplicated sets** |
 | `all` (default) | 1–8 | everything in the workspace **and** docs (**not** `code`) |
 | `code` (opt-in, separate) | 9 | the **whole project codebase** — architecture/SOLID/DRY/security/… via lens fan-out → prioritized refactoring plan + run report (timestamped, in `.dev_flow/audit/`) + `docs/_framework.md` update (read-only; hands off to the pipeline, never commits) |
 
@@ -42,7 +42,7 @@ Each scope runs a defined subset of the [procedure](#procedure); `all` runs the 
 /dev-flow audit rules            # only groom .dev_flow/rules/
 /dev-flow audit skills           # only groom .dev_flow/skills/
 /dev-flow audit cache            # only groom .dev_flow/cache/
-/dev-flow audit docs             # only check docs/ integrity (index, statuses, refs, glossary, drift)
+/dev-flow audit docs             # only check docs/ integrity (index, statuses, refs, glossary, duplicated sets, drift)
 /dev-flow audit code             # whole-codebase audit → refactoring plan (all base lenses)
 /dev-flow audit code модуль auth, фокус на architecture та DRY   # scoped + lens-focused (free-form)
 /dev-flow audit code focus security                              # security-lens sweep
@@ -182,12 +182,15 @@ Grouped with Steps 7a–7c as the **`docs` scope**. Where 7a–7c groom the glos
 3. **Cross-reference integrity** — check that `Depends on` / `Used by` resolve and are **bidirectional** (if A depends on B, B lists A under `Used by`), that header links (`Specification:`, `Plan:`, `Spike:`) resolve, and that inline `[C_XXX]` / `[SP_XXX]` / `[PL_XXX]` references point at existing documents/sections. Flag dangling or one-directional links; propose the reciprocal fix.
 4. **Orphans & completeness** — flag a concept with no spec or plan where one is expected, a spec with no parent concept, a doc file absent from `_index.md`, and an epic referencing a missing concept.
 5. **Freshness** — flag active concepts/specs/plans with significant edits but no matching `Changelog` row, an `Updated` date older than commits that touched the document's IDs, and lingering [banned phrases](concept.md#banned-phrases) in an `active` concept/spec.
+6. **Duplicated value sets** — where the same set of values (an enum, a criteria list, an option set, a gate checklist) is enumerated in more than one document, diff the copies: each must list the same members. Also diff a set restated **within** one document — a contract's pseudocode-enumerated set against its §03 validation rule. Report divergence as drift and propose reconciliation toward the **owning** document (the spec defining the entity, else the concept); a copy is never treated as the authority.
 
 Apply the derived/index fixes directly; **propose** status changes, reciprocal-link fixes, and removals (per *apply-safe / propose-judgement*). Document *content* fixes route through [propagate](propagate.md) — audit reports the drift, it does not rewrite design documents.
 
 ### Step 8 — Report
 
 Always end with a structured report (and in `--dry-run`, this is the *only* output — nothing is written). Apply the safe/derived changes directly; list the judgement calls as proposals awaiting confirmation. **Never commit** — present the changes and follow the standard approval rule.
+
+A check that could not be run — a *blocked* path, not the no-op of an absent directory — is reported as `unobserved` with the missing observation boundary; no section claims more than its evidence supports. See [Evidence Discipline](../references/evidence-discipline.md).
 
 ### Step 9 — `code` scope: the whole-codebase audit
 
@@ -215,7 +218,7 @@ Fan out **one read-only subagent per lens** (the [code-audit-lens role](../roles
 
 #### Step 9.2 — Consolidate (barrier — needs all Findings)
 
-One agent (single writer) merges every lens's Findings into ConsolidatedFindings: dedup by normalized location + type; cluster cross-module duplication into a `duplication-cluster` / `abstraction-candidate`; detect docs↔code architecture drift (`docs-code-drift`); surface **cross-lens conflicts** (e.g. `standards` vs `architecture`) as their own `cross-lens-conflict` kind — **preserved, never averaged away**. For each, compute `blast_radius` via [Impact Walk](../references/impact.md) and `priority = f(severity, blast_radius, effort)`; return sorted by priority. This is a **barrier** — it needs the whole picture.
+One agent (single writer) merges every lens's Findings into ConsolidatedFindings: dedup by normalized location + type; cluster cross-module duplication into a `duplication-cluster` / `abstraction-candidate`; detect docs↔code architecture drift (`docs-code-drift`); surface **cross-lens conflicts** (e.g. `standards` vs `architecture`) as their own `cross-lens-conflict` kind — **preserved, never averaged away**. For each, compute `blast_radius` via [Impact Walk](../references/impact.md) over the merged `affected` set and `priority = f(max severity, blast_radius, effort)`; return sorted by priority. This is a **barrier** — it needs the whole picture.
 
 #### Step 9.3 — ProducePlan (the scope stops here)
 

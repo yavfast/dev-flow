@@ -14,7 +14,7 @@ This phase activates **only when both conditions are met:**
 1. The project has an existing test suite (e.g., `tests/` directory, test runner configured).
 2. There are defined rules for running and validating tests (e.g., `pytest`, `jest`, CI config).
 
-If neither exists — skip directly to Review (Phase 6: [review](review.md)).
+If neither exists — skip directly to Review (Phase 6: [review](review.md)), and record the skip as `unobserved` with the reason (no harness), never as a clean result — see [Evidence Discipline](../references/evidence-discipline.md).
 
 ## Command
 
@@ -124,8 +124,11 @@ After running tests, report:
 | Passed | Count |
 | Failed | Count + failure details |
 | Skipped | Count + reason |
+| Unobserved | Contracts/criteria this environment could not verify + the missing observation boundary (no harness / no fixture / no service) |
 | New tests added | List with traceable IDs |
 | Tests updated | List with change description |
+
+The report claims no more than the evidence supports — "covered" only where a test actually ran; an unverifiable criterion is `unobserved` with a named reason, never silence. See [Evidence Discipline](../references/evidence-discipline.md).
 
 ## Reflection
 

@@ -46,7 +46,7 @@ Additional commands:
 | `/dev-flow skill <request>` | Manage project technology knowledge |
 | `/dev-flow subtask <task>` | Delegate a secondary task to a subagent — a full dev-flow participant that builds its own context and reports fully |
 | `/dev-flow status` | Show current state, resume previous session |
-| `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — reconcile state, trim context, compact closed tasks, groom rules/skills/cache, check docs integrity (index/statuses/refs) |
+| `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — reconcile state, trim context, compact closed tasks, groom rules/skills/cache, check docs integrity (index/statuses/refs/duplicated sets) |
 | `/dev-flow audit code <intent>` | Opt-in whole-codebase audit (architecture/SOLID/DRY/security via parallel lenses) → prioritized refactoring plan + run report (timestamped, in `.dev_flow/audit/`) + framework map; read-only, hands off to the pipeline |
 | `/dev-flow do <request>` / `/dev-flow <anything>` | Freeform — interprets intent and auto-routes to the right phase (the default command) |
 
@@ -393,7 +393,7 @@ dev-flow/
 │   ├── experience-capture.md    # Transition Checkpoint — distill, demote, promote; auto-applied lessons
 │   ├── application-enforcement.md  # Per-burst knowledge re-activation (loaded ≠ applied)
 │   ├── procedural-skills.md     # Skills as procedural memory — freshness, promotion, curation
-│   ├── evidence-discipline.md   # Evidence states (present→wired→exercised→outcome-supported) + coverage rung, skill check, intervention ledger
+│   ├── evidence-discipline.md   # Evidence states (present→wired→exercised→outcome-supported) + coverage rung, skill check, intervention ledger, report ceiling
 │   ├── cache.md                 # Resource cache + /tmp workspace discipline
 │   ├── roles.md                 # Base vs project-overlay roles
 │   ├── glossary.md              # Project domain vocabulary

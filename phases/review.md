@@ -56,9 +56,14 @@ A checkable guard on the reviewer itself: **2+ consecutive substantive diffs** (
    ### Warnings
    - {warning description} — {file:line}
 
+   ### Unobserved
+   - {check the reviewer could not evaluate} — {what was missing: no spec for the area, no test result, no runtime access}
+
    ### Summary
    {1-2 sentence summary of the review}
    ```
+
+   A check the reviewer could not evaluate is listed as `unobserved` with the missing observation boundary — it is neither a pass nor a warning, and never omitted. The summary claims no more than the evidence supports. See [Evidence Discipline](../references/evidence-discipline.md).
 
 ## After Review: Verify Phase
 

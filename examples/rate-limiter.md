@@ -349,6 +349,9 @@ Launch a reviewer subagent with a clean context. The subagent receives:
 - OCP: Storage is injectable, new storage backends don't require changes ✓
 - DIP: RateLimiter depends on abstract BucketStorage, not concrete class ✓
 
+### Unobserved
+- Concurrent-access safety under a real Redis backend — no integration environment in this review; carried into Verify
+
 ### Summary
 Implementation matches spec contracts. SOLID principles followed.
 One minor suggestion about making the storage interface explicit.
