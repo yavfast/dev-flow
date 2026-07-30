@@ -1,8 +1,10 @@
 # Dev-Flow Active Context
 
+<!-- Instantiated as `.dev_flow/active_context.md`; relative links below resolve from `.dev_flow/`. -->
+
 This file is a **dashboard** — a thin index over the task files in [`tasks/`](tasks/). Detailed per-task state lives in those files; this file only lists what is active and what has recently completed.
 
-Any contributor may rebuild this dashboard from `tasks/*.md` if it becomes stale or inconsistent. See [phases/status.md](../phases/status.md).
+Any contributor may rebuild this dashboard from `tasks/*.md` if it becomes stale or inconsistent. See `phases/status.md` (dev-flow skill).
 
 ## Active Tasks
 

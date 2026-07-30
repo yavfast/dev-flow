@@ -13,14 +13,14 @@
 | **Document** | `[type: concept/spec/plan/code]` — [title and file path] |
 | **Pipeline phase** | `[onboard / research / concept / spec / plan / implement / test / review / verify / propagate / fix / rule / skill / ask / todo / do / subtask / status / audit]` |
 | **Traceable ID** | `[C_XXX / SP_XXX / PL_XXX or n/a]` |
-| **Ticket** | `[PROJ-123 (external tracker) or n/a]` — present only when the task is explicitly tied to a tracker ticket; see [Ticket Tracker Integration](../references/ticket-tracker.md) |
+| **Ticket** | `[PROJ-123 (external tracker) or n/a]` — present only when the task is explicitly tied to a tracker ticket; see `references/ticket-tracker.md` (dev-flow skill) |
 
 ## Intent
 
 <!-- Captured at intake by whoever opens the task; user's terms, inferred parts
      marked `(inferred)`. Changes only when the user restates the goal.
      Skip for trivial routes with self-evident intent.
-     See [Task Intent](../references/task-intent.md). -->
+     See `references/task-intent.md` (dev-flow skill). -->
 
 - **Goal (why):** [what problem this solves / why the user wants it]
 - **Target state:** [how things should look when done]
@@ -88,4 +88,4 @@ A subtask is a thread of work claimed by one contributor. To join this task, add
 
 ---
 
-*This is a shared file. Each contributor owns their own subtask block and their own tagged entries in shared sections (Description paragraphs, Coordination Notes, Blocking Issues, Relevant Context rows, Activity Log entries). Do not refactor others' content. Coordinate via Coordination Notes. See [phases/status.md](../phases/status.md) for the full protocol.*
+*This is a shared file. Each contributor owns their own subtask block and their own tagged entries in shared sections (Description paragraphs, Coordination Notes, Blocking Issues, Relevant Context rows, Activity Log entries). Do not refactor others' content. Coordinate via Coordination Notes. See `phases/status.md` (dev-flow skill) for the full protocol.*

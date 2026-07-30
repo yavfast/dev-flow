@@ -79,7 +79,7 @@ The request is a freeform description in any language. Interpret the intent and 
 
 ## Index Format
 
-`.dev_flow/rules/_index.yaml` is grouped by category. Each category entry carries the backing `file` and a `summary`; each rule under it carries `name`, `severity`, and a one-line `summary`:
+`.dev_flow/rules/_index.yaml` is grouped by category. Each category entry carries the backing `file` and a `summary`; each rule under it carries `name`, `severity`, and a one-line `summary`, plus an **optional** `evidence` record (a missing key reads as `unobserved`; a state other than `unobserved` requires `source` + `ref` — see [Evidence Discipline](../references/evidence-discipline.md)):
 
 ```yaml
 categories:
@@ -90,6 +90,11 @@ categories:
       - name: NoMPrefixForFields
         severity: must
         summary: Do not prefix instance fields with `m`
+        evidence:
+          state: exercised          # present | wired | exercised | outcome-supported | unobserved
+          source: tripwire
+          observed_at: 2026-07-30
+          ref: .dev_flow/tasks/task_C_AUTH.md
       - name: EnumOverConstants
         severity: prefer
         summary: Use an enum instead of a list of integer constants

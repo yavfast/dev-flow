@@ -116,7 +116,7 @@ updated: {YYYY-MM-DD}
 
 A skill is distilled **procedural** memory (*how to use X here / how to do Y here*), and its retrieval carries **precedence** over the model's general prior. See [Procedural Skills](../references/procedural-skills.md) for the full discipline; the contract:
 
-- **Additive fields** over the template: `kind: procedural`; a `## Applicability Boundary` body section (**mandatory** — `when_to_use` / `when_not` / `version_or_context_scope`; a skill without one is rejected); a freshness stamp (`written_against` version/context + `state: current|stale`, optional for a pure-process skill); `promotion: candidate|established` (+ a scope note while `candidate`).
+- **Additive fields** over the template: `kind: procedural`; a `## Applicability Boundary` body section (**mandatory** — `when_to_use` / `when_not` / `version_or_context_scope`; a skill without one is rejected); a freshness stamp (`written_against` version/context + `state: current|stale`, optional for a pure-process skill); `promotion: candidate|established` (+ a scope note while `candidate`); an **optional** `check` field — the signal proving the procedure fired, never an invented command (see [Evidence Discipline](../references/evidence-discipline.md)).
 - **Retrieval precedence:** a *current* matching skill outranks the general prior; a *stale* one must be re-grounded + re-stamped before it can override fresh research; **no match never blocks** (fall back to prior + research); a `candidate` applied outside its scope falls back (no forced reuse).
 - **Promotion (structural, never a self-score):** one hard case → `candidate` (scoped); a 2nd convergent use → `established` + generalized boundary (N≥2).
 
@@ -155,7 +155,16 @@ skills:
     topics: [rate-limit, throttle, backoff, retry]
     source: onboard
     updated: {YYYY-MM-DD}
+    promotion: established       # candidate | established
+    check: "{command / check result that proves it fired}"   # optional; never invented
+    evidence:                    # optional; missing key reads as unobserved
+      state: exercised           # present | wired | exercised | outcome-supported | unobserved
+      source: skill-check
+      observed_at: {YYYY-MM-DD}
+      ref: .dev_flow/tasks/task_PL_API.md
 ```
+
+`promotion`, `check`, and `evidence` mirror the skill file's own fields — see [Procedural Skills](../references/procedural-skills.md) and [Evidence Discipline](../references/evidence-discipline.md).
 
 ## Loading Algorithm
 

@@ -100,6 +100,8 @@ Loading `.dev_flow/rules/` and `.dev_flow/skills/` is a mandatory gate at the st
 
 If the directory is absent, the gate is a no-op. Each relevant phase restates this as its "Skill check" / "Rule check" — gates, not reminders. The gate is also **re-triggered at the moment of action** — the relevant set is re-surfaced per action burst beside the work (a pointer-only Pre-Action Marker), not only once at phase start, because loaded ≠ applied in a long session. See [Application Enforcement](references/application-enforcement.md).
 
+A rule or skill carries an optional **evidence state** (`present` → `wired` → `exercised` → `outcome-supported`, or `unobserved`) with mandatory provenance; configured ≠ used, count ≠ conclusion. See [Evidence Discipline](references/evidence-discipline.md).
+
 ## Validation Gates
 
 **Concept -> Specification:**
@@ -269,6 +271,7 @@ dev-flow uses a **collaborative per-task context model** so multiple AI agents c
 .dev_flow/
 ├── active_context.md          # Dashboard — table of active tasks + recently completed
 ├── cache/                     # Durable resources (Figma exports, downloads, baselines) + _index.yaml
+├── evidence/                  # ledger.yaml — intervention ledger (Evidence Discipline); absent → reconcile is a no-op
 ├── tasks/
 │   ├── _index.md              # Catalog of task files (conventions + active/recent lists)
 │   ├── task_<ID>.md           # Per-task shared context — multiple contributors
@@ -391,6 +394,7 @@ Severity levels: **must** (blocks review) | **should** (warning) | **prefer** (a
 - [Code Reuse](references/code-reuse.md) *(cross-cutting sub-procedure of implement/fix — search for an existing function/class before creating a new one; build for reuse only with a real near-term consumer, YAGNI-gated; the code-altitude counterpart of the concept Reuse Check, backstopped by the audit-code duplication lens)*
 - [Procedural Skills](references/procedural-skills.md) *(cross-cutting refinement of the skill subsystem — skills are procedural memory with a mandatory applicability boundary + freshness stamp; a current skill outranks the prior, a stale one is re-grounded first; candidate→established promotion; audit curation)*
 - [Application Enforcement](references/application-enforcement.md) *(cross-cutting sub-procedure of implement/fix/testing/verify — re-trigger the knowledge gate per action burst via a pointer-only Pre-Action Marker; conformance tripwire + advisory/interface-gate/sampled-verifier tiers; clean-context review realizes the verifier tier; self-attestation banned; runtime-conditional, degrades to advisory)*
+- [Evidence Discipline](references/evidence-discipline.md) *(cross-cutting sub-procedure of audit (`rules`/`skills`) + the Experience Capture harvest — evidence states `present`/`wired`/`exercised`/`outcome-supported`/`unobserved` on a knowledge artifact, provenance mandatory; three consumers: harvest coverage rung, skill `check` field, intervention ledger with longitudinal reconciliation; configured ≠ used, count ≠ conclusion, no numeric scores)*
 - [Resource Cache](references/cache.md) *(cross-cutting — durable resource store `.dev_flow/cache/` with trust levels + `/tmp` workspace discipline; every phase checks it before expensive fetches)*
 - [Roles](references/roles.md) *(base vs project-overlay subagent roles — reuse what exists, create new under .dev_flow/roles/ via inherits)*
 - [Glossary](references/glossary.md) *(`docs/_glossary.md` — canonical domain vocabulary; created at onboard/concept, loaded with `_index.md`)*

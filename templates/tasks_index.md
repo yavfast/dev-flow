@@ -1,5 +1,7 @@
 # Tasks Directory Index
 
+<!-- Instantiated as `.dev_flow/tasks/_index.md`; relative links below resolve from that directory. -->
+
 This directory holds **per-task context files**. Each file is the shared working space for one research topic, feature, or fix. Multiple AI agents may contribute to the same task in parallel.
 
 The parent file [`../active_context.md`](../active_context.md) is a thin dashboard derived from these files; if it ever drifts, this directory wins.
@@ -39,4 +41,4 @@ The parent file [`../active_context.md`](../active_context.md) is a thin dashboa
 
 ---
 
-*Tasks index is regenerable. Any dev-flow command may rebuild it by listing `task_*.md` files in this directory. See [../phases/status.md](../phases/status.md).*
+*Tasks index is regenerable. Any dev-flow command may rebuild it by listing `task_*.md` files in this directory. See `phases/status.md` (dev-flow skill).*

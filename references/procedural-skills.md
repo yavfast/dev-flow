@@ -18,6 +18,7 @@ A skill captures *how to use tool X here / how to do process Y here* — not a r
 | `freshness` | `written_against` (tool/framework version or context description) + `state: current\|stale`. **Optional** for a pure-process skill with no version. |
 | `promotion` | `candidate` (born of one hard case — narrow) \| `established` (confirmed by a 2nd convergent use — generalized). |
 | `scope_note` | Required while `candidate`: the observed context the candidate is limited to. |
+| `check` | **Optional** at any `promotion`: the signal proving the procedure fired; without it the skill's evidence state stays below `exercised`. Never an invented command — see [Evidence Discipline](evidence-discipline.md). |
 
 ## Retrieval precedence — the contract
 
@@ -39,7 +40,7 @@ The agent's declarative reasoning never switches off — a loaded skill **shifts
 
 [audit](../phases/audit.md) grooms the catalogue — **incrementally, never a bulk rewrite** (avoids the context-collapse / brevity-bias rot seen in prior art):
 
-- `prune` low-hit / stale-beyond-use, `merge` near-duplicates → **propose** (destructive, like skill deletion — goes through review, consistent with [Experience Capture](experience-capture.md)'s autonomy policy).
+- `prune` low-hit / stale-beyond-use, `merge` near-duplicates → **propose** (destructive, like skill deletion — goes through review, consistent with [Experience Capture](experience-capture.md)'s autonomy policy). "Low-hit" is read from the recorded evidence state, not estimated: an artifact still `present` with no `exercised` observation ever recorded is the prune candidate ([Evidence Discipline](evidence-discipline.md)).
 - `restamp` freshness, incremental edits → **apply**.
 - **Conflict** (two skills prescribe different procedures for one surface) → **surface as an explicit decision; never let retrieval silently pick a side** (the least-mitigated failure in prior art).
 

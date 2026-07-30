@@ -126,6 +126,7 @@ Regenerate `tasks/_index.md` from the task headers: Active and Recently Complete
 1. **Index ↔ disk** — reconcile `rules/_index.yaml` against the actual files: add entries for rule files missing from the index, remove entries pointing to files that no longer exist, fix `summary`/`file` fields that have drifted.
 2. **Semantic duplicates** — scan for rules expressing the same constraint under different names or in different category files. Propose a merge: keep the canonical rule (usually the one with the stable ID and more references), deprecate or redirect the other, and report it. **Do not auto-delete.**
 3. **Consistency** — check that each rule has a sane category and severity, that cross-references (rule IDs, file paths, traceable IDs) still resolve, and that `must`-severity rules are genuinely mandatory. Flag stale or dangling references.
+4. **Ledger reconcile (every entry except `owner_kind: skill`)** — for each `.dev_flow/evidence/ledger.yaml` entry whose `trigger` is due, append one verdict (`improved` / `unchanged` / `regressed` / `still-unobserved`); a `regressed` in history keeps its blocker. `owner_kind: skill` belongs to Step 7.6. Report artifacts still `present` with no `exercised` observation ever recorded as **prune candidates** — *proposed*, never auto-deleted (Step 6.2 policy). Absent the file → no-op. See [Evidence Discipline](../references/evidence-discipline.md).
 
 ### Step 7 — Revise `skills/`
 
@@ -136,6 +137,7 @@ Curation of **procedural skills** — edit **incrementally, never a bulk rewrite
 3. **Staleness** — flag skills whose `updated` date is old, that reference removed code/APIs, or that have decayed into general knowledge no longer worth keeping (re-apply the non-triviality filter). Propose removals; do not auto-delete.
 4. **Freshness re-stamp** — where a procedural skill's `written_against` has drifted past the current tool/framework version, mark it `stale` (or re-stamp `current` if re-grounded). This restamp/incremental edit is **applied**; `prune`/`merge` stay **proposed** (destructive → review).
 5. **Conflicts** — two skills prescribing different procedures for one surface are **surfaced as an explicit decision**, never silently resolved by picking one. Flag an implausibly high `candidate` ratio for re-grading (advisory).
+6. **Evidence & ledger (`owner_kind: skill` entries)** — read `low-hit` from the recorded evidence state rather than estimating it, note skills whose missing `check` keeps them below `exercised` (advisory, never a promotion blocker), and apply the Step 6.4 reconcile to entries with `owner_kind: skill`. See [Evidence Discipline](../references/evidence-discipline.md).
 
 ### Step 7a — Groom `docs/_glossary.md` (if present)
 
@@ -247,6 +249,7 @@ Use this template so the result is scannable:
    • Trimmed active_context.md (<before> → <after> lines)
    • Rebuilt tasks/_index.md
    • rules/_index.yaml: +<a> entries, −<b> orphans, fixed <c> summaries
+   • evidence/ledger.yaml: +<v> verdicts appended; <p> prune candidates proposed
    • skills indexes: +<a>/−<b>
    • cache: extended valid_until on <n> entries (cheap check confirmed unchanged)
    • docs/_glossary.md: resolved <b> stale ambiguities (flags dropped)

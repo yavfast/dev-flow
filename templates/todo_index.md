@@ -1,8 +1,10 @@
+<!-- Instantiated as `.dev_flow/todos/_index.md`; relative links below resolve from that directory. -->
+
 # Todos Register
 
 This directory holds **deferred work captured by `/dev-flow todo`** — ideas the project might execute later, each filed with the documentation it touches, a feasibility verdict, and a return trigger. It is the home for a todo only when **no owning plan exists** for the area; when a plan exists, the item lives in that plan's `## Backlog` section instead.
 
-A todo is *deferred*, not committed work — execution happens later via `/dev-flow do <description>`, which **re-runs a full analysis** (the entry below is a head-start, not a trusted final verdict — context drifts) and marks the entry `promoted`. [Audit](../phases/audit.md) grooms this register.
+A todo is *deferred*, not committed work — execution happens later via `/dev-flow do <description>`, which **re-runs a full analysis** (the entry below is a head-start, not a trusted final verdict — context drifts) and marks the entry `promoted`. The `audit` phase grooms this register (`phases/audit.md` in the dev-flow skill).
 
 ## Conventions
 
@@ -46,4 +48,4 @@ A todo is *deferred*, not committed work — execution happens later via `/dev-f
 
 ---
 
-*Created and groomed by `/dev-flow todo` and `/dev-flow audit`. See [../phases/todo.md](../phases/todo.md).*
+*Created and groomed by `/dev-flow todo` and `/dev-flow audit`. See `phases/todo.md` (dev-flow skill).*

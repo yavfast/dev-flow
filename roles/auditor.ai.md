@@ -44,6 +44,7 @@ role Auditor {
     - "Compacted closed task files + session_history/session_YYYY-MM-DD.md archives"
     - "Regenerated active_context.md and tasks/_index.md"
     - "Reconciled rules/skills indexes; entry-by-entry cache index reconciliation (flags, no regeneration); proposed (not auto-applied) merges/removals"
+    - "Appended ledger verdicts + proposed prune candidates from recorded evidence state (never estimated)"
     - "Reflection-derived rules/skills written automatically through the structural rule/skill gate (never auto-`must`; contradictions → independent review; visible in the commit diff)"
     - "A structured audit report for the user (the sole output under --dry-run)"
 
@@ -108,6 +109,7 @@ role Auditor {
       - "Regenerate active_context.md (thin) and tasks/_index.md from task headers"
     groom_catalogues:
       - "Reconcile rules and skills indexes against disk; detect duplicates/staleness"
+      - "Reconcile evidence/ledger.yaml: for each entry whose trigger is due append ONE verdict (improved|unchanged|regressed|still-unobserved) — owner_kind:skill in the skills step, all others in the rules step; report never-`exercised` artifacts as prune candidates (proposed, never auto-deleted); a regressed in history keeps its blocker; absent file → no-op"
       - "Reconcile cache/_index.yaml entry by entry: flag unindexed files / missing-file entries / missing-trust and unchecked-public entries, propose unreferenced/stale removals — never regenerate"
       - "Sweep expired valid_until: cheap currency check where possible (extend when unchanged); flag changed/uncheckable for refresh — never re-fetch"
       - "Apply index reconciliation; propose merges/removals"

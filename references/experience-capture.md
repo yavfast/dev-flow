@@ -37,7 +37,9 @@ When a task **closes**, `DemoteOnTaskClose` makes its salience markers inert (a 
 
 ## Applying experience — auto-apply through structural gates
 
-Self-learning is a **standing, ungated process**: a harvested lesson is written to the owning catalogue **automatically, with no permission prompt**. The gate is **structural, never a self-score**:
+Self-learning is a **standing, ungated process**: a harvested lesson is written to the owning catalogue **automatically, with no permission prompt**. The gate is **structural, never a self-score**.
+
+**First, the coverage rung** ([Evidence Discipline](evidence-discipline.md)) — *covered* (name the covering artifact) → *extend* → *create* → *needs-evidence*, choosing the **narrowest durable owner**: `rule` for a constraint, `skill` for a procedure, `drop` for a narrow one-off; defaulting to `skill` is forbidden. Directive, not blocking: record the reason and proceed. On *create*, open a dormant intervention-ledger entry (`lesson`/`artifact`/`owner_kind`/`problem_class`/`trigger`); a ledger failure skips the entry, never the write. Then:
 
 - A **reusable constraint or convention** → write a [rule](../phases/rule.md). Auto-written rules default to **`should`**; a `prefer` is fine. **Never auto-write a `must`** — a `must` blocks future code, so it is treated as doubtful (below).
 - **Broadly-useful, non-trivial** project knowledge that passes the [skill](../phases/skill.md) non-triviality filter → write/update a skill. (Write the content as a falsifiable, evidence-scoped observation — never an absolute verdict.)

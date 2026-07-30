@@ -316,6 +316,8 @@ your-project/
     │       └── {skill}.md
     ├── roles/                      # Project role overlays & specialists (optional)
     │   └── _index.yaml
+    ├── evidence/                   # Intervention ledger (absent → reconcile no-op)
+    │   └── ledger.yaml
     └── cache/                      # Durable resources (gitignore by default)
         ├── _index.yaml
         ├── figma/                  # Design exports
@@ -391,6 +393,7 @@ dev-flow/
 │   ├── experience-capture.md    # Transition Checkpoint — distill, demote, promote; auto-applied lessons
 │   ├── application-enforcement.md  # Per-burst knowledge re-activation (loaded ≠ applied)
 │   ├── procedural-skills.md     # Skills as procedural memory — freshness, promotion, curation
+│   ├── evidence-discipline.md   # Evidence states (present→wired→exercised→outcome-supported) + coverage rung, skill check, intervention ledger
 │   ├── cache.md                 # Resource cache + /tmp workspace discipline
 │   ├── roles.md                 # Base vs project-overlay roles
 │   ├── glossary.md              # Project domain vocabulary
