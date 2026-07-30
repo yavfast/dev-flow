@@ -6,19 +6,19 @@ Cross-cutting reference for how dev-flow's subagent roles are organized, found, 
 
 A role is the reusable description of *who* does a piece of work — responsibilities, capabilities, and the contract for what it returns. Writing it once keeps behavior and shared protocols ("conclusion, not the dump") consistent instead of re-stated in every prompt, and what a run teaches persists so the next one starts ahead.
 
-## Two layers
+## Layers
 
 **Base roles — the skill.** The roles under the skill's `roles/` directory (implementer, tester, reviewer, …) are the portable base: generic, stable, the same across every project. They carry the responsibilities and the output contract for each phase.
 
-**Project overlays — `.dev_flow/roles/`.** A project keeps its own roles under `.dev_flow/roles/`. Two kinds:
+**Project overlays — `.dev_flow/roles/`.** A project keeps its own roles under `.dev_flow/roles/`:
 - An **overlay** of a base role (same slug, e.g. `tester.ai.md`) that adds *this project's* specifics — its test command, where live scenarios live, what counts as pass/fail.
 - A **new specialization** (a slug the base doesn't have, e.g. `migration-verifier`) for a role this project needs and the base doesn't provide.
 
 The base carries the contract; the overlay carries the project specifics. A role declares its base(s) by naming them in an `inherits:` field — a convention the executing agent honours when it reads the role, not engine machinery, so it works the same on any project (with or without an AI-DSL runtime).
 
-## Two framings: obligations vs bounded autonomy
+## Framings: obligations vs bounded autonomy
 
-Roles are written in one of two framings — a **convention**, not a fixed schema (these files are prose projections; see the closing note). Pick the framing that fits what the role is:
+Roles are written in one of the framings below — a **convention**, not a fixed schema (these files are prose projections; see the closing note). Pick the framing that fits what the role is:
 
 - **Obligation framing** — `responsibilities` + binding `rules` (+ a `skills` gate + `workflow`). Use it for **gated pipeline executors** whose output must pass a validation gate: concept/spec/plan authors, implementer, tester, reviewer, propagator, auditor, context-tracker, the onboard-* roles, the orchestrator. These roles *must* do certain things, so they state duties and binding rules.
 - **Bounded-autonomy framing** — `capabilities` (what it MAY do) + `constraints` (hard `NEVER`s). Use it for **read-only or self-directing roles** that sit outside the strict gate chain: `advisor` (read-only Q&A), `researcher` (time-boxed spike, no gates), `subtask-executor` (delegated full participant — it also carries `responsibilities`, as a deliberate hybrid). `todo-planner` (deferred-work capture, files one record, no gates) is the same shape. These roles act with judgement inside guardrails, so framing them as capability + limit is clearer than a duty list.

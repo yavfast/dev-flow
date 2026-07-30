@@ -4,7 +4,7 @@ Cross-cutting sub-procedure for every phase. Like [Delegation for Focus](delegat
 
 ## Why this exists
 
-Compaction archives by **age** — the bulky raw turns of a solved problem survive while the lesson inside them is lost. Two design commitments:
+Compaction archives by **age** — the bulky raw turns of a solved problem survive while the lesson inside them is lost. Design commitments:
 
 - **Store the distillation, not the transcript.** What survives is a short summary plus any durable lesson — never the raw turns, which are referenced by path if kept at all.
 - **Trust structure, not self-assessment.** An agent's numeric self-rating ("importance 8/10", "confidence 90%") is unreliable. So reflection fires on **deterministic structural events** dev-flow already logs, and salience is recorded with the **discrete markers** of [Salience Markers](../phases/status.md#salience-markers) — never a self-scored number.

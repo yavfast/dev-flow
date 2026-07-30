@@ -284,7 +284,7 @@ If detected, annotate `project_structure.md` with workspace boundaries.
 
 ### Layer Computation (Step 3)
 
-For workspaces, build layers at **two levels**:
+For workspaces, build layers at **these levels**:
 
 1. **Package-level graph:** Which packages depend on which (from workspace config, lock files, `imports`).
 2. **Module-level graph within each package:** Standard import-based analysis.

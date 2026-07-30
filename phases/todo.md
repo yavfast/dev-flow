@@ -4,14 +4,14 @@
 
 Take a free-form description of work to do **later**, find the documentation it would touch, judge whether it is doable, and **file a planning record** with a return trigger. It does not build anything and does not pass through the pipeline gates.
 
-"Later" has two flavors — `todo` handles both:
+"Later" comes in flavors — `todo` handles each:
 
 - **Deferred (speculative)** — work the project *might* do; YAGNI-gated; trigger is a future event or date; may end up dropped. ("колись додамо WebSocket")
 - **Queued follow-up (committed)** — a concrete fix/change *noticed while working on the current task* that must wait until that task finishes, because doing it now would interfere (overlapping context corrupts the work in progress). It is **not** speculative and is never YAGNI-dropped; its trigger is the completion of the originating task (`after task_<ID>`). This is the case a parallel [subtask](subtask.md) cannot cover — subtask needs disjoint file scope, but here the contexts overlap, so the work must be *sequenced after*, not parallelized.
 
 Which flavor applies — and how urgent the work is — is **determined by `todo` from context** (the state of the relevant plans and tasks), **not parsed from the request's wording**: the description may carry no timing or task-binding words at all. The analysis may even conclude the work is urgent enough to *not* defer, and recommend running it now instead.
 
-`todo` is invoked two ways: **by the developer** (`/dev-flow todo …`), or **by an agent itself** — when, mid-work, it spots a defect or problem that does *not* belong to its current task and whose fix can wait for a later session, it files an agent-initiated `todo` rather than derailing into it or losing it. One needing analysis runs in a **cheap subagent** (Step 0) so the discovery is captured without eroding focus; a trivial finding that needs no analysis the agent files inline.
+`todo` is invoked **by the developer** (`/dev-flow todo …`), or **by an agent itself** — when, mid-work, it spots a defect or problem that does *not* belong to its current task and whose fix can wait for a later session, it files an agent-initiated `todo` rather than derailing into it or losing it. One needing analysis runs in a **cheap subagent** (Step 0) so the discovery is captured without eroding focus; a trivial finding that needs no analysis the agent files inline.
 
 `todo` is the deferred-capture sibling of the routing band: `ask` analyzes and writes nothing; `todo` analyzes and files for later; `do` analyzes and acts now.
 

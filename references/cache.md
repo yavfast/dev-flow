@@ -13,12 +13,12 @@ The boundary in one line: **`/tmp` is staging, the cache is keeping** — anythi
 
 ## Memory & Data Tiers (L0/L1/L2)
 
-A session's state lives at three levels, distinguished by how long each survives. Knowing which tier a thing belongs to is how you keep the right state in the right place — and why a fresh session can resume cleanly after the live context is gone.
+A session's state lives at distinct levels, distinguished by how long each survives. Knowing which tier a thing belongs to is how you keep the right state in the right place — and why a fresh session can resume cleanly after the live context is gone.
 
 | Tier | What it is | Lifetime | Holds |
 |------|-----------|----------|-------|
 | **L0 — live context** | The working transcript the agent reasons over | Dies on compact | Everything in attention right now |
-| **L1 — session scratch** | Two scratch stores below L2 | Survive compact; non-durable — working memory dies on restart, the data cache is cleared on reboot | **Working memory** (session-UUID-keyed: distilled notes/params/reminders) + the **data cache** (project-slug `/tmp` workspace: raw artifacts staged this session) |
+| **L1 — session scratch** | Scratch stores below L2 | Survive compact; non-durable — working memory dies on restart, the data cache is cleared on reboot | **Working memory** (session-UUID-keyed: distilled notes/params/reminders) + the **data cache** (project-slug `/tmp` workspace: raw artifacts staged this session) |
 | **L2 — durable** | The project's `.dev_flow/` store | Survives compact *and* restart | Task files, the resource cache, rules/skills — the source of truth |
 
 The north star: keep durable task state complete in **L2** so that when L0 is lost (compact) or the session ends (restart), work resumes deterministically from files — which beats riding a lossy context-summary. **L1 is the bridge**: it survives a compact so the agent can re-attend without a durable write on every step, yet it is *acceptably lost* on restart because anything that must outlive the session has been promoted to L2.
@@ -27,13 +27,13 @@ L1 has a **memory** half and a **data** half, treated differently:
 - **Working memory** — small, distilled, re-read *whole* (notes, parameters, reminders). Defined in [Session Working Memory](#session-working-memory-l1) below.
 - **Data cache** — raw, bulky artifacts (logs, downloads, captures) referenced *by path*, never inlined. This is the project workspace under `/tmp` (see [Temporary Workspace Discipline](#temporary-workspace-tmp-discipline)). Raw data lives here, never in working memory.
 
-The two halves are **keyed differently**, so their lifetimes differ: working memory is **session-UUID-keyed** (it dies on a session restart), while the data cache is **project-slug-keyed** (`/tmp/{project-slug}/` — shared per-repo, cleared only on reboot, with timestamped names preventing cross-session collisions). Both survive a compact; neither is durable — anything that must outlive its tier is promoted to L2.
+The halves are **keyed differently**, so their lifetimes differ: working memory is **session-UUID-keyed** (it dies on a session restart), while the data cache is **project-slug-keyed** (`/tmp/{project-slug}/` — shared per-repo, cleared only on reboot, with timestamped names preventing cross-session collisions). Both survive a compact; neither is durable — anything that must outlive its tier is promoted to L2.
 
 The **resource cache** (`.dev_flow/cache/`, the bulk of this document) is the durable **L2 data** store: an L1 data-cache artifact that proves worth keeping is *promoted* into it, exactly as `/tmp` staging is promoted today.
 
 ## Invocation
 
-There is no dedicated cache command. Cache operations happen two ways:
+There is no dedicated cache command. Cache operations happen these ways:
 
 - **Inside a phase** — the resource gate (check before fetch, save after fetch) and the auto-save triggers below run as part of whatever phase is executing.
 - **On explicit request** — a freeform ask ("збережи цей макет", "find the cached OAuth RFC", "remove the old baseline") routes through [do](../phases/do.md) and is applied **inline** (no subagent), like the [rule](../phases/rule.md) and [skill](../phases/skill.md) phases. The request may be in any language; interpret the intent and apply the appropriate action to `.dev_flow/cache/`.
@@ -69,7 +69,7 @@ Do **NOT** cache:
 
 ## The Index (`_index.yaml`)
 
-The index is a list of entries under a `resources:` root. An entry takes one of **two shapes** — a single-file entry, or a collection entry when one source yields many related files. Pick the shape by counting files, not by domain.
+The index is a list of entries under a `resources:` root. An entry takes one of these **shapes** — a single-file entry, or a collection entry when one source yields many related files. Pick the shape by counting files, not by domain.
 
 ### Single-file entry
 
@@ -110,7 +110,7 @@ When a single acquisition yields a *set* of related files — a Figma page's fra
         summary: 'Login — empty/error state ("Check your connection")'
 ```
 
-Each file is its own object, so adding, editing, or removing one file touches exactly one list item — its three facts (name, link, description) stay together. That locality is the whole point of the template: a file's `summary` and `source` ride *with* its `name`, rather than the link living in the parent's prose and the description in a trailing `#` comment on a bare filename.
+Each file is its own object, so adding, editing, or removing one file touches exactly one list item — its facts (name, link, description) stay together. That locality is the whole point of the template: a file's `summary` and `source` ride *with* its `name`, rather than the link living in the parent's prose and the description in a trailing `#` comment on a bare filename.
 
 ### Fields
 

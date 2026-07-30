@@ -31,7 +31,7 @@ The description is freeform, in any language. It should clearly state what the s
 
 This command is handled by **SubtaskExecutor**: [roles/subtask-executor.ai.md](../roles/subtask-executor.ai.md) — combined with the base role (and project overlay, if any) of the phase being executed.
 
-## Two Delegation Shapes
+## Delegation Shapes
 
 Not every delegation is a subtask. The rights follow the shape:
 

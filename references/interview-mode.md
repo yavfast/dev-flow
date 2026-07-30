@@ -15,7 +15,7 @@ A decision point exists when **all** of these hold:
 2. The choice is **material** — it changes architecture, a contract/data shape, the scope boundary, a dependency, a state model, or a technology choice (in plans).
 3. The choice is **not cheaply reversible** — undoing it later means touching code, migrating data, or breaking a consumer.
 
-If all three hold, the decision goes through the interview. If any fails, decide it yourself and move on.
+If all hold, the decision goes through the interview. If any fails, decide it yourself and move on.
 
 ### Do NOT interview on
 
@@ -90,9 +90,9 @@ Reply with a marker (e.g. "A"), or compose/amend one ("A but with C's cap",
 
 Then **stop and wait** for the developer's answer. Do not proceed past an unresolved material decision. If several independent decisions are open, list them together (each with its own `DEC_NN` + lettered options) so the developer can answer them in one pass. When more than one decision is on the table, the markers are scoped per decision, so the developer pairs each `DEC_NN` with its letter — e.g. "DEC_01: A, DEC_02: B, DEC_03: C but with A's default" — never a bare list of letters that can't be mapped back to a decision.
 
-### 5. Resolve — two valid outcomes
+### 5. Resolve — the valid outcomes
 
-Each decision ends in exactly one of two states:
+Each decision ends in exactly one of these states:
 
 - **Resolved (consensus)** — the developer picked an option (yours or their own). This is the default and the goal for production work. Record the chosen option **and its rationale**, and note the rejected alternatives so the choice isn't silently re-opened later.
 

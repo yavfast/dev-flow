@@ -2,7 +2,7 @@
 
 The committed reference behind the [`audit code` scope](../phases/audit.md#step-9--code-scope-the-whole-codebase-audit). The phase doc carries the *procedure* (stages, gates, hand-off); this reference carries the *detail* — the full lens menu and per-lens checklists, the bottom-up module walk shared with onboard, the SOLID/DRY heuristics, the antipattern catalogue, and the refactoring playbook. It is loaded by the audit `code` scope and by onboard (for the shared walk); it is **not** a standalone pipeline stage.
 
-Two things keep it honest:
+What keeps it honest:
 
 - **A lens is read-only and returns conclusions, not dumps.** Every checklist below produces Findings — a `conclusion` + `file:line` locations. Raw search hits, traces, and logs stay in the workspace, referenced by path, never inlined (per [Delegation → conclusion-not-dump](delegation.md)).
 - **The registry is open.** The base lenses ship here; a project adds its own by appending a registry row + a checklist section in *this file* — no concept or spec edit needed.

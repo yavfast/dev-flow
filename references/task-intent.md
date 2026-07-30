@@ -8,7 +8,7 @@ A request states an *action*; the *reason* for it usually stays in the user's he
 
 ## The Intent record
 
-Three fields, captured in the task file (see the [task template](../templates/task_context.md) → `## Intent`):
+Captured in the task file (see the [task template](../templates/task_context.md) → `## Intent`):
 
 | Field | Answers |
 |-------|---------|
@@ -29,7 +29,7 @@ For pipeline-scale work the intent flows downstream into the documents: the conc
 
 Whoever opens the task captures the intent: `do` while interpreting the request (before routing), or any directly-invoked phase when it creates the task file. Distinguish the **requested action** from the **underlying goal** — "add an index to this table" is the action; "the search page is too slow" may be the goal, and it changes what a good solution is.
 
-## Check — the four moments
+## Check — the moments
 
 1. **Before a material decision** (implement / fix / plan). Ask: *does this option serve the recorded intent?* This is the concrete target of [Consequence Forecasting](consequence-forecasting.md)'s upward glance at implement altitude — glance at the record, not at a remembered impression of it.
 2. **Letter-vs-spirit conflict.** Evidence shows that executing the request *as literally stated* will not achieve the recorded goal (or actively defeats it) → **stop and surface**: present the conflict with marked options ([Interview Mode](interview-mode.md) style — follow the letter / adjust toward the goal / clarify), with your recommendation. Never silently follow the letter off the cliff, and never silently substitute your own reinterpretation.

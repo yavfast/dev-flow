@@ -1,12 +1,12 @@
 # Evidence Discipline — Name What Fired, Not What Exists
 
-Cross-cutting sub-procedure of [audit](../phases/audit.md) (`rules`/`skills` scopes) and the harvest step of [Experience Capture](experience-capture.md), which runs in every phase. Not a pipeline stage and no command. It supplies one vocabulary — **evidence state** — plus three consumers that speak it (`C_EVD_03_01`).
+Cross-cutting sub-procedure of [audit](../phases/audit.md) (`rules`/`skills` scopes) and the harvest step of [Experience Capture](experience-capture.md), which runs in every phase. Not a pipeline stage and no command. It supplies one vocabulary — **evidence state** — plus the consumers that speak it (`C_EVD_03_01`).
 
 Advisory throughout — no consumer adds a blocking gate (`C_EVD_DEC_02`).
 
 ## Evidence state
 
-Five discrete values on a project-knowledge artifact (rule, skill), ordered by strength. Recorded as an **optional** `evidence:` key on the artifact's `_index.yaml` entry; a missing key reads as `unobserved`.
+Discrete values on a project-knowledge artifact (rule, skill), ordered by strength. Recorded as an **optional** `evidence:` key on the artifact's `_index.yaml` entry; a missing key reads as `unobserved`.
 
 | State | Means | Admissible source |
 |-------|-------|-------------------|
@@ -20,7 +20,7 @@ Record fields: `state` · `source` · `observed_at` · `ref` — `source` is one
 
 Never lower a state; `RecordEvidence` returns unwritten instead. Ageing belongs to `freshness` in [Procedural Skills](procedural-skills.md). `outcome-supported` is reachable only from reconciliation.
 
-Two standing rules:
+Standing rules:
 
 - **Configured ≠ used.** Presence proves `present` and nothing more.
 - **Count ≠ conclusion.** Numbers of rules, skills, or roles route inspection only — never a quality argument, never grounds for a finding.
@@ -29,17 +29,17 @@ Orthogonal to `promotion`/`freshness` in [Procedural Skills](procedural-skills.m
 
 ## Consumer 1 — the coverage rung
 
-Runs inside [Experience Capture](experience-capture.md)'s harvest, before a durable artifact is written. Four rungs: **covered** (name the covering artifact) → **extend** (an existing artifact absorbs it) → **create** → **needs-evidence**.
+Runs inside [Experience Capture](experience-capture.md)'s harvest, before a durable artifact is written. Rungs: **covered** (name the covering artifact) → **extend** (an existing artifact absorbs it) → **create** → **needs-evidence**.
 
 Directive, not blocking: it recommends and requires a recorded reason; the caller may still create the artifact (`C_EVD_DEC_02`). `covered` without a named covering artifact is invalid.
 
-Owner menu — five values (`SP_EVD_03_04`): `rule` · `skill` · `drop` · `none` (covered) · `needs-evidence`. The first three mirror `SP_EXC_01_04.kind` plus its DROP branch; the last two are non-targets. **Narrowest durable owner wins; defaulting to `skill` is forbidden** — a `rule` carries a constraint, a `skill` a procedure, `drop` a narrow one-off.
+Owner menu (`SP_EVD_03_04`): `rule` · `skill` · `drop` · `none` (covered) · `needs-evidence`. The first three mirror `SP_EXC_01_04.kind` plus its DROP branch; the last two are non-targets. **Narrowest durable owner wins; defaulting to `skill` is forbidden** — a `rule` carries a constraint, a `skill` a procedure, `drop` a narrow one-off.
 
 ## Consumer 2 — the skill `check` field
 
 Additive **optional** field on a procedural skill, beside the [Procedural Skills](procedural-skills.md) set: **`check`** — the signal that proves the procedure fired (command, check result, observable artifact). It is the only source of `exercised` for a skill; without it that state stays out of reach (`C_EVD_DEC_07`).
 
-**No invented evidence** (`SP_EVD_03_03`). A command, path, port, version, flag, or filename in `check` — or in a finding's `verification` — is admissible only when its source was **opened in this session** or **explicitly supplied by the user**. Otherwise record an explicit no-evidence marker, never an ecosystem default (`npm test`, `pytest`, `make build`). An L1 working-memory note counts when it records the opening with a reference; a bare mention of the name does not.
+**No invented evidence** (`SP_EVD_03_03`). A command, path, port, version, flag, or filename in `check` is admissible only when its source was **opened in this session** or **explicitly supplied by the user**. Otherwise record an explicit no-evidence marker, never an ecosystem default (`npm test`, `pytest`, `make build`). An L1 working-memory note counts when it records the opening with a reference; a bare mention of the name does not.
 
 ## Consumer 3 — the intervention ledger
 
@@ -53,7 +53,7 @@ Absent `.dev_flow/evidence/` the reconcile step is a no-op.
 
 ## Degradation
 
-Where the runtime cannot observe an action, no source for `exercised` exists and the state stays `unobserved`; never simulate the observation ([Application Enforcement](application-enforcement.md) degrades the same way). A conditional phase that never activated yields `unobserved`, not a silent skip.
+Where the runtime cannot observe an action, no source for `exercised` exists and the state stays `unobserved`; never simulate the observation ([Application Enforcement](application-enforcement.md) degrades the same way). A conditional phase that never activated is not an observation either: the artifacts it would have exercised stay `unobserved`, never read as clean.
 
 Opening a ledger entry can fail (`EVD_NO_TRIGGER`, `EVD_DUPLICATE_ENTRY`) inside a harvest that is otherwise ungated: on either, skip the ledger entry and let the harvest write proceed — the write is never blocked by ledger bookkeeping.
 

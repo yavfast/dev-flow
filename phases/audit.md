@@ -195,7 +195,7 @@ The opt-in `code` scope is its **own multi-stage procedure**, not a subset of St
 
 **Scope guiding constraints** (layered on audit's *non-committing* character):
 
-- **Read-only w.r.t. source through the plan.** ParseIntent + the three stages touch no source file and never commit. Code change happens only in HandOff, via the standard gated pipeline. (`git status` shows no source change after ProducePlan.)
+- **Read-only w.r.t. source through the plan.** ParseIntent + the stages touch no source file and never commit. Code change happens only in HandOff, via the standard gated pipeline. (`git status` shows no source change after ProducePlan.)
 - **Conclusions, not dumps.** A lens subagent returns Findings — a one-line `conclusion` + `file:line` locations. Raw search hits/traces/logs stay in the workspace, referenced by path, never inlined ([Delegation](../references/delegation.md)).
 - **No silent truncation.** If cost/scope narrows the run (sampled, top-N, incremental), the report names what was excluded.
 - **Reduced mode is honest.** Without documented architecture/rules, drop the conformance lenses (`standards`/`architecture`/`specifications`) and say so; recommend `onboard`. Never fabricate a conformance baseline.

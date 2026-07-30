@@ -2,7 +2,7 @@
 
 Shared sub-procedure for the **Implement**, **Fix**, and **Verify** phases (and the mechanism behind **Review** and the **Subtask** command). This is **not** a standalone pipeline stage — it runs *inside* those phases whenever a step is about to flood the main context with secondary, noisy work.
 
-**Two delegation shapes.** This reference covers **focus delegation** — a single noisy *step* inside your own phase run: minimal rights, no `.dev_flow/` writes, stage-and-report, no dialogue. Delegating a whole secondary *task* is the [subtask phase](../phases/subtask.md) — there the subagent is a **full dev-flow participant with delegated rights**: it assembles its own context, joins the task file as a contributor, persists skills/cache per the phase protocols, and can converse with its initiator. The moment a delegated step outgrows one exchange, it is a subtask.
+**Delegation shapes.** This reference covers **focus delegation** — a single noisy *step* inside your own phase run: minimal rights, no `.dev_flow/` writes, stage-and-report, no dialogue. Delegating a whole secondary *task* is the [subtask phase](../phases/subtask.md) — there the subagent is a **full dev-flow participant with delegated rights**: it assembles its own context, joins the task file as a contributor, persists skills/cache per the phase protocols, and can converse with its initiator. The moment a delegated step outgrows one exchange, it is a subtask.
 
 ## Why this exists
 

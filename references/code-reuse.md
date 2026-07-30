@@ -8,7 +8,7 @@ Reuse is settled once, high up: the concept phase's [Reuse Check](../phases/conc
 
 ## The discipline
 
-Two halves, both scaled by [change-class](../phases/do.md#change-classes) — skip for a trivial one-liner.
+Each half is scaled by [change-class](../phases/do.md#change-classes) — skip for a trivial one-liner.
 
 ### 1. Search before create
 

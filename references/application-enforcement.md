@@ -33,7 +33,7 @@ Per **action burst** — a series of calls of one action type (e.g. "test run"),
 
 Activation is fixed per-burst, but tripwire **sensitivity** and verifier **sampling** rise on structural drift signals — priority to the **first classic action** (the loop does not recover, so catch the first), then post-compaction, session growth, prior-divergence. Modulation only raises sample/sensitivity within the already-chosen tier; it adds no enforcement of its own, and is derived from deterministic events — never a "feels like I'm drifting" self-rating.
 
-A fifth signal targets the verifier itself — **verifier-rubber-stamp**: 2+ consecutive substantive reviews with zero actionable findings (a count, not a self-rating). A higher sample rate cannot fix a verifier that *is* the problem, so this one escalates — surface to the user; switch model if available.
+One more signal targets the verifier itself — **verifier-rubber-stamp**: 2+ consecutive substantive reviews with zero actionable findings (a count, not a self-rating). A higher sample rate cannot fix a verifier that *is* the problem, so this one escalates — surface to the user; switch model if available.
 
 ## Where it is wired
 

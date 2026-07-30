@@ -61,7 +61,7 @@ role Auditor {
     - "MUST enforce hygiene caps (dashboard ~80 lines, Shared Activity Log 10, per-subtask Activity 10, task file ~300 lines, Recently Completed 5)"
     - "MUST NOT commit; present changes and follow the standard approval rule"
     - "MUST make zero on-disk changes when --dry-run is set"
-    - "(code scope) MUST keep ParseIntent + the three stages read-only w.r.t. source and never commit — code change happens only at HandOff via the standard gated pipeline; a lens MUST return conclusions + file:line, never raw dumps; a narrowed/sampled run MUST name what it excluded; the `security` lens MUST audit statically (no exploit execution); an exploitable must-severity security finding MUST be fast-tracked, never parked in the backlog"
+    - "(code scope) MUST keep ParseIntent + the stages read-only w.r.t. source and never commit — code change happens only at HandOff via the standard gated pipeline; a lens MUST return conclusions + file:line, never raw dumps; a narrowed/sampled run MUST name what it excluded; the `security` lens MUST audit statically (no exploit execution); an exploitable must-severity security finding MUST be fast-tracked, never parked in the backlog"
 
   ground_truth_order:
     task_reality: "docs/ document status (plan completed / spec+concept active) and git history for the traceable ID win over the task header"
