@@ -55,6 +55,10 @@ If none apply — skip directly to commit approval.
 - Running database migrations against a real database instance
 - Verifying deployment configurations or environment-specific behavior
 
+### Design Compliance (UI changes)
+
+When the verified change affects visual UI **and** a design source of truth exists (design-tool link, design tokens, mockups, style guide), live verification includes a **design compliance check**: a read-only clean-context validator compares the implementation against the design property by property — layout, color, typography, effects, and **every variant/state the design defines** (not just the ones visible in the handed node) — and returns a compliance report whose deviations enter the fix cycle below. The full procedure, per-app-type inspection guidance (web/mobile/desktop/TUI), and report format live in **[Design Compliance](../references/design-compliance.md)**.
+
 ## Context Loading
 
 Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding)):

@@ -43,6 +43,8 @@ Before writing code, verify:
 
 **Resource check.** Before fetching a design export or external document (e.g. via the Figma MCP) for this implementation, check `.dev_flow/cache/_index.yaml` and reuse a cached copy; save an expensive new fetch back to the cache. See [Resource Cache](../references/cache.md).
 
+**Design-source check (UI work).** When implementing UI from a design source of truth (design-tool link, tokens, mockups), implement **every variant and state the design defines** — not just the ones visible in the handed frame — and use the design's tokens instead of hardcoded near-matches: Verify will validate the result property by property against that source. See [Design Compliance](../references/design-compliance.md).
+
 **Role check:** If you'll delegate any step (run tests, verify, a wide search) to a subagent, check `.dev_flow/roles/_index.yaml` first and reuse a fitting base role or project overlay instead of re-deriving one. See [Roles](../references/roles.md).
 
 **Framework check.** When `docs/_framework.md` exists, load it alongside `docs/_index.md` — it is the project's architectural map (core abstractions · layers · extension points · shared utilities · conventions, maintained by onboard and the [`audit code` scope](audit.md#step-9--code-scope-the-whole-codebase-audit)). New code MUST respect the layer boundaries and extension points it records; the map links down to the `.dev_flow/rules/` that carry the enforceable detail. No-op while the file is absent.
