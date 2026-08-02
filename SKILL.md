@@ -13,6 +13,11 @@ description: >
   resuming a previous session or checking status, auditing and grooming
   project context (.dev_flow/, docs/) or the whole codebase,
   managing project coding rules and knowledge skills,
+  analyzing an external repository to decide what to borrow for THIS project and
+  writing the result into docs/ext_adoption/ ("adopt", "analyze repo", "adoption",
+  "what can we take from X", "which ideas from X are useful here", "розбери репозиторій",
+  "проаналізуй репо", "що корисного взяти", "що запозичити") — prefer this over a
+  standalone repo-analysis skill whenever the project uses dev-flow (docs/ or .dev_flow/ present),
   or working with concept/spec documents.
 user-invocable: true
 argument-hint: "[phase] [target]"
@@ -55,6 +60,7 @@ Each transition includes a validation gate to prevent drift.
 | — | `/dev-flow skill <request>` | Find, add, update, or remove project knowledge skills | Updated `.dev_flow/skills/` |
 | — | `/dev-flow status` | Show current state, resume previous session | Status summary |
 | — | `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — reconcile task state with reality, trim context, compact closed tasks, groom rules/skills/cache, check docs integrity (index/statuses/refs/orphans/freshness/duplicated sets); opt-in `code` scope audits the whole codebase → refactoring plan | Audit report + cleaned context (or, for `code`, a refactoring plan) |
+| — | `/dev-flow adopt <repo>` | Analyze an external repository at concept altitude and produce the adoption document for this project (what to borrow, what to skip, in what order) | `docs/ext_adoption/*.concept.md` + `docs/ext_adoption/*.md` |
 | — | `/dev-flow ask <question>` | Read-only Q&A about code or feasibility — no changes | Answer + optional next-step suggestion |
 | — | `/dev-flow todo <description>` | Capture future work — find relevant docs, assess feasibility, file a planning record with a return trigger (does not build) | Plan backlog item or `.dev_flow/todos/` entry |
 | — | `/dev-flow subtask <task>` | Delegate a secondary task to a subagent — a full dev-flow participant that assembles its own context, runs any phase (fix, test, research, etc.), and can converse with its initiator | Full subtask report |
@@ -67,6 +73,8 @@ Each transition includes a validation gate to prevent drift.
 **Research command:** Use `/dev-flow research <topic>` (alias: `spike`) when a concept/spec/plan cannot be confidently authored — unfamiliar domain, unverified library capability, unknown solution space — or to close an open Design Decision waiting on facts. Time-boxed and cost-gated; spikes pass through no validation gates. Produces `docs/*.spike.md` and persists durable findings to `.dev_flow/skills/`. See [research phase](phases/research.md).
 
 **Todo command:** Use `/dev-flow todo <description>` to capture work to do later. It finds the documentation the work would touch, assesses its execution prospect (feasibility + scope), and files a single planning record with a return trigger — into an owning plan's backlog if one exists, otherwise into `.dev_flow/todos/`. Flavors: a **deferred** speculative idea (trigger = date/event, may be dropped), or a **queued follow-up** — a fix noticed *during* the current task that must wait until it finishes because the contexts overlap (trigger = `after task_<ID>`, never dropped; a parallel `subtask` can't cover it since contexts aren't disjoint). A queued follow-up is surfaced automatically when its task completes (offered, not auto-run). `todo` **infers** the flavor, urgency, and trigger from the state of the relevant plans/tasks — not from your wording (the description may carry no timing words) — and may even recommend doing the work now instead of deferring. It builds nothing and passes through no gates; a later `do`/`plan` run executes the record. An **agent can also file a `todo` itself** — when it spots an out-of-scope, deferrable defect mid-work it spawns a cheap subagent running the todo flow (or files a trivial one inline), so the finding is captured without derailing its current task. Completes the routing triad: `ask` analyzes and writes nothing, `todo` analyzes and files for later, `do` analyzes and acts now. See [todo phase](phases/todo.md).
+
+**Adopt command:** Use `/dev-flow adopt <repo>` (aliases: `analyze-repo`, `adoption`) to bring an external repository's ideas into this project deliberately. It resolves the reference — a local path, a URL (cloned into `ext_repos/` at the project root, which the run adds to `.gitignore`), or the name of an already-tracked repo — analyzes it at **concept altitude** into `docs/ext_adoption/<name>.concept.md`, and then **automatically** produces `docs/ext_adoption/<name>.md`: what the target already has, which of the source's concepts are worth taking (`high` / `medium` with an explicit take-defer-decline ruling / `low` with a one-line reason), the derived ideas that only exist at the intersection of the two, and a recommended order sorted by effect over cost. Adoption documents are **advisory** — no traceable ID, no gate, not a backlog; they feed the [concept phase](phases/concept.md)'s Reuse Check as the external-prior-art source. A re-run is incremental: it diffs the source's commits since the recorded one and leaves untouched concepts byte-identical. A run writes only the two documents, the clone, the one `.gitignore` line, and the ordinary task context — never code, specs, plans, or todo records. See [External Repo Adoption](references/repo-adoption.md).
 
 **Resource cache (not a phase):** `.dev_flow/cache/` is the durable, indexed store for expensive-to-reacquire resources (Figma exports, downloaded documents, baseline screenshots). Every phase checks its `_index.yaml` before an expensive re-fetch and saves new fetches back; anything linked from docs or task files lives here, never in `/tmp`. Transient artifacts go to the project workspace `/tmp/{project-slug}/` with timestamped names. Freeform cache requests ("збережи цей макет", "find the cached RFC") route through `do` and are applied inline. See [Resource Cache](references/cache.md).
 
@@ -228,6 +236,7 @@ All documents live in `docs/` directories. Every generated doc file follows the 
 | Index | `_index.md` | `docs/_index.md` |
 | Glossary | `_glossary.md` | `docs/_glossary.md` |
 | Framework map | `_framework.md` | `docs/_framework.md` |
+| Adoption notes | `ext_adoption/*.md` | `docs/ext_adoption/other_repo.md` |
 
 **Spike** is an optional pre-concept investigation artifact, produced by the [research phase](phases/research.md) (`/dev-flow research`). Use it when the problem domain is unclear and you need to explore approaches before committing to a concept. Spikes do not pass through the pipeline gates.
 
@@ -238,6 +247,8 @@ When `docs/` has more than 5 documents, maintain an `_index.md` catalog.
 **Index format convention:** machine-read catalogues (`.dev_flow/rules/`, `.dev_flow/skills/`, `.dev_flow/roles/`, `.dev_flow/cache/`) use `_index.yaml` — structured entries agents match against. Human-browsed catalogues (`docs/`, `.dev_flow/tasks/`, `.dev_flow/todos/`) use `_index.md`. Apply the same split to any new collection.
 
 `docs/_glossary.md` is the project's canonical domain vocabulary (term → definition + aliases to avoid). It is created lazily (during onboard, or when the first cross-concept term is resolved) and, whenever present, is **loaded into context alongside `_index.md`** (independent of the >5-doc threshold that gates `_index.md`) — so authoring uses one canonical term per concept. See [Glossary](references/glossary.md).
+
+`docs/ext_adoption/` holds the **advisory** analyses of external repositories produced by [`adopt`](references/repo-adoption.md) — a `<name>.concept.md` portrait of the source and a `<name>.md` adoption document for this project. They own no traceable ID, pass no gate, and are not a backlog; they are consulted during the concept phase's Reuse Check and are excluded from the `audit docs` integrity checks (index · statuses · cross-refs · orphans · freshness) that apply to pipeline documents.
 
 `docs/_framework.md` is the project's living **architectural map** (core abstractions · layers · extension points · shared utilities · conventions) — an overview that links *down* to the `.dev_flow/rules/` and `.dev_flow/skills/` holding the enforceable detail; it inlines none of it. It is created/maintained by onboard and by the [`audit code` scope](phases/audit.md#step-9--code-scope-the-whole-codebase-audit) (never hand-authored as part of a feature), and, whenever present, is **loaded into context alongside `_index.md`** on code-touch phases — so implementation and review see the architecture spine. See [Code Audit](references/code-audit.md).
 
@@ -411,6 +422,7 @@ Severity levels: **must** (blocks review) | **should** (warning) | **prefer** (a
 - [Status phase](phases/status.md) | Templates: [task_context](templates/task_context.md), [active_context (dashboard)](templates/active_context.md), [tasks_index](templates/tasks_index.md)
 - [Audit phase](phases/audit.md) *(full `.dev_flow/` + `docs/` revision — reconcile, trim, compact + reflect, groom rules/skills, check docs integrity; opt-in `code` scope = whole-codebase audit → refactoring plan)*
 - [Code Audit](references/code-audit.md) *(the `audit code` scope's detail — lens registry + per-lens checklists, the bottom-up walk shared with onboard, SOLID/DRY heuristics, antipattern catalogue, refactoring playbook)*
+- [External Repo Adoption](references/repo-adoption.md) *(the `adopt` service command — resolve/clone an external repo into `ext_repos/`, analyze it at concept altitude, and automatically produce the advisory adoption document; incremental on re-run, writes nothing outside its closed list)*
 - [Ask phase](phases/ask.md) *(read-only Q&A, no file changes)*
 - [Todo phase](phases/todo.md) *(capture future work — find docs, assess feasibility, file a planning record)* | Template: [todo_index](templates/todo_index.md)
 - [Subtask phase](phases/subtask.md) *(delegate secondary tasks to subagent)*

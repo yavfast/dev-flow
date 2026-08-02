@@ -31,6 +31,8 @@ Before creating a new concept, answer these questions. If any answer is unclear 
 
 If reuse check reveals that the problem is already covered — extend the existing concept instead.
 
+**External prior art.** Steps 1–2 search *inside* the project. When `docs/ext_adoption/` exists, read the adoption documents relevant to this concept's domain — an external repository may already have solved the problem, and the adoption document carries the relevance verdict and the integration risk. Cite it as the concept's origin (`Spike:` or a provenance note), the way a spike is cited. If no adoption document covers a domain where external prior art plainly exists, [`/dev-flow adopt <repo>`](../references/repo-adoption.md) produces one. Advisory only — it informs the concept, never authorizes it.
+
 This is the design-altitude, once-per-concept check. Its code-altitude counterpart — searching for an existing function/class before writing a new one, and building for reuse — is [Code Reuse](../references/code-reuse.md), applied per action burst in implement/fix.
 
 ## Context Loading

@@ -93,6 +93,7 @@ Analyze the task description to identify which dev-flow phase protocol the subag
 | "Write tests", "add tests" | `test` | Follow testing phase protocol |
 | "Find out", "where is", "ask" — answerable from the codebase | `ask` | Read-only — the phase's no-write constraints prevail: no contributor join, report only |
 | "Research", "investigate", "compare approaches" — needs external sources or experiments | `research` | Full research protocol incl. Step 4 persistence (skills + cache) |
+| "Analyze repo X", "what to borrow from X" — a named *external* repository | `adopt` | Full adoption procedure incl. the writable-area boundary ([External Repo Adoption](../references/repo-adoption.md)) |
 | "Refactor", "extract", "rename" | `implement` | Code changes following plan |
 | "Update spec", "update docs" | `propagate` | Documentation updates |
 | General / no clear phase | — | Freeform execution with scope boundaries |

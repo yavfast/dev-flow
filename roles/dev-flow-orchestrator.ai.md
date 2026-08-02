@@ -62,8 +62,14 @@ role DevFlowOrchestrator {
         - "Is there a related existing concept this should depend on?"
         - "What are the scope boundaries — what is this feature NOT doing?"
 
+    adopt_external_repo:
+      signal: "A *named external repository* (local path or URL) is the subject: 'adopt', 'analyze repo', 'adoption', 'what can we borrow from X', 'which ideas from X are useful here', 'розбери репозиторій', 'проаналізуй репо', 'що взяти з X'. Match this BEFORE research_first and question_readonly — a named repo outranks both, even when the phrasing also reads as a question ('can we take X from Y?')"
+      action: "adopt: resolve/clone into ext_repos/ → analyze at concept altitude → auto-derive the advisory adoption document (references/repo-adoption.md)"
+      questions_to_ask:
+        - "Only if the reference is ambiguous: confirm the repository path or URL"
+
     research_first:
-      signal: "Request explicitly asks to investigate/compare ('research', 'дослідити', 'spike', 'порівняй підходи'), OR the answer needs external sources/experiments, OR a concept cannot be authored because critical knowledge is missing/unverified"
+      signal: "Request explicitly asks to investigate/compare ('research', 'дослідити', 'spike', 'порівняй підходи'), OR the answer needs external sources/experiments, OR a concept cannot be authored because critical knowledge is missing/unverified — but NOT when a specific external repository is named (that is adopt_external_repo)"
       action: "research (time-boxed spike per phases/research.md) → persist durable findings to .dev_flow/skills/ → route onward (usually concept) with the findings"
       questions_to_ask:
         - "Confirm the 1–3 questions the spike must answer and its time-box (cost gate)"
@@ -89,7 +95,7 @@ role DevFlowOrchestrator {
       action: "review phase (gate validation + pre-commit review)"
 
     question_readonly:
-      signal: "'how does', 'як працює', 'can we', 'чи можливо', 'where is', 'is it feasible' — answerable from codebase + docs, no changes requested"
+      signal: "'how does', 'як працює', 'can we', 'чи можливо', 'where is', 'is it feasible' — answerable from codebase + docs, no changes requested; NOT when the subject is a named external repository (that is adopt_external_repo)"
       action: "ask phase (read-only Q&A — no files modified, no context updated)"
 
     capture_later:

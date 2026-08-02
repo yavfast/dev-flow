@@ -77,6 +77,7 @@ Analyze the freeform request against the loaded context to determine:
 | **Question (no changes)** | "how does", "як працює", "can we", "чи можливо", "where is", "де знаходиться", "is it feasible" — answerable from codebase + docs | ask |
 | **Capture for later** | "todo", "колись", "на майбутнє", "maybe later", "capture this idea", "потім" (deferred); or "виправити після поточної", "fix after this task", "помітив … але не зараз", "after this is done" (queued follow-up noticed mid-task, contexts overlap) — work to file, not execute now | todo |
 | **Research / investigate** | "research", "дослідити", "spike", "compare approaches", "порівняй підходи", "не знаю, який підхід", "what's the best way to" — answer needs external sources, measurements, or an unexplored solution space | research |
+| **Learn from an external repo** | "adopt", "analyze repo", "розбери репозиторій", "проаналізуй репо", "що взяти з X", "what can we borrow from", "which ideas from X are useful here" — a *named external repository* (path or URL) is the subject | adopt — [External Repo Adoption](../references/repo-adoption.md) |
 | **Plan only** | "plan", "сплануй", no code changes mentioned | plan |
 
 When the intent is **ambiguous**, ask 1–2 targeted clarifying questions before routing. Do **not** start executing before the intent is clear.
@@ -223,6 +224,9 @@ User request received
 │   │   └─ ask
 │   └─ Needs external sources / experiments / unknown solution space
 │       └─ research (time-boxed spike)
+│
+├─ A named external repository is the subject ("what's worth taking from X")
+│   └─ adopt (analyze at concept altitude → advisory adoption document)
 │
 ├─ Work to file for later (deferred idea, or a fix noticed mid-task to run after it)
 │   └─ todo (find docs → assess feasibility → file a planning record with a trigger)

@@ -52,6 +52,8 @@ Do **NOT** cache:
 - **Secrets, credentials, tokens, personal data** — never, in any form.
 - Bulky data with **no stated future consumer** — the same minimality bar the validation gates apply to documents: "just in case" is not a consumer.
 
+**Not the cache:** clones of external repositories analyzed by [`adopt`](repo-adoption.md) live in `ext_repos/` at the project root and are never promoted here. A clone is a live worktree that refreshes itself via `git pull`, not an immutable fetched artifact — cache curation must not touch it.
+
 ## Directory Layout
 
 ```

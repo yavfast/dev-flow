@@ -40,6 +40,7 @@ Additional commands:
 |---------|---------|
 | `/dev-flow research <topic>` | Time-boxed investigation (spike) when knowledge is missing |
 | `/dev-flow fix <problem>` | Investigate and fix a bug |
+| `/dev-flow adopt <repo>` | Analyze an external repository (path or URL) at concept altitude and produce the adoption document — what to borrow, what to skip, in what order |
 | `/dev-flow ask <question>` | Read-only Q&A — no file changes |
 | `/dev-flow todo <description>` | Capture future work — find relevant docs, assess feasibility, file a planning record with a return trigger (builds nothing) |
 | `/dev-flow rule <request>` | Manage project coding rules |
@@ -248,6 +249,12 @@ Interview Mode chooses among *known* options — but sometimes the options thems
 
 Not every change is ready to start. The **todo phase** (`/dev-flow todo <description>`) captures one without starting it: it finds the documentation the work would touch, assesses its execution prospect (feasibility + scope), and files a single planning record with a **return trigger** — into an owning plan's backlog if one exists, otherwise into `.dev_flow/todos/`. Flavors: a **deferred** "maybe later" idea, or a **queued follow-up** — a defect you spot *while* working on the current task that you can't fix now because the contexts overlap (and a parallel `subtask` can't help, since it needs disjoint scope). It's filed as `queued` with trigger `after task_<ID>`; when that task completes, dev-flow surfaces it and offers to run it next. The command works out which flavor, how urgent, and what trigger from the state of the relevant plans and tasks — not from how you phrased it (the description may have no timing words at all) — and may even tell you to just do it now. It builds nothing and passes through no gates; a later `do`/`plan` run executes it. Agents file todos too: when one spots an out-of-scope, deferrable defect mid-work, it spawns a cheap subagent running the todo flow (or files a trivial one inline) — capturing the finding without derailing its current task. This completes a clean routing triad — `ask` analyzes and writes nothing, **`todo` analyzes and files for later**, `do` analyzes and acts now — and reuses the existing backlog/trigger discipline so a "later" never quietly becomes permanent (audit grooms the register). See [`phases/todo.md`](phases/todo.md).
 
+### Learning From External Repositories
+
+The concept phase's Reuse Check asks "what already exists?" — and looks only inside your project. But genuinely new ideas usually come from someone else's engineering. **`/dev-flow adopt <repo>`** is the sanctioned way in. Give it a local path or a URL (a remote repo is cloned into `ext_repos/` at your project root, which the run adds to `.gitignore`), and it analyzes the repository at **concept altitude** — ideas, mental models, architectural trade-offs, not APIs — into `docs/ext_adoption/<name>.concept.md`, then **automatically** produces `docs/ext_adoption/<name>.md`: what your project already has, which of the source's concepts are `high` relevance (with the integration point, cost, and risk), which are `medium` (with an explicit take/defer/decline ruling), which are `low` (one line of why not), the **derived ideas** that exist only at the intersection of the two projects, and a recommended order sorted by effect over cost.
+
+These documents are **advisory** — no traceable ID, no gate, not a backlog. They inform whoever writes the concept; they never authorize a change. The boundary is mechanical: a run writes the two documents, the clone, one `.gitignore` line, and the ordinary task context — never your code, specs, plans, or todo register. Re-run it later and it goes incremental: it diffs the source's commits since the one it recorded, leaves unchanged concepts byte-identical, and appends to the changelog. An empty `high` section is a valid result, written and stated plainly — knowing a repository has nothing for you is worth recording, so nobody analyzes it twice. See [`references/repo-adoption.md`](references/repo-adoption.md).
+
 ### Task Intent
 
 A request states an *action*; the *reason* for it usually stays in the user's head — and an agent optimizing for the literal wording can complete the action perfectly while missing the point. dev-flow captures the **Task Intent** at intake: the goal (why), the target state, and the expected result, recorded in the task file in the user's own terms (inferred parts marked as inferred). Every later moment checks against that record instead of a remembered impression: material implementation decisions ask "does this serve the goal?", delegated subagents receive the intent in their brief, and completion reports a verdict — `met / partially met / diverged` — where the bar is "the expected result is observable", not merely "the steps were performed". When the letter of the request and its recorded goal diverge, dev-flow stops and surfaces the conflict rather than silently following either. See [`references/task-intent.md`](references/task-intent.md).
@@ -294,7 +301,13 @@ your-project/
 │   ├── feature_group.epic.md      # Coordinates 3+ related concepts
 │   ├── _index.md                  # Catalog (when >5 documents)
 │   ├── _glossary.md               # Canonical domain vocabulary (lazy)
-│   └── _framework.md              # Architectural map (onboard / audit code)
+│   ├── _framework.md              # Architectural map (onboard / audit code)
+│   └── ext_adoption/              # Advisory analyses of external repos (`adopt`)
+│       ├── other-repo.concept.md  # Portrait of the source
+│       └── other-repo.md          # What to borrow from it, and why
+│
+├── ext_repos/                     # Clones of analyzed external repos (gitignored)
+│   └── other-repo/
 │
 └── .dev_flow/
     ├── active_context.md           # Dashboard of active tasks
@@ -401,6 +414,7 @@ dev-flow/
 │   ├── roles.md                 # Base vs project-overlay roles
 │   ├── glossary.md              # Project domain vocabulary
 │   ├── code-audit.md            # `audit code` lens registry + shared walk + refactoring playbook
+│   ├── repo-adoption.md         # `adopt` — analyze an external repo, produce the advisory adoption document
 │   └── solid-architecture.md
 └── examples/             # End-to-end walkthrough
     └── rate-limiter.md

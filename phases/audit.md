@@ -185,6 +185,8 @@ Grouped with Steps 7a–7c as the **`docs` scope**. Where 7a–7c groom the glos
 5. **Freshness** — flag active concepts/specs/plans with significant edits but no matching `Changelog` row, an `Updated` date older than commits that touched the document's IDs, and lingering [banned phrases](concept.md#banned-phrases) in an `active` concept/spec.
 6. **Duplicated value sets** — where the same set of values (an enum, a criteria list, an option set, a gate checklist) is enumerated in more than one document, diff the copies: each must list the same members. Also diff a set restated **within** one document — a contract's pseudocode-enumerated set against its §03 validation rule. Report divergence as drift and propose reconciliation toward the **owning** document (the spec defining the entity, else the concept); a copy is never treated as the authority.
 
+**Scope exclusion.** `docs/ext_adoption/` is out of scope for 7e.1–7e.5: adoption documents are advisory, own no traceable ID, carry no pipeline `Status`, and are deliberately absent from `_index.md`'s document tables — flagging them as orphans or status-drift is a false positive. Check only that each pair's internal links resolve, and report an adoption document whose source repository no longer exists at the recorded path. See [External Repo Adoption](../references/repo-adoption.md).
+
 Apply the derived/index fixes directly; **propose** status changes, reciprocal-link fixes, and removals (per *apply-safe / propose-judgement*). Document *content* fixes route through [propagate](propagate.md) — audit reports the drift, it does not rewrite design documents.
 
 ### Step 8 — Report

@@ -11,7 +11,7 @@
 | Field | Value |
 |-------|-------|
 | **Document** | `[type: concept/spec/plan/code]` — [title and file path] |
-| **Pipeline phase** | `[onboard / research / concept / spec / plan / implement / test / review / verify / propagate / fix / rule / skill / ask / todo / do / subtask / status / audit]` |
+| **Pipeline phase** | `[onboard / research / concept / spec / plan / implement / test / review / verify / propagate / fix / rule / skill / ask / todo / do / subtask / status / audit / adopt]` |
 | **Traceable ID** | `[C_XXX / SP_XXX / PL_XXX / E_XXX or n/a]` |
 | **Ticket** | `[PROJ-123 (external tracker) or n/a]` — present only when the task is explicitly tied to a tracker ticket; see `references/ticket-tracker.md` (dev-flow skill) |
 
