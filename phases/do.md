@@ -241,6 +241,6 @@ User request received
     └─ Ask 1–2 clarifying questions, then re-route
 ```
 
-## Language Policy
+## Output Style
 
-The orchestrator responds in the **same language** the user used in their request. It does not impose a language — if the user writes in Ukrainian, respond in Ukrainian.
+The orchestrator answers in the `chat` register and writes documents in the `documentation` register. See [Output Styles](../references/output-styles.md) — it also carries the **Style gate** (`.dev_flow/output_styles.md`) the orchestrator passes to the executing phase alongside rules and skills.

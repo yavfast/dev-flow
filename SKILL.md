@@ -224,7 +224,7 @@ In code, reference these as comments: `# [C_ACS_03_01] PermissionInterceptor`
 
 ## File Organization
 
-All documents live in `docs/` directories. Every generated doc file follows the [Documentation Formatting](references/formatting.md) conventions — in particular, **no hard line wraps inside sentences or paragraphs** (one paragraph = one logical line). One concept = one file set:
+All documents live in `docs/` directories. Every generated doc file follows the [Documentation Formatting](references/formatting.md) conventions — in particular, **no hard line wraps inside sentences or paragraphs** (one paragraph = one logical line) — and is written in the `documentation` register of [Output Styles](references/output-styles.md) (agent-first reader; a cross-reference replaces a restatement). One concept = one file set:
 
 | File | Extension | Example |
 |------|-----------|---------|
@@ -281,6 +281,7 @@ dev-flow uses a **collaborative per-task context model** so multiple AI agents c
 ```
 .dev_flow/
 ├── active_context.md          # Dashboard — table of active tasks + recently completed
+├── output_styles.md           # Project style profiles — documentation register + chat register (Output Styles); absent → shipped defaults
 ├── cache/                     # Durable resources (Figma exports, downloads, baselines) + _index.yaml
 ├── evidence/                  # ledger.yaml — intervention ledger (Evidence Discipline); absent → reconcile is a no-op
 ├── tasks/
@@ -318,6 +319,7 @@ dev-flow uses a **collaborative per-task context model** so multiple AI agents c
 ### Rules for all phases
 
 - **Project-knowledge gate (first).** Read `.dev_flow/rules/_index.yaml` and `.dev_flow/skills/_index.yaml`, load what's relevant to the area you touch, and obey it — see [Project Knowledge Is Binding](#project-knowledge-is-binding).
+- **Style gate.** Read `.dev_flow/output_styles.md` and write in the register it selects — documentation for files, chat for anything the developer reads (in chat every link/path/ID carries a short description, since the jump often does not work). Absent → shipped defaults, the gate is a no-op. Advisory: it adds no gate criterion. See [Output Styles](references/output-styles.md).
 - **Resource gate.** Before an expensive external fetch (Figma export, web document), check `.dev_flow/cache/_index.yaml` and reuse a cached copy (no-op while the directory is absent); an entry past its `valid_until` gets a cheap currency check (ETag, Figma version) before any re-fetch. After an expensive fetch, save the artifact back — a focus-delegated helper *stages* it in the workspace and reports (a task-delegated subagent writes the cache itself per the protocol — see [subtask phase](phases/subtask.md)). A resource fetched from the open internet is saved with `trust: public` and goes through the safety check first. Transient artifacts follow the workspace discipline — `/tmp/{project-slug}/` with timestamped names. See [Resource Cache](references/cache.md).
 - At the **start** of any phase:
   - **Continuation** — locate the task via `active_context.md`. If your own Subtask block exists, resume it. If you have no block in this task yet, add a new `### Subtask:` block (you become a Contributor).
@@ -410,6 +412,7 @@ Severity levels: **must** (blocks review) | **should** (warning) | **prefer** (a
 - [Roles](references/roles.md) *(base vs project-overlay subagent roles — reuse what exists, create new under .dev_flow/roles/ via inherits)*
 - [Glossary](references/glossary.md) *(`docs/_glossary.md` — canonical domain vocabulary; created at onboard/concept, loaded with `_index.md`)*
 - [Documentation Formatting](references/formatting.md) *(cross-cutting — formatting conventions for all generated documentation files; no hard line wraps inside sentences/paragraphs, one list item / table row per line, no wholesale reformatting of existing files)*
+- [Output Styles](references/output-styles.md) *(cross-cutting sub-procedure of every phase that writes a doc file or answers the developer — two registers for two readers: documentation (agent-first, a cross-reference replaces a restatement) vs chat (the deciding developer — their language, low semantic complexity, every link/path/ID carried with a short description because the jump often fails, sharpest inside Interview Mode dialogs); ASD-STE100 as the English register orientation; project profiles in the mandatory-load `.dev_flow/output_styles.md`, created and edited adaptively; advisory — style never removes content and adds no gate criterion)*
 - [Design Compliance](references/design-compliance.md) *(cross-cutting sub-procedure of verify — validate a UI implementation against its design source of truth (design-tool link, tokens, mockups, style guide) property by property via a read-only clean-context validator; enumerates the FULL variant/state set before comparing; app-type-agnostic — web, mobile, desktop, TUI; deviations feed the Verify fix cycle, design-vs-spec conflicts escalate upstream)*
 - [Implement phase](phases/implement.md)
 - [Test phase](phases/testing.md) *(conditional — functional tests: unit + mock)*

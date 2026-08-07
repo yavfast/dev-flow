@@ -2,6 +2,8 @@
 
 Cross-cutting formatting rules for **every documentation file the pipeline produces or edits** — spikes, concepts, specs, plans, epics, task files, indexes, rules, skills. Apply them whenever a phase writes Markdown; they are conventions of the *source text*, independent of how any renderer displays it.
 
+**Scope boundary.** This reference owns the *mechanics* — line breaks, list and table shape, heading hierarchy. Its counterpart [Output Styles](output-styles.md) owns the *register* — which language, how complex, and how a pointer to another document is carried. The two are orthogonal and cite each other rather than overlap.
+
 ## The core rule — no hard wraps inside a sentence or paragraph
 
 **One paragraph = one logical line.** Never insert a line break in the middle of a sentence or paragraph to keep lines under some column width (80, 100, 120 — any). Let long lines stay long; editors soft-wrap them. A line break in a doc file appears only *between* block elements: paragraphs, list items, table rows, headings, code fences.
@@ -41,7 +43,7 @@ Apply these rules to **new and edited text only**. Never reflow an entire existi
 
 ## Language consistency
 
-The documentation **body** follows the project's chosen working language (mirroring each phase's Language Policy); structural section headers stay in the exact form the templates define them, whatever the body language. Do not mix languages within one document body.
+The documentation **body** follows the project's documentation language (set by the `documentation` register — see [Output Styles](output-styles.md), which may differ from the chat language); structural section headers stay in the exact form the templates define them, whatever the body language. Do not mix languages within one document body.
 
 ## Quick checklist (before saving any doc file)
 

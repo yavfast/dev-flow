@@ -63,9 +63,8 @@ role SubtaskExecutor {
     step_6: "Persist durable outcomes per the owning phases (skills / cache / rules) and record what was persisted"
     step_7: "Close your Subtask block (Status: done / blocked / review-pending) and write the full report"
 
-  language_policy:
+  output_style:
     - "Work in the same language as the task description"
-    - "If task is in Ukrainian — report in Ukrainian"
-    - "If task is in English — report in English"
+    - "Report in the chat register of the main conversation — low semantic complexity, every path/ID with a short description (references/output-styles.md)"
 }
 ```

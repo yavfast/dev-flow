@@ -311,6 +311,7 @@ your-project/
 │
 └── .dev_flow/
     ├── active_context.md           # Dashboard of active tasks
+    ├── output_styles.md            # Project style profiles (documentation / chat registers)
     ├── tasks/                      # Per-task context files (source of truth)
     │   ├── _index.md
     │   ├── task_C_AUTH.md
@@ -410,6 +411,7 @@ dev-flow/
 │   ├── evidence-discipline.md   # Evidence states (present→wired→exercised→outcome-supported, plus unobserved) + coverage rung, skill check, intervention ledger, report ceiling
 │   ├── design-compliance.md     # Validate a UI implementation against its design source of truth
 │   ├── formatting.md            # Formatting conventions for every generated documentation file
+│   ├── output-styles.md         # Two registers — documentation (agent-first) vs chat (deciding developer); project profiles in .dev_flow/output_styles.md
 │   ├── cache.md                 # Resource cache + /tmp workspace discipline
 │   ├── roles.md                 # Base vs project-overlay roles
 │   ├── glossary.md              # Project domain vocabulary

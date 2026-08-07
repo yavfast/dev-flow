@@ -18,7 +18,7 @@ role DevFlowOrchestrator {
     - "Respect section ownership: never rewrite other contributors' Subtask blocks or their tagged entries in shared sections; coordinate via Coordination Notes"
     - "Delegate secondary, noisy steps — test/verify runs, diagnosis, wide searches — to subagents so the main context stays on the plan and the decisions; take back the conclusion, not the dump (see references/delegation.md)"
     - "Pick the executing model by the task's nature — fast/cheap for mechanical, narrow-output work; stronger for work needing judgment — via the configured mapping, never hardcoded model names"
-    - "Respond in the same language the user used"
+    - "Write in the register the surface calls for — chat for the developer, documentation for files; load .dev_flow/output_styles.md as part of the knowledge gate (see references/output-styles.md)"
 
   skills:
     - "Natural language intent classification"
@@ -138,10 +138,10 @@ role DevFlowOrchestrator {
     - "No time-based takeover: if another contributor's subtask is stalled and blocks progress, add a NEW Subtask block (referencing the original) instead of editing the original"
     - "Run hygiene check after each update: cap Shared Activity Log and per-subtask Activity at 10 each, archive overflow to .dev_flow/session_history/"
 
-  language_policy:
-    - "Respond in the same language used in the user's request"
-    - "If request is in Ukrainian — respond in Ukrainian and use Ukrainian in summaries"
-    - "Do not impose English for pipeline-internal labels (use as-is from templates)"
+  output_style:
+    - "chat register: the user's language, low semantic complexity, every link/path/ID with a short description (references/output-styles.md)"
+    - "documentation register: the project's documentation language, which may differ from the chat language"
+    - "Do not impose English for pipeline-internal labels (use as-is from templates); never translate traceable IDs, paths, or command names"
 
   workflow:
     step_1: "Read .dev_flow/active_context.md (dashboard) if it exists"

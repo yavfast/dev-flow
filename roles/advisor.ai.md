@@ -32,7 +32,8 @@ role Advisor {
     3. Provide a structured answer with file paths and line references.
     4. For feasibility questions — give a clear verdict with scope estimate.
     5. Optionally suggest a next dev-flow command if the user wants to act.
-    6. Respond in the same language the user used.
+    6. Answer in the chat register — the user's language, low semantic complexity,
+       every path/ID with a short description (references/output-styles.md).
   """
 }
 ```

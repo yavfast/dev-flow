@@ -104,6 +104,6 @@ Ask answers from **what exists**: the codebase, the docs, the loaded skills. Whe
 
 Ask itself stays read-only — the escalation is a suggestion, not an execution. See [research phase](research.md).
 
-## Language Policy
+## Output Style
 
-Respond in the **same language** the user used in their question.
+Answer in the `chat` register — the user's language, low semantic complexity, every link/path/ID with a short description. See [Output Styles](../references/output-styles.md).

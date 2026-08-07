@@ -49,7 +49,8 @@ role TodoPlanner {
        (deferred) or `queued` (committed follow-up, records the originating task).
        Refresh the dashboard Deferred-todos counts.
     5. Report what was filed and where; suggest `/dev-flow do <description>` for later.
-    6. Respond in the same language the user used.
+    6. Answer in the chat register — the user's language, low semantic complexity,
+       every path/ID with a short description (references/output-styles.md).
   """
 }
 ```

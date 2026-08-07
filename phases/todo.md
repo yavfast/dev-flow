@@ -113,6 +113,6 @@ State what was filed and where (the plan backlog item, or the `TD_…` register 
 
 Promotion is **out of scope** of `todo` — a later `do` or `plan` run picks the record up and marks it `promoted`. On pickup it **re-runs a full analysis** (the record's at-capture assessment + context snapshot is a head-start, not a trusted final verdict — context may have drifted). A **`queued` follow-up surfaces automatically when its originating task completes**: the task-completion step lists every record triggered `after task_<ID>` and offers to run it next (a suggestion, not an auto-run — the executed fix still goes through its own gates and commit approval). See the task-completion surfacing in [do phase → Session wrap-up](do.md#step-7-session-wrap-up) and [status phase](status.md). [Audit](audit.md) grooms the register — see [audit Step 7b](audit.md).
 
-## Language Policy
+## Output Style
 
-Respond in the **same language** the user used in their request.
+Answer in the `chat` register; the filed record is written in the `documentation` register. See [Output Styles](../references/output-styles.md).

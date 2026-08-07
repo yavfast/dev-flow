@@ -167,8 +167,8 @@ Report: verdict per question, recommended next phase (`concept` ready / more res
 - Running a **perspective panel** on a narrow factual question — N researchers paying N× to return the same answer; a panel is for genuinely many-sided topics (Step 2b)
 - **Lens theater** — picking perspectives that don't disagree on *this* topic, so the synthesis is just concatenation; or, conversely, **flattening** real cross-lens contradictions into one tidy verdict instead of surfacing the trade-off as a decision input
 
-## Language Policy
+## Output Style
 
-Frame the spike and report findings in the **same language** the user used. Spike file section headers stay as the template defines them.
+Spike file → `documentation` register; findings reported to the user → `chat` register. See [Output Styles](../references/output-styles.md). Spike file section headers stay as the template defines them.
 
 **Formatting.** The spike file follows [Documentation Formatting](../references/formatting.md) — no hard line wraps inside sentences or paragraphs.

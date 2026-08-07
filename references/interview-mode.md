@@ -75,6 +75,8 @@ For the recommendation, add **why** you'd choose it — the trade-off you're opt
 
 Whichever channel you use, the options carry their markers (§3) so the developer can answer by marker or compose across them.
 
+**The question must stand on its own.** This is the sharpest case of the `chat` register ([Output Styles](output-styles.md)): in an options dialog the text *is* the whole context — markup may not render, the jump does not work, and the answer is irreversible by the definition of a fork. So every document, path, or traceable ID named in a question or an option carries a short description of what it is, in the developer's language, at low semantic complexity. A developer who has to open a link to understand an option cannot make an informed choice.
+
 **When the `AskUserQuestion` tool is available** (Claude Code), use it — it is built for exactly this: 2–4 options, recommended option first labelled `(Recommended)`, and the developer can always choose "Other". **Prefix each option's label with its marker** (`A — Fixed window (Recommended)`, `B — Sliding window`, …) and put the consequence in the description. The marker matters even here: when the developer picks "Other" to amend or combine options, they cite the markers (`like A but cap at 100, per C`), and your reply is unambiguous. Batch up to 4 *independent* decisions into one call.
 
 **When the tool is not available, the chat IS the dialog** — so reproduce it faithfully. Present each decision as a clearly marked list the developer can answer against:
