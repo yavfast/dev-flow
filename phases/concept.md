@@ -60,6 +60,7 @@ Boundary: the glossary says *what a word means*; this concept's Domain Model (§
 - **Diagrams over prose:** Use ASCII diagrams, mermaid, or structured tables to show relationships, hierarchies, and flows.
 - **Explicit boundaries:** State what this concept IS and IS NOT.
 - **Cross-references:** Link to related concepts with `[C_XXX]` identifiers.
+- **Declare criticality:** Set the header `Criticality:` — the weight of this module inside the whole application (`peripheral` / `supporting` / `core` / `critical`) — and, where a single mechanism (`§3.x`) carries a different weight than the rest, a `Criticality:` line on that section. Optional and never guessed: omit it when the weight is genuinely unknown, since an absent declaration lowers nothing. The [review](review.md) phase reads it to decide whether a finding here may block a commit. See [Review Convergence](../references/review-convergence.md).
 - **Formatting:** Follow [Documentation Formatting](../references/formatting.md) — no hard line wraps inside sentences or paragraphs; one paragraph = one logical line.
 - **Changelog:** Every concept ends with a `## Changelog` table recording significant changes.
 
@@ -100,6 +101,7 @@ Reject or flag the following phrases in any concept. They signal deferred decisi
 > **Author:** agent / human name
 > **Owner:** role / team / module responsible for long-term maintenance
 > **Complexity:** low | medium | high (estimated maintenance burden)
+> **Criticality:** peripheral | supporting | core | critical (weight in the whole application; optional)
 >
 > **Depends on:** [C_YYY](./other.concept.md)
 > **Used by:** [C_ZZZ](./another.concept.md)

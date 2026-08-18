@@ -31,7 +31,7 @@ Any contributor may rebuild this dashboard from `tasks/*.md` if it becomes stale
      active view, so without this line the fact would be invisible. Regenerable from
      todos/_index.md + plan backlogs. Omit the whole section when there are no todos. -->
 
-_N candidate · M queued — see [todos/](todos/_index.md)_
+_N candidate · M queued · K contested — see [todos/](todos/_index.md)_
 <!-- Conditional — include a line like the next ONLY for a todo bound to a closed plan/task: -->
 - ⚠ `TD_<ts>_<slug>` bound to **completed** `PL_XXX` backlog — won't appear in Active
 

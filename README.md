@@ -230,6 +230,16 @@ Code review is performed by a **clean-context subagent** — a fresh AI instance
 - SOLID principles (unless project rules override)
 - Security, naming, code quality
 
+### Review Convergence
+
+Two agents can disagree forever about a detail that does not matter. On a large project that turns the review loop into an infinite ping-pong over, say, the states of a button that carries no weight in the module at all. dev-flow bounds the loop — see [`references/review-convergence.md`](references/review-convergence.md):
+
+- **Declared criticality.** A concept header, and optionally a single mechanism or contract, declares its weight — `peripheral` / `supporting` / `core` / `critical`. The author states it once, when the question is cheap. It is optional, and its absence lowers nothing.
+- **Computed materiality.** The reviewer states a finding's **severity** as before, and never states whether it may block. That verdict — `blocking` / `advisory` / `deferrable` — is computed from severity plus the declared criticality, so "this does not matter here" stops being one agent's opinion.
+- **The `review-non-convergence` tripwire.** A non-`must` finding raised a second time unresolved leaves the loop as a **`contested`** todo carrying *both* readings, instead of spawning a third round. A `must` finding and a security finding block **without limit** — the mechanism terminates arguments, never defects.
+
+A repeat round also stops re-reading the whole diff: it reads the delta since the previous round's baseline, plus every still-open finding, plus every area declared `critical`.
+
 ### Interview Mode
 
 The biggest architectural mistakes are made silently. When authoring a **concept**, **specification**, **plan**, or a **fix** hits a real fork — two or more viable, hard-to-reverse options (including the classic "band-aid vs proper fix") — dev-flow does **not** quietly pick one and bury it where no reviewer will catch it. Instead it stops and runs a short **interview**: it presents the fork with 2–4 marked options (A/B/C) and a **recommended answer**, and asks the developer to decide.
@@ -409,6 +419,7 @@ dev-flow/
 │   ├── application-enforcement.md  # Per-burst knowledge re-activation (loaded ≠ applied)
 │   ├── procedural-skills.md     # Skills as procedural memory — freshness, promotion, curation
 │   ├── evidence-discipline.md   # Evidence states (present→wired→exercised→outcome-supported, plus unobserved) + coverage rung, skill check, intervention ledger, report ceiling
+│   ├── review-convergence.md    # Declared criticality → computed finding materiality; review-non-convergence tripwire → contested todo; incremental round scope
 │   ├── design-compliance.md     # Validate a UI implementation against its design source of truth
 │   ├── formatting.md            # Formatting conventions for every generated documentation file
 │   ├── output-styles.md         # Two registers — documentation (agent-first) vs chat (deciding developer); project profiles in .dev_flow/output_styles.md

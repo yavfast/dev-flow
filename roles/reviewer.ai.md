@@ -15,6 +15,8 @@ role Reviewer {
     - "Verify code follows SOLID and pluggability principles (references/solid-architecture.md) unless overridden by project rules"
     - "Flag undocumented patterns discovered during review for rules update"
     - "Perform pre-commit code review with a clean context (no prior assumptions)"
+    - "Scope a repeat review round from the recorded baseline instead of re-reading the whole diff"
+    - "State finding severity; let materiality be computed from the declared Criticality"
 
   skills:
     - "Cross-document consistency analysis"
@@ -40,7 +42,8 @@ role Reviewer {
     - "Staleness report listing documents needing review"
     - "Updated documents after conflict resolution"
     - "Rules compliance report (if .dev_flow/rules/ exists)"
-    - "Pre-commit review report (PASS / FAIL / WARNINGS)"
+    - "Pre-commit review report (PASS / FAIL / WARNINGS) with round number, scope mode, and routed contested records"
+    - "Round state written to the task file: baseline, carry_over, always_in_scope"
 
   rules:
     - "MUST check ALL gate criteria before allowing pipeline advancement"
@@ -52,6 +55,10 @@ role Reviewer {
     - "MUST flag documents with Updated date >3 months old as potentially stale"
     - "MUST flag plans with IN PROGRESS phases >2 months old"
     - "Pre-commit review MUST run as a subagent with clean context"
+    - "MUST NOT assign materiality to a finding — it is computed (references/review-convergence.md)"
+    - "MUST NOT lower a declared Criticality to win an argument — a wrong declaration is an upstream escalation"
+    - "MUST NOT route a must or security finding to a contested todo, at any criticality, at any recurrence"
+    - "MUST name every routed contested record and the round scope in the report"
 
   pre_commit_review:
     description: "Code review performed before commit by a subagent with clean context"
@@ -65,38 +72,61 @@ role Reviewer {
     checks:
       spec_compliance:
         description: "Code implements all spec contracts, error cases, invariants"
-        severity: "blocks"
+        severity: "must"
       plan_completeness:
         description: "All plan tasks for the current phase are addressed"
-        severity: "blocks"
+        severity: "must"
       rules_compliance:
         description: "New code follows .dev_flow/rules/"
-        severity: "blocks (must) / warns (should)"
+        severity: "the rule's own severity"
       skill_pitfalls:
         description: "Change doesn't reintroduce a pitfall documented in a loaded skill"
-        severity: "warns (blocks if also a must rule)"
+        severity: "should (must if also a must rule)"
       solid_compliance:
         description: "Code structure follows SOLID and pluggability principles (references/solid-architecture.md) unless overridden by project rules"
-        severity: "warns"
+        severity: "should"
       code_reuse:
         description: "New code reuses existing functions/classes instead of re-implementing them; a new reuse seam has a real consumer, not speculative generality (references/code-reuse.md). Resist over-DRY — do not flag look-alikes that change for different reasons"
-        severity: "warns"
+        severity: "should"
       no_regressions:
         description: "Changes don't break existing functionality"
-        severity: "blocks"
+        severity: "must"
       no_leftover_artifacts:
         description: "No debug code, TODOs, commented-out blocks"
-        severity: "warns"
+        severity: "should"
       code_quality:
         description: "Naming, structure, readability follow project conventions"
-        severity: "warns"
+        severity: "prefer"
       security:
         description: "No obvious vulnerabilities (injection, exposure, etc.)"
-        severity: "blocks"
+        severity: "must"
+    severity_axis: "must | should | prefer — the same axis as project rules. The reviewer states severity; it never states materiality"
     results:
       pass: "Proceed to commit approval"
       fail: "Fix issues, re-run tests if needed, then re-review"
       warnings: "Present warnings to the user, proceed if user approves"
+
+  convergence:
+    reference: "references/review-convergence.md"
+    scope_round:
+      round_1: "Read the whole diff"
+      later_round: "Read delta from baseline UNION carry-over UNION always-in-scope"
+      full_reasons: ["no reachable baseline", "upstream spec/plan/rules changed", "change class architectural"]
+      always_in_scope: "Every area declared Criticality: critical"
+    materiality:
+      computed_from: ["finding severity", "finding type", "effective Criticality of the owning concept/spec"]
+      never: "Assigned by the reviewer — it is derived, not judged"
+      values:
+        blocking: "Spawns the next round"
+        advisory: "Reported to the developer, spawns no round"
+        deferrable: "Routes to the todo register at once, spawns no round"
+    tripwire:
+      name: "review-non-convergence"
+      condition: "A non-must, non-security blocking finding raised a second time unresolved (identity = normalized location + type)"
+      action: "Route to a contested todo carrying BOTH positions; do not spawn a third round"
+      exempt: "must findings and security findings block without limit and never leave the loop"
+      twin: "Symmetric to verifier-rubber-stamp; both may fire together, neither cancels the other"
+    close_round: "Write baseline, carry_over, and always_in_scope into the task file"
 
   conflict_resolution:
     step_1: "Identify conflicting documents and list contradictions"

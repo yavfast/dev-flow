@@ -8,6 +8,7 @@ Take a free-form description of work to do **later**, find the documentation it 
 
 - **Deferred (speculative)** — work the project *might* do; YAGNI-gated; trigger is a future event or date; may end up dropped. ("колись додамо WebSocket")
 - **Queued follow-up (committed)** — a concrete fix/change *noticed while working on the current task* that must wait until that task finishes, because doing it now would interfere (overlapping context corrupts the work in progress). It is **not** speculative and is never YAGNI-dropped; its trigger is the completion of the originating task (`after task_<ID>`). This is the case a parallel [subtask](subtask.md) cannot cover — subtask needs disjoint file scope, but here the contexts overlap, so the work must be *sequenced after*, not parallelized.
+- **Contested (unresolved)** — a low-materiality review finding on which the reviewer and the implementing agent did not converge, routed out of the review loop by [Review Convergence](../references/review-convergence.md). Not speculative, so the YAGNI-gate does not drop it. It does **not** surface when the originating task completes — that would reopen the argument right after the commit. Its trigger is the next deliberate change to the owning file, and it carries **both** readings so the next session does not re-derive the argument. Filed by the review phase, not by a developer request. **A `must` finding and a security finding never take this route** — at any criticality, at any recurrence. They block without limit; the flavor exists to end arguments, not defects.
 
 Which flavor applies — and how urgent the work is — is **determined by `todo` from context** (the state of the relevant plans and tasks), **not parsed from the request's wording**: the description may carry no timing or task-binding words at all. The analysis may even conclude the work is urgent enough to *not* defer, and recommend running it now instead.
 
@@ -32,6 +33,8 @@ Which flavor applies — and how urgent the work is — is **determined by `todo
 /dev-flow todo помітив витік у CacheManager.close() — виправити після поточної задачі
 /dev-flow todo after this task: the retry helper double-counts attempts, fix it
 ```
+
+A **contested** record has no command form — the [review](review.md) phase files it when a finding fails to converge.
 
 ## Role Responsible
 
@@ -87,8 +90,9 @@ Then **derive timing and binding from context — never parse them from the requ
 | **An active plan owns the area** with an open phase/backlog | bind to that plan (file into its backlog); urgency follows the plan's schedule | the plan event/phase that returns it to scope |
 | **Docs/tasks signal it is urgent** — a `must`-rule violation, a blocking defect, a plan phase already waiting on it | do **not** defer — surface a recommendation to run it now (`/dev-flow do …` or `fix`) instead of filing | n/a (act now) |
 | **None of the above** — a free-standing concept/idea | a **candidate** deferred to preserve focus on current work | a soft revisit cadence (next planning / when bandwidth frees); sitting in the register is a normal backlog state — audit may graduate a matured candidate into documentation |
+| **Filed by the review phase** — a non-`must`, non-security finding that did not converge | **contested**; record both positions and the effective criticality the verdict rested on. Refuse the record for a `must` or security finding, or when either position is empty | the next deliberate change to the owning file — never `after task_<ID>` |
 
-Trigger discipline: **never a bare "later"**, but the trigger need not be a hard date — a context-derived event, a task completion, or a revisit cadence all qualify. For a *candidate*, run the [Consequence-Forecasting](../references/consequence-forecasting.md) YAGNI-gate (`build now` / `seam+flag` / `drop+record`) to decide the trigger and whether to file at all. A *queued* follow-up skips the gate — it is committed work, not speculation.
+Trigger discipline: **never a bare "later"**, but the trigger need not be a hard date — a context-derived event, a task completion, or a revisit cadence all qualify. For a *candidate*, run the [Consequence-Forecasting](../references/consequence-forecasting.md) YAGNI-gate (`build now` / `seam+flag` / `drop+record`) to decide the trigger and whether to file at all. A *queued* follow-up and a *contested* record skip the gate — neither is speculation; for a contested record the gate chooses only the trigger.
 
 ### Step 4: File the planning record
 
@@ -101,9 +105,11 @@ If Step 3 concluded the work is **urgent (act now)**, do not file a record — r
 
 **Record id** — `TD_<YYYYMMDD_HHMMSS>_<slug>` (timestamp + 1–3-word kebab slug), mirroring task naming so concurrent contributors never collide. No sequential numbering.
 
-Every record carries: id, description, relevant-doc links, at-capture feasibility, scope estimate, **suggested phase**, **context snapshot**, return trigger, and a status — `candidate` (deferred) or `queued` (committed follow-up; also records the originating task it waits behind) → later `promoted` / `dropped`.
+Every record carries: id, description, relevant-doc links, at-capture feasibility, scope estimate, **suggested phase**, **context snapshot**, return trigger, and a status — `candidate` (deferred), `queued` (committed follow-up; also records the originating task it waits behind), or `contested` (unresolved review finding) → later `promoted` / `dropped`.
 
-**Leave a dashboard trace.** Targeted-edit `.dev_flow/active_context.md`'s **Deferred (todos)** section (create it from the [template](../templates/active_context.md) on first use) so the fact of the addition is visible at the entry point — refresh the `candidate · queued` counts. **Always** add an explicit flag line when the record bound to an already-**closed** plan or task (a backlog item in a `completed` plan, or a change to a `done`/archived task's area): that target is off the active view, so without this line the deferral would be invisible. Per-item detail stays in the register; the dashboard carries only counts + closed-target flags.
+A **contested** record additionally carries the reviewer's position, the author's position, the finding identity, and the effective criticality the materiality verdict rested on. Both positions are mandatory: a record with one position is one side's verdict, not a disagreement, and must not be filed. A record is likewise refused for a `must`-severity or security finding — those block without limit ([Review Convergence](../references/review-convergence.md)).
+
+**Leave a dashboard trace.** Targeted-edit `.dev_flow/active_context.md`'s **Deferred (todos)** section (create it from the [template](../templates/active_context.md) on first use) so the fact of the addition is visible at the entry point — refresh the `candidate · queued · contested` counts. **Always** add an explicit flag line when the record bound to an already-**closed** plan or task (a backlog item in a `completed` plan, or a change to a `done`/archived task's area): that target is off the active view, so without this line the deferral would be invisible. Per-item detail stays in the register; the dashboard carries only counts + closed-target flags.
 
 ### Step 5: Report
 
@@ -111,7 +117,7 @@ State what was filed and where (the plan backlog item, or the `TD_…` register 
 
 > "Filed as `TD_20260623_143000_cache-leak` in `.dev_flow/todos/` and noted on the dashboard. When ready, run `/dev-flow do <description>` to pick it up."
 
-Promotion is **out of scope** of `todo` — a later `do` or `plan` run picks the record up and marks it `promoted`. On pickup it **re-runs a full analysis** (the record's at-capture assessment + context snapshot is a head-start, not a trusted final verdict — context may have drifted). A **`queued` follow-up surfaces automatically when its originating task completes**: the task-completion step lists every record triggered `after task_<ID>` and offers to run it next (a suggestion, not an auto-run — the executed fix still goes through its own gates and commit approval). See the task-completion surfacing in [do phase → Session wrap-up](do.md#step-7-session-wrap-up) and [status phase](status.md). [Audit](audit.md) grooms the register — see [audit Step 7b](audit.md).
+Promotion is **out of scope** of `todo` — a later `do` or `plan` run picks the record up and marks it `promoted`. On pickup it **re-runs a full analysis** (the record's at-capture assessment + context snapshot is a head-start, not a trusted final verdict — context may have drifted). A **`queued` follow-up surfaces automatically when its originating task completes**: the task-completion step lists every record triggered `after task_<ID>` and offers to run it next (a suggestion, not an auto-run — the executed fix still goes through its own gates and commit approval). A **`contested` record does not** — it waits for its own file-change trigger. See the task-completion surfacing in [do phase → Session wrap-up](do.md#step-7-session-wrap-up) and [status phase](status.md). [Audit](audit.md) grooms the register — see [audit Step 7b](audit.md).
 
 ## Output Style
 

@@ -18,6 +18,8 @@
 
 ### 01_01. {EntityName}  {#SP_XXX_01_01}
 
+> **Criticality:** {optional — weight of this entity inside the module; omit to inherit the concept's header}
+
 {Description of the entity and its purpose.}
 
 Fields:
@@ -33,6 +35,8 @@ Invariants:
 ## 02. Contracts  {#SP_XXX_02}
 
 ### 02_01. {OperationName}  {#SP_XXX_02_01}
+
+> **Criticality:** {optional — weight of this contract inside the module; omit to inherit the concept's header}
 
 Purpose: {What this operation does.}
 

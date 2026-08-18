@@ -12,7 +12,11 @@ This clean-context review also **realizes the `sampled-verifier` tier** of [Appl
 
 A checkable guard on the reviewer itself: **2+ consecutive substantive diffs** (non-trivial change class) reviewed with **zero actionable findings** (blocking/should-fix, not nits) is a `verifier-rubber-stamp` tripwire. Re-running the same reviewer cannot fix itself — surface to the user; switch model if the harness has one.
 
+Its symmetric twin guards the opposite failure — a loop that never converges. Findings carry a computed **materiality**, a recurring non-`must` finding trips `review-non-convergence` and leaves the loop as a `contested` todo, and a repeat round reads only the delta from its baseline. Procedure: **[Review Convergence](../references/review-convergence.md)**.
+
 ### Pre-Commit Review Procedure
+
+0. **Scope the round** ([Review Convergence](../references/review-convergence.md)). Round 1 reads the whole diff. A later round reads **delta ∪ carry-over ∪ always-in-scope** from the baseline written at the close of the previous round, unless a full reason holds: no reachable baseline · upstream spec/plan/rules changed · change class `architectural`. Areas declared `Criticality: critical` are always in scope. Name `scope_mode` — and the reason for a full round — in the report.
 
 1. **Launch a reviewer subagent** (role: [reviewer.ai.md](../roles/reviewer.ai.md)) with a clean context containing only:
    - The git diff of all staged/unstaged changes
@@ -26,35 +30,42 @@ A checkable guard on the reviewer itself: **2+ consecutive substantive diffs** (
 
 2. **The reviewer subagent checks:**
 
-   | Check | Description | Severity |
-   |-------|-------------|----------|
-   | Spec compliance | Code implements all spec contracts, error cases, invariants | blocks |
-   | Plan completeness | All plan tasks for the current phase are addressed | blocks |
-   | Rules compliance | New code follows `.dev_flow/rules/` | blocks (must), warns (should) |
-   | Skill pitfalls | Change doesn't reintroduce a pitfall documented in a loaded skill | warns (blocks if also a `must` rule) |
-   | SOLID compliance | Code structure follows SOLID and pluggability principles ([reference](../references/solid-architecture.md)) unless overridden by project rules | warns |
-   | No regressions | Changes don't break existing functionality | blocks |
-   | No leftover artifacts | No debug code, TODOs, commented-out blocks | warns |
-   | Code quality | Naming, structure, readability follow project conventions | warns |
-   | Security | No obvious vulnerabilities (injection, exposure, etc.) | blocks |
+   | Check | Description | Finding severity |
+   |-------|-------------|------------------|
+   | Spec compliance | Code implements all spec contracts, error cases, invariants | `must` |
+   | Plan completeness | All plan tasks for the current phase are addressed | `must` |
+   | Rules compliance | New code follows `.dev_flow/rules/` | the rule's own severity |
+   | Skill pitfalls | Change doesn't reintroduce a pitfall documented in a loaded skill | `should` (`must` if also a `must` rule) |
+   | SOLID compliance | Code structure follows SOLID and pluggability principles ([reference](../references/solid-architecture.md)) unless overridden by project rules | `should` |
+   | No regressions | Changes don't break existing functionality | `must` |
+   | No leftover artifacts | No debug code, TODOs, commented-out blocks | `should` |
+   | Code quality | Naming, structure, readability follow project conventions | `prefer` |
+   | Security | No obvious vulnerabilities (injection, exposure, etc.) | `must` |
 
-3. **Review result:**
+   The column is the finding's **severity**, on the same `must` / `should` / `prefer` axis as project rules. It is the reviewer's input to the materiality computation in step 3 — not the verdict. A check's severity is a ceiling per finding, not a floor: a reviewer states a lower severity when the concrete finding warrants it.
+
+3. **Classify each finding** ([Review Convergence](../references/review-convergence.md)). The reviewer assigns `severity` (`must` / `should` / `prefer`); **materiality is computed, never assigned** — from `severity`, finding type, and the effective `Criticality` declared by the owning concept/spec. `blocking` spawns the next round; `advisory` is reported only; `deferrable` leaves the loop at once. A `must` or security finding is always `blocking` and never leaves the loop.
+
+4. **Review result:**
    - **Pass** — proceed to commit approval.
-   - **Fail (blocking)** — fix issues, re-run tests if needed, then re-review.
+   - **Fail (blocking)** — fix issues, re-run tests if needed, then re-review. A non-`must` blocking finding that recurs unresolved into a second round trips `review-non-convergence` and routes to a `contested` todo instead of a third round.
    - **Warnings only** — present warnings to the user, proceed if user approves.
 
-4. **Report format:**
+5. **Report format:**
 
    ```
-   ## Pre-Commit Review
+   ## Pre-Commit Review — round {N}, scope {full|incremental}{, reason: {full reason}}
 
    **Result:** PASS / FAIL / WARNINGS
 
    ### Blocking Issues
-   - [ ] {issue description} — {file:line}
+   - [ ] {issue description} — {file:line} — severity {must|should}, criticality {value|unstated}, recurrence {n}
 
    ### Warnings
-   - {warning description} — {file:line}
+   - {warning description} — {file:line} — advisory under criticality {value|unstated}
+
+   ### Routed to todo (contested)
+   - {TD_id} — {issue} — {why it did not converge; both positions recorded in the register}
 
    ### Unobserved
    - {check the reviewer could not evaluate} — {what was missing: no spec for the area, no test result, no runtime access}
@@ -63,7 +74,9 @@ A checkable guard on the reviewer itself: **2+ consecutive substantive diffs** (
    {1-2 sentence summary of the review}
    ```
 
-   A check the reviewer could not evaluate is listed as `unobserved` with the missing observation boundary — it is neither a pass nor a warning, and never omitted. The summary claims no more than the evidence supports. See [Evidence Discipline](../references/evidence-discipline.md).
+   A check the reviewer could not evaluate is listed as `unobserved` with the missing observation boundary — it is neither a pass nor a warning, and never omitted. Every routed record is named; a silently deferred finding is a report-ceiling violation. The summary claims no more than the evidence supports. See [Evidence Discipline](../references/evidence-discipline.md).
+
+6. **Close the round.** Write `baseline` (tree state), `carry_over` (open blocking findings + recurrence), and `always_in_scope` into the task file, so the next round scopes from them.
 
 ## After Review: Verify Phase
 

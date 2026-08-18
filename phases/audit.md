@@ -158,7 +158,8 @@ Open deferrals are sanctioned only while their trigger lives — this step is wh
    - **triggerless / expired-trigger** entries → propose re-triggering or explicit drop;
    - **orphaned** entries whose relevant docs no longer exist, and `promoted` entries with no matching task → propose reconciling/dropping;
    - **matured candidates** (stable, repeatedly skipped, clearly belongs somewhere durable) → propose **graduating into documentation** — a concept's future-work/scope section or the owning plan's backlog — so it leaves the transient register for its proper home;
-   - **fell-through queued follow-ups** — a `queued` record triggered `after task_<ID>` whose originating task is `done`/archived **or stale/abandoned** but was never picked up → surface for running or explicit drop (a deferred fix must not vanish when its task closed or stalled).
+   - **fell-through queued follow-ups** — a `queued` record triggered `after task_<ID>` whose originating task is `done`/archived **or stale/abandoned** but was never picked up → surface for running or explicit drop (a deferred fix must not vanish when its task closed or stalled);
+   - **contested clusters** — several `contested` records ([Review Convergence](../references/review-convergence.md)) pointing at one area is a signal that the area's `Criticality` is absent or declared wrong, not that each record needs a verdict. Propose declaring or correcting the criticality in the owning concept/spec; a `contested` record is never dropped as speculative, and a record missing either position is reported as malformed.
    Same discipline as plan backlogs — "later" is never silent.
 4. **Spikes** — flag `docs/*.spike.md` stuck in `in-progress` beyond their time-box; propose concluding them (`concluded` / `inconclusive` / `abandoned`).
 

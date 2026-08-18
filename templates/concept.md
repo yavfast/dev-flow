@@ -7,6 +7,7 @@
 > **Author:** {author}
 > **Owner:** {role / team / module responsible for long-term maintenance}
 > **Complexity:** {low | medium | high — estimated maintenance burden}
+> **Criticality:** {peripheral | supporting | core | critical — weight of this module in the whole application; optional, omit when unknown}
 >
 > **Depends on:** {list of [C_YYY](./path) references, or "none"}
 > **Used by:** {list of [C_ZZZ](./path) references, or "—"}
@@ -39,6 +40,8 @@
 ## 3. Mechanisms  {#C_XXX_03}
 
 ### 3.1. Core Algorithm  {#C_XXX_03_01}
+
+> **Criticality:** {optional — weight of this mechanism inside the module; omit to inherit the header}
 
 {High-level logic in prose or abstract pseudocode. NOT code.}
 

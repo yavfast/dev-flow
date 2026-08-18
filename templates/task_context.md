@@ -52,6 +52,18 @@ A subtask is a thread of work claimed by one contributor. To join this task, add
      that line of work, they add a *new* subtask block — they do NOT edit
      the original block. -->
 
+## Review Rounds
+
+<!-- Written by the review phase at the CLOSE of each round, so the next round can
+     scope from it instead of re-reading the whole diff. Omit the section until a
+     first round has closed. See `references/review-convergence.md` (dev-flow skill). -->
+
+| Round | Scope | Baseline | Verdict | Carry-over (identity → recurrence) |
+|-------|-------|----------|---------|-------------------------------------|
+| 1 | full (no-baseline) | `<tree-ref>` | FAIL | `src/x.ts:41#logic:null` → 1 |
+
+**Always in scope:** [areas declared `Criticality: critical` — read every round regardless of the delta, or "—"]
+
 ## Coordination Notes
 
 <!-- Append-only conversation between contributors. Prefix each note with
