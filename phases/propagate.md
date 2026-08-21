@@ -46,6 +46,8 @@ An **obvious documentation defect** is a mechanical error with a single correct 
 - A derived index (`docs/_index.md`) or `Status` column out of sync with the documents on disk.
 - A `Status` that mechanically contradicts hard evidence (a plan all `[DONE]` still `in-progress`; an `Updated` date older than a later edit).
 - A renamed/retired domain term left inconsistent with `docs/_glossary.md`; a stale `Updated` date; a typo.
+- A drifted Contents item (or a plan Progress link) out of sync with the document's actual substantive h2/phase set — see [Docs Scaling](../references/docs-scaling.md).
+- The **path part** of a reference to an anchor moved by a document split. The ID part is immutable: auto-fix never "repairs" a reference by renaming or renumbering an anchor (the ID_MUTATION refusal) — a wrong ID goes through the normal pipeline.
 
 **What is NOT an obvious defect — never auto-rewrite it:** anything that changes *meaning* — a contract, an invariant, a described behavior, a design decision, the substance of a concept/spec. Those go through the normal propagation pipeline (matrix below) or, if the document itself is wrong, [Upstream Escalation](../references/escalation.md).
 

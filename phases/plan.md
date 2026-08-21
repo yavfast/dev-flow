@@ -9,7 +9,7 @@ Break the specification into actionable phases with concrete technology choices,
 - **Goal restates the intent:** The plan's Goal section restates the task's recorded intent (goal / target state / expected result — see [Task Intent](../references/task-intent.md)) for this plan's scope, so phases are checked against *why* the work exists, not only against the spec.
 - **Concrete technology choices:** This is the only document where you specify languages, frameworks, libraries, file paths, and module names.
 - **Always track progress:** Every phase must have a status: `[DONE]`, `[IN PROGRESS]`, `[TODO]`, or `[BACKLOG]`.
-- **Top-level progress summary:** The plan must have a checkbox summary showing overall progress at a glance.
+- **Top-level progress summary:** The plan must have a checkbox summary showing overall progress at a glance; each item links to its phase anchor (`#PL_XXX_PN`) — the linked Progress serves as the plan's Contents (a plan has no separate Contents section; see [Docs Scaling](../references/docs-scaling.md)) and is updated in the same edit that adds/renames/removes a phase.
 - **Backlog section:** Out-of-scope items go to the backlog at the bottom. Each item names the **trigger** that returns it to scope (event or date) or an owner who decides — an untriggered backlog item is a hidden "later" ([audit](audit.md) flags them).
 - **Declare Required Knowledge:** list the rules/skills this plan's work must apply, plus any skill *use / create / update* as tracked work items. This is the source of truth for the per-burst [Knowledge Activation](../references/application-enforcement.md) — re-surfaced beside each implementation burst, not just loaded once.
 - **No orphaned phases:** Every phase must reference which spec sections it implements.
@@ -150,7 +150,7 @@ Omit if no technology choice was contested. One record per decision:
 
 ## Changelog Requirement
 
-Every plan must include a Changelog table at the bottom. Record significant changes: technology decision changes, added/removed phases, scope changes. Minor status updates (TODO → DONE) do not require a changelog entry.
+A plan's Changelog follows the history policy of [Docs Scaling](../references/docs-scaling.md): entries pass the content filter (incidents, ambiguous decisions, structural events — e.g. a reversed technology decision, an added/removed phase, a scope change), and the table is optional when vcs is the primary history medium. Status updates (TODO → DONE) never produce an entry — progress lives in the Progress checklist.
 
 ## Refactoring Protocol
 

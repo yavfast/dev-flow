@@ -30,6 +30,12 @@ The cache index is checked before every expensive fetch, and a cached copy is re
 
 **Out of scope:** commit messages keep their own conventions (subject ≤ 72 chars, wrapped body) — those rules apply to git, not to doc files.
 
+## Paragraph size and prose value
+
+- **A long paragraph splits into several.** One paragraph carries one statement; a paragraph longer than `paragraph_max` (value in [Docs Scaling](docs-scaling.md)) is divided into several paragraphs within the same section. Reading tools silently truncate overlong lines, so an oversized logical line loses its tail unseen. Legacy oversized paragraphs are fixed when that paragraph is edited, never by a mass campaign.
+- **No prose without informative or semantic value in pipeline documents.** Filler, restatements, and ceremony are not written; the rule is applied by the author at writing time and by the reviewer as an ordinary style finding — it is not an audit check.
+- **Self-sufficient headings** — word each heading so it is understandable without its parents; the rule lives in [Docs Scaling](docs-scaling.md).
+
 ## Lists, tables, headings
 
 - **One list item = one line**, however long it gets. Do not wrap a long item onto continuation lines; if an item is truly too long, that is a signal to split it into sub-items, not to wrap it.
@@ -52,3 +58,5 @@ The documentation **body** follows the project's documentation language (set by 
 - [ ] Each list item and table row on a single line
 - [ ] Template-defined headings and anchors untouched
 - [ ] Only touched text re-formatted — no file-wide reflow
+- [ ] New/edited paragraphs each carry one statement, none overlong (see [Docs Scaling](docs-scaling.md))
+- [ ] No filler prose; headings self-sufficient (see [Docs Scaling](docs-scaling.md))

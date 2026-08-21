@@ -289,10 +289,11 @@ So `pin` means "survive while this task is active" — not "survive forever". Wh
 
 1. **Shared Activity Log:** keep at most **10 entries** per task file (newest first). When over the cap, evict `noise`/`superseded` first and then the oldest `normal` entries; a `pin` on an active task is kept. Move the evicted overflow to a session history file before appending.
 2. **Per-subtask Activity:** same cap — ~10 entries per subtask block. When exceeded, archive that block's older entries.
-3. **Description:** describes the active understanding. New paragraphs are additive (signed by contributor). When the description grows past ~3 paragraphs, consider consolidating into one paragraph in a Coordination Note discussion first.
-4. **Subtask blocks:** completed (done) subtask blocks may be archived once the task file exceeds ~300 lines.
-5. **Dashboard size:** if `active_context.md` exceeds ~80 lines, prune Recently Completed and archive overflow.
-6. **No large blobs:** never store logs, diffs, full command output, or verbose narratives in any context file. Reference a file instead.
+3. **Activity content filter (canonical):** a Shared Activity Log or per-subtask Activity entry records only `incident` / `ambiguous-decision` / `structural-event` events (classes defined in [Docs Scaling](../references/docs-scaling.md)); an event outside these classes is not written (the TRIVIAL_ENTRY refusal) — progress lives in the Progress checklists.
+4. **Description:** describes the active understanding. New paragraphs are additive (signed by contributor). When the description grows past ~3 paragraphs, consider consolidating into one paragraph in a Coordination Note discussion first.
+5. **Subtask blocks:** completed (done) subtask blocks may be archived once the task file exceeds ~300 lines.
+6. **Dashboard size:** if `active_context.md` exceeds ~80 lines, prune Recently Completed and archive overflow.
+7. **No large blobs:** never store logs, diffs, full command output, or verbose narratives in any context file. Reference a file instead.
 
 ### Session history archive
 

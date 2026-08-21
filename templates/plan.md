@@ -36,13 +36,18 @@
 
 ## Progress
 
-- [ ] Phase 1 — {name}
-- [ ] Phase 2 — {name}
+<!-- A plan has no Contents section — this linked list serves that role: every item for an
+     authored phase links to its phase anchor (a [backlog] item has no phase section yet, so
+     no link). Update the matching item in the same edit that adds/renames/removes a phase.
+     See references/docs-scaling.md. -->
+
+- [ ] [Phase 1 — {name}](#PL_XXX_P1)
+- [ ] [Phase 2 — {name}](#PL_XXX_P2)
 - [backlog] Phase N — {name}
 
 ## Phases
 
-### Phase 1 — {Name} (`{path/to/file}`) [TODO]
+### Phase 1 — {Name} (`{path/to/file}`) [TODO]  {#PL_XXX_P1}
 
 **Depends on:** none
 **Implements:** [SP_XXX_01](./spec.sp.md#SP_XXX_01)
@@ -56,7 +61,7 @@ What to create:
 Notes:
 - {implementation notes}
 
-### Phase 2 — {Name} [TODO]
+### Phase 2 — {Name} [TODO]  {#PL_XXX_P2}
 
 **Depends on:** Phase 1
 **Implements:** [SP_XXX_02](./spec.sp.md#SP_XXX_02)
@@ -99,6 +104,11 @@ Items deferred from the current implementation cycle (each names the trigger tha
 **Resolution trigger:** {open decisions only: the event/date by which this must close}
 
 ## Changelog
+
+<!-- Optional when vcs is the primary history medium — see references/docs-scaling.md (History policy).
+     Entry classes only: incident / ambiguous-decision / structural-event; an event outside these
+     classes is not written (TRIVIAL_ENTRY refusal — progress lives in the Progress checklist).
+     One entry = one logical line. -->
 
 | Date | Change |
 |------|--------|

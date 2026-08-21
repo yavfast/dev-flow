@@ -10,7 +10,22 @@
 > **Used by:** {list of [SP_ZZZ](./path) references, or "—"}
 > **Plan:** [name.plan.md](./name.plan.md)
 >
-> {Brief description of what this specification defines.}
+> {Lead summary, within `lead_lines` (see references/docs-scaling.md): what this specification defines, who reads it in which situation, what parts it consists of. The header alone must suffice to decide "read on or not".}
+
+## Contents
+
+<!-- Substantive h2 sections only (no h3, no service sections); one item per section, in order;
+     annotation states what the section defines, not a restatement of the title.
+     Update the matching item in the same edit that adds/renames/removes an h2.
+     See references/docs-scaling.md. -->
+
+- [01. Data Structures](#SP_XXX_01) — {which entities and fields it defines}
+- [02. Contracts](#SP_XXX_02) — {which operations it specifies}
+- [03. Validation Rules](#SP_XXX_03) — {what must hold across the structures}
+- [04. State Transitions](#SP_XXX_04) — {which lifecycles it defines}
+- [05. Verification Criteria](#SP_XXX_05) — {how conformance is checked}
+- [06. Reversibility](#SP_XXX_06) — {how the feature rolls back}
+- [07. Design Decisions](#SP_XXX_DEC) — {which forks were resolved or stay open}
 
 ## 01. Data Structures  {#SP_XXX_01}
 
@@ -142,6 +157,11 @@ Transition rules:
 **Resolution trigger:** {open decisions only: the event/date by which this must close}
 
 ## Changelog
+
+<!-- Optional when vcs is the primary history medium — see references/docs-scaling.md (History policy).
+     Entry classes only: incident / ambiguous-decision / structural-event; an event outside these
+     classes is not written (TRIVIAL_ENTRY refusal — progress lives in plan/task checklists).
+     One entry = one logical line. -->
 
 | Date | Change |
 |------|--------|

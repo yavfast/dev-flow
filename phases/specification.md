@@ -17,6 +17,7 @@ Specifications MUST NOT reference specific programming languages, frameworks, or
 - **Single Source of Truth:** Once created, source code becomes a derived artifact. All changes start in the specification first.
 - **Follow the glossary:** `docs/_glossary.md` is loaded with `docs/_index.md`; name every entity, field, and contract with its canonical term (not an `_Avoid_` alias). If the spec introduces a genuinely new domain term, add it to the glossary. Term *formation* is mainly a concept-phase job — here you consume the canonical vocabulary. See [Glossary](../references/glossary.md).
 - **Formatting:** Follow [Documentation Formatting](../references/formatting.md) — no hard line wraps inside sentences or paragraphs; one paragraph = one logical line.
+- **Contents + lead summary:** the template's Contents section and the lead summary in the header follow [Docs Scaling](../references/docs-scaling.md) — update the Contents item in the same edit that changes an h2.
 - **Criticality is inherited, then refined:** A spec has no application-level declaration of its own — it inherits the one in its concept's header through `Concept:`. Add a `Criticality:` line to an entity (`§01_xx`) or a contract (`§02_xx`) only where that part's weight inside the module differs from the rest. Optional; an omitted line inherits and lowers nothing. Read by [review](review.md) — see [Review Convergence](../references/review-convergence.md).
 
 ## Context Loading

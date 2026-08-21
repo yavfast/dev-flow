@@ -15,7 +15,20 @@
 > **Specification:** [SP_XXX](./name.sp.md)
 > **Plan:** [name.plan.md](./name.plan.md)
 >
-> {Brief one-paragraph description of what this concept covers.}
+> {Lead summary, within `lead_lines` (see references/docs-scaling.md): what this concept covers, who reads it in which situation, what parts it consists of. The header alone must suffice to decide "read on or not".}
+
+## Contents
+
+<!-- Substantive h2 sections only (no h3, no service sections); one item per section, in order;
+     annotation states what the section defines, not a restatement of the title.
+     Update the matching item in the same edit that adds/renames/removes an h2.
+     See references/docs-scaling.md. -->
+
+- [1. Philosophy](#C_XXX_01) — {what problem this solves and which constraints bound it}
+- [2. Domain Model](#C_XXX_02) — {which entities and data flows it defines}
+- [3. Mechanisms](#C_XXX_03) — {how the solution works}
+- [4. Integration Points](#C_XXX_04) — {what it depends on and exposes}
+- [5. Design Decisions](#C_XXX_DEC) — {which forks were resolved or stay open}
 
 ## 1. Philosophy  {#C_XXX_01}
 
@@ -83,6 +96,11 @@
 **Resolution trigger:** {open decisions only: the event/date by which this must close}
 
 ## Changelog
+
+<!-- Optional when vcs is the primary history medium — see references/docs-scaling.md (History policy).
+     Entry classes only: incident / ambiguous-decision / structural-event; an event outside these
+     classes is not written (TRIVIAL_ENTRY refusal — progress lives in plan/task checklists).
+     One entry = one logical line. -->
 
 | Date | Change |
 |------|--------|

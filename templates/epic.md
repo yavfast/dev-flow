@@ -6,7 +6,7 @@
 > **Updated:** YYYY-MM-DD
 > **Author:** {author}
 >
-> {Brief description of the feature and its business goal.}
+> {Lead summary, within `lead_lines` (see references/docs-scaling.md): the feature and its business goal, who reads this epic in which situation, which concepts compose it. The header alone must suffice to decide "read on or not".}
 
 ## Stakeholders
 
@@ -54,3 +54,14 @@ Epic-level criteria (beyond individual concept success):
 - Integration points between concepts are tested.
 - No cross-concept conflicts remain.
 - All epic-level acceptance criteria are met.
+
+## Changelog
+
+<!-- Optional when vcs is the primary history medium — see references/docs-scaling.md (History policy).
+     Entry classes only: incident / ambiguous-decision / structural-event; an event outside these
+     classes is not written (TRIVIAL_ENTRY refusal — progress lives in the concept table and criteria).
+     One entry = one logical line. -->
+
+| Date | Change |
+|------|--------|
+| YYYY-MM-DD | Initial version |

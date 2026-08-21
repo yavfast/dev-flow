@@ -45,6 +45,9 @@ A subtask is a thread of work claimed by one contributor. To join this task, add
 - [ ] Remaining step
 
 **Activity:**
+<!-- Content filter (see references/docs-scaling.md): only incidents, ambiguous decisions,
+     and structural events. A success report or interim status is not written (TRIVIAL_ENTRY) —
+     progress lives in the Progress checklist above. -->
 - HH:MM — [what changed in one line]
 
 <!-- Add more `### Subtask:` blocks below as other contributors join.
@@ -94,7 +97,9 @@ A subtask is a thread of work claimed by one contributor. To join this task, add
 
 <!-- Task-level events: subtask created/done, status changed, contributor
      joined, regenerated. Newest first. Cap at 10 entries — archive overflow
-     to .dev_flow/session_history/session_YYYY-MM-DD.md. -->
+     to .dev_flow/session_history/session_YYYY-MM-DD.md.
+     Content filter (see references/docs-scaling.md): only incidents, ambiguous
+     decisions, and structural events — a trivial progress report is not written. -->
 
 - HH:MM [agent-id] — created task
 
