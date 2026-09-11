@@ -2,6 +2,14 @@
 
 Shared sub-procedure for the **Concept**, **Specification**, **Plan**, and **Fix** phases. Concept and spec link here for design forks; plan for its Technology Decisions; fix for root-cause and fix-strategy forks (see [Interview Mode in Fix](../phases/fix.md#interview-mode-in-fix)). This is **not** a standalone pipeline stage — it runs *inside* those phases whenever a real fork in the road appears.
 
+## Contents
+
+- [Why this exists](#why-this-exists) — Rationale: make material forks visible with a framed recommendation instead of silently picking
+- [When to trigger](#when-to-trigger) — The decision-point test, the do-NOT-interview list, and interview vs spike
+- [The procedure](#the-procedure) — Steps 0–5: gather context, collect, order, frame with A/B/C markers, ask (tool or chat form), resolve; who conducts it
+- [Recording — the Design Decisions section](#recording--the-design-decisions-section) — `DEC_NN` anchor scheme per document type, fix-phase exception, the ADR-style record template
+- [Worked example](#worked-example) — A sample DEC_01 interview (delivery guarantee) with markered options, recommendation and sequential follow-up
+
 ## Why this exists
 
 A silently-picked option buried in a large document stops looking like a choice and ossifies into code before anyone catches it. The developer owns the consequences and holds context you don't (roadmap, business constraints, team) — at a material fork your job is to make the fork **visible** with a framed recommendation, not to guess well: a cheap question now beats an expensive reversal later.

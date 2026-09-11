@@ -6,7 +6,7 @@ Advisory throughout — no consumer adds a blocking gate.
 
 ## Evidence state
 
-Discrete values on a project-knowledge artifact (rule, skill), ordered by strength. Recorded as an **optional** `evidence:` key on the artifact's `_index.yaml` entry; a missing key reads as `unobserved`.
+Discrete values on a project-knowledge artifact (rule, skill), ordered by strength — never a numeric score. Recorded as an **optional** `evidence:` key on the artifact's `_index.yaml` entry; a missing key reads as `unobserved`.
 
 | State | Means | Admissible source |
 |-------|-------|-------------------|

@@ -1,5 +1,17 @@
 # Phase 6: Review & Validation
 
+## Contents
+
+- [Purpose](#purpose) — scope of the phase: gates, document conflicts, deprecation, doc-code alignment, pre-commit review
+- [Pre-Commit Code Review](#pre-commit-code-review) — clean-context reviewer, tripwires, round scoping/mode, checks table, materiality, report format
+- [After Review: Verify Phase](#after-review-verify-phase) — hand-off to verify before commit; Review -> Verify gate checklist
+- [Validation Gates](#validation-gates) — pointer to canonical SKILL.md gates and this phase's supplements
+- [Hallucination-Risk Heuristics](#hallucination-risk-heuristics) — red/yellow flag tables for specs, application steps, precision test
+- [Project Rules Compliance](#project-rules-compliance) — rules activation protocol, severity handling, findings table, rule-update procedure
+- [Conflict Resolution Protocol](#conflict-resolution-protocol) — conflict detection criteria, resolution steps table, changelog audit
+- [Deprecation & Removal](#deprecation--removal) — deprecating a document, draft/deprecated behavior, removal policy
+- [Document Index Maintenance](#document-index-maintenance) — `_index.md` rules when docs/ exceeds 5 documents
+
 ## Purpose
 
 Validate pipeline gates, detect conflicts between documents, manage deprecation, ensure the documentation-code alignment is maintained, and perform pre-commit code review of changes.
@@ -27,6 +39,7 @@ Its symmetric twin guards the opposite failure — a loop that never converges. 
    - Project rules (`.dev_flow/rules/`) if they exist — binding
    - Relevant project skills (`.dev_flow/skills/`) for the changed area, if they exist
    - SOLID architecture reference (`references/solid-architecture.md`)
+   - `docs/_framework.md` (the architectural map) if present
 
    **Pass the artifact + contract only — never the author's conclusion or self-assessment; frame the review adversarially** ("find what violates the spec/rules", not "is this good?"). Realizes the `sampled-verifier` contract ([Application Enforcement](../references/application-enforcement.md)).
 

@@ -1,5 +1,14 @@
 # Phase: Do — Freeform Intent Routing
 
+## Contents
+
+- [Purpose](#purpose) — Route any freeform request to the right phase; `do` is the default fallback for `/dev-flow` without a phase keyword
+- [Command](#command) — `/dev-flow do <request>` and the equivalent bare `/dev-flow <request>` syntax, with example invocations
+- [Role Responsible](#role-responsible) — DevFlowOrchestrator role file that handles this command
+- [Procedure](#procedure) — Steps 1–7: load context + gates, interpret intent (intent table, Change Classes), clarify, route Scenarios A–D, wrap-up
+- [Routing Decision Tree](#routing-decision-tree) — ASCII tree from request shape to target phase: continue, change, fix, docs, status, catalogues, audit, ask, adopt, todo
+- [Output Style](#output-style) — Chat vs documentation registers and the Style gate the orchestrator passes to the executing phase
+
 ## Purpose
 
 Accept any natural-language request and route it to the appropriate dev-flow phase. The agent interprets intent from context, asks clarifying questions when needed, and executes the correct phase sequence automatically.

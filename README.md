@@ -2,6 +2,19 @@
 
 A [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skill that enforces **concept-driven development** — a structured pipeline where every code change traces back to a concept and specification, preventing architectural drift and ensuring living documentation.
 
+## Contents
+
+- [Why dev-flow?](#why-dev-flow) — the drift problem and the principles the pipeline answers it with
+- [The Pipeline](#the-pipeline) — phase chain with gates, the command per phase, the service commands
+- [Installation](#installation) — where the skill directory goes
+- [Quick Start](#quick-start) — first commands for a greenfield project and for taking over an existing codebase
+- [How It Works](#how-it-works) — traceable IDs, gates, two-stage testing and clean-context review, interview mode, spikes, todos, external repo adoption, task intent, escalation, cache, tracker tickets, session continuity
+- [File Structure](#file-structure) — what dev-flow creates inside a project (`docs/`, `.dev_flow/`)
+- [Skill Structure](#skill-structure) — the layout of this skill: `SKILL.md`, phases, references, templates, roles
+- [Key Principles](#key-principles) — the standing rules in one list
+- [Requirements](#requirements) — runtime prerequisites
+- [License](#license) — MIT license terms
+
 ## Why dev-flow?
 
 Most projects suffer from a common pattern: documentation is written once and forgotten, specs diverge from code, and architectural decisions get lost in commit history. dev-flow solves this by making documentation a **first-class artifact** in the development pipeline, not an afterthought.

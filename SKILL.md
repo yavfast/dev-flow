@@ -41,6 +41,25 @@ Each transition includes a validation gate to prevent drift.
 - **Test** — functional tests only (unit + mock) covering the changed code.
 - **Verify** — regression, integration, and live testing (end-to-end flows, app/service launch). If Verify finds issues → fix code → re-run Test (if exists) → re-run Review → re-run Verify.
 
+## Contents
+
+- [Pipeline Phases](#pipeline-phases) — command per phase and service command; default routing to `do`; conditional Test/Verify; Quick Start preflight
+- [Project Knowledge Is Binding](#project-knowledge-is-binding) — mandatory rules/skills gate, severities, precedence, re-trigger at the moment of action
+- [Validation Gates](#validation-gates) — the pass/fail checklist at every transition from Concept to Commit
+- [Developer Checkpoints](#developer-checkpoints) — design sign-off and commit sign-off; the `Autonomy` field
+- [Git Workflow Integration](#git-workflow-integration) — branch/PR mapping; the commit rules
+- [Active Context & Session Continuity](#active-context--session-continuity) — `.dev_flow/` task-context model, memory tiers, rules for all phases (start / step / transition / completion), multi-contributor tolerance, hygiene
+- [Document Status Vocabulary](#document-status-vocabulary) — lifecycle statuses of concepts, specs, plans
+- [Versioning](#versioning) — breaking change → new version; non-breaking → edit in place
+- [When Modifying Existing Functionality](#when-modifying-existing-functionality) — change classes; concept → spec → plan → sign-off → code → test → review → verify → sign-off
+- [Traceable Identifiers](#traceable-identifiers) — ID formats for concept, spec, plan, epic, design decision
+- [File Organization](#file-organization) — `docs/` file set per concept; index, glossary, framework map, adoption files; umbrella sets
+- [Project Rules](#project-rules) — `.dev_flow/rules/` layout, severities, unit form, auto-discovery of rules
+- [Greenfield vs Takeover](#greenfield-vs-takeover) — entry routes into the pipeline
+- [Phase Details & Templates](#phase-details--templates) — router to every phase, reference, template, and example file
+- [Delegation for Focus (Context Isolation)](#delegation-for-focus-context-isolation) — hand noisy work to a subagent, keep only the conclusion
+- [Subagent Roles (AI-DSL)](#subagent-roles-ai-dsl) — base roles, project overlays, specialist focus helpers
+
 ## Pipeline Phases
 
 | Phase | Command | Purpose | Output |
@@ -66,27 +85,11 @@ Each transition includes a validation gate to prevent drift.
 | — | `/dev-flow subtask <task>` | Delegate a secondary task to a subagent — a full dev-flow participant that assembles its own context, runs any phase (fix, test, research, etc.), and can converse with its initiator | Full subtask report |
 | — | `/dev-flow do <request>` | Freeform routing — interpret intent and run the right phases | Phase output + updated context |
 
-**Default command:** Any invocation of `/dev-flow <text>` that does not match a recognized phase keyword routes automatically to `do`. For example, `/dev-flow add Skip button to login` is equivalent to `/dev-flow do add Skip button to login`.
+**Default command:** `/dev-flow <text>` with no recognized phase keyword routes to `do`.
 
-**Ask command:** Use `/dev-flow ask <question>` for read-only questions about the codebase or feasibility of changes. No files are modified, no context is updated.
+**Service commands — facts the table omits.** `research` (alias `spike`) is time-boxed, cost-gated, passes no gate, and persists durable findings to `.dev_flow/skills/`. `todo` infers flavor (`deferred` / `queued` / `contested`) and trigger from plan/task state, files into the owning plan's backlog else `.dev_flow/todos/`, and builds nothing. `adopt` (aliases `analyze-repo`, `adoption`) is advisory — no ID, no gate — and writes only its two documents, the clone in `ext_repos/`, one `.gitignore` line, and task context. `audit` resolves the drift that `status` reports; its `code <intent>` scope is opt-in, excluded from `all`, writes its plan under `.dev_flow/audit/`, and stops at the Plan→Code gate. `onboard` runs once and supports `--resume`. The **resource cache** (`.dev_flow/cache/` + `_index.yaml`, not a phase) is checked before any expensive re-fetch; transients go to `/tmp/{project-slug}/` with timestamped names ([Resource Cache](references/cache.md)).
 
-**Research command:** Use `/dev-flow research <topic>` (alias: `spike`) when a concept/spec/plan cannot be confidently authored — unfamiliar domain, unverified library capability, unknown solution space — or to close an open Design Decision waiting on facts. Time-boxed and cost-gated; spikes pass through no validation gates. Produces `docs/*.spike.md` and persists durable findings to `.dev_flow/skills/`. See [research phase](phases/research.md).
-
-**Todo command:** Use `/dev-flow todo <description>` to capture work to do later. It finds the documentation the work would touch, assesses its execution prospect (feasibility + scope), and files a single planning record with a return trigger — into an owning plan's backlog if one exists, otherwise into `.dev_flow/todos/`. Flavors: a **deferred** speculative idea (trigger = date/event, may be dropped); a **queued follow-up** — a fix noticed *during* the current task that must wait until it finishes because the contexts overlap (trigger = `after task_<ID>`, never dropped; a parallel `subtask` can't cover it since contexts aren't disjoint); or a **contested** record filed by the review phase for a finding that did not converge (trigger = the next deliberate change to the owning file, carries both positions, never surfaces at task completion — see [Review Convergence](references/review-convergence.md)). A queued follow-up is surfaced automatically when its task completes (offered, not auto-run). `todo` **infers** the flavor, urgency, and trigger from the state of the relevant plans/tasks — not from your wording (the description may carry no timing words) — and may even recommend doing the work now instead of deferring. It builds nothing and passes through no gates; a later `do`/`plan` run executes the record. An **agent can also file a `todo` itself** — when it spots an out-of-scope, deferrable defect mid-work it spawns a cheap subagent running the todo flow (or files a trivial one inline), so the finding is captured without derailing its current task. Completes the routing triad: `ask` analyzes and writes nothing, `todo` analyzes and files for later, `do` analyzes and acts now. See [todo phase](phases/todo.md).
-
-**Adopt command:** Use `/dev-flow adopt <repo>` (aliases: `analyze-repo`, `adoption`) to bring an external repository's ideas into this project deliberately. It resolves the reference — a local path, a URL (cloned into `ext_repos/` at the project root, which the run adds to `.gitignore`), or the name of an already-tracked repo — analyzes it at **concept altitude** into `docs/ext_adoption/<name>.concept.md`, and then **automatically** produces `docs/ext_adoption/<name>.md`: what the target already has, which of the source's concepts are worth taking (`high` / `medium` with an explicit take-defer-decline ruling / `low` with a one-line reason), the derived ideas that only exist at the intersection of the two, and a recommended order sorted by effect over cost. Adoption documents are **advisory** — no traceable ID, no gate, not a backlog; they feed the [concept phase](phases/concept.md)'s Reuse Check as the external-prior-art source. A re-run is incremental: it diffs the source's commits since the recorded one and leaves untouched concepts byte-identical. A run writes only the two documents, the clone, the one `.gitignore` line, and the ordinary task context — never code, specs, plans, or todo records. See [External Repo Adoption](references/repo-adoption.md).
-
-**Resource cache (not a phase):** `.dev_flow/cache/` is the durable, indexed store for expensive-to-reacquire resources (Figma exports, downloaded documents, baseline screenshots). Every phase checks its `_index.yaml` before an expensive re-fetch and saves new fetches back; anything linked from docs or task files lives here, never in `/tmp`. Transient artifacts go to the project workspace `/tmp/{project-slug}/` with timestamped names. Freeform cache requests ("збережи цей макет", "find the cached RFC") route through `do` and are applied inline. See [Resource Cache](references/cache.md).
-
-**Audit command:** Use `/dev-flow audit` for the periodic revision of `.dev_flow/` and the `docs/` documentation set — it reconciles every task's recorded state against reality (linked docs + git), trims the dashboard, compacts/reflects on closed tasks (archiving noise, harvesting lessons into rules/skills), grooms the `rules/`, `skills/`, and `cache/` catalogues, and reconciles `docs/` integrity (index, statuses, cross-references, orphans, freshness, glossary, duplicated value sets, scaling, drift). Where [status](phases/status.md) *reports* drift, `audit` *resolves* it. Supports `--dry-run` (report only) and a `scope` (`context` / `tasks` / `rules` / `skills` / `cache` / `docs` / `all`). A separate, opt-in **`code`** scope (`/dev-flow audit code <free-form intent>`, excluded from `all`) extends the same idea to source code: it audits the whole codebase through parallel lenses (architecture / SOLID / DRY / security / …) and emits a prioritized refactoring **plan** + run report — written to `.dev_flow/audit/` with a timestamp, not into `docs/` — plus a `docs/_framework.md` map update — read-only, stopping at the Plan→Code gate and handing off to the standard pipeline (it never commits). See [Code Audit](references/code-audit.md).
-
-**Phase 0 (Onboard):** Optional. Run once when adopting dev-flow for an existing project. Analyzes code bottom-up (utilities first), generates concepts, specs, and plans. Supports `--resume` for continuation across sessions. See [onboard phase](phases/onboard.md).
-
-**Phase 5 (Test) activation condition:** The project must have an existing test suite AND defined rules for running tests (e.g., `pytest`, `jest`, CI pipeline). If neither exists — skip directly to Review, recording the skip as `unobserved` with its reason (see [Evidence Discipline](references/evidence-discipline.md)). Runs only **functional tests** (unit + mock) covering the changed code. Does NOT run integration or live tests at this stage.
-
-**Phase 6 (Review):** Pre-commit code review is performed by a subagent with a clean context to ensure an unbiased perspective. This is mandatory before any commit. The `Review → fix → re-Review` loop is bounded by [Review Convergence](references/review-convergence.md): a finding's power to block is **computed** from the `Criticality` its owning concept/spec declares, a recurring non-`must` finding leaves the loop as a `contested` todo instead of a further round, and a repeat round reads only the delta from its recorded baseline. A `must` or security finding blocks without limit. The repeat round also carries a **mode**: a contained fix of a prescribed finding that is neither `must` nor a security class is confirmed mechanically instead of re-reviewed — see [Verification Economy](references/verification-economy.md).
-
-**Phase 7 (Verify):** Regression, integration, and live testing — runs after Review passes. Includes launching the app/service and verifying end-to-end scenarios. If issues are found during Verify, the cycle repeats: fix → Test → Review → Verify, each re-run scoped to what the fix earns, never for a `must` or security finding (see [Verification Economy](references/verification-economy.md)). Ask user permission before creating new integration/live scenarios. If no automated verification exists — provide manual verification steps for the user, and record what stayed unverified as `unobserved` with its reason (see [Evidence Discipline](references/evidence-discipline.md)).
+**Conditional and mandatory phases.** Test (5) runs only when the project has a test suite AND rules for running it — otherwise skip to Review and record the skip as `unobserved` with its reason ([Evidence Discipline](references/evidence-discipline.md)); it runs functional tests (unit + mock) on the changed code only. Review (6) is mandatory before any commit and is done by a clean-context subagent; the fix → re-review loop is bounded by [Review Convergence](references/review-convergence.md), and a contained non-`must`, non-security fix is confirmed mechanically instead of re-reviewed ([Verification Economy](references/verification-economy.md)). Verify (7) — regression, integration, live — runs after Review passes; issues → fix → Test → Review → Verify at the scope the fix earns, never narrowed for a `must` or security finding; ask before creating new integration/live scenarios; with no automation, give manual steps and record `unobserved`.
 
 ### Quick Start
 
@@ -174,6 +177,54 @@ Stops in every route where the main agent presents its work to the developer and
 
 **Autonomy.** Skipped only when the request itself orders it ("автономно", "без зупинок", "commit without asking"); a harness or system autonomy setting does not count. Record `Autonomy: full — "<quote>"` in the task header at intake; absent → `checkpoints`. Task-scoped; a decision settled under `full` is `resolved (delegated)`. Subagents never hold a checkpoint — only the main agent talks to the developer.
 
+## Git Workflow Integration
+
+Pipeline artifacts map to git workflow as follows:
+
+| Scope | Branch / PR |
+|-------|-------------|
+| Concept + Specification | One PR — reviewed together as a design unit |
+| Implementation Plan | Separate PR — technology decisions reviewed independently |
+| Implementation (per plan phase) | One PR per plan phase — incremental, reviewable |
+| Review + Propagation | Same PR as the triggering change |
+
+**Commit rules:**
+1. **Never commit without explicit user approval.** After completing a phase, stop at the commit sign-off ([Developer Checkpoints](#developer-checkpoints)): present the changes and ask "Ready to commit?". Only `Autonomy: full` in the task header skips it.
+2. **Run pre-commit review** by a clean-context subagent before asking for commit approval.
+3. Only commit after the review passes and the user confirms.
+4. Commit message must reference the traceable ID: `[C_XXX] / [SP_XXX] / [PL_XXX]`. When the task is tied to a tracker ticket, the ticket key joins the ID in the message (e.g. `[PROJ-123][SP_XXX] …`) and the tracker's commit-time conventions apply, **each outward write confirmed first**. See [Ticket Tracker Integration](references/ticket-tracker.md).
+5. **After the commit (and push, when pushed)** on a ticket-tied task, proactively propose adding the corresponding ticket comment/worklog + status transition per the tracker's conventions — confirmed, never silent. See [Ticket Tracker Integration](references/ticket-tracker.md).
+
+## Active Context & Session Continuity
+
+dev-flow keeps a **collaborative per-task context** in `.dev_flow/` so several agents can work one project in parallel. A task file is a shared document: each contributor owns the parts it adds and never rewrites another's. The full read/write protocol, regeneration procedure, and archive flow live in the [status phase](phases/status.md).
+
+**Memory tiers.** L0 = the live transcript (lost on compact); L1 = session scratch — the [session working memory](references/cache.md#session-working-memory-l1) (notes / params / reminders / reads) plus the `/tmp/{project-slug}/` data cache (survives compact, not restart); L2 = `.dev_flow/` (durable). [Experience Capture](references/experience-capture.md) promotes L1 → L2; [salience markers](phases/status.md#salience-markers) decide what survives a compaction. Write to working memory as you work (parameter set, non-obvious fact, deferred action, every file read) and re-read the whole area whenever the thread is lost; a file already read this session, unchanged and uninvalidated, is not read again ([Verification Economy](references/verification-economy.md)).
+
+Layout of `.dev_flow/` (dashboard, `output_styles.md`, `cache/`, `evidence/`, `tasks/`, `todos/`, `session_history/`): [status phase → Context Files](phases/status.md#context-files).
+
+**Source of truth = the task files**; `active_context.md` and `tasks/_index.md` are derived views any contributor may rebuild. Naming: `task_C_AUTH.md` when tied to a traceable doc, else `task_YYYYMMDD_HHMMSS_<slug>.md`. Task-file sections (header with `Autonomy`, Current Work Item, **Intent**, Subtask blocks, Coordination Notes, Blocking Issues, Relevant Context, Shared Activity Log) and their ownership: [templates/task_context.md](templates/task_context.md); dashboard and catalog: [templates/active_context.md](templates/active_context.md), [templates/tasks_index.md](templates/tasks_index.md).
+
+### Rules for all phases
+
+- **Project-knowledge gate (first).** Read `.dev_flow/rules/_index.yaml` and `.dev_flow/skills/_index.yaml`, load what matches the area you touch, obey it ([Project Knowledge Is Binding](#project-knowledge-is-binding)).
+- **Style gate.** Read `.dev_flow/output_styles.md`; documentation register for files, chat register for the developer (every link/path/ID carries a short description). Absent → shipped defaults ([Output Styles](references/output-styles.md)).
+- **Resource gate.** Before an expensive fetch check `.dev_flow/cache/_index.yaml`; after one, save the artifact back (`trust: public` + safety check for open-internet sources); transients to `/tmp/{project-slug}/` ([Resource Cache](references/cache.md)).
+- **Phase start.** Continuation: locate the task via `active_context.md`, resume your Subtask block or add a new one (you become a Contributor). New task: create `tasks/task_<ID>.md` from the template with your Subtask block, the **Intent**, and the **Autonomy** field (`full` only when the request says so, quoted); add a row to `active_context.md` and `tasks/_index.md` by targeted Edit.
+- **After a step.** Check off Progress, set the next item, append Activity (incidents, ambiguous decisions, structural events only); refresh `Last updated`.
+- **Phase boundary.** Targeted Edit on the dashboard row. **Transition** (phase/subtask boundary, task switch): run the Transition Checkpoint — `{s:pin}` summary, demote raw entries, harvest durable lessons through the structural rule/skill gate (never an auto-`must`), promote working memory to the task file ([Experience Capture](references/experience-capture.md)).
+- **Spotted-defect reflex.** An out-of-scope, deferrable defect is filed as an agent-initiated [`todo`](phases/todo.md) (cheap subagent, or inline if trivial) — never chased, never lost. In-scope or urgent → fix or escalate.
+- **Subtask finished.** Set its `Status: done`; the task stays `in-progress` until every subtask is done.
+- **Task completion.** Any contributor sets `Status: done`, moves the dashboard row to Recently Completed, updates the catalog, then **surfaces queued follow-ups** (`.dev_flow/todos/` and plan backlogs triggered `after task_<this ID>`) as offers, not auto-runs.
+
+### Multi-contributor tolerance
+
+Own your Subtask block and your tagged entries; append to shared sections, never rewrite others'; targeted edits over rewrites; re-read a shared file immediately before writing it; logs append-only, newest first; indexes are regenerable; no locks and no time-based takeover — continue a stale line of work by adding a new block that references the original. Full rules: [status phase → Collaboration Model](phases/status.md#collaboration-model-read-first).
+
+### Hygiene
+
+Salience-ordered compaction (`noise`/`superseded` first, `pin` of active tasks retained); Shared Activity Log ≤ 10 entries and per-subtask Activity ≈ 10 (overflow → `session_history/`); a task file past ~300 lines triggers an archive cycle; the dashboard stays under ~80 lines with the latest 5 completed; no logs, diffs, or narratives in context files — reference `.dev_flow/cache/` or the `/tmp` workspace instead, and never link a `/tmp` path from a doc or task file. Detail: [status phase → Context Hygiene](phases/status.md#context-hygiene).
+
 ## Document Status Vocabulary
 
 All document types use a unified set of statuses with clear lifecycle:
@@ -233,7 +284,7 @@ In code, reference these as comments: `# [C_ACS_03_01] PermissionInterceptor`
 
 ## File Organization
 
-All documents live in `docs/` directories. Every generated doc file follows the [Documentation Formatting](references/formatting.md) conventions — in particular, **no hard line wraps inside sentences or paragraphs** (one paragraph = one logical line) — and is written in the `documentation` register of [Output Styles](references/output-styles.md) (agent-first reader; a cross-reference replaces a restatement). One concept = one file set:
+All documents live in `docs/`, follow [Documentation Formatting](references/formatting.md) (one paragraph = one logical line, no hard wraps inside sentences) and the `documentation` register of [Output Styles](references/output-styles.md). One concept = one file set:
 
 | File | Extension | Example |
 |------|-----------|---------|
@@ -248,149 +299,27 @@ All documents live in `docs/` directories. Every generated doc file follows the 
 | Framework map | `_framework.md` | `docs/_framework.md` |
 | Adoption notes | `ext_adoption/*.md` | `docs/ext_adoption/other_repo.md` |
 
-A file set may hold **more than one file per type**: a document split by the [Docs Scaling](references/docs-scaling.md) policy becomes an **umbrella** (the original file name — the canonical entry point) plus child files; `_index.md` lists only umbrellas, and moved sections keep their anchors verbatim — no split ever renames or renumbers a traceable ID (the ID_MUTATION refusal).
-
-**Spike** is an optional pre-concept investigation artifact, produced by the [research phase](phases/research.md) (`/dev-flow research`). Use it when the problem domain is unclear and you need to explore approaches before committing to a concept. Spikes do not pass through the pipeline gates.
-
-**Epic** is an optional grouping document for a feature spanning 3+ closely related concepts (see onboard Step 7 and [concept phase](phases/concept.md)). Template: [templates/epic.md](templates/epic.md).
-
-When `docs/` has more than 5 documents, maintain an `_index.md` catalog — a router, not a section catalogue: one-line annotation per file plus an ID-prefix→file map (see [Docs Scaling](references/docs-scaling.md)).
-
-**Index format convention:** machine-read catalogues (`.dev_flow/rules/`, `.dev_flow/skills/`, `.dev_flow/roles/`, `.dev_flow/cache/`) use `_index.yaml` — structured entries agents match against. Human-browsed catalogues (`docs/`, `.dev_flow/tasks/`, `.dev_flow/todos/`) use `_index.md`. Apply the same split to any new collection.
-
-`docs/_glossary.md` is the project's canonical domain vocabulary (term → definition + aliases to avoid). It is created lazily (during onboard, or when the first cross-concept term is resolved) and, whenever present, is **loaded into context alongside `_index.md`** (independent of the >5-doc threshold that gates `_index.md`) — so authoring uses one canonical term per concept. See [Glossary](references/glossary.md).
-
-`docs/ext_adoption/` holds the **advisory** analyses of external repositories produced by [`adopt`](references/repo-adoption.md) — a `<name>.concept.md` portrait of the source and a `<name>.md` adoption document for this project. They own no traceable ID, pass no gate, and are not a backlog; they are consulted during the concept phase's Reuse Check and are excluded from the `audit docs` integrity checks (index · statuses · cross-refs · orphans · freshness · scaling) that apply to pipeline documents.
-
-`docs/_framework.md` is the project's living **architectural map** (core abstractions · layers · extension points · shared utilities · conventions) — an overview that links *down* to the `.dev_flow/rules/` and `.dev_flow/skills/` holding the enforceable detail; it inlines none of it. It is created/maintained by onboard and by the [`audit code` scope](phases/audit.md#step-9--code-scope-the-whole-codebase-audit) (never hand-authored as part of a feature), and, whenever present, is **loaded into context alongside `_index.md`** on code-touch phases — so implementation and review see the architecture spine. See [Code Audit](references/code-audit.md).
-
-## Git Workflow Integration
-
-Pipeline artifacts map to git workflow as follows:
-
-| Scope | Branch / PR |
-|-------|-------------|
-| Concept + Specification | One PR — reviewed together as a design unit |
-| Implementation Plan | Separate PR — technology decisions reviewed independently |
-| Implementation (per plan phase) | One PR per plan phase — incremental, reviewable |
-| Review + Propagation | Same PR as the triggering change |
-
-**Commit rules:**
-1. **Never commit without explicit user approval.** After completing a phase, stop at the commit sign-off ([Developer Checkpoints](#developer-checkpoints)): present the changes and ask "Ready to commit?". Only `Autonomy: full` in the task header skips it.
-2. **Run pre-commit review** by a clean-context subagent before asking for commit approval.
-3. Only commit after the review passes and the user confirms.
-4. Commit message must reference the traceable ID: `[C_XXX] / [SP_XXX] / [PL_XXX]`. When the task is tied to a tracker ticket, the ticket key joins the ID in the message (e.g. `[PROJ-123][SP_XXX] …`) and the tracker's commit-time conventions apply, **each outward write confirmed first**. See [Ticket Tracker Integration](references/ticket-tracker.md).
-5. **After the commit (and push, when pushed)** on a ticket-tied task, proactively propose adding the corresponding ticket comment/worklog + status transition per the tracker's conventions — confirmed, never silent. See [Ticket Tracker Integration](references/ticket-tracker.md).
-
-## Active Context & Session Continuity
-
-dev-flow uses a **collaborative per-task context model** so multiple AI agents can work on the same project in parallel. A task file is a **shared document with multiple contributors**; each contributor owns the parts they add and never rewrites parts authored by others.
-
-**Memory tiers.** This durable per-task context is **L2** (`.dev_flow/`, survives both compact and restart). Above it sit **L0** live context (the transcript, lost on compact) and **L1** session scratch (survives compact, not durable): the [session working memory](references/cache.md#session-working-memory-l1) of distilled notes/params/reminders/reads (session-keyed, lost on restart) plus the data cache (the project `/tmp` workspace, cleared on reboot). [Experience Capture](references/experience-capture.md) checkpoints promote L1→L2, and [salience markers](phases/status.md#salience-markers) decide what survives a compaction — together keeping durable task state complete so a fresh session can resume from files.
-
-**Use working memory as you work.** Set a parameter when you fix a working value (current segment / phase / target), jot a note when you learn a non-obvious fact you'd hate to re-derive, drop a reminder when you defer an action, record a read when you open a document or source file; re-read the whole area first whenever you've lost the thread (after a compaction, on a subtask switch). A file already read this session, unchanged and uninvalidated, is not read again — see [Verification Economy](references/verification-economy.md). Write triggers: [Session Working Memory](references/cache.md#session-working-memory-l1).
-
-```
-.dev_flow/
-├── active_context.md          # Dashboard — table of active tasks + recently completed
-├── output_styles.md           # Project style profiles — documentation register + chat register (Output Styles); absent → shipped defaults
-├── cache/                     # Durable resources (Figma exports, downloads, baselines) + _index.yaml
-├── evidence/                  # ledger.yaml — intervention ledger (Evidence Discipline); absent → reconcile is a no-op
-├── tasks/
-│   ├── _index.md              # Catalog of task files (conventions + active/recent lists)
-│   ├── task_<ID>.md           # Per-task shared context — multiple contributors
-│   └── ...
-├── todos/                     # Deferred future work captured by `todo` (homeless ideas) + _index.md
-└── session_history/           # Archived completed tasks
-```
-
-**Source of truth = the task files.** The index files (`active_context.md`, `tasks/_index.md`) are derived views — any contributor can rebuild them from `tasks/*.md` when they drift.
-
-**Task file naming:**
-- Tied to a traceable doc → `task_C_AUTH.md`, `task_PL_RATE_LIMITER.md`.
-- Otherwise → `task_YYYYMMDD_HHMMSS_<slug>.md` (slug = 1–3-word kebab-case).
-
-**Each task file contains:**
-- Header: Task ID, Created, Last updated, Status, **Contributors** (list of agent IDs), **Autonomy** (`checkpoints` default / `full — "<quoted instruction>"`).
-- **Current Work Item** — shared metadata (Document, Phase, Traceable ID; optional `Ticket:` link when the task is tied to an external tracker — see [Ticket Tracker Integration](references/ticket-tracker.md)).
-- **Intent** — the user's goal / target state / expected result, captured at intake and checked against at decisions and completion (see [Task Intent](references/task-intent.md)).
-- **Description** — shared, additive paragraphs signed by contributor.
-- **Subtasks** — one block per contributor; each block has Author/Status/Goal/ Progress checklist/Activity. The block's author is its sole editor.
-- **Coordination Notes** — append-only conversation between contributors.
-- **Blocking Issues** — each tagged with the reporter who raised it.
-- **Relevant Context** — table; each row tagged with the contributor who added it.
-- **Shared Activity Log** — task-level events (subtask added, contributor joined, status changed). Append-only, newest first.
-
-**`active_context.md`** is a lightweight dashboard listing active tasks with phase, status, contributors, and last-updated, plus a thin **Deferred (todos)** pointer (counts + any todo bound to an already-closed plan/task, so a deferral filed by `todo` stays visible at the entry point). **No per-task details live here.**
-
-**Templates:**
-- [templates/task_context.md](templates/task_context.md) — task file
-- [templates/active_context.md](templates/active_context.md) — dashboard
-- [templates/tasks_index.md](templates/tasks_index.md) — `tasks/_index.md`
-
-### Rules for all phases
-
-- **Project-knowledge gate (first).** Read `.dev_flow/rules/_index.yaml` and `.dev_flow/skills/_index.yaml`, load what's relevant to the area you touch, and obey it — see [Project Knowledge Is Binding](#project-knowledge-is-binding).
-- **Style gate.** Read `.dev_flow/output_styles.md` and write in the register it selects — documentation for files, chat for anything the developer reads (in chat every link/path/ID carries a short description, since the jump often does not work). Absent → shipped defaults, the gate is a no-op. Advisory: it adds no gate criterion. See [Output Styles](references/output-styles.md).
-- **Resource gate.** Before an expensive external fetch (Figma export, web document), check `.dev_flow/cache/_index.yaml` and reuse a cached copy (no-op while the directory is absent); an entry past its `valid_until` gets a cheap currency check (ETag, Figma version) before any re-fetch. After an expensive fetch, save the artifact back — a focus-delegated helper *stages* it in the workspace and reports (a task-delegated subagent writes the cache itself per the protocol — see [subtask phase](phases/subtask.md)). A resource fetched from the open internet is saved with `trust: public` and goes through the safety check first. Transient artifacts follow the workspace discipline — `/tmp/{project-slug}/` with timestamped names. See [Resource Cache](references/cache.md).
-- At the **start** of any phase:
-  - **Continuation** — locate the task via `active_context.md`. If your own Subtask block exists, resume it. If you have no block in this task yet, add a new `### Subtask:` block (you become a Contributor).
-  - **New task** — create `tasks/task_<ID>.md` from the template with one Subtask block (yours), capturing the **Intent** (goal / target state / expected result) and the **Autonomy** field (`full` only when the request itself says so, quoted) at intake — see [Task Intent](references/task-intent.md) and [Developer Checkpoints](#developer-checkpoints). Add a row to `active_context.md` and `tasks/_index.md` via a **targeted Edit**.
-- After **completing a step**: in your own Subtask block, check off the Progress item, set the next item, append to your Activity bullet list. Refresh the task header's `Last updated`.
-- At a **phase boundary**: targeted Edit on the dashboard row (Phase / Status / Contributors / Updated).
-- At a **transition** (phase/subtask boundary, task switch) run a **Transition Checkpoint** — distill the closing segment into a `{s:pin}` summary, demote its raw entries, harvest any durable lesson (auto-applied through the structural rule/skill gate; never an auto-`must`), and promote durable working-memory parts to the task file. See [Experience Capture](references/experience-capture.md).
-- **Spotted-defect reflex (while working).** If you notice a defect or problem that is **not part of your current task** and whose fix is **deferrable to a later session**, do not derail into it and do not lose it — file an **agent-initiated `todo`**: spawn a **cheap subagent** with the problem description (it runs the [todo phase](phases/todo.md) and reports what it filed), or for a trivial finding needing no analysis, file the register line inline. In-scope or urgent problems are not deferred — fix them or escalate.
-- When you **finish your subtask**: set your Subtask's `Status: done`. The task itself stays `in-progress` until all subtasks are done.
-- On **task completion** (all subtasks done): any contributor may set the task's overall `Status: done`, move its row from "Active" to "Recently Completed" in the dashboard, and update the catalog. Then **surface queued follow-ups**: scan `.dev_flow/todos/` (and plan backlogs) for `queued` records triggered `after task_<this ID>` and offer to run each next (`/dev-flow do …`) — a suggestion, not an auto-run; the executed work still passes its own gates and commit approval. See [todo phase](phases/todo.md).
-
-### Multi-contributor tolerance
-
-Each contributor edits only their own subtask block and their own tagged entries in shared sections. The dashboard and catalog are updated with **targeted edits** (Edit, single row), never full rewrites.
-
-1. **Own your block, leave others':** each Subtask block has an `Author` tag. Only the author edits it. Reading other contributors' blocks is encouraged — they are shared context.
-2. **Additive shared sections:** Description paragraphs, Coordination Notes, Blocking Issues, Relevant Context rows, and Shared Activity Log entries are all tagged with their author. Append your own; do not rewrite others'.
-3. **Targeted edits over rewrites:** when updating the dashboard, the catalog, or the task header (Last updated / Contributors / Status), use `Edit` on the specific field/row rather than rewriting the whole file.
-4. **Read-before-write:** immediately before writing to a **shared** file (task file, index, external ticket), re-read it. If another contributor's edit has landed, re-apply your edit on the latest content. The rule exists because other contributors write concurrently — it does not extend to files only you have read.
-5. **Append-only logs:** Coordination Notes and Shared Activity Log entries are added newest-first; never rewrite an existing entry.
-6. **Indexes are regenerable:** if `active_context.md` or `_index.md` drift, any contributor may rebuild them from `tasks/*.md` headers.
-7. **No exclusive locks, no time-based takeover.** If a contributor's subtask is stale and another wants to continue that line of work, they **add a new subtask block** referencing the original — they do not edit the original block. Coordinate explicitly via Coordination Notes.
-
-### Hygiene
-
-- **Salience-ordered compaction:** when a cap forces eviction, drop `noise`/`superseded` entries first and retain `pin` entries of active tasks, falling back to age-order for the `normal` remainder — markers are task-scoped and go inert on task close (see [Salience Markers](phases/status.md#salience-markers)).
-- **Shared Activity Log** per task: keep at most **10 entries** (newest first). Archive overflow to `.dev_flow/session_history/session_YYYY-MM-DD.md`.
-- **Per-subtask Activity:** also capped at ~10 entries per block.
-- **Activity content filter:** an Activity / Shared Activity Log entry records only incidents, ambiguous decisions, and structural events — a trivial progress report is not written; progress lives in the Progress checklists (canon in the [status phase](phases/status.md), classes in [Docs Scaling](references/docs-scaling.md)).
-- **Task file size:** if a task file exceeds ~300 lines, trigger an archive cycle — archive completed (done) subtask blocks first.
-- **Dashboard size:** `active_context.md` stays under ~80 lines. "Recently completed" keeps the latest 5 — older entries go to `session_history/`.
-- **No large blobs** in any context file: never store logs, diffs, or verbose narratives — reference a file instead: durable resources from `.dev_flow/cache/`, transient output from the project workspace in `/tmp` (see [Resource Cache](references/cache.md)). Never link a `/tmp` path from a doc or task file.
-
-See [status phase](phases/status.md) for the full read/write protocol, regeneration procedure, and archive flow.
+- **Umbrella sets.** A document split under [Docs Scaling](references/docs-scaling.md) becomes an umbrella (the original file name, the canonical entry point) plus child files; `_index.md` lists only umbrellas; no split renames or renumbers a traceable ID.
+- **Spike** — optional pre-concept investigation from [research](phases/research.md); passes no gate. **Epic** — optional grouping for a feature spanning 3+ closely related concepts; template [templates/epic.md](templates/epic.md).
+- **`_index.md`** — maintained once `docs/` exceeds 5 documents; a router (one-line annotation per file + ID-prefix → file map), never a section catalogue ([Docs Scaling](references/docs-scaling.md)).
+- **`_glossary.md`** — canonical domain vocabulary, created lazily, and **loaded alongside `_index.md` whenever present**, independent of the 5-doc threshold ([Glossary](references/glossary.md)).
+- **`_framework.md`** — the living architectural map, maintained only by onboard and `audit code`, **loaded alongside `_index.md` on code-touch phases**; it links down to rules/skills and inlines none of their detail ([Code Audit](references/code-audit.md)).
+- **`ext_adoption/`** — advisory analyses from [`adopt`](references/repo-adoption.md): no traceable ID, no gate, not a backlog; consulted by the concept phase's Reuse Check; excluded from the `audit docs` integrity checks.
+- **Index format.** Machine-read catalogues (`.dev_flow/rules/`, `skills/`, `roles/`, `cache/`) use `_index.yaml`; human-browsed ones (`docs/`, `.dev_flow/tasks/`, `todos/`) use `_index.md`. Apply the split to any new collection.
 
 ## Project Rules
 
-When `.dev_flow/rules/` exists, all new code MUST comply (binding — see [Project Knowledge Is Binding](#project-knowledge-is-binding)). Rules are extracted during onboard and updated during implement/review phases.
+When `.dev_flow/rules/` exists, all new code MUST comply ([Project Knowledge Is Binding](#project-knowledge-is-binding)). Rules are extracted during onboard and updated during implement/fix/review. Severity: **must** (blocks review) · **should** (warning) · **prefer** (advisory); rules apply to new code only.
 
 ```
 .dev_flow/rules/
-├── _index.yaml         # Index of all rules (YAML)
-├── naming.md           # Naming conventions
-├── structure.md        # Code structure patterns
-├── architecture.md     # Architectural constraints
-├── error-handling.md   # Error handling patterns
-├── style.md            # Code style and formatting
-└── testing.md          # Testing patterns (if tests exist)
+├── _index.yaml         # Derived router — regenerated from the files
+├── naming.md · structure.md · architecture.md · error-handling.md · style.md · testing.md
 ```
 
-Severity levels: **must** (blocks review) | **should** (warning) | **prefer** (advisory). Rules apply to new code only — no retroactive refactoring required.
+Each rule is one h2 unit — directive and severity in the heading over a bounded body, immutable id; a category above `digest_min` opens with a `## Contents` digest; an optional `applies_to` selector is what the knowledge gate matches. A skill forms from an accumulated rule cluster at the agent's discretion. See [Knowledge Scaling](references/knowledge-scaling.md) and the [rule phase](phases/rule.md).
 
-Each rule is one h2 unit whose heading carries the directive and severity (`## {id} — {directive} ({severity})  {#{id}}`) over a bounded body; a category file above `digest_min` rules opens with a `## Contents` digest, and a category's optional `applies_to` selector (`paths` / `phases`; absent → always-on, reported as advisory) is what the knowledge gate matches against the work at hand. The index is a derived router regenerated from the files. A skill forms from an accumulated cluster of rules (audit signals `skill-candidate`; the agent decides); `audit` keeps the digests, index, anchors, and severity vocabulary in sync and proposes compaction and splits. See [Knowledge Scaling](references/knowledge-scaling.md).
-
-**Auto-discovery of new rules (autonomous self-learning):** During the `implement` and `fix` reflection checkpoints (see [Experience Capture](references/experience-capture.md)), if the implementation plan or fix analysis reveals a coding pattern, constraint, or convention that is not yet captured in `.dev_flow/rules/` — harvest it and **write the rule automatically, without asking permission**. The gate is *structural, not a self-score*. Specifically:
-- If a plan phase describes a new architectural constraint, naming convention, or error-handling pattern — create or update the corresponding rule file automatically.
-- If a `fix` phase root-cause analysis identifies a violated invariant that has no matching rule — write the rule so the same class of bug is prevented in the future.
-- Auto-written rules default to severity **should** (use **prefer** for advisory). **Never auto-write a `must`** — a `must` blocks future code; if the lesson is genuinely `must`-strength, or it contradicts an existing rule, route it to an **independent clean-context review** ([Delegation for Focus](references/delegation.md)) and write only if confirmed.
-- The rule phase writes the rule, updates `.dev_flow/rules/_index.yaml` (under its category's `rules` list — see [rule phase → Index Format](phases/rule.md#index-format)), and the new rule is mentioned in the commit message. The developer reviews every auto-written rule in the **commit diff** — the [commit-approval gate](#git-workflow-integration) is untouched, so self-learning never bypasses developer oversight, it just moves it to commit time.
+**Auto-discovery (self-learning).** At the `implement` and `fix` reflection checkpoints ([Experience Capture](references/experience-capture.md)), a coding pattern, constraint, or violated invariant with no matching rule is **written automatically, without asking**: default severity `should` (`prefer` for advisory); **never an auto-`must`** — a `must`-strength lesson or a contradiction with an existing rule goes to an independent clean-context review first ([Delegation for Focus](references/delegation.md)). The rule phase writes the file and the index entry; the commit message names the rule; the developer reviews every auto-written rule in the commit diff — the commit sign-off is untouched.
 
 ## Greenfield vs Takeover
 
@@ -406,59 +335,56 @@ Each rule is one h2 unit whose heading carries the directive and severity (`## {
 
 ## Phase Details & Templates
 
-- [Onboard phase](phases/onboard.md) *(optional, for takeover)*
-- [Research phase](phases/research.md) | [Spike template](templates/spike.md) *(on-demand — time-boxed investigation when knowledge is insufficient; alias `spike`)*
-- [Concept phase](phases/concept.md) | [Template](templates/concept.md)
-- [Specification phase](phases/specification.md) | [Template](templates/specification.md)
-- [Plan phase](phases/plan.md) | [Template](templates/plan.md)
-- [Interview Mode](references/interview-mode.md) *(cross-cutting sub-procedure of concept/spec/plan/fix — surface design forks to the developer instead of choosing silently)*
-- [Upstream Escalation](references/escalation.md) *(cross-cutting sub-procedure of implement/test/review/verify/fix — when evidence shows the spec/plan/concept is wrong, fix the document, don't bend the code)*
-- [Delegation for Focus](references/delegation.md) *(cross-cutting sub-procedure of implement/fix/verify — delegate noisy work to a subagent, keep only the conclusion)*
-- [Experience Capture](references/experience-capture.md) *(cross-cutting sub-procedure of all phases — Transition Checkpoint: distill a closing segment into a pinned summary, demote raw turns, propose durable lessons; factual Response Trailer; tiered context-pressure response)*
-- [Impact Walk](references/impact.md) *(cross-cutting sub-procedure of ask/do/propagate/review — blast radius of a change: docs, code bindings, active tasks)*
-- [Task Intent](references/task-intent.md) *(cross-cutting sub-procedure of do/plan/implement/fix/verify/subtask — capture the user's goal / target state / expected result at intake, record it in the task file, check decisions and the final outcome against it; a letter-vs-spirit conflict is surfaced, never silently resolved)*
-- [Ticket Tracker Integration](references/ticket-tracker.md) *(cross-cutting sub-procedure of do/fix/implement + commit — when a task is explicitly tied to a tracker ticket (Jira/Linear/…), discover the project's tracker skill/MCP and let it own the ticket conventions **and behavior** — a dedicated tracker skill's rules outrank dev-flow's defaults here; read + link by default, every outward write confirmed)*
-- [Consequence Forecasting](references/consequence-forecasting.md) *(cross-cutting sub-procedure of concept/spec/plan/implement/fix — forecast future needs at the phase's altitude, then YAGNI-gate each: build now / seam+flag / drop+record; advisory, composes Impact Walk + Minimality, routes to Interview/Escalation)*
-- [Code Reuse](references/code-reuse.md) *(cross-cutting sub-procedure of implement/fix — search for an existing function/class before creating a new one; build for reuse only with a real near-term consumer, YAGNI-gated; the code-altitude counterpart of the concept Reuse Check, backstopped by the audit-code duplication lens)*
-- [Procedural Skills](references/procedural-skills.md) *(cross-cutting refinement of the skill subsystem — skills are procedural memory with a mandatory applicability boundary + freshness stamp; a current skill outranks the prior, a stale one is re-grounded first; candidate→established promotion; audit curation)*
-- [Application Enforcement](references/application-enforcement.md) *(cross-cutting sub-procedure of implement/fix/testing/verify — re-trigger the knowledge gate per action burst via a pointer-only Pre-Action Marker; conformance tripwire + advisory/interface-gate/sampled-verifier tiers; clean-context review realizes the verifier tier; self-attestation banned; runtime-conditional, degrades to advisory)*
-- [Evidence Discipline](references/evidence-discipline.md) *(cross-cutting sub-procedure of audit (`rules`/`skills`) + the Experience Capture harvest + the test/verify/review/audit reports — evidence states `present`/`wired`/`exercised`/`outcome-supported`/`unobserved` on a knowledge artifact, provenance mandatory; consumers: harvest coverage rung, skill `check` field, intervention ledger with longitudinal reconciliation, report ceiling (a claim never exceeds its state; `unobserved` written with a named reason instead of silence); configured ≠ used, count ≠ conclusion, no numeric scores)*
-- [Resource Cache](references/cache.md) *(cross-cutting — durable resource store `.dev_flow/cache/` with trust levels + `/tmp` workspace discipline; every phase checks it before expensive fetches)*
-- [Roles](references/roles.md) *(base vs project-overlay subagent roles — reuse what exists, create new under .dev_flow/roles/ via inherits)*
-- [Glossary](references/glossary.md) *(`docs/_glossary.md` — canonical domain vocabulary; created at onboard/concept, loaded with `_index.md`)*
-- [Documentation Formatting](references/formatting.md) *(cross-cutting — formatting conventions for all generated documentation files; no hard line wraps inside sentences/paragraphs, one list item / table row per line, no wholesale reformatting of existing files)*
-- [Knowledge Scaling](references/knowledge-scaling.md) *(cross-cutting — keeping `.dev_flow/rules/` and `.dev_flow/skills/` cheap to apply as they grow: directive-first unit form with an immutable id and a bounded body, a machine-matchable `applies_to` selector per category/unit, a `## Contents` digest per knowledge file, the index as a derived router, an activation protocol that computes the relevant set (over `activation_budget` drops nothing and lowers no severity), consolidation of an accumulated rule cluster into a skill at the agent's discretion (`skill-candidate` advisory), compaction into `<category>.log.md`, split without umbrella, and the closed audit verdict set with its apply / propose / advisory split; thresholds named here and defined once in Docs Scaling; legacy catalogues migrate derived-layers-first; advisory — no gate criterion changes)*
-- [Docs Scaling](references/docs-scaling.md) *(cross-cutting — keeping large documentation corpora cheap to navigate: grep-first reading protocol, Contents + lead summary, adaptive history policy with an unconditional content filter, split policy with umbrella sets and immutable traceable IDs, `_index.md` as a router; the single shipped source of numeric thresholds; advisory — audit reports, propagate auto-fixes only the mechanical class)*
-- [Output Styles](references/output-styles.md) *(cross-cutting sub-procedure of every phase that writes a doc file or answers the developer — two registers for two readers: documentation (agent-first, a cross-reference replaces a restatement) vs chat (the deciding developer — their language, low semantic complexity, every link/path/ID carried with a short description because the jump often fails, sharpest inside Interview Mode dialogs); ASD-STE100 as the English register orientation; project profiles in the mandatory-load `.dev_flow/output_styles.md`, created and edited adaptively; advisory — style never removes content and adds no gate criterion)*
-- [Review Convergence](references/review-convergence.md) *(cross-cutting sub-procedure of review (reads) + concept/specification (declare) + todo (receives) + audit (grooms) — bounds the `Review → fix → re-Review` loop: an author-declared **functional criticality** (`peripheral`/`supporting`/`core`/`critical`, declared optionally at an application level and a module level, weakest declared wins, absence lowers nothing) from which a finding's **materiality** (`blocking`/`advisory`/`deferrable`) is **computed, never judged**; the `review-non-convergence` tripwire (symmetric twin of `verifier-rubber-stamp`) routes a recurring non-`must` finding to a `contested` todo carrying both positions; a repeat round reads delta ∪ carry-over ∪ always-in-scope from the recorded baseline. `must` and security findings block without limit — the loop terminates arguments, never defects. Advisory: no gate criterion changes)*
-- [Verification Economy](references/verification-economy.md) *(cross-cutting sub-procedure of review/verify (round mode) + review/propagate/audit/implement/fix (unsolicited checks) + the session working memory in [Resource Cache](references/cache.md) (re-reads) — every check carries an **entry condition** computed from a fact outside the acting agent's prose (diff · file state · exit code · ledger entry · developer message · running command), never a self-rating: a `Signal` opens an unsolicited comparison, an `Invalidator` opens a re-read, and a `ConfirmDiscriminator` set turns a repeat round into a mechanical `confirm` instead of a second clean-context review. Each set is closed, `undeterminable` always runs the check in full, and a suppressed check is written as `unobserved` with the absent fact ([Evidence Discipline](references/evidence-discipline.md)) with any substantive suspicion routed to a `todo`. `must` findings, security findings, commit approval, and clean-context review as a mechanism are never economized. Advisory: no gate criterion changes)*
-- [Design Compliance](references/design-compliance.md) *(cross-cutting sub-procedure of verify — validate a UI implementation against its design source of truth (design-tool link, tokens, mockups, style guide) property by property via a read-only clean-context validator; enumerates the FULL variant/state set before comparing; app-type-agnostic — web, mobile, desktop, TUI; deviations feed the Verify fix cycle, design-vs-spec conflicts escalate upstream)*
-- [Implement phase](phases/implement.md)
-- [Test phase](phases/testing.md) *(conditional — functional tests: unit + mock)*
-- [Review phase](phases/review.md) *(pre-commit review by clean-context subagent; loop bounded by [Review Convergence](references/review-convergence.md))*
-- [Verify phase](phases/verify.md) *(conditional — regression, integration, live testing)*
-- [Propagate phase](phases/propagate.md)
-- [Fix phase](phases/fix.md) *(analyze, plan, fix, verify)*
-- [Rule phase](phases/rule.md) *(add/edit/remove coding rules)*
-- [Skill phase](phases/skill.md) *(manage project knowledge skills)*
-- [Status phase](phases/status.md) | Templates: [task_context](templates/task_context.md), [active_context (dashboard)](templates/active_context.md), [tasks_index](templates/tasks_index.md)
-- [Audit phase](phases/audit.md) *(full `.dev_flow/` + `docs/` revision — reconcile, trim, compact + reflect, groom rules/skills, check docs integrity; opt-in `code` scope = whole-codebase audit → refactoring plan)*
-- [Code Audit](references/code-audit.md) *(the `audit code` scope's detail — lens registry + per-lens checklists, the bottom-up walk shared with onboard, SOLID/DRY heuristics, antipattern catalogue, refactoring playbook)*
-- [External Repo Adoption](references/repo-adoption.md) *(the `adopt` service command — resolve/clone an external repo into `ext_repos/`, analyze it at concept altitude, and automatically produce the advisory adoption document; incremental on re-run, writes nothing outside its closed list)*
-- [Ask phase](phases/ask.md) *(read-only Q&A, no file changes)*
-- [Todo phase](phases/todo.md) *(capture future work — find docs, assess feasibility, file a planning record)* | Template: [todo_index](templates/todo_index.md)
-- [Subtask phase](phases/subtask.md) *(delegate secondary tasks to subagent)*
-- [Do phase](phases/do.md) *(default fallback for freeform requests)*
-- [End-to-end example](examples/rate-limiter.md)
+| File | Holds |
+|------|-------|
+| [Onboard](phases/onboard.md) | Takeover: reverse-engineer docs + rules bottom-up |
+| [Research](phases/research.md) · [spike template](templates/spike.md) | Time-boxed investigation (alias `spike`) |
+| [Concept](phases/concept.md) · [template](templates/concept.md) | Idea, architecture, mechanisms; checklist, Reuse Check, banned phrases |
+| [Specification](phases/specification.md) · [template](templates/specification.md) | Structures, contracts, rules, verification criteria, rollback |
+| [Plan](phases/plan.md) · [template](templates/plan.md) | Phases with `Verify:`; technology decisions; Refactoring Protocol |
+| [Implement](phases/implement.md) | Code per plan under the knowledge gate |
+| [Test](phases/testing.md) | Functional tests on changed code; conditional |
+| [Review](phases/review.md) | Clean-context pre-commit review; check matrix |
+| [Verify](phases/verify.md) | Regression, integration, live; conditional |
+| [Propagate](phases/propagate.md) | Docs ↔ code drift; mechanical auto-fixes |
+| [Fix](phases/fix.md) | Analyze → plan → fix → verify; diagnosis loop; rule detection |
+| [Rule](phases/rule.md) · [Skill](phases/skill.md) | Manage `.dev_flow/rules/` and `.dev_flow/skills/`; index formats |
+| [Status](phases/status.md) · templates [task_context](templates/task_context.md), [active_context](templates/active_context.md), [tasks_index](templates/tasks_index.md) | Context protocol, regeneration, salience markers, hygiene, archive |
+| [Audit](phases/audit.md) | `.dev_flow/` + `docs/` revision; opt-in `code` scope |
+| [Ask](phases/ask.md) · [Todo](phases/todo.md) · [todo_index template](templates/todo_index.md) | Read-only Q&A · future work with a return trigger |
+| [Subtask](phases/subtask.md) | Delegate a secondary task to a full dev-flow participant |
+| [Do](phases/do.md) | Freeform routing; change classes |
+| [Interview Mode](references/interview-mode.md) | Design forks as marked options; open decisions with triggers |
+| [Upstream Escalation](references/escalation.md) | Wrong doc → fix the doc, not the code |
+| [Delegation for Focus](references/delegation.md) | Noisy work to a subagent; specialist routing |
+| [Experience Capture](references/experience-capture.md) | Transition Checkpoint; harvest; trailer; context pressure |
+| [Impact Walk](references/impact.md) | Blast radius: docs, code bindings, active tasks |
+| [Task Intent](references/task-intent.md) | Goal / target / expected result at intake |
+| [Ticket Tracker Integration](references/ticket-tracker.md) | Ticket-tied tasks; tracker skill owns conventions |
+| [Consequence Forecasting](references/consequence-forecasting.md) | Forecast at altitude; YAGNI gate: build / seam / drop+record |
+| [Code Reuse](references/code-reuse.md) | Search before creating; YAGNI-gated reuse |
+| [Procedural Skills](references/procedural-skills.md) | Procedural memory; boundary + freshness; promotion |
+| [Application Enforcement](references/application-enforcement.md) | Per-burst Pre-Action Marker; enforcement tiers |
+| [Evidence Discipline](references/evidence-discipline.md) | Evidence states; ledger; report ceiling; `unobserved` |
+| [Resource Cache](references/cache.md) | `.dev_flow/cache/`; `/tmp` workspace; working memory (L1) |
+| [Roles](references/roles.md) | Base vs project-overlay subagent roles; `inherits:` |
+| [Glossary](references/glossary.md) | `docs/_glossary.md` — canonical vocabulary |
+| [Documentation Formatting](references/formatting.md) | Formatting conventions for generated doc files |
+| [Knowledge Scaling](references/knowledge-scaling.md) | Rules/skills at scale: unit form, selectors, digests, relevant set |
+| [Docs Scaling](references/docs-scaling.md) | Grep-first reading, Contents, history, splits; **single source of thresholds** |
+| [Output Styles](references/output-styles.md) | Documentation vs chat registers; `.dev_flow/output_styles.md` profiles |
+| [Review Convergence](references/review-convergence.md) | Criticality → materiality; `contested` todo; delta rounds |
+| [Verification Economy](references/verification-economy.md) | Entry conditions: Signal, Invalidator, ConfirmDiscriminator |
+| [Design Compliance](references/design-compliance.md) | UI vs design source of truth, in verify |
+| [Code Audit](references/code-audit.md) | `audit code`: lenses, walk, antipatterns, playbook |
+| [External Repo Adoption](references/repo-adoption.md) | `adopt`: clone, analysis, advisory adoption document |
+| [SOLID reference](references/solid-architecture.md) | Generic architecture guidance — project rules override it |
+| [Epic template](templates/epic.md) · [End-to-end example](examples/rate-limiter.md) | Grouping for 3+ concepts · full pipeline walk-through |
 
 ## Delegation for Focus (Context Isolation)
 
-Noisy secondary work (test output, build logs, screenshots, wide searches, reproduction traces) erodes main-context focus — the plan, the spec, the task state. The reflex during implement / fix / verify: hand that work to a subagent and keep only the *conclusion, not the dump*; pick the subagent's model by the task's nature, never by a hardcoded name. The full principle — the core-vs-delegate line, the scenarios table, and the model guidance — lives in **[Delegation for Focus](references/delegation.md)**.
-
-For a whole secondary *task* (not a single noisy step), use the [subtask phase](phases/subtask.md): there the subagent is a **full dev-flow participant with delegated rights** — it assembles its own context from hints, joins the task file as a contributor, persists skills/cache per their owning protocols, escalates real decisions to its initiator, and returns a full report. Commits stay with the main context (the developer-approval chain).
+Noisy secondary work — test output, build logs, screenshots, wide searches, reproduction traces — erodes the main context's hold on the plan, the spec, and the task state. During implement / fix / verify hand it to a subagent and keep the *conclusion, not the dump*; pick the model by the task's nature, never a hardcoded name. The core-vs-delegate line, scenarios, and model guidance: [Delegation for Focus](references/delegation.md). For a whole secondary *task*, use the [subtask phase](phases/subtask.md): the subagent is a full dev-flow participant with delegated rights — it assembles its own context, joins the task file as a contributor, persists skills/cache per their protocols, escalates real decisions to its initiator, and returns a full report; commits stay with the main context.
 
 ## Subagent Roles (AI-DSL)
 
-Each phase has a specialized **base role** for subagent execution (implementer, tester, reviewer, …), and a project adds its own **overlays** and specializations under `.dev_flow/roles/`, declared by naming the base role(s) in an `inherits:` field. The full catalogue of base roles by phase — and how to find, reuse, and create roles — lives in **[Roles](references/roles.md)**.
-
-Beyond the per-phase roles, a project can grow **specialist focus helpers** — read-only roles that own a recurring noisy step (wide code search, log/trace triage, screenshot analysis). They are **not shipped base roles** (a generic log-analyst can't know your log format); the agent creates them per-project under `.dev_flow/roles/` when the pattern recurs, and the [Delegation routing reflex](references/delegation.md#named-specialists-and-the-routing-reflex) routes matching work to them by description. Each warm-starts from a role-local memory of distilled heuristics and promotes the broadly-useful ones to skills via [Experience Capture](references/experience-capture.md).
+Each phase has a **base role** for subagent execution (implementer, tester, reviewer, …); a project adds **overlays** under `.dev_flow/roles/` via `inherits:`. Catalogue and how to find, reuse, or create roles: [Roles](references/roles.md). A project may also grow **specialist focus helpers** — read-only roles owning a recurring noisy step (wide code search, log triage, screenshot analysis) — created per project when the pattern recurs and routed to by the [Delegation routing reflex](references/delegation.md#named-specialists-and-the-routing-reflex); each warm-starts from a role-local memory and promotes broadly useful heuristics to skills via [Experience Capture](references/experience-capture.md).

@@ -1,5 +1,20 @@
 # Phase: Subtask — Delegate a Secondary Task to a Subagent
 
+## Contents
+
+- [Purpose](#purpose) — subagent as full participant with delegated rights; the context economy; one contributor model
+- [Command](#command) — `/dev-flow subtask` syntax and example invocations
+- [Role Responsible](#role-responsible) — SubtaskExecutor combined with the executed phase's base role and overlay
+- [Delegation Shapes](#delegation-shapes) — focus vs task delegation table: writes, dialogue, report, rule of thumb
+- [When to Use](#when-to-use) — side bugs, off-plan side tasks, context-heavy research, peripheral changes
+- [When NOT to Use](#when-not-to-use) — main task, dialogue-heavy work, file conflicts (use todo), trivial tasks
+- [Delegated Rights & Boundaries](#delegated-rights--boundaries) — code/task-file/skills rights, read-only phases prevail, no commits, scope narrowing
+- [Talking to the Initiator](#talking-to-the-initiator) — what to escalate, Interview-Mode discipline, checkpoint dialogue default
+- [Procedure](#procedure) — Steps 1–5: pick phase (table), formulate brief, spawn (prompt template, agent type, model), mid-task exchanges, integrate
+- [Full Report Contract](#full-report-contract) — required report sections: Result, Decisions, Changes, Verification, Open items, Materials
+- [Parallel Subtasks](#parallel-subtasks) — launching independent subtasks together; disjoint source scopes
+- [Output Style](#output-style) — task-description language for the subagent, chat register for the relayed report
+
 ## Purpose
 
 Offload a secondary task to a subagent so the main conversation keeps its context and focus on the primary work. The subagent is a **full dev-flow participant with delegated rights**: the initiator hands it the task, a role, and context *hints* — the subagent assembles its own working context from there, executes the matching phase protocol end to end, talks to its initiator when a real decision needs one, and returns a **full report**.

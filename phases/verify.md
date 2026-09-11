@@ -1,5 +1,20 @@
 # Phase 7: Verify — Regression, Integration & Live Testing
 
+## Contents
+
+- [Purpose](#purpose) — what Verify covers beyond unit tests: regression, integration, live end-to-end checks
+- [Delegation](#delegation) — run verification in a clean-context subagent; where run logs/screenshots go and what is promoted to cache
+- [Command](#command) — `/dev-flow verify [target]` syntax and target examples (module, integration, live, regression)
+- [Activation Condition](#activation-condition) — the triggers that activate the phase; skip recorded as `unobserved`, never clean
+- [Verification Categories](#verification-categories) — levels 1–3 table (regression/integration/live), live-test kinds, design compliance check for UI
+- [Context Loading](#context-loading) — skill/rule gates for the verified area plus per-burst re-activation with Pre-Action Marker
+- [Safe Testing Principle](#safe-testing-principle) — never damage user data: test accounts/entities, ask before real data, what counts as destructive
+- [Verification Workflow](#verification-workflow) — level-by-level procedure, fix cycle with `confirm`-scoped re-runs, upstream escalation, manual checklist
+- [Reflection — harvest verification lessons](#reflection--harvest-verification-lessons) — Transition Checkpoint: auto-apply rules/skills from failure modes and gotchas, never a `must`
+- [Verification Result Reporting](#verification-result-reporting) — report table (levels, counts, unobserved, intent verdict, fix cycles); evidence discipline
+- [Gate Check (Verify -> Commit)](#gate-check-verify---commit) — checklist before commit, incl. reflection run and explicit commit sign-off
+- [Anti-Patterns](#anti-patterns) — skipping verification, partial fix cycles, coding around a disproved spec, unasked new scenarios
+
 ## Purpose
 
 After functional tests pass and code review is approved, verify the changes at a broader scope: regression testing, integration testing, and live verification (launching the app/service to check end-to-end behavior).

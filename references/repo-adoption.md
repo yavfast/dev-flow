@@ -6,6 +6,15 @@ Adoption documents are **advisory**: no traceable ID, no validation gate, not a 
 
 `adopt` is a service command, not a pipeline stage. It receives nothing from a gate and hands nothing to one.
 
+## Contents
+
+- [Command](#command) — `/dev-flow adopt <repo>` with `--subpath` and `--readopt`, recognized aliases, freeform routing via do
+- [What a run may write](#what-a-run-may-write) — Closed write list (adoption concept + document, `ext_repos/`, `.gitignore`, `.dev_flow/**`) and what is never written
+- [Procedure](#procedure) — Steps 1–9: resolve, acquire workspace, run mode, source analysis, target context, verdicts, synthesis, write, report
+- [Edge cases](#edge-cases) — Situation → behaviour table: self-analysis, unreachable URL, non-git source, dirty clone, collisions, monorepo, large source
+- [Delegation](#delegation) — Steps 4 and 6 may go to a read-only clean-context subagent returning concepts or verdicts, never files
+- [Boundary with the resource cache](#boundary-with-the-resource-cache) — Clones live in `ext_repos/`, not `.dev_flow/cache/`; `audit cache` does not curate them
+
 ## Command
 
 ```

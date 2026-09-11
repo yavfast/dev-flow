@@ -1,5 +1,20 @@
 # Phase: Research — Time-Boxed Investigation (Spike)
 
+## Contents
+
+- [Purpose](#purpose) — what a spike is, its outputs (spike file + durable skills), and its on-demand, non-pipeline status
+- [Command](#command) — `/dev-flow research` / `spike` syntax and example invocations
+- [Role Responsible](#role-responsible) — Researcher subagent vs main agent duties; panel fan-out for many-sided topics
+- [Entry Points](#entry-points) — table of triggering phases (do, concept, interview, ask, audit) and their signals
+- [When NOT to Use](#when-not-to-use) — cases that belong to skills, ask, interview, or a normal task instead
+- [Context Loading](#context-loading) — skill check and cache check gates, glossary load before investigating
+- [Cost Gate](#cost-gate) — framing fields (questions, scope, time-box, single/panel mode) and the A/B/C fork
+- [Procedure](#procedure) — Steps 1–6: frame, investigate (single or panel + synthesis), conclude, persist, close, hand off
+- [Spike Rules](#spike-rules) — throwaway status, binding time-box, no design decisions, scratch-only prototypes
+- [Relation to Other Phases](#relation-to-other-phases) — table mapping research to concept, interview, ask, skill, cache, subtask, audit
+- [Anti-Patterns](#anti-patterns) — unframed spikes, prototype creep, deciding in the spike, panel misuse, lens theater
+- [Output Style](#output-style) — documentation register for the spike file, chat register for findings; formatting rule
+
 ## Purpose
 
 Close a knowledge gap **before** committing to a design. Research is the phase for situations where a concept, specification, or plan cannot be confidently authored because data or context is missing: an unfamiliar domain, an unverified library capability, an unknown solution space, or an open Design Decision waiting on facts.

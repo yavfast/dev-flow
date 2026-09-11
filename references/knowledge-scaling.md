@@ -2,6 +2,21 @@
 
 Cross-cutting conventions for `.dev_flow/rules/` and `.dev_flow/skills/`: the form of a knowledge unit (directive in the heading, bounded body), a machine-matchable applicability selector, a digest at the top of every category file, the index as a derived router, an activation protocol that computes the relevant set instead of "loading the area", the consolidation of accumulated rules into a skill, and the audit verdicts that keep all of it in shape. Every phase with a knowledge gate applies the activation protocol; the rule, skill, and audit phases apply the rest. Advisory: no gate criterion, no severity semantics, and no precedence rule changes. Thresholds are named here and defined once in [Docs Scaling → Thresholds](docs-scaling.md#thresholds); they are consumed only by mechanical measurement — nobody counts by hand.
 
+## Contents
+
+- [Unit form](#unit-form) — Rule heading template `{id} — {directive} ({severity}) {#id}`, id/directive/severity rules, bounded body order, legacy form
+- [Selector (`applies_to`)](#selector-applies_to) — `paths`/`phases` selector syntax, the closed phase set, category vs unit narrowing, always-on default, match rule
+- [Digest (`## Contents`)](#digest--contents) — Category-file digest line format, when required (`digest_min`), same-edit sync rule, legacy-line handling
+- [Index fields](#index-fields) — `rules/_index.yaml` additive fields (summary, applies_to, log, evidence, moved_to) with example; derived-router rules
+- [Activation protocol](#activation-protocol) — relevant-set computation at every knowledge gate, over-budget behaviour, body-read triggers, degradation
+- [Consolidation (rules → skill)](#consolidation-rules--skill) — Signal (`skill-candidate`), agent decision, execution steps for creating the skill and folding rules, skill → rule
+- [Write hygiene](#write-hygiene) — the order of every rule/skill write and the refusals (`SELECTOR_WIDENS`, `NARRATIVE_IN_BODY`, `BOUNDARY_MISSING`)
+- [Compaction and split](#compaction-and-split) — What compaction keeps and moves to the narrative log, split procedure and its refusals, `<category>.log.md` status
+- [Audit verdicts](#audit-verdicts) — Closed verdict table (measure / class / action), apply-propose-advisory semantics, severity normalization mapping
+- [Legacy migration](#legacy-migration) — Incremental migration: derived layers by audit, headings lazily, content by proposal, selector hints as proposals
+- [Where it is wired](#where-it-is-wired) — Touchpoint table: which phase or reference carries each part of this discipline
+- [Boundaries](#boundaries) — What stays unchanged (gates, severities, precedence), budget-is-a-signal rule, and what is out of scope
+
 ## Unit form
 
 A **rule** is one h2 block in its category file. The heading is the single source of the directive and the severity; the digest and the index are derived from it.

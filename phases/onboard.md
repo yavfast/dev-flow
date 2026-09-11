@@ -1,5 +1,18 @@
 # Phase 0: Onboard (Optional)
 
+## Contents
+
+- [Purpose](#purpose) — reverse-engineering docs from code (Code → Concepts → Specs → Plans); one-time optional phase
+- [Command](#command) — `/dev-flow onboard` with `--resume` and `--scope` options
+- [Working Directory](#working-directory) — layout of `.dev_flow/onboard/` checkpoint files
+- [Procedure Steps](#procedure-steps) — Steps 1–9: workspace, structure, layers, module analysis, rules/skills/glossary, docs, index, validation, cleanup
+- [Session Continuity](#session-continuity) — state/queue tracking and `--resume` behavior across sessions
+- [Parallelization Strategy](#parallelization-strategy) — what can run in parallel and the recommended subagent allocation
+- [state.yaml Format](#stateyaml-format) — schema of the progress file
+- [queue.yaml Format](#queueyaml-format) — schema of the per-layer module queue
+- [Monorepo / Workspace Support](#monorepo--workspace-support) — workspace detection, two-level layering, per-package docs, state extension
+- [Anti-Patterns](#anti-patterns) — single-pass analysis, specs before concepts, skipping analysis files, lost state, wrong plan status
+
 ## Purpose
 
 Analyze an existing project (takeover scenario) and generate a complete set of concept, specification, and plan documents from existing code and documentation. This is a **reverse-engineering** procedure: Code → Concepts → Specs → Plans.

@@ -1,5 +1,16 @@
 # Phase: Fix — Bug Investigation and Resolution
 
+## Contents
+
+- [Purpose](#purpose) — Streamlined investigate → plan → implement → verify path for bugs that need no new concept or spec
+- [Command](#command) — `/dev-flow fix <problem description>` syntax (freeform, any language) with example invocations
+- [Procedure](#procedure) — Steps 0–6: skills/ticket check, analyze (confidence gate), plan + design sign-off, implement, verify, docs, reflect
+- [Diagnosis (optional)](#diagnosis-optional) — When the confidence gate fails: cost gate options A/B/C, the diagnosis loop, missing-seam finding, delegation, artifacts
+- [Interview Mode in Fix](#interview-mode-in-fix) — Root-cause and fix-strategy forks, sanctioned stop-gap, where decisions are recorded, advisory checks, spotted defects
+- [Rule Detection](#rule-detection) — Trigger words per language, severity mapping (must/should/prefer), examples, merge into an existing rule, no duplicates
+- [When NOT to Use Fix](#when-not-to-use-fix) — Routes to the full pipeline: new feature, contract/data-structure change, architectural change
+- [Relation to Other Phases](#relation-to-other-phases) — Step 5 propagate trigger, rule suggestion, task-file/dashboard touch rule and fresh task file for a standalone fix
+
 ## Purpose
 
 Investigate a reported problem, plan the fix, implement it, and verify the result. Unlike the full concept-spec-plan pipeline, `fix` is a streamlined path for bug fixes and corrections that do not require new concepts or specifications.

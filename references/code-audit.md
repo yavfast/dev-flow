@@ -7,6 +7,15 @@ What keeps it honest:
 - **A lens is read-only and returns conclusions, not dumps.** Every checklist below produces Findings — a `conclusion` + `file:line` locations. Raw search hits, traces, and logs stay in the workspace, referenced by path, never inlined (per [Delegation → conclusion-not-dump](delegation.md)).
 - **The registry is open.** The base lenses ship here; a project adds its own by appending a registry row + a checklist section in *this file* — no concept or spec edit needed.
 
+## Contents
+
+- [Lens Registry](#lens-registry) — Base lens table, menu lens table (selected per intent/project), sub-angle folding, how to add a project lens
+- [Per-Lens Checklists](#per-lens-checklists) — Finding fields, then what-to-look-for and finding types per lens (`standards` … `tests`) plus menu/domain stubs
+- [Shared Bottom-Up Analysis](#shared-bottom-up-analysis) — The dependency-layered module walk shared by onboard and `audit code`, and how each caller binds to it
+- [SOLID / DRY Heuristics](#solid--dry-heuristics) — Principle → smell table (SRP/OCP/LSP/ISP/DIP/DRY), over-DRY caution, pluggability flag; project rules win
+- [Antipattern Catalogue](#antipattern-catalogue) — Extensible table of antipatterns with appearance and typical fix, the type vocabulary for the `patterns` lens
+- [Refactoring Playbook](#refactoring-playbook) — Priority formula, change-class → hand-off route table, top-N vs backlog with return triggers, provenance and hand-off rules
+
 ## Lens Registry
 
 A lens is one audit projection: a `key`, a `focus`, a `source_of_truth`, and the checklist that follows. The base set is universal; the long tail and domain-specific lenses are an **intent-/project-selected menu** — a run pulls only what its intent and project type call for, never the whole list. Refinement angles fold into a base lens's checklist rather than standing alone.
@@ -239,6 +248,6 @@ The plan keeps the **top-N by priority** as active items; the remainder goes to 
 - A `cross-lens-conflict` is preserved as an **explicit decision input** in the plan, never averaged away — the developer resolves it at the gate.
 - A finding tracing to a **wrong document** routes to [Upstream Escalation](escalation.md), not into the plan; a finding contradicting a **settled `DEC_NN`** cites it rather than proposing blind reversal.
 - Recurring patterns and tech gotchas surfaced during the audit are harvested as rules/skills via [Experience Capture](experience-capture.md) — auto-applied through the structural gate (no permission prompt; would-be `must`/contradictions go to independent review).
-- The plan also carries the `docs/_framework.md` update (abstraction-candidates → map overview + links to rules/skills; overview only, no enforceable detail inlined). The map **stays in `docs/`** (loaded as code-touch context, unlike the plan/report).
+- The plan also carries the `docs/_framework.md` update (abstraction-candidates → map overview + links to rules/skills; overview only, no enforceable detail inlined). The map **stays in `docs/`** (loaded as code-touch context, unlike the plan/report) and is **never hand-authored as part of a feature** — only onboard and `audit code` create or maintain it.
 
 Execution (refactor → review → verify → commit) is the standard gated pipeline on this plan; **audit itself changes no code and never commits**.

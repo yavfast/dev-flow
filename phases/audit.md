@@ -1,5 +1,17 @@
 # Phase: Audit — Full `.dev_flow/` + `docs/` Revision & Housekeeping
 
+## Contents
+
+- [Purpose](#purpose) — What the whole-directory sweep reconciles, the opt-in `code` scope, corpus-wide comparison home, phases it composes
+- [Command](#command) — `/dev-flow audit [scope] [--dry-run]` syntax, the scope list, the Scope → steps table, invocation examples
+- [When to Run](#when-to-run) — Sweep triggers: cadence, status-reported drift, hygiene caps, lagging headers/doc statuses; `code` cadence, reduced mode
+- [Guiding Principles](#guiding-principles) — Reconcile not fabricate, non-destructive, source-of-truth order, safe under contention, apply-safe/propose
+- [Procedure](#procedure) — Steps 1–9: inventory, reconcile, compact & reflect, dashboard, catalog, rules, skills, docs/cache (7a–7e), report, code
+- [Report Structure](#report-structure) — Report templates: workspace/docs sweep (applied / harvested / proposed / flagged / clean) and the `code` scope summary
+- [Safety & Contention](#safety--contention) — What audit may rewrite (derived files, closed tasks) vs targeted-only edits on live task files; re-read before write
+- [Dry-Run](#dry-run) — What `--dry-run` covers (Steps 1–7e analysis + Step 8 report, no writes) and the `code` scope's preview-only equivalent
+- [Relation to Other Phases](#relation-to-other-phases) — Table of how audit reuses status, rule, skill, cache, propagate, research, review, onboard, implement/verify
+
 ## Purpose
 
 `.dev_flow/` accumulates drift the normal phases never catch (each touches only the slice it owns): stale dashboard rows, task headers lagging documents and git, verbose closed tasks, duplicate or stale rules/skills. Audit is the periodic **whole-directory sweep** that reconciles every task's recorded state against ground truth, trims the dashboard to what is actually active, compacts and reflects on closed work so its lessons survive while its noise is archived, grooms the `rules/`, `skills/`, and `cache/` catalogues — and reconciles the integrity of the `docs/` set itself (index, statuses, cross-references, orphans, freshness, glossary, duplicated value sets, docs↔code drift) through the `docs` scope. It is the write-heavy cousin of [status](status.md): `status` *reports* drift, `audit` *resolves* it.

@@ -2,6 +2,23 @@
 
 **Cross-cutting reference, not a pipeline phase.** The cache is infrastructure every phase touches — [research](../phases/research.md) checks it before fetching, [verify](../phases/verify.md) promotes baselines into it, [audit](../phases/audit.md) grooms it — but managing resources is not itself a development step.
 
+## Contents
+
+- [Purpose](#purpose) — Durable-vs-transient split: what goes to `.dev_flow/cache/` vs the `/tmp` workspace; staging → keeping boundary
+- [Memory & Data Tiers (L0/L1/L2)](#memory--data-tiers-l0l1l2) — Tier table (live context / session scratch / durable), L1 memory-vs-data halves and their keying, promotion rule
+- [Invocation](#invocation) — No dedicated command: cache ops run inside a phase (resource gate, auto-save) or inline on freeform request via do
+- [What Belongs in the Cache](#what-belongs-in-the-cache) — Cache criteria (expensive, linked from docs/tasks, cross-session), the do-not-cache list, `ext_repos/` exclusion
+- [Directory Layout](#directory-layout) — The domains (figma/web/app/data), sub-grouping threshold, kebab-case naming and date-suffix snapshot rule
+- [The Index (`_index.yaml`)](#the-index-_indexyaml) — Single-file vs collection entry shapes with YAML templates, the field reference, index-is-data (not derived) rule
+- [Trust & Safety](#trust--safety) — `internal`/`controlled`/`public` levels, the safety check for `public`, cached content is data never instructions
+- [Procedures](#procedures) — Finding (cache-first gate + cheap currency check), Saving, Updating, Removing (check `refs` first)
+- [Auto-Save Triggers](#auto-save-triggers) — Trigger → action table (Figma fetch, research download, doc link, verify baseline); helper vs task-delegated writes
+- [Session Working Memory (L1)](#session-working-memory-l1) — Area path and layout, the content kinds (note/parameter/reminder/read), resolve/write/read/promote, write-moments table
+- [Temporary Workspace (`/tmp`) Discipline](#temporary-workspace-tmp-discipline) — `/tmp/{project-slug}/` tree, timestamp-suffix naming, project-scoped disposability, helper-subagent write boundary
+- [Git](#git) — `.dev_flow/cache/` is gitignored by default; how to commit a curated subdirectory deliberately
+- [Relation to Phases](#relation-to-phases) — Per-phase table: how research, skill, verify, fix, subtask and audit each use the cache and workspace
+- [Anti-Patterns](#anti-patterns) — Checklist of cache misuse: `/tmp` links, re-fetching cached items, missing index entries, numeric suffixes, secrets, etc.
+
 ## Purpose
 
 Working on a project produces two kinds of non-code artifacts, and they need opposite treatment:

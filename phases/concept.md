@@ -1,5 +1,21 @@
 # Phase 1: Concept Authoring
 
+## Contents
+
+- [Purpose](#purpose) — a concept answers "what" and "why": idea, architecture, mechanisms, philosophy
+- [Language Independence](#language-independence) — no languages, frameworks, or libraries in a concept
+- [Pre-Concept Checklist](#pre-concept-checklist) — the questions to answer first; unverified answers go to research or an open decision
+- [Reuse Check](#reuse-check) — mandatory search of existing concepts, code, and `docs/ext_adoption/` before creating a new concept
+- [Context Loading](#context-loading) — skill/rule gates: load domain skills and architecture rules; no mechanism may violate a `must`
+- [Project Glossary](#project-glossary) — reuse canonical terms from `docs/_glossary.md`, add new terms inline, escalate only material conflicts
+- [Authoring Principles](#authoring-principles) — ideas over implementation, domain language, diagrams, boundaries, criticality header, formatting, Contents, changelog
+- [Interview Mode for Design Decisions](#interview-mode-for-design-decisions) — surface material forks as interviews; open decisions vs banned deferrals; forecast check
+- [Banned Phrases](#banned-phrases) — table of deferral phrases ("temporarily", "for now", "TBD", …) with what to write instead
+- [Structure](#structure) — the concept file template: header fields, §1–§4 anchored sections, Design Decisions (DEC records), Changelog
+- [Spike / Exploration (Optional)](#spike--exploration-optional) — when to run a research spike before or during authoring and how to reference it
+- [Concept Granularity](#concept-granularity) — when to split, when to keep together, rule of thumb; size thresholds from Docs Scaling
+- [Epic / Feature Group](#epic--feature-group) — create an `*.epic.md` when 3+ related concepts have ordering dependencies
+
 ## Purpose
 
 A concept describes the idea, architecture, mechanisms, and philosophy. It answers "what" and "why", not "how to implement".

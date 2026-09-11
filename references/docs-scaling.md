@@ -105,6 +105,7 @@ Rollback: an umbrella set merges back into one file without loss — the anchors
 - Section listings (a file's anchor list) are forbidden in the index.
 - Prose in the index header falls under the history content filter above.
 - A `docs/` subdirectory may carry its own `_index.md`; the more specific index wins for its files.
+- Index format split: a machine-read catalogue (`.dev_flow/rules/`, `skills/`, `roles/`, `cache/`) uses `_index.yaml` — structured entries agents match against; a human-browsed catalogue (`docs/`, `.dev_flow/tasks/`, `.dev_flow/todos/`) uses `_index.md`. Apply the same split to any new collection.
 
 ## Self-sufficient headings
 

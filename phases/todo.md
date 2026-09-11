@@ -1,5 +1,14 @@
 # Phase: Todo — Capture Future Work for Later
 
+## Contents
+
+- [Purpose](#purpose) — file a planning record for later work; the flavors (deferred, queued, contested); who invokes `todo`
+- [Command](#command) — `/dev-flow todo <description>` with deferred and queued examples; contested has no command form
+- [Role Responsible](#role-responsible) — handled by TodoPlanner (`roles/todo-planner.ai.md`)
+- [Constraints](#constraints) — planning record only, no git, no edits to others' blocks, no triggerless deferral, preliminary analysis
+- [Procedure](#procedure) — Steps 0–5: delegation check, context+gates, doc/state search + dedup, flavor/trigger table, filing rules, report
+- [Output Style](#output-style) — `chat` register for the answer, `documentation` register for the record
+
 ## Purpose
 
 Take a free-form description of work to do **later**, find the documentation it would touch, judge whether it is doable, and **file a planning record** with a return trigger. It does not build anything and does not pass through the pipeline gates.

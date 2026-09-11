@@ -1,5 +1,18 @@
 # Phase: Status — Restore Session Context
 
+## Contents
+
+- [Purpose](#purpose) — What status loads into a session; owns the read/write protocol every phase follows; reports drift, audit resolves it
+- [Command](#command) — `/dev-flow status [task_id]` syntax — dashboard summary without argument, single-task detail with one
+- [Context Files](#context-files) — `.dev_flow/` layout, source-of-truth rule (task files win over derived indexes), templates, legacy single-file migration
+- [Collaboration Model (read first)](#collaboration-model-read-first) — Table of who may edit each region of a shared task file; no exclusive locking, no time-based takeover
+- [Read Protocol](#read-protocol) — Re-attention first, then Steps 1–5: read dashboard, read task file, validate freshness, output templates, continuation
+- [Write Protocol](#write-protocol) — Working-memory promotion; updates at phase start / step end / phase end / completion; targeted-edit safety, append-only
+- [Regeneration Procedure](#regeneration-procedure) — How any contributor rebuilds `active_context.md` and `tasks/_index.md` from task headers, incl. Deferred (todos)
+- [Salience Markers](#salience-markers) — `{s:pin|noise|superseded→}` vocabulary, written form, task-scoped expiry, how dev-flow compaction honours salience
+- [Context Hygiene](#context-hygiene) — Canonical caps (10 log entries, ~300-line task, ~80-line dashboard), activity content filter, session history archive
+- [Roles](#roles) — Each phase role updates its own subtask block; ContextTracker is the dedicated read/write/regenerate worker
+
 ## Purpose
 
 Load the active development context into the session so you can quickly resume where you (or other contributors) left off, without re-reading all documents from scratch.
@@ -21,11 +34,15 @@ For the periodic whole-directory revision — reconciling task state with realit
 
 ```
 .dev_flow/
-├── active_context.md          # Dashboard — table of active tasks + recently completed
+├── active_context.md          # Dashboard — table of active tasks + recently completed (+ thin Deferred pointer)
+├── output_styles.md           # Project style profiles — documentation + chat registers (Output Styles); absent → shipped defaults
+├── cache/                     # Durable resources (Figma exports, downloads, baselines) + _index.yaml (Resource Cache)
+├── evidence/                  # ledger.yaml — intervention ledger (Evidence Discipline); absent → reconcile is a no-op
 ├── tasks/
 │   ├── _index.md              # Catalog of task files
 │   ├── task_<ID>.md           # Per-task shared context (multiple contributors)
 │   └── ...
+├── todos/                     # Deferred future work filed by `todo` + _index.md
 └── session_history/           # Archived sessions
 ```
 
@@ -169,7 +186,7 @@ Every dev-flow command MUST update context using this protocol. The goal is **to
      - Otherwise → `task_YYYYMMDD_HHMMSS_<slug>`.
    - **Continuation** — read `active_context.md` to find the existing Task ID.
 2. **Open or create the task file.**
-   - New → write `tasks/task_<ID>.md` from the [task template](../templates/task_context.md). Add yourself to `Contributors`. Add one `### Subtask:` block with you as `Author` and `Status: in-progress`. Set `Last updated` to now.
+   - New → write `tasks/task_<ID>.md` from the [task template](../templates/task_context.md). Add yourself to `Contributors`. Fill `## Intent` (goal / target state / expected result — [Task Intent](../references/task-intent.md)) and the header's `Autonomy` field — `full — "<quote>"` only when the request itself orders it, otherwise `checkpoints` ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)). Add one `### Subtask:` block with you as `Author` and `Status: in-progress`. Set `Last updated` to now.
    - Existing → read the file. Then:
      - If your `<agent-id>` is already in `Contributors` and you have a Subtask block → resume it.
      - If you are not yet a contributor → add yourself to `Contributors` (targeted Edit on the header), append a new `### Subtask:` block at the end of the Subtasks section, and add a Coordination Notes entry like `HH:MM [your-id] — joined, starting on <goal>`.
