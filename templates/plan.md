@@ -87,7 +87,7 @@ Items deferred from the current implementation cycle (each names the trigger tha
 
 ### DEC_01 — {short question}  {#PL_XXX_DEC_01}
 
-> **Status:** {resolved | open}
+> **Status:** {proposed | resolved | resolved (delegated) | open}
 > **Date:** YYYY-MM-DD
 
 **Question:** {the fork, in one sentence}

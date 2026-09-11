@@ -229,7 +229,7 @@ Implement token-bucket rate limiting for per-agent LLM calls.
 | 2026-03-24 | Initial version |
 ```
 
-**Gate check:** All spec sections covered (§01+§03 → Phase 1, §02+§04 → Phase 2; §05 is the `Verify:` source, §06 has no code surface). Technology decisions with rationale; no contested forks. Dependencies stated. Each phase names what to verify. `Status` → `in-progress` as coding starts. Proceed to code.
+**Gate check:** All spec sections covered (§01+§03 → Phase 1, §02+§04 → Phase 2; §05 is the `Verify:` source, §06 has no code surface). Technology decisions with rationale; no contested forks. Dependencies stated. Each phase names what to verify. `Status` → `in-progress` as coding starts. **Design sign-off:** plan, Design Decisions (none contested), files to touch presented; developer: go. **Proceed to code.**
 
 ---
 
@@ -412,7 +412,7 @@ Steps:
 
 ## Step 8 — Commit
 
-Ask the user for explicit commit approval before committing.
+Commit sign-off: changed files, review verdict, intent verdict; "Ready to commit?" — commit on the developer's yes (SKILL.md → Developer Checkpoints).
 
 ```
 All checks passed:

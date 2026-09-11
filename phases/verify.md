@@ -212,7 +212,7 @@ Before proceeding to commit:
 - [ ] If Verify found issues → fix → re-run Test (if exists) → Review → Verify — no fix cycle left incomplete
 - [ ] A failure that traces to the spec/plan itself is escalated upstream, not coded around (see [Upstream Escalation](../references/escalation.md))
 - [ ] Reflection checkpoint run — recurring failure modes harvested and auto-applied as rules/skills (see [Reflection](#reflection--harvest-verification-lessons))
-- [ ] Ask the user for explicit commit approval
+- [ ] Ask the user for explicit commit approval — the commit sign-off of [Developer Checkpoints](../SKILL.md#developer-checkpoints)
 
 ## Anti-Patterns
 

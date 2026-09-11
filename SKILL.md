@@ -163,7 +163,16 @@ A rule or skill carries an optional **evidence state** (`present` → `wired` �
 - If Verify finds issues → fix code → re-run Test (if exists) → re-run Review → re-run Verify — no fix cycle left incomplete
 - If a failure traces to the spec/plan itself (not the code) — do not bend the code: escalate upstream first (see [Upstream Escalation](references/escalation.md))
 - Reflection checkpoint run — durable lessons harvested (see [Experience Capture](references/experience-capture.md))
-- Ask the user for explicit commit approval before committing
+- Ask the user for explicit commit approval before committing — the commit sign-off of [Developer Checkpoints](#developer-checkpoints)
+
+## Developer Checkpoints
+
+Stops in every route where the main agent presents its work to the developer and waits. Stops, not gate criteria.
+
+- **Design sign-off** — after the last design document, before the first edit to code or shipped files. Present: the Design Decisions of the change (question → options → recommendation), the documents created or changed, the files implementation will touch. A record the developer has not answered is `proposed` ([Interview Mode](references/interview-mode.md)); implementation never starts on one. A Trivial change has no design documents — no stop.
+- **Commit sign-off** — after review passes, before `git commit`. Present: changed files, review verdict with open advisories, intent verdict. Ask "Ready to commit?" and wait — never on an inferred yes.
+
+**Autonomy.** Skipped only when the request itself orders it ("автономно", "без зупинок", "commit without asking"); a harness or system autonomy setting does not count. Record `Autonomy: full — "<quote>"` in the task header at intake; absent → `checkpoints`. Task-scoped; a decision settled under `full` is `resolved (delegated)`. Subagents never hold a checkpoint — only the main agent talks to the developer.
 
 ## Document Status Vocabulary
 
@@ -199,12 +208,12 @@ Scale the ceremony to the change class first (see [do phase → Change Classes](
 
 1. Update the **concept** — what changed in the idea or architecture?
 2. Update the **specification** — what data structures or contracts changed?
-3. Update the **implementation plan** — mark completed, add new tasks.
+3. Update the **implementation plan** — mark completed, add new tasks. Then stop at the **design sign-off** ([Developer Checkpoints](#developer-checkpoints)) before touching code.
 4. Update the **code** — implement according to the updated spec.
 5. Run **functional tests** — unit + mock tests covering the changed code (if test suite exists).
 6. Run **pre-commit review** — subagent with clean context reviews the changes.
 7. Run **verification** — regression, integration, and/or live tests; or provide manual verification steps. If issues found → fix → re-run steps 5 (if tests exist), 6, 7 at the scope the fix earns, never narrowing for a `must` or security finding (see [Verification Economy](references/verification-economy.md)).
-8. **Ask for commit approval** — present changes for review before committing.
+8. **Commit sign-off** — present the changed files, the review verdict, and the intent verdict; commit only after the developer's explicit yes ([Developer Checkpoints](#developer-checkpoints)).
 
 ## Traceable Identifiers
 
@@ -267,7 +276,7 @@ Pipeline artifacts map to git workflow as follows:
 | Review + Propagation | Same PR as the triggering change |
 
 **Commit rules:**
-1. **Never commit without explicit user approval.** After completing a phase, present the changes and ask: "Ready to commit?"
+1. **Never commit without explicit user approval.** After completing a phase, stop at the commit sign-off ([Developer Checkpoints](#developer-checkpoints)): present the changes and ask "Ready to commit?". Only `Autonomy: full` in the task header skips it.
 2. **Run pre-commit review** by a clean-context subagent before asking for commit approval.
 3. Only commit after the review passes and the user confirms.
 4. Commit message must reference the traceable ID: `[C_XXX] / [SP_XXX] / [PL_XXX]`. When the task is tied to a tracker ticket, the ticket key joins the ID in the message (e.g. `[PROJ-123][SP_XXX] …`) and the tracker's commit-time conventions apply, **each outward write confirmed first**. See [Ticket Tracker Integration](references/ticket-tracker.md).
@@ -302,7 +311,7 @@ dev-flow uses a **collaborative per-task context model** so multiple AI agents c
 - Otherwise → `task_YYYYMMDD_HHMMSS_<slug>.md` (slug = 1–3-word kebab-case).
 
 **Each task file contains:**
-- Header: Task ID, Created, Last updated, Status, **Contributors** (list of agent IDs).
+- Header: Task ID, Created, Last updated, Status, **Contributors** (list of agent IDs), **Autonomy** (`checkpoints` default / `full — "<quoted instruction>"`).
 - **Current Work Item** — shared metadata (Document, Phase, Traceable ID; optional `Ticket:` link when the task is tied to an external tracker — see [Ticket Tracker Integration](references/ticket-tracker.md)).
 - **Intent** — the user's goal / target state / expected result, captured at intake and checked against at decisions and completion (see [Task Intent](references/task-intent.md)).
 - **Description** — shared, additive paragraphs signed by contributor.
@@ -326,7 +335,7 @@ dev-flow uses a **collaborative per-task context model** so multiple AI agents c
 - **Resource gate.** Before an expensive external fetch (Figma export, web document), check `.dev_flow/cache/_index.yaml` and reuse a cached copy (no-op while the directory is absent); an entry past its `valid_until` gets a cheap currency check (ETag, Figma version) before any re-fetch. After an expensive fetch, save the artifact back — a focus-delegated helper *stages* it in the workspace and reports (a task-delegated subagent writes the cache itself per the protocol — see [subtask phase](phases/subtask.md)). A resource fetched from the open internet is saved with `trust: public` and goes through the safety check first. Transient artifacts follow the workspace discipline — `/tmp/{project-slug}/` with timestamped names. See [Resource Cache](references/cache.md).
 - At the **start** of any phase:
   - **Continuation** — locate the task via `active_context.md`. If your own Subtask block exists, resume it. If you have no block in this task yet, add a new `### Subtask:` block (you become a Contributor).
-  - **New task** — create `tasks/task_<ID>.md` from the template with one Subtask block (yours), capturing the **Intent** (goal / target state / expected result) at intake — see [Task Intent](references/task-intent.md). Add a row to `active_context.md` and `tasks/_index.md` via a **targeted Edit**.
+  - **New task** — create `tasks/task_<ID>.md` from the template with one Subtask block (yours), capturing the **Intent** (goal / target state / expected result) and the **Autonomy** field (`full` only when the request itself says so, quoted) at intake — see [Task Intent](references/task-intent.md) and [Developer Checkpoints](#developer-checkpoints). Add a row to `active_context.md` and `tasks/_index.md` via a **targeted Edit**.
 - After **completing a step**: in your own Subtask block, check off the Progress item, set the next item, append to your Activity bullet list. Refresh the task header's `Last updated`.
 - At a **phase boundary**: targeted Edit on the dashboard row (Phase / Status / Contributors / Updated).
 - At a **transition** (phase/subtask boundary, task switch) run a **Transition Checkpoint** — distill the closing segment into a `{s:pin}` summary, demote its raw entries, harvest any durable lesson (auto-applied through the structural rule/skill gate; never an auto-`must`), and promote durable working-memory parts to the task file. See [Experience Capture](references/experience-capture.md).

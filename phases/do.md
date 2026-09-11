@@ -56,7 +56,7 @@ This command is handled by **DevFlowOrchestrator**: [roles/dev-flow-orchestrator
 
 ### Step 2: Interpret the request
 
-**Capture the intent first.** Before classifying, extract the [Task Intent](../references/task-intent.md) — the goal (why), target state, and expected result — from the request wording, active context, and any linked ticket. Distinguish the *requested action* from the *underlying goal*; mark inferred parts `(inferred)`. Record it in the task file's `## Intent` section (in Step 6 for a new task). Skip the record for trivial routes with self-evident intent.
+**Capture the intent first.** If the request itself orders an unattended run ("автономно", "без зупинок"), set the task header `Autonomy: full — "<quote>"`; a harness or system autonomy setting does not ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)). Before classifying, extract the [Task Intent](../references/task-intent.md) — the goal (why), target state, and expected result — from the request wording, active context, and any linked ticket. Distinguish the *requested action* from the *underlying goal*; mark inferred parts `(inferred)`. Record it in the task file's `## Intent` section (in Step 6 for a new task). Skip the record for trivial routes with self-evident intent.
 
 Analyze the freeform request against the loaded context to determine:
 
@@ -90,10 +90,10 @@ For change requests (not questions/research), classify the change **before** rou
 
 | Class | What it is | Route |
 |-------|-----------|-------|
-| **Trivial** | No behavior change: typo, comment, log message, rename with no contract impact | implement → test (if suite exists) → review → commit approval. Skip concept/spec/plan edits; pre-commit review stays a clean-context subagent ([review phase](review.md)) — it just has little to read |
-| **Standard** | Behavior changes within an existing spec'd area: new field, changed validation, UI element | spec → plan → implement → full Test/Review/Verify pipeline |
-| **Architectural** | New capability, new entity, changed mechanism or boundary | concept → spec → plan → implement → full pipeline |
-| **Internal refactor** | Structure changes, contracts identical | [Refactoring Protocol](plan.md#refactoring-protocol) (plan-only workflow) |
+| **Trivial** | No behavior change: typo, comment, log message, rename with no contract impact | implement → test (if suite exists) → review → **commit sign-off**. No design sign-off (no design documents). Skip concept/spec/plan edits; pre-commit review stays a clean-context subagent ([review phase](review.md)) — it just has little to read |
+| **Standard** | Behavior changes within an existing spec'd area: new field, changed validation, UI element | spec → plan → **design sign-off** → implement → full Test/Review/Verify pipeline → **commit sign-off** |
+| **Architectural** | New capability, new entity, changed mechanism or boundary | concept → spec → plan → **design sign-off** → implement → full pipeline → **commit sign-off** |
+| **Internal refactor** | Structure changes, contracts identical | [Refactoring Protocol](plan.md#refactoring-protocol) (plan-only workflow — carries its own **design sign-off** and **commit sign-off**) |
 
 When unsure between two classes, take the heavier one — under-classifying is how drift starts. When the class hinges on how far the change reaches, run the [Impact Walk](../references/impact.md) — the radius (docs / code bindings / active tasks) is the evidence. The [propagation matrix](propagate.md#change-type-propagation-matrix) remains the per-document authority on what must be updated; change classes decide where the route *starts*.
 
@@ -133,15 +133,16 @@ After confirming intent, invoke the appropriate dev-flow phase(s) in order:
    - Gate: spec → plan
    - Update `auth.plan.md` — add task for Skip button
    - Gate: plan → implement
+   - Design sign-off — DEC batch, changed docs, files to touch; wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints))
    - Implement the change
    - Run tests if suite exists
-   - Present for commit approval
+   - Review, then commit sign-off — changed files, review verdict, intent verdict; "Ready to commit?"
 
 #### Scenario C — New feature (no existing documents)
 
 1. Confirm: "No existing concept found for this. I'll start from concept phase."
-2. Execute: `/dev-flow concept` → `/dev-flow spec` → `/dev-flow plan` → `/dev-flow implement`
-3. Follow all gate checks between phases.
+2. Execute: `/dev-flow concept` → `/dev-flow spec` → `/dev-flow plan` → **design sign-off** → `/dev-flow implement` → … → review → **commit sign-off**
+3. Follow all gate checks between phases; the checkpoints are skipped only under `Autonomy: full` in the task header ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)).
 
 #### Scenario D — Documentation only
 
@@ -163,7 +164,7 @@ If updates are needed:
 
 ### Step 6: Update context
 
-For a **new task**, fill the task file's `## Intent` section with what Step 2 captured (goal / target state / expected result) — it is the reference every later check compares against ([Task Intent](../references/task-intent.md)). If the user restates the goal mid-task, update the section and re-check open work against it.
+For a **new task**, set the header `Autonomy` field and fill the task file's `## Intent` section with what Step 2 captured (goal / target state / expected result) — it is the reference every later check compares against ([Task Intent](../references/task-intent.md)). If the user restates the goal mid-task, update the section and re-check open work against it.
 
 After every phase step, in `.dev_flow/tasks/task_<ID>.md`:
 - In **your own Subtask block** (the one whose `Author` is your session): check off completed steps in Progress, set the next step, append a one-line entry to that block's Activity bullet list.
@@ -181,7 +182,7 @@ Never rewrite another contributor's Subtask block or their tagged entries in sha
 ### Step 7: Session wrap-up
 
 If the user ends the session (or after completing a full phase chain):
-1. **Intent verdict (on completion).** When reporting the task done or requesting commit approval, compare the outcome to the task's `## Intent` (Expected result) and state `intent: met / partially met / diverged (+why)` in the report — a divergence is surfaced, never silently absorbed. Skip for a mid-task hand-off. See [Task Intent](../references/task-intent.md).
+1. **Intent verdict (on completion).** When reporting the task done or stopping at the commit sign-off, compare the outcome to the task's `## Intent` (Expected result) and state `intent: met / partially met / diverged (+why)` in the report — a divergence is surfaced, never silently absorbed. Skip for a mid-task hand-off. See [Task Intent](../references/task-intent.md).
 2. In **your own Subtask block** — set `Status` (`review-pending` / `done` / `blocked`), append a wrap-up entry to its Activity list. Optionally add a Coordination Note about hand-off (`[your-id] — stepping away, anyone may pick up from <here>`).
 3. In the task **header** — refresh `Last updated`. If all Subtasks across all contributors are `done`, set the task-level `Status: done`.
 4. Targeted Edit on the dashboard and catalog:
@@ -200,12 +201,12 @@ User request received
 │
 ├─ Describes UI/API/behavior change
 │   ├─ Small (affects 1–2 spec sections)
-│   │   └─ spec → plan → implement
+│   │   └─ spec → plan → design sign-off → implement → … → commit sign-off
 │   └─ Large (affects architecture)
-│       └─ concept → spec → plan → implement
+│       └─ concept → spec → plan → design sign-off → implement → … → commit sign-off
 │
 ├─ Reports a defect ("fix", "виправи", "падає", crash, error description)
-│   └─ fix (analyze → plan fix → implement → verify)
+│   └─ fix (analyze → plan fix → design sign-off → implement → verify → commit sign-off)
 │
 ├─ Describes documentation update
 │   └─ propagate / review

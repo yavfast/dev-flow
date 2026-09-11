@@ -454,6 +454,7 @@ dev-flow/
 4. **Fresh eyes before commit** — clean-context review catches what you missed
 5. **Living docs, not dead docs** — propagation keeps documentation current
 6. **Rules and skills accumulate** — project knowledge is captured and reused across sessions
+7. **The developer signs off before code and before commit** — a design sign-off after the design documents, a commit sign-off before `git commit`; skipped only when the request itself says so
 
 ## Requirements
 

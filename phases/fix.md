@@ -49,7 +49,7 @@ If you'll delegate the diagnosis loop or verification (see the **Delegation** no
 2. **Propose the fix** — list specific changes (files, methods, what changes and why). If the same root cause admits *materially different* strategies — a quick **band-aid**, a **structural** fix, a **workaround** — with different long-term cost, surface them as marked options with a recommendation, not a single silent pick (see [Interview Mode in Fix](#interview-mode-in-fix)).
 3. **Assess impact** — note if the fix touches shared code that other features depend on.
 4. **Check rules (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml` and load rules for the code you'll change; the fix MUST comply (`must` = blocks).
-5. **Present to user** — show the analysis and the fix option(s). Wait for approval (or the developer's chosen/composed option) before proceeding to implementation.
+5. **Present to user** — show the analysis and the fix option(s). Wait for approval (or the developer's chosen/composed option) before proceeding to implementation. This is the fix route's design sign-off ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)).
 
 ### Step 3: Implement
 
@@ -98,6 +98,8 @@ A fix is the highest-yield **rule auto-discovery** moment: a bug just proved a g
 - **Skill from a non-obvious diagnosis.** If diagnosis produced broadly-useful, non-trivial knowledge — a stack-specific pitfall, a debugging technique that paid off — write/update a skill through the [skill phase](skill.md) non-triviality filter.
 
 **Auto-apply, no permission prompt** — written through the structural rule/skill gate; **never auto-write a `must`**, and route a would-be `must` or a contradiction with an existing rule to an [independent clean-context review](../references/delegation.md) first. Every write is visible in the commit diff. Then distill the segment, demote the raw diagnosis turns, and promote durable parts to the fix's task file. See **[Experience Capture](../references/experience-capture.md)**. (For a code-only fix, the auto-written rule and any open decision are recorded as in [Interview Mode in Fix](#interview-mode-in-fix).)
+
+**Commit sign-off.** Before `git commit`: changed files, review verdict, intent verdict; "Ready to commit?" and wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)).
 
 ## Diagnosis (optional)
 

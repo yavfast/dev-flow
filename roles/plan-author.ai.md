@@ -24,7 +24,7 @@ role PlanAuthor {
 
   outputs:
     - "*.plan.md file with proper structure and metadata"
-    - "Design Decisions section recording every contested technology fork (resolved or open)"
+    - "Design Decisions section recording every contested technology fork (proposed / resolved / open)"
     - "List of open decision points surfaced back to the orchestrator for the interview"
     - "Updated _index.md entry"
 

@@ -94,9 +94,11 @@ Then **stop and wait** for the developer's answer. Do not proceed past an unreso
 
 ### 5. Resolve — the valid outcomes
 
-Each decision ends in exactly one of these states:
+A fork the developer has not answered yet (no live channel, or recorded without asking) is **`proposed`**: question, options, recommended option with rationale. It satisfies the gates' "settled" criterion up to the design sign-off, where the developer's answer moves it to a terminal state; implementation never starts on a `proposed` record, and the agent never resolves one by its own hand ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)). Under `Autonomy: full` the agent settles it as `resolved (delegated)`.
 
-- **Resolved (consensus)** — the developer picked an option (yours or their own). This is the default and the goal for production work. Record the chosen option **and its rationale**, and note the rejected alternatives so the choice isn't silently re-opened later.
+Each decision then ends in exactly one of these terminal states:
+
+- **Resolved (consensus)** — the developer picked an option (yours or their own). This is the default and the goal for production work. Written `resolved (delegated)` when the agent settled it under `Autonomy: full`. Record the chosen option **and its rationale**, and note the rejected alternatives so the choice isn't silently re-opened later.
 
 - **Open (documented alternatives)** — the developer chooses to keep options open. Legitimate for **research / exploratory** work, or when a decision genuinely depends on information that doesn't exist yet. This is **not** a license to defer by default. An open decision is only acceptable if it records:
   - the candidate options with their trade-offs, **and**
@@ -113,9 +115,9 @@ The interview needs a live developer, so it is conducted by **whoever is talking
 A **delegated subagent** (a phase author, or a task-delegated [subtask](../phases/subtask.md) executor) must **not** resolve a material fork by guessing — and it must first exhaust the Step 0 context-gathering, since code and prior `DEC_NN` records often close a fork outright. For whatever genuinely remains, its channel is the **initiator**, not the developer:
 
 1. **Escalate up the chain.** Present the fork to the initiator in the standard form — markered options + a recommended answer, independent questions batched. The initiator answers from the main-task picture it holds, or relays to the developer what only the developer can decide, and the answer comes back down.
-2. **No live channel** (a one-shot run, batch work)? Checkpoint instead: record each decision point in Design Decisions as **open** — options, consequences, recommended answer with rationale, and a resolution trigger of "resolve with the initiator/developer before the gate" — and surface the list in the report. The initiator then answers and **continues the same subagent** (its assembled context is the asset), or runs the interview with the developer itself and flips each record to `resolved`.
+2. **No live channel** (a one-shot run, batch work)? Checkpoint instead: record each decision point in Design Decisions as **`proposed`** (options, consequences, recommended answer) and surface the list in the report; `open` is reserved for a fork that waits on information nobody has yet. The initiator then answers and **continues the same subagent** (its assembled context is the asset), or runs the interview with the developer itself and flips each record to `resolved`.
 
-Either way the gate (below) will not pass while material decisions are still open without a trigger — so nothing slips through on the delegated path.
+Either way nothing slips through: a `proposed` record is presented at the design sign-off before any code edit, and the gate (below) will not pass while a material decision is `open` without a trigger.
 
 ## Recording — the Design Decisions section
 
@@ -130,7 +132,7 @@ Every concept, spec, and plan template carries a **Design Decisions** section. E
 ```markdown
 ### DEC_01 — {short question}  {#C_XXX_DEC_01}
 
-> **Status:** resolved | open
+> **Status:** proposed | resolved | resolved (delegated) | open
 > **Date:** YYYY-MM-DD
 
 **Question:** {the fork, in one sentence}

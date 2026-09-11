@@ -32,7 +32,7 @@ Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../S
 
 Specs are where a concept's choices get pinned to concrete data shapes and contracts — and a buried choice here (a field's type, an error model, a state transition, a sync strategy) is even harder to reverse than in the concept, because consumers bind to it. When authoring surfaces **two or more materially different ways to model or contract something**, do not pick one silently. Stop and run an interview: present the fork with 2–4 options and your **recommended answer**, reach a consensus, and record the outcome.
 
-See **[Interview Mode](../references/interview-mode.md)** for the full procedure. Record every resolved or open decision in the spec's **Design Decisions** section.
+See **[Interview Mode](../references/interview-mode.md)** for the full procedure. Record every proposed, resolved, or open decision in the spec's **Design Decisions** section.
 
 **Interview vs Banned Phrases.** A documented **open** decision (options + trade-offs + a resolution trigger) is *not* a banned "TBD". The banned phrases below are *undocumented* deferrals with no owner and no trigger. An open decision records the alternatives and the concrete event/date that closes it — that is the sanctioned way to leave something open (e.g. for research work).
 
@@ -224,7 +224,7 @@ decision:
 
 ### DEC_01 — {short question}  {#SP_XXX_DEC_01}
 
-> **Status:** resolved | open
+> **Status:** proposed | resolved | resolved (delegated) | open
 > **Date:** YYYY-MM-DD
 
 **Question:** {the fork, in one sentence}

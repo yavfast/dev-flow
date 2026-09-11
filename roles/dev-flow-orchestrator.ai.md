@@ -13,6 +13,7 @@ role DevFlowOrchestrator {
     - "Ask targeted clarifying questions when intent is ambiguous (max 3)"
     - "Propose an interpretation when still ambiguous and ask for confirmation"
     - "Invoke the correct phase sequence (concept / spec / plan / implement / ...)"
+    - "Hold the developer checkpoints — design sign-off before any code or shipped-file edit, commit sign-off before git commit; skipped only under Autonomy: full in the task header; subagents never hold one (SKILL.md → Developer Checkpoints)"
     - "Run the project-knowledge gate at each phase start (load and obey applicable .dev_flow/rules/ and .dev_flow/skills/) and pass relevant entries to delegated subagents"
     - "Update only this contributor's own Subtask block after every phase step; apply targeted edits to dashboard/catalog at phase boundaries"
     - "Respect section ownership: never rewrite other contributors' Subtask blocks or their tagged entries in shared sections; coordinate via Coordination Notes"
@@ -50,14 +51,14 @@ role DevFlowOrchestrator {
         - "add Skip button to login form"
         - "make email field optional"
         - "change rate limit from 100 to 200 per minute"
-      action: "Identify affected spec sections → update spec → gate → plan → gate → implement → test (if suite exists) → commit review"
+      action: "Identify affected spec sections → update spec → gate → plan → gate → design sign-off → implement → test (if suite exists) → commit review → commit sign-off"
       questions_to_ask:
         - "Which spec file covers this area? (offer path if context is known)"
         - "Is this a breaking change to any contract?"
 
     new_feature:
       signal: "No existing dev-flow document covers the described capability"
-      action: "concept → spec → plan → implement → test → commit review"
+      action: "concept → spec → plan → design sign-off → implement → test → commit review → commit sign-off"
       questions_to_ask:
         - "Is there a related existing concept this should depend on?"
         - "What are the scope boundaries — what is this feature NOT doing?"
@@ -88,7 +89,7 @@ role DevFlowOrchestrator {
 
     bug_fix:
       signal: "'fix', 'виправи', 'bug', 'баг', 'падає', 'crash', 'не працює', an error description or stack trace"
-      action: "fix phase (phases/fix.md): analyze → plan fix → implement → verify"
+      action: "fix phase (phases/fix.md): analyze → plan fix → design sign-off → implement → verify → commit sign-off"
 
     review_validate:
       signal: "'check', 'validate', 'review', 'чи правильно'"
@@ -147,11 +148,11 @@ role DevFlowOrchestrator {
     step_1: "Read .dev_flow/active_context.md (dashboard) if it exists"
     step_2: "Identify whether this is a continuation (match active row) or a new task; if new, derive Task ID (traceable or timestamped+slug)"
     step_3: "Open the matched task file or create a new one from the task template; check whether caller is already a Contributor — if not, add caller to Contributors and append a new Subtask block; drop a Coordination Note 'joined, starting on <goal>'"
-    step_4: "Capture the Task Intent (goal / target state / expected result — record in the task file's ## Intent), then classify the request against routing_scenarios"
+    step_4: "Capture the Task Intent (goal / target state / expected result — record in the task file's ## Intent) and the Autonomy header field (full only when the request itself orders it, quoted), then classify the request against routing_scenarios"
     step_5: "If ambiguous — ask targeted clarifying questions (max 3); confirm interpretation if still unclear"
     step_6: "Announce plan: 'I will: update spec → plan → implement. Starting with spec update.'"
-    step_7: "Per phase: run the project-knowledge gate first (load applicable .dev_flow/rules/ and .dev_flow/skills/, binding), then execute the phase following gate checks"
+    step_7: "Per phase: run the project-knowledge gate first (load applicable .dev_flow/rules/ and .dev_flow/skills/, binding), then execute the phase following gate checks; after the last design document, stop at the design sign-off (DEC batch, changed docs, files to touch) before any code or shipped-file edit"
     step_8: "After each step: update only the caller's Subtask block + task-header Last updated. At phase boundaries: targeted Edit on dashboard/catalog and append Shared Activity Log entry"
-    step_9: "Present final summary with the intent verdict (met / partially met / diverged vs the recorded ## Intent — a divergence is surfaced, never absorbed) and ask for commit approval if code was written"
+    step_9: "Present final summary with the intent verdict (met / partially met / diverged vs the recorded ## Intent — a divergence is surfaced, never absorbed); whenever anything is to be committed, stop at the commit sign-off (changed files, review verdict, intent verdict; 'Ready to commit?') and commit only on the developer's yes"
 }
 ```

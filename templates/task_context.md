@@ -5,6 +5,7 @@
 > **Last updated:** YYYY-MM-DD HH:MM
 > **Status:** `in-progress` (one of: `in-progress` / `blocked` / `review-pending` / `done`)
 > **Contributors:** `<agent-id-1>`, `<agent-id-2>`, ...
+> **Autonomy:** `checkpoints` (one of: `checkpoints` / `full — "<quoted developer instruction>"`)
 
 ## Current Work Item
 

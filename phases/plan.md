@@ -33,6 +33,10 @@ A rule, an existing concept, or a documented convention that already settles a c
 
 **Forecast check (advisory).** Before fixing phase order or a structural choice, forecast at *plan altitude* — which phase unblocks which, and the cost a later structural change would force — and route each anticipation through the YAGNI-gate (`build now` / `seam+flag` / `drop+record`); a deferred phase goes to the backlog with a return trigger, never dropped silently. See [Consequence Forecasting](../references/consequence-forecasting.md).
 
+## Design Sign-off
+
+When the plan passes its gate, stop before implementation: present the Design Decisions of the change (question → options → recommendation), the documents created or changed, the files implementation will touch; wait. Skipped only under `Autonomy: full`. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
+
 ## Structure
 
 ```markdown
@@ -131,7 +135,7 @@ Omit if no technology choice was contested. One record per decision:
 
 ### DEC_01 — {short question}  {#PL_XXX_DEC_01}
 
-> **Status:** resolved | open
+> **Status:** proposed | resolved | resolved (delegated) | open
 > **Date:** YYYY-MM-DD
 
 **Question:** {the fork, in one sentence}
@@ -172,11 +176,12 @@ When a code change restructures modules, files, or internal organization **witho
    - Add a Refactor phase with [TODO] status
    - List file moves, renames, and structural changes
    - Reference which existing plan phases are affected
+   - Design sign-off: present the Refactor phase and wait for the developer's go (SKILL.md → Developer Checkpoints)
 3. Implement the refactoring
 4. Run tests — all existing tests must pass without modification
 5. Update the plan: mark Refactor phase [DONE], update file paths in other phases
 6. Skip Concept and Specification updates — contracts did not change
-7. Ask user for commit approval
+7. Commit sign-off — changed files, review verdict, intent verdict; "Ready to commit?" and wait
 ```
 
 ### Refactor Phase Format in Plan

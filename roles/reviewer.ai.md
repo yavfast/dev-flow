@@ -175,6 +175,7 @@ role Reviewer {
       - "Contested technology forks resolved (consensus + rationale) or recorded as open decisions with a resolution trigger"
       - "Phase dependencies explicit"
       - "Every phase declares a Verify field (spec SP_XXX_05_* criteria + any phase-local acceptance check)"
+    reading_note: "A proposed Design Decision (Interview Mode) satisfies the resolved-or-open criteria above up to the design sign-off; implementation never starts on one"
 
   rules_compliance:
     condition: ".dev_flow/rules/ directory exists"

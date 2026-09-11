@@ -71,7 +71,7 @@ Concepts are where the biggest, least-reversible choices are made — and where 
 
 The developer holds context you don't (roadmap, business constraints, team) and owns the consequences; an architectural mistake set here is expensive to undo once it reaches code. A cheap question now beats an expensive reversal later.
 
-See **[Interview Mode](../references/interview-mode.md)** for the full procedure — when a fork counts as a decision point (and when it does not), how to frame options with a recommendation, sequential vs batched questions, and the two valid outcomes (consensus vs documented open alternatives with a resolution trigger). Record every resolved or open decision in the concept's **Design Decisions** section.
+See **[Interview Mode](../references/interview-mode.md)** for the full procedure — when a fork counts as a decision point (and when it does not), how to frame options with a recommendation, sequential vs batched questions, and the valid outcomes (consensus vs documented open alternatives with a resolution trigger). Record every proposed, resolved, or open decision in the concept's **Design Decisions** section.
 
 **Interview vs Banned Phrases.** A documented **open** decision (options + trade-offs + a resolution trigger) is *not* a banned deferral. The phrases below ("temporarily", "for now", …) are *undocumented* deferrals with no owner and no trigger; an open decision records the alternatives and the concrete event/date that closes it — the sanctioned way to leave something open (e.g. for research work).
 
@@ -152,7 +152,7 @@ section only if authoring surfaced no decision points. One record per decision:
 
 ### DEC_01 — {short question}  {#C_XXX_DEC_01}
 
-> **Status:** resolved | open
+> **Status:** proposed | resolved | resolved (delegated) | open
 > **Date:** YYYY-MM-DD
 
 **Question:** {the fork, in one sentence}

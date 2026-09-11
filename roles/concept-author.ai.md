@@ -28,7 +28,7 @@ role ConceptAuthor {
   outputs:
     - "*.concept.md file with proper structure and metadata"
     - "*.epic.md file (when 3+ related concepts needed)"
-    - "Design Decisions section recording every material fork (resolved or open)"
+    - "Design Decisions section recording every material fork (proposed / resolved / open)"
     - "List of open decision points surfaced back to the orchestrator for the interview"
     - "Updated _index.md entry"
     - "Updated docs/_glossary.md (new or clarified domain terms)"

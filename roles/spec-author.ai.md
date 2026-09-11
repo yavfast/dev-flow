@@ -25,7 +25,7 @@ role SpecAuthor {
 
   outputs:
     - "*.sp.md file with proper structure and metadata"
-    - "Design Decisions section recording every material fork (resolved or open)"
+    - "Design Decisions section recording every material fork (proposed / resolved / open)"
     - "List of open decision points surfaced back to the orchestrator for the interview"
     - "Updated _index.md entry"
 

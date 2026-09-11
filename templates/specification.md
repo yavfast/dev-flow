@@ -140,7 +140,7 @@ Transition rules:
 
 ### DEC_01 — {short question}  {#SP_XXX_DEC_01}
 
-> **Status:** {resolved | open}
+> **Status:** {proposed | resolved | resolved (delegated) | open}
 > **Date:** YYYY-MM-DD
 
 **Question:** {the fork, in one sentence}
