@@ -134,6 +134,10 @@ Verify fails
 
 This cycle repeats until all verification passes. Each iteration is smaller because the fix is targeted.
 
+**Scope each re-run to the fix.** A contained fix of a prescribed finding that is neither `must` nor a security class re-runs as a `confirm` round — **every test that was green stays green**, plus a diff check against the prescribed fix — instead of the full Test + clean-context Review pass. The `confirm` round *is* the re-run the gate criterion below asks for, at the scope the fix earned. Any discriminator false or undeterminable → the full re-run above; a round that does not confirm replays as `full`.
+
+Here the prescription must come from a record written **before** the fix existed — the verification failure's own output, or a review finding. The agent that wrote the fix never rates its own fix as unambiguous. With no such record, D2 is false and the re-run is full. Discriminator set: [Verification Economy](../references/verification-economy.md).
+
 **When the failure points upstream.** Verify is often the first place reality pushes back on the *documents*: a spec'd limit that does not survive a live run, an integration contract that cannot hold, a plan technology decision that fails in practice. Bending the code there would make it correct per document and broken per reality. Escalate instead — fix the owning document (interview if it is a fork), re-pass its gate, then resume this cycle. See **[Upstream Escalation](../references/escalation.md)**.
 
 ### Manual Verification
@@ -214,7 +218,7 @@ Before proceeding to commit:
 
 - Skipping verification for "small" changes that affect shared code
 - Running integration/live tests before functional tests and review pass
-- Fixing a verification failure without re-running functional tests + review
+- Fixing a verification failure without re-running functional tests + review, when the fix does not meet every `confirm` discriminator (see [Verification Economy](../references/verification-economy.md)) — and always for a `must` or security finding
 - Bending code to a spec the failure just disproved — escalate upstream instead (see [Upstream Escalation](../references/escalation.md))
 - Not providing manual verification steps when no automated tests exist
 - Creating new integration/live test scenarios without asking the user first

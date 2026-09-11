@@ -117,10 +117,14 @@ Produce a drift report listing:
 
 ### When to Run Drift Detection
 
+A corpus-wide comparison belongs here, or in the [`audit`](audit.md) `docs` scope — not inside an unrelated task. The list below says when to **invoke** the sweep; invoking it is what supplies the entry condition (`explicit-request`, or `audit-run` in the matching scope).
+
 - Before a release or milestone
 - After a large refactoring
 - When joining a project (as part of onboard)
 - Periodically (e.g., monthly) on active projects
+
+Inside a task, a comparison nobody asked for needs a signal. Every signal **false** → do not run it; write the skipped check as `unobserved` with the absent fact, and route a substantive suspicion to a `todo`. A signal you cannot compute is not a false one — run the check in full. The signal set is closed and defined once in the reference. See [Verification Economy](../references/verification-economy.md).
 
 The [Impact Walk](../references/impact.md) reuses this ID-collection machinery to answer the *neighborhood* question for a single node — keep the two on one collection approach.
 

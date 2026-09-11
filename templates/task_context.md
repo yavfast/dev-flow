@@ -59,11 +59,15 @@ A subtask is a thread of work claimed by one contributor. To join this task, add
 
 <!-- Written by the review phase at the CLOSE of each round, so the next round can
      scope from it instead of re-reading the whole diff. Omit the section until a
-     first round has closed. See `references/review-convergence.md` (dev-flow skill). -->
+     first round has closed. See `references/review-convergence.md` (dev-flow skill).
+     Mode: `full` (clean-context reviewer) or `confirm` (mechanical check of a contained,
+     prescribed fix). Round 1 is always `full`, and a `must` or security finding never
+     gets a `confirm` round. See `references/verification-economy.md`. -->
 
-| Round | Scope | Baseline | Verdict | Carry-over (identity → recurrence) |
-|-------|-------|----------|---------|-------------------------------------|
-| 1 | full (no-baseline) | `<tree-ref>` | FAIL | `src/x.ts:41#logic:null` → 1 |
+| Round | Scope | Mode | Baseline | Verdict | Carry-over (identity → recurrence) |
+|-------|-------|------|----------|---------|-------------------------------------|
+| 1 | full (no-baseline) | full | `<tree-ref>` | FAIL | `src/x.ts:41#logic:null` → 1 |
+| 2 | delta | confirm | `<tree-ref>` | PASS | — |
 
 **Always in scope:** [areas declared `Criticality: critical` — read every round regardless of the delta, or "—"]
 

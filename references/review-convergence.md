@@ -42,7 +42,7 @@ Then the table (so `severity` is `should` or `prefer`):
 | `should` | blocking | blocking | advisory | deferrable | blocking |
 | `prefer` | advisory | advisory | advisory | deferrable | advisory |
 
-- **blocking** — spawns the next round.
+- **blocking** — spawns the next round. The round's **mode** (`full` / `confirm`) is computed from the fix, not from the finding — see [Verification Economy](verification-economy.md).
 - **advisory** — reported to the developer, spawns no round.
 - **deferrable** — routes to the todo register at once, spawns no round.
 
@@ -88,7 +88,9 @@ Otherwise the round reads **delta ∪ carry-over ∪ always-in-scope**:
 
 An empty delta with a non-empty carry-over is a legitimate round. Every part empty means no round is needed.
 
-The report names `scope_mode`, and the reason for a full round. A narrowed scope with no named reason violates the no-silent-truncation rule.
+The report names `scope_mode`, the round mode, and the reason for a full round. A narrowed scope with no named reason violates the no-silent-truncation rule.
+
+Scope and mode are independent: scope says **what the round reads**, mode says **who performs it**. A `confirm` round reads the fix diff against the prescribed fix; `must` and security findings never reach it (discriminator D1).
 
 ## Degradation
 

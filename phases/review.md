@@ -18,6 +18,8 @@ Its symmetric twin guards the opposite failure — a loop that never converges. 
 
 0. **Scope the round** ([Review Convergence](../references/review-convergence.md)). Round 1 reads the whole diff. A later round reads **delta ∪ carry-over ∪ always-in-scope** from the baseline written at the close of the previous round, unless a full reason holds: no reachable baseline · upstream spec/plan/rules changed · change class `architectural`. Areas declared `Criticality: critical` are always in scope. Name `scope_mode` — and the reason for a full round — in the report.
 
+0b. **Select the round mode** (repeat rounds only — [Verification Economy](../references/verification-economy.md)). A contained fix of a prescribed finding that is neither `must` nor a security class runs as `confirm`: check the diff against the prescribed fix and that every test that was green is still green, then skip to step 5. Everything else, and round 1 always, runs `full` — continue to step 1. A `confirm` round that does not confirm replays as `full` from step 1.
+
 1. **Launch a reviewer subagent** (role: [reviewer.ai.md](../roles/reviewer.ai.md)) with a clean context containing only:
    - The git diff of all staged/unstaged changes
    - The relevant specification (`*.sp.md`) for contract verification
@@ -48,13 +50,13 @@ Its symmetric twin guards the opposite failure — a loop that never converges. 
 
 4. **Review result:**
    - **Pass** — proceed to commit approval.
-   - **Fail (blocking)** — fix issues, re-run tests if needed, then re-review. A non-`must` blocking finding that recurs unresolved into a second round trips `review-non-convergence` and routes to a `contested` todo instead of a third round.
+   - **Fail (blocking)** — fix issues, re-run tests if needed, then re-review. Select the repeat round's mode first: a contained fix of a prescribed finding that is neither `must` nor a security class is a `confirm` round in the main context, everything else spawns the clean-context reviewer. A `confirm` round that does not confirm replays as `full` — it never closes a finding it did not confirm. See [Verification Economy](../references/verification-economy.md). A non-`must` blocking finding that recurs unresolved into a second round trips `review-non-convergence` and routes to a `contested` todo instead of a third round.
    - **Warnings only** — present warnings to the user, proceed if user approves.
 
 5. **Report format:**
 
    ```
-   ## Pre-Commit Review — round {N}, scope {full|incremental}{, reason: {full reason}}
+   ## Pre-Commit Review — round {N}, scope {full|incremental}, mode {full|confirm}{, reason: {full reason}}
 
    **Result:** PASS / FAIL / WARNINGS
 
@@ -69,14 +71,15 @@ Its symmetric twin guards the opposite failure — a loop that never converges. 
 
    ### Unobserved
    - {check the reviewer could not evaluate} — {what was missing: no spec for the area, no test result, no runtime access}
+   - {check the reviewer did not open} — {the absent entry condition: no signal is true for this file}
 
    ### Summary
    {1-2 sentence summary of the review}
    ```
 
-   A check the reviewer could not evaluate is listed as `unobserved` with the missing observation boundary — it is neither a pass nor a warning, and never omitted. Every routed record is named; a silently deferred finding is a report-ceiling violation. The summary claims no more than the evidence supports. See [Evidence Discipline](../references/evidence-discipline.md).
+   A check the reviewer could not evaluate, or did not open for a missing entry condition ([Verification Economy](../references/verification-economy.md)), is listed as `unobserved` with the absent fact — it is neither a pass nor a warning, and never omitted. Every routed record is named; a silently deferred finding is a report-ceiling violation. The summary claims no more than the evidence supports. See [Evidence Discipline](../references/evidence-discipline.md).
 
-6. **Close the round.** Write `baseline` (tree state), `carry_over` (open blocking findings + recurrence), and `always_in_scope` into the task file, so the next round scopes from them.
+6. **Close the round.** Write `baseline` (tree state), the round mode, `carry_over` (open blocking findings + recurrence), and `always_in_scope` into the task file, so the next round scopes from them.
 
 ## After Review: Verify Phase
 

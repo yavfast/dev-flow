@@ -39,6 +39,8 @@ Before writing code, verify:
 
 **Ticket check (if tied to a tracker).** If the task's Current Work Item carries a `Ticket:` link, propose the *In Progress* status transition through the discovered tracker skill/MCP before coding — confirmed first, never silent. See [Ticket Tracker Integration](../references/ticket-tracker.md).
 
+**Verification economy.** A comparison outside this task and unasked for (code comments against docs, doc freshness, a corpus sweep) runs only on a signal; with every signal **false**, skip it, record it as `unobserved` with the absent fact, and file a `todo` if a substantive suspicion remains. A signal you cannot compute is not a false one — run the check in full. Re-reading a file already in context needs an invalidator. See [Verification Economy](../references/verification-economy.md).
+
 **Knowledge activation (per-burst).** The skill/rule gate above is **re-triggered at the moment of action**, not only here at phase start: before each action burst, re-surface the applicable rules/skills beside the work with a pointer-only Pre-Action Marker — a long session drifts from what was loaded. For a high-stakes burst, escalate to the matching tier (deterministic tripwire / interface-gate / sampled cross-model verifier) where the runtime can observe the action; self-attestation is never the control. See [Application Enforcement](../references/application-enforcement.md).
 
 **Resource check.** Before fetching a design export or external document (e.g. via the Figma MCP) for this implementation, check `.dev_flow/cache/_index.yaml` and reuse a cached copy; save an expensive new fetch back to the cache. See [Resource Cache](../references/cache.md).

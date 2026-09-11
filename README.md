@@ -240,6 +240,16 @@ Two agents can disagree forever about a detail that does not matter. On a large 
 
 A repeat round also stops re-reading the whole diff: it reads the delta since the previous round's baseline, plus every still-open finding, plus every area declared `critical`.
 
+### Verification Economy
+
+The opposite failure of a missed check is a check with no subject: comparing code comments against docs when nothing suggests they diverge, re-reading a document already in context, re-reviewing a one-line fix the reviewer itself prescribed. That is not free caution — it spends the context the plan and the spec need, and its findings dilute the real ones. So every check carries an **entry condition** — see [`references/verification-economy.md`](references/verification-economy.md):
+
+- **Signal.** A comparison nobody asked for runs only when something gives it a subject: the file is in the diff, a traceable ID it references changed, a test failed, the developer asked, or `audit` is running. Corpus-wide sweeps keep their declared home in `propagate` and `audit`.
+- **Invalidator.** A file already read this session is re-read only after a compaction, a change under you, your own edit, a task switch, a different fragment, or a request. Elapsed time is not an invalidator. `read-before-write` on shared files and the mandatory knowledge indexes are untouched.
+- **Confirm discriminators.** A repeat review round runs as a mechanical `confirm` when the finding was neither `must` nor a security class, the review named one concrete fix, the diff stayed inside the named locations, nothing else changed, and the green tests are still green. Anything else is a full round.
+
+Every condition is computed from a fact outside the agent's own prose — a diff, a file state, an exit code — never from "it looks fine to me". When the fact cannot be computed, the check runs in full. And a check that does not run is **written down** as `unobserved` with the missing fact, so the boundary of what was verified stays visible.
+
 ### Interview Mode
 
 The biggest architectural mistakes are made silently. When authoring a **concept**, **specification**, **plan**, or a **fix** hits a real fork — two or more viable, hard-to-reverse options (including the classic "band-aid vs proper fix") — dev-flow does **not** quietly pick one and bury it where no reviewer will catch it. Instead it stops and runs a short **interview**: it presents the fork with 2–4 marked options (A/B/C) and a **recommended answer**, and asks the developer to decide.
@@ -420,6 +430,7 @@ dev-flow/
 │   ├── procedural-skills.md     # Skills as procedural memory — freshness, promotion, curation
 │   ├── evidence-discipline.md   # Evidence states (present→wired→exercised→outcome-supported, plus unobserved) + coverage rung, skill check, intervention ledger, report ceiling
 │   ├── review-convergence.md    # Declared criticality → computed finding materiality; review-non-convergence tripwire → contested todo; incremental round scope
+│   ├── verification-economy.md  # Entry condition per check: signal / invalidator / confirm discriminators; suppression written as unobserved
 │   ├── design-compliance.md     # Validate a UI implementation against its design source of truth
 │   ├── formatting.md            # Formatting conventions for every generated documentation file
 │   ├── output-styles.md         # Two registers — documentation (agent-first) vs chat (deciding developer); project profiles in .dev_flow/output_styles.md

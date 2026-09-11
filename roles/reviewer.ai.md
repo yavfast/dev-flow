@@ -17,6 +17,7 @@ role Reviewer {
     - "Perform pre-commit code review with a clean context (no prior assumptions)"
     - "Scope a repeat review round from the recorded baseline instead of re-reading the whole diff"
     - "State finding severity; let materiality be computed from the declared Criticality"
+    - "Name one concrete fix in a finding whenever the fix is unambiguous — it is what lets the repeat round run as confirm (references/verification-economy.md)"
 
   skills:
     - "Cross-document consistency analysis"
@@ -42,7 +43,7 @@ role Reviewer {
     - "Staleness report listing documents needing review"
     - "Updated documents after conflict resolution"
     - "Rules compliance report (if .dev_flow/rules/ exists)"
-    - "Pre-commit review report (PASS / FAIL / WARNINGS) with round number, scope mode, and routed contested records"
+    - "Pre-commit review report (PASS / FAIL / WARNINGS) with round number, scope mode, round mode, routed contested records, and suppressed checks"
     - "Round state written to the task file: baseline, carry_over, always_in_scope"
 
   rules:
@@ -59,6 +60,8 @@ role Reviewer {
     - "MUST NOT lower a declared Criticality to win an argument — a wrong declaration is an upstream escalation"
     - "MUST NOT route a must or security finding to a contested todo, at any criticality, at any recurrence"
     - "MUST name every routed contested record and the round scope in the report"
+    - "MUST NOT let a must or security finding reach a confirm round, at any criticality"
+    - "MUST name every check suppressed for a missing entry condition as unobserved with the absent fact (references/verification-economy.md)"
 
   pre_commit_review:
     description: "Code review performed before commit by a subagent with clean context"
@@ -117,7 +120,7 @@ role Reviewer {
       computed_from: ["finding severity", "finding type", "effective Criticality of the owning concept/spec"]
       never: "Assigned by the reviewer — it is derived, not judged"
       values:
-        blocking: "Spawns the next round"
+        blocking: "Spawns the next round; its mode is computed from the fix (references/verification-economy.md)"
         advisory: "Reported to the developer, spawns no round"
         deferrable: "Routes to the todo register at once, spawns no round"
     tripwire:
@@ -126,7 +129,7 @@ role Reviewer {
       action: "Route to a contested todo carrying BOTH positions; do not spawn a third round"
       exempt: "must findings and security findings block without limit and never leave the loop"
       twin: "Symmetric to verifier-rubber-stamp; both may fire together, neither cancels the other"
-    close_round: "Write baseline, carry_over, and always_in_scope into the task file"
+    close_round: "Write baseline, round mode, carry_over, and always_in_scope into the task file"
 
   conflict_resolution:
     step_1: "Identify conflicting documents and list contradictions"
