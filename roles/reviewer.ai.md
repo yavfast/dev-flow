@@ -179,8 +179,9 @@ role Reviewer {
   rules_compliance:
     condition: ".dev_flow/rules/ directory exists"
     procedure:
-      - "Read .dev_flow/rules/_index.yaml to identify applicable categories"
-      - "For each changed file, check against relevant rules by severity"
+      - "Read .dev_flow/rules/_index.yaml (by category block when above full_read_limit); match category applies_to selectors against the changed files and the review phase, always-on categories included (Knowledge Scaling activation protocol)"
+      - "Take the matched categories' rules[] from the index, filter by unit selector → the relevant set of directives; over activation_budget drops nothing and lowers no severity; read a rule body only when its directive does not decide the case, a violation is suspected or found, an example is needed, or the rule itself is under edit"
+      - "For each changed file, check against the relevant set by severity"
       - "must violations block advancement — fix before proceeding"
       - "should violations trigger warning — acceptable if justified"
       - "prefer violations are informational — note but do not block"

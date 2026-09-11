@@ -340,9 +340,10 @@ your-project/
     ├── todos/                      # Deferred future work filed by `todo`
     │   └── _index.md
     ├── session_history/            # Archived completed tasks
-    ├── rules/                      # Project coding rules
-    │   ├── _index.yaml
+    ├── rules/                      # Project coding rules — directive-first units, `## Contents` digest, `applies_to` selectors
+    │   ├── _index.yaml             # Derived router (category summary + selector + rules[])
     │   ├── naming.md
+    │   ├── naming.log.md           # Narrative moved out of compacted rules (optional, outside gate loading)
     │   ├── structure.md
     │   └── ...
     ├── skills/                     # Project technology knowledge
@@ -428,6 +429,7 @@ dev-flow/
 │   ├── experience-capture.md    # Transition Checkpoint — distill, demote, promote; auto-applied lessons
 │   ├── application-enforcement.md  # Per-burst knowledge re-activation (loaded ≠ applied)
 │   ├── procedural-skills.md     # Skills as procedural memory — freshness, promotion, curation
+│   ├── knowledge-scaling.md     # Rules/skills at scale — directive-first units, selectors, digests, relevant set, rule↔skill kind test, audit verdicts
 │   ├── evidence-discipline.md   # Evidence states (present→wired→exercised→outcome-supported, plus unobserved) + coverage rung, skill check, intervention ledger, report ceiling
 │   ├── review-convergence.md    # Declared criticality → computed finding materiality; review-non-convergence tripwire → contested todo; incremental round scope
 │   ├── verification-economy.md  # Entry condition per check: signal / invalidator / confirm discriminators; suppression written as unobserved

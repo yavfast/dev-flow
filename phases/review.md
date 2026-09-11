@@ -142,8 +142,8 @@ When `.dev_flow/rules/` exists, review new or modified code against the project 
 
 During the pre-commit code review of new or modified code:
 
-1. Read `.dev_flow/rules/_index.yaml` to identify applicable rule categories.
-2. For each category relevant to the changed files, read the rules document.
+1. Read `.dev_flow/rules/_index.yaml` (by category block when it is above `full_read_limit`) and match category `applies_to` selectors against the changed files and the `review` phase (always-on categories included) — the [Knowledge Scaling](../references/knowledge-scaling.md) activation protocol.
+2. Take the matched categories' `rules[]` from the index, filter by unit selector → the relevant set of directives; over `activation_budget` drops nothing and lowers no severity; read a rule's body (ranged by its anchor) only on a trigger — the directive does not decide the case, a violation is suspected or found, an example is needed, the rule itself is under edit.
 3. Check new code against rules by severity:
    - **must** rules — violation **blocks** advancement. Fix before proceeding.
    - **should** rules — violation triggers **warning**. Acceptable if justified in the review.
@@ -152,7 +152,7 @@ During the pre-commit code review of new or modified code:
 
 | Rule | Severity | File:Line | Status | Notes |
 |------|----------|-----------|--------|-------|
-| {RuleName} | must/should/prefer | path:line | pass/fail/waived | {justification if waived} |
+| {RuleId} | must/should/prefer | path:line | pass/fail/waived | {justification if waived} |
 
 ### When Rules Are Updated
 
@@ -163,9 +163,9 @@ Rules documents in `.dev_flow/rules/` are living documents. They can be updated:
 - By **user request** — explicit instruction to add, modify, or remove a rule.
 
 When updating rules:
-1. Edit the relevant `.dev_flow/rules/{category}.md` file.
-2. Add the `Source` metadata: `onboard analysis | manual | phase observation`.
-3. Update `.dev_flow/rules/_index.yaml` if a new rule was added.
+1. Edit the relevant `.dev_flow/rules/{category}.md` file in the unit form (directive in the heading, bounded body — [rule phase](rule.md)); a reviewer's lesson that is a procedure rather than a checkable constraint goes to a skill instead (kind test).
+2. Record `Provenance` (the review's task file) in the unit body.
+3. Update the category's `## Contents` digest line and `.dev_flow/rules/_index.yaml` in the same edit.
 4. Existing code is NOT required to be retroactively fixed.
 
 **Reflection.** A reviewer finding that "this convention keeps being violated" is the review phase's [Experience Capture](../references/experience-capture.md) harvest: write it as a rule automatically through the [rule phase](rule.md) (default `should`; a would-be `must` or a contradiction routes to independent review first; the developer sees it in the commit diff), rather than an ad-hoc note that evaporates with the review's clean context.

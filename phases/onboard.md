@@ -94,7 +94,7 @@ After analyzing all modules, extract coding rules, patterns, and style conventio
 └── testing.md          # Testing patterns and requirements (if tests exist)
 ```
 
-6. Every rule MUST include at least one real code example with file path reference.
+6. Every rule MUST include at least one real code example with file path reference. Write each rule in the unit form of [Knowledge Scaling](../references/knowledge-scaling.md) — `## {id} — {directive} ({severity})  {#{id}}` over a bounded body — a directive over `directive_max` is split or written as a skill, never truncated; a body stays within `unit_body_max`; give every category an `applies_to` selector (`paths` globs / `phases`) derived from the layer it governs and let a rule's own selector only narrow it, add the `## Contents` digest above `digest_min` rules, and write the index as the derived router with those selectors.
 7. Flag inconsistencies (same pattern done differently in different modules) in `issues.md`.
 8. Update `state.yaml`: `step: rules_extracted`.
 

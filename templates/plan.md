@@ -31,7 +31,7 @@
 
 | Kind | Ref | Applies to | Note |
 |------|-----|-----------|------|
-| rule | {RuleName} | Phase {N} | {what it constrains} |
+| rule | {RuleId} | Phase {N} | {what it constrains} |
 | skill (apply) | {SkillName} | Phase {N} | {current — outranks the prior / stale — re-ground first} |
 
 ## Progress

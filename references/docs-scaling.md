@@ -1,6 +1,6 @@
 # Docs Scaling — Reading, Navigating, and Splitting Large Documentation
 
-Cross-cutting conventions that keep the cost of finding and reading a fragment constant as the `docs/` corpus grows: a grep-first reading protocol, in-document navigation (Contents + lead summary), an adaptive history policy, a split policy for documents that outgrow one file, and the corpus mechanics they rest on (anchors, index router, self-sufficient headings). Every phase that reads or writes pipeline documents applies these conventions; the mechanical checks run in the audit phase (report only) and the mechanical fixes in the propagate phase. Advisory: no gate criterion and no verdict set changes. Scope: pipeline documents in `docs/` — spikes and `ext_adoption/` are exempt.
+Cross-cutting conventions that keep the cost of finding and reading a fragment constant as the `docs/` corpus grows: a grep-first reading protocol, in-document navigation (Contents + lead summary), an adaptive history policy, a split policy for documents that outgrow one file, and the corpus mechanics they rest on (anchors, index router, self-sufficient headings). Every phase that reads or writes pipeline documents applies these conventions; the mechanical checks run in the audit phase (report only) and the mechanical fixes in the propagate phase. Advisory: no gate criterion and no verdict set changes. Scope: pipeline documents in `docs/` — spikes and `ext_adoption/` are exempt; the knowledge catalogues `.dev_flow/rules/` and `.dev_flow/skills/` consume the named constants through [Knowledge Scaling](knowledge-scaling.md).
 
 ## Reading protocol (grep-first)
 
@@ -28,6 +28,11 @@ The single source of numeric thresholds in this skill. Other files name a consta
 | `paragraph_max` | 1 500 characters | length of one logical line (one paragraph = one line) |
 | `lead_lines` | 3–5 logical lines | lead summary length |
 | `changelog_overflow` | 30 entries | Changelog table rows |
+| `directive_max` | 160 characters | length of a knowledge unit's heading directive / a category `summary` / a skills domain `description` ([Knowledge Scaling](knowledge-scaling.md)) |
+| `rationale_max` | 3 logical lines | lines of a knowledge unit's `Why` section |
+| `unit_body_max` | 400 words | words of a knowledge unit's body, heading to next h2 |
+| `digest_min` | 5 units | h2 units in a knowledge file above which a digest is required |
+| `activation_budget` | 20 units | items in one relevant set at a knowledge gate; per phase in the audit overload probe |
 
 Consumption rule: each constant is read only by a cheap mechanical count inside the audit checks or the reading protocol above. Authors and reviewers never count words, characters, sections, or entries by hand — they respond to report verdicts and write by habit ("one paragraph — one statement"; "a section you cannot scan is a split candidate"). During authoring the values are order-of-magnitude orientation, nothing more. Boundary semantics: a trigger fires strictly above its threshold, never at equality. A numeric review finding ("exceeds N words") requires the mechanical measurement attached as provenance; without it the claim is `unobserved`, not a severity finding. A threshold whose cheap measurement is unavailable degrades to judgment without the number — work never stops for a recount.
 

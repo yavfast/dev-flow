@@ -29,7 +29,7 @@ role OnboardRulesExtractor {
     - .dev_flow/rules/error-handling.md — Error handling and logging patterns
     - .dev_flow/rules/style.md — Code style, formatting, documentation conventions
     - .dev_flow/rules/testing.md — Testing patterns and requirements (if tests exist)
-    - .dev_flow/rules/_index.yaml — Index of all rules with summary (YAML)
+    - .dev_flow/rules/_index.yaml — Derived router (YAML): per category `file`, one-line scope `summary`, `applies_to` selector (`paths` globs / `phases`), `rules[]` with `name` (= id), `severity`, `summary` (= the heading directive) — see references/knowledge-scaling.md
 
   rules_document_structure: |
     # {Category} Rules
@@ -38,14 +38,15 @@ role OnboardRulesExtractor {
     > **Source:** onboard analysis / manual / phase observation
     > **Status:** active
 
-    ## Rule: {RuleName}
+    ## Contents
+    - [{RuleId}](#{RuleId}) ({severity}) — {directive}     ← one line per rule, derived from the headings; required above `digest_min` rules
 
-    **Category:** {naming | structure | architecture | error-handling | style | testing}
-    **Severity:** {must | should | prefer}
+    ## {RuleId} — {directive, one imperative line within `directive_max`} ({must | should | prefer})  {#{RuleId}}
+
     **Applies to:** {scope — e.g., all service classes, controller handlers, data models}
 
-    ### Description
-    {Clear, concise description of the rule.}
+    ### Why
+    {Within `rationale_max` logical lines.}
 
     ### Examples
 
@@ -59,8 +60,15 @@ role OnboardRulesExtractor {
     // Counter-example showing what to avoid
     ```
 
-    ### Rationale
-    {Why this pattern exists — consistency, performance, readability, framework requirement.}
+    **Provenance:** onboard analysis — {module / layer analyzed}
+
+  unit_form_rules:
+    - "The heading is the single source of the directive and severity (references/knowledge-scaling.md); RuleId is immutable (PascalCase or PREFIX-NNN) and unique in the catalogue"
+    - "A directive over `directive_max` is split into two rules or written as a skill — never truncated"
+    - "Whole body within `unit_body_max`; no investigation narrative in the body"
+    - "Every category gets an `applies_to` selector derived from the layer it governs (paths globs / phases from the closed set); a rule's own selector only narrows it"
+    - "Digest line and index entry are written in the same edit as the heading"
+    - "A lesson that is a procedure (how to perform, not a constraint a reviewer checks from the artifact) goes to .dev_flow/skills/, not here (kind test)"
 
   severity_levels:
     must: "Mandatory — violation blocks review. Core architectural constraints and naming conventions."

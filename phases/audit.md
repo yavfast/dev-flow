@@ -126,10 +126,12 @@ Regenerate `tasks/_index.md` from the task headers: Active and Recently Complete
 
 ### Step 6 — Revise `rules/`
 
-1. **Index ↔ disk** — reconcile `rules/_index.yaml` against the actual files: add entries for rule files missing from the index, remove entries pointing to files that no longer exist, fix `summary`/`file` fields that have drifted.
+1. **Index ↔ disk (derived layers, applied)** — regenerate the derived layers from the rule headings per [Knowledge Scaling](../references/knowledge-scaling.md): `rules/_index.yaml` category blocks (`rules[]` = the file's units by id plus `moved_to` aliases; stale `file` / `summary` / `severity`; a unit selector wider than its category or a `phases` value outside the closed set → `index-drift`), each category file's `## Contents` digest above `digest_min` units (`digest-drift`; legacy `## Rule:` units get `(legacy)` lines — `heading-legacy`, the heading itself is never rewritten by audit), a missing `{#id}` anchor added from the heading id (`anchor-coverage`), severity words outside `must` / `should` / `prefer` or outside the heading normalized per the [rule phase](rule.md#severity-normalization) with every rename reported (`severity-vocab`), and a category `summary` over `directive_max` or reading as a list of directives replaced by one scope line (`summary-accumulation`). Defects reported, never auto-fixed: a duplicate anchor, a `moved_to` whose target is missing. Every line carries its measurement or is `unobserved`.
 2. **Semantic duplicates** — scan for rules expressing the same constraint under different names or in different category files. Propose a merge: keep the canonical rule (usually the one with the stable ID and more references), deprecate or redirect the other, and report it. **Do not auto-delete.**
 3. **Consistency** — check that each rule has a sane category and severity, that cross-references (rule IDs, file paths, traceable IDs) still resolve, and that `must`-severity rules are genuinely mandatory. Flag stale or dangling references.
 4. **Ledger reconcile (every entry except `owner_kind: skill`)** — for each `.dev_flow/evidence/ledger.yaml` entry whose `trigger` is due, append one verdict (`improved` / `unchanged` / `regressed` / `still-unobserved`); a `regressed` in history keeps its blocker. `owner_kind: skill` belongs to Step 7.6. Report artifacts still `present` with no `exercised` observation ever recorded as **prune candidates** — *proposed*, never auto-deleted (Step 6.2 policy). Absent the file → no-op. See [Evidence Discipline](../references/evidence-discipline.md).
+5. **Knowledge scaling — proposed** ([Knowledge Scaling → Audit verdicts](../references/knowledge-scaling.md#audit-verdicts); content changes, executed by the [rule phase](rule.md) only after confirmation; never a rule-id change): `unit-verbosity` — body over `unit_body_max`, `Why` over `rationale_max`, or a directive over `directive_max` → compaction into `<category>.log.md` (a directive is split or reclassified, never truncated); `kind-mismatch` — the kind test (a reviewer can check it from the artifact alone?) disagrees with the current kind, with the signals named → reclassification rule → skill; `split-planned` / `split-required` — file words over `full_read_limit` / `soft_split` → split into a new category file with its own selector, no umbrella; `knowledge-overload` — the probe: for each phase of the closed set, count the rules (aliases excluded) whose `applies_to.phases` is empty or contains it; over `activation_budget` → the remedy menu (narrow selectors · split the category by selector · reclassify procedural rules · merge duplicates · lower to `prefer` — never a `must`).
+6. **Selector coverage (advisory)** — a category without `applies_to` is `always-on`: report `selector-missing` with a selector hint derived from the category name; the hint is never written automatically.
 
 ### Step 7 — Revise `skills/`
 
@@ -141,6 +143,8 @@ Curation of **procedural skills** — edit **incrementally, never a bulk rewrite
 4. **Freshness re-stamp** — where a procedural skill's `written_against` has drifted past the current tool/framework version, mark it `stale` (or re-stamp `current` if re-grounded). This restamp/incremental edit is **applied**; `prune`/`merge` stay **proposed** (destructive → review).
 5. **Conflicts** — two skills prescribing different procedures for one surface are **surfaced as an explicit decision**, never silently resolved by picking one. Flag an implausibly high `candidate` ratio for re-grading (advisory).
 6. **Evidence & ledger (`owner_kind: skill` entries)** — read `low-hit` from the recorded evidence state rather than estimating it, note skills whose missing `check` keeps them below `exercised` (advisory, never a promotion blocker), and apply the Step 6.4 reconcile to entries with `owner_kind: skill`. See [Evidence Discipline](../references/evidence-discipline.md).
+7. **Knowledge scaling — applied** ([Knowledge Scaling](../references/knowledge-scaling.md)): a root `domains[].description` over `directive_max` or carrying inline file lists / history comments → one scope line (`summary-accumulation`); a skill file above `full_read_limit` without `## Contents` → `digest-drift` (the digest is required there; regenerated from its headings), a missing lead summary reported advisory per [Docs Scaling](../references/docs-scaling.md).
+8. **Knowledge scaling — proposed** (executed by the [skill phase](skill.md) only after confirmation): `split-planned` / `split-required` for a skill file over `full_read_limit` / `soft_split` (a new file in the same domain, ids unchanged); `kind-mismatch` for a Pitfall that reads as an artifact constraint (`artifact-constraint-in-skill`) → reclassification skill → rule with a one-line pointer left in the skill; `knowledge-overload` per domain (entries over `activation_budget`) — advisory for skills.
 
 ### Step 7a — Groom `docs/_glossary.md` (if present)
 
@@ -263,6 +267,7 @@ Use this template so the result is scannable:
    • Trimmed active_context.md (<before> → <after> lines)
    • Rebuilt tasks/_index.md
    • rules/_index.yaml: +<a> entries, −<b> orphans, fixed <c> summaries
+   • rules: regenerated <d> digests (<l> legacy lines), added <e> anchors, normalized <f> severity words (<old> → <new> each), de-accumulated <g> category summaries
    • evidence/ledger.yaml: +<v> verdicts appended; <p> prune candidates proposed
    • skills indexes: +<a>/−<b>
    • cache: extended valid_until on <n> entries (cheap check confirmed unchanged)
@@ -276,6 +281,10 @@ Use this template so the result is scannable:
 
 🟡 Proposed (need your confirmation)
    • Merge rule <A> into <B> (same constraint: <reason>)
+   • Compact rule <id> (<n> words > unit_body_max) → <category>.log.md
+   • Reclassify rule <id> → skill <domain/> (kind test: <signals>) / skill <domain/Name> Pitfall → rule
+   • Split <category>.md (<n> words > full_read_limit | soft_split): <id…> → <new-category>.md
+   • knowledge-overload: phase <phase> activates <n> rules > activation_budget — remedies: <menu>
    • Merge glossary term <A> into <B> (same concept; fold into _Avoid_)
    • Remove stale skill <domain/Name> (references deleted <X>)
    • Remove cached <domain/file> (unreferenced since <date> / superseded by <newer>)
@@ -293,6 +302,7 @@ Use this template so the result is scannable:
    • Cache: <a> files without index entry / <b> entries with missing files (cannot invent `source`)
    • Cache: <file> expired (<valid_until>), source changed or uncheckable — refresh belongs to its update task
    • Docs: orphan <doc> (no spec/plan) / deprecated <doc> still in active Depends on / banned phrase in active <doc>
+   • Rules: duplicate anchor {#<id>} in <file-A>, <file-B> / alias <id> → <moved_to> target missing / category <name> has no applies_to (always-on; hint: <selector>)
 
 ✔️ Clean — no action: <areas with nothing to do>
 ```
