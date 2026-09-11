@@ -32,13 +32,13 @@ The request is a freeform description in any language. Interpret the intent and 
    - Removing a rule — request explicitly says "remove", "delete", "видалити".
    - Listing/showing rules — request says "list", "show", "покажи": read-only — print the matching rules from `_index.yaml` and the category files, write nothing (skip steps 4-7).
 
-2a. **Kind test.** Can a reviewer decide compliance from the artifact (diff, document, task file, commit history) without performing a procedure? Yes → a rule. No → a skill: route to the [skill phase](skill.md). Signals of a misfiled unit (closed list): `multi-step`, `actor-subject` ("measure", "consult", "run with"), `subnumbered-growth` (`X.1`, `X.2`), `no-artifact-check`, `artifact-constraint-in-skill`. Undeterminable → the kind stays as requested, noted `unobserved`. See [Knowledge Scaling → Kind test](../references/knowledge-scaling.md#kind-test-rule-vs-skill).
+2a. **Owner.** A lesson from an incident is a rule. Route to the [skill phase](skill.md) only knowledge that is not an artifact constraint, or a consolidation of an accumulated rule cluster ([Knowledge Scaling → Consolidation](../references/knowledge-scaling.md#consolidation-rules--skill)). In doubt — a rule.
 
 3. **Determine rule properties:**
    - **Category:** naming | structure | architecture | error-handling | style — or an additional category (concurrency / performance / security / testing / ui / data; see Categories below)
    - **Severity:** must | should | prefer — closed set; normalize any other word (see [Severity Normalization](#severity-normalization)); never auto-write a `must` (an independent clean-context review confirms it first)
    - **Rule id:** PascalCase, concise (e.g., `NoMPrefixForFields`, `EnumOverConstants`), or the project's `PREFIX-NNN` scheme when one exists; unique in the catalogue, immutable once written
-   - **Directive:** one imperative logical line, within `directive_max`; over the limit → split into two rules or reclassify (never truncate)
+   - **Directive:** one imperative logical line, within `directive_max`; over the limit → split into two rules (never truncate)
    - **Selector:** inherit the category's `applies_to` (`paths` globs / `phases`) or narrow it; a unit selector never widens its category
    - If ambiguous, ask the user (max 2 questions).
 
@@ -80,7 +80,7 @@ The request is a freeform description in any language. Interpret the intent and 
 
 ## Index Format
 
-`.dev_flow/rules/_index.yaml` is grouped by category and is a **derived router** — regenerated from the category files, never the source of truth. Each category entry carries the backing `file`, a one-line `summary` of the category's scope (within `directive_max`, never an accumulating list of directives), an optional `applies_to` selector (`paths` globs / `phases` from the closed set) that is the default for its rules, and an optional `log`; each rule under it carries `name` (= the rule id), `severity`, `summary` (= the heading directive), an optional narrowing `applies_to`, an **optional** `evidence` record (a missing key reads as `unobserved`; a state other than `unobserved` requires `source` + `ref` — see [Evidence Discipline](../references/evidence-discipline.md)), or — for a moved or reclassified rule — `moved_to` in place of `summary` (an alias: keeps the id resolvable, never activated). See [Knowledge Scaling → Index fields](../references/knowledge-scaling.md#index-fields).
+`.dev_flow/rules/_index.yaml` is grouped by category and is a **derived router** — regenerated from the category files, never the source of truth. Each category entry carries the backing `file`, a one-line `summary` of the category's scope (within `directive_max`, never an accumulating list of directives), an optional `applies_to` selector (`paths` globs / `phases` from the closed set) that is the default for its rules, and an optional `log`; each rule under it carries `name` (= the rule id), `severity`, `summary` (= the heading directive), an optional narrowing `applies_to`, an **optional** `evidence` record (a missing key reads as `unobserved`; a state other than `unobserved` requires `source` + `ref` — see [Evidence Discipline](../references/evidence-discipline.md)), or — for a moved or folded-away rule — `moved_to` in place of `summary` (an alias: keeps the id resolvable, never activated). See [Knowledge Scaling → Index fields](../references/knowledge-scaling.md#index-fields).
 
 ```yaml
 categories:
@@ -108,7 +108,7 @@ categories:
         severity: should
         summary: Wrap checked exceptions in a domain exception at the boundary
       - name: RetryWithBackoff
-        moved_to: skills/api/retry-procedure.md   # reclassified into a skill; id kept as an alias
+        moved_to: skills/api/retry-procedure.md   # folded into a consolidated skill; id kept as an alias
 ```
 
 ## Severity Normalization
@@ -119,10 +119,10 @@ Closed set: `must` | `should` | `prefer`. Any other word is mapped at write time
 
 The [audit](audit.md) `rules` scope proposes; this phase executes — **only with the developer's confirmation** (`NOT_CONFIRMED` otherwise), and never changing a rule id (`ID_MUTATION` refusal):
 
-- **Reclassify rule → skill** (`kind-mismatch`): create the skill via the [skill phase](skill.md) (`when_to_use` from Applies to + selector, `when_not` from the body's exceptions, scope from provenance — no `when_to_use` derivable → stop and ask the author (`BOUNDARY_MISSING`); `promotion` = `established` when evidence is `exercised` or above, else `candidate`; freshness `current`); remove the rule body and digest line; turn the index entry into `name: {id}, moved_to: {skill path}`; append one `structural-event` line to the category file. Skill → rule runs the write procedure above and leaves a one-line pointer in the skill.
+- **Consolidation is not a proposal** — a `skill-candidate` cluster is the agent's call, executed through the [skill phase](skill.md); folding a rule into the skill body (removing it, `moved_to` alias) is a deletion and passes an independent clean-context review first.
 - **Compact** (`unit-verbosity`): keep heading · Applies to · Why (within `rationale_max`) · Examples · Provenance; move the rest verbatim to `{category}.log.md` under `## {id} — {date}`; link it from Provenance. Directive, examples, and provenance never change (`CONTENT_LOSS` refusal).
 - **Split** (`split-planned` / `split-required`): move rules verbatim into a new category file with its own selector; regenerate digests and index blocks; fix the path part of every `<file>#<id>` reference; the set of anchors before = after. No umbrella — the index is the router.
-- **Overload remedies** (`knowledge-overload`): narrow selectors · split the category by selector · reclassify procedural rules · merge duplicates · lower to `prefer` — never a `must`.
+- **Overload remedies** (`knowledge-overload`): narrow selectors · split the category by selector · consolidate the cluster into a skill · merge duplicates · lower to `prefer` — never a `must`.
 
 ## Rule Categories
 

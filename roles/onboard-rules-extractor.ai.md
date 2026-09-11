@@ -64,11 +64,11 @@ role OnboardRulesExtractor {
 
   unit_form_rules:
     - "The heading is the single source of the directive and severity (references/knowledge-scaling.md); RuleId is immutable (PascalCase or PREFIX-NNN) and unique in the catalogue"
-    - "A directive over `directive_max` is split into two rules or written as a skill — never truncated"
+    - "A directive over `directive_max` is split into two rules — never truncated"
     - "Whole body within `unit_body_max`; no investigation narrative in the body"
     - "Every category gets an `applies_to` selector derived from the layer it governs (paths globs / phases from the closed set); a rule's own selector only narrows it"
     - "Digest line and index entry are written in the same edit as the heading"
-    - "A lesson that is a procedure (how to perform, not a constraint a reviewer checks from the artifact) goes to .dev_flow/skills/, not here (kind test)"
+    - "Every extracted lesson is a rule; a skill forms later from an accumulated rule cluster (Knowledge Scaling → Consolidation), not at extraction time"
 
   severity_levels:
     must: "Mandatory — violation blocks review. Core architectural constraints and naming conventions."

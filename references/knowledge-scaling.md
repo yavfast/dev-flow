@@ -1,6 +1,6 @@
 # Knowledge Scaling — Keeping Rules and Skills Cheap to Apply as They Grow
 
-Cross-cutting conventions for `.dev_flow/rules/` and `.dev_flow/skills/`: the form of a knowledge unit (directive in the heading, bounded body), a machine-matchable applicability selector, a digest at the top of every category file, the index as a derived router, an activation protocol that computes the relevant set instead of "loading the area", a rule-vs-skill kind test with reclassification, and the audit verdicts that keep all of it in shape. Every phase with a knowledge gate applies the activation protocol; the rule, skill, and audit phases apply the rest. Advisory: no gate criterion, no severity semantics, and no precedence rule changes. Thresholds are named here and defined once in [Docs Scaling → Thresholds](docs-scaling.md#thresholds); they are consumed only by mechanical measurement — nobody counts by hand.
+Cross-cutting conventions for `.dev_flow/rules/` and `.dev_flow/skills/`: the form of a knowledge unit (directive in the heading, bounded body), a machine-matchable applicability selector, a digest at the top of every category file, the index as a derived router, an activation protocol that computes the relevant set instead of "loading the area", the consolidation of accumulated rules into a skill, and the audit verdicts that keep all of it in shape. Every phase with a knowledge gate applies the activation protocol; the rule, skill, and audit phases apply the rest. Advisory: no gate criterion, no severity semantics, and no precedence rule changes. Thresholds are named here and defined once in [Docs Scaling → Thresholds](docs-scaling.md#thresholds); they are consumed only by mechanical measurement — nobody counts by hand.
 
 ## Unit form
 
@@ -8,8 +8,8 @@ A **rule** is one h2 block in its category file. The heading is the single sourc
 
     ## {id} — {directive} ({severity})  {#{id}}
 
-- `id` — immutable: a PascalCase name (`NoMPrefixForFields`) or the project's `PREFIX-NNN` scheme (`WF-011`); the anchor is the id verbatim. No operation (edit, split, move, reclassification, compaction) ever changes an id — the ID_MUTATION refusal of Docs Scaling applies to knowledge catalogues.
-- `directive` — one imperative logical line, executable without the body, within `directive_max`. Over the limit → never truncate: split into two units or reclassify (a multi-step directive is a procedure).
+- `id` — immutable: a PascalCase name (`NoMPrefixForFields`) or the project's `PREFIX-NNN` scheme (`WF-011`); the anchor is the id verbatim. No operation (edit, split, move, consolidation, compaction) ever changes an id — the ID_MUTATION refusal of Docs Scaling applies to knowledge catalogues.
+- `directive` — one imperative logical line, executable without the body, within `directive_max`. Over the limit → never truncate: split into two units.
 - `severity` — `must` | `should` | `prefer`, in the heading. Any other word is normalized (see Severity normalization) and the rename reported.
 
 Body, in order: `**Applies to:**` (one human-readable line) · `### Why` (within `rationale_max`) · `### Examples` (Correct / Incorrect, real file path) · `**Provenance:**` (task file, ticket, commit, or a narrative-log entry). Whole body within `unit_body_max`. Investigation narrative, log quotes, and "relationship to neighbours" prose do not live in the body — the task file already holds them; overflow goes to `<category>.log.md` (Narrative log).
@@ -58,7 +58,7 @@ First section of a category file, after the file title and its optional one-line
             applies_to: { phases: [review] }  # optional, narrows
             evidence: { state: exercised, source: gate-result, observed_at: 2026-07-30, ref: .dev_flow/tasks/task_X.md }
           - name: WF-004
-            moved_to: skills/old-project/lookup-guide.md   # alias of a moved / reclassified unit — no summary, never activated
+            moved_to: skills/old-project/lookup-guide.md   # alias of a moved / folded-away unit — no summary, never activated
 
 - `summary` of a category (and `description` of a skills domain) is one line about the category's scope, never a list of directives or files, never a growing accumulation → `summary-accumulation` (apply).
 - `rules[]` = the units of the file (by id) plus aliases; a difference → `index-drift` (apply). A `moved_to` whose target is missing → defect (reported, never deleted automatically).
@@ -73,46 +73,32 @@ Runs at every knowledge gate and at every per-burst re-trigger of [Application E
 3. Take the matched categories' `rules[]` from the index (the file's `## Contents` carries the same lines for a reader opening the file).
 4. Filter units by their own selector (inherited when absent), skipping `moved_to` aliases → the **relevant set**: `id · severity · directive · file#anchor`, ordered `must` → `should` → `prefer`, then skills (index entry + `when_to_use`, with the freshness state from [Procedural Skills](procedural-skills.md)).
 5. Compare the set size with `activation_budget`. **Over budget drops nothing and lowers no severity**: load the whole set, write one note to the session working memory (`knowledge-overload phase=… n=…`); the durable detector is the audit probe.
-6. Read a unit's **body** only on a trigger from this closed list: the directive alone does not decide the concrete action · a violation is suspected or found (review, tripwire) · a Correct/Incorrect example is needed · the unit itself is being edited or reclassified. Read it ranged — from `{#id}` to the next h2 ([Docs Scaling → Reading protocol](docs-scaling.md#reading-protocol-grep-first)).
+6. Read a unit's **body** only on a trigger from this closed list: the directive alone does not decide the concrete action · a violation is suspected or found (review, tripwire) · a Correct/Incorrect example is needed · the unit itself is being edited or consolidated. Read it ranged — from `{#id}` to the next h2 ([Docs Scaling → Reading protocol](docs-scaling.md#reading-protocol-grep-first)).
 
 Degradation: an index that does not parse as YAML → match by category names and phase name from the text, record `unobserved` with the reason, continue. Only phase known (concept, ask, todo) → phase match plus always-on; paths-only categories stay silent by design.
 
 The relevant set is what the Pre-Action Marker carries as pointers where no plan Required Knowledge exists.
 
-## Kind test (rule vs skill)
+## Consolidation (rules → skill)
 
-One question, unchanged: **can a reviewer decide compliance from the artifact (diff, document, task file, commit history) without performing a procedure?** Yes → rule. No (compliance shows only in *how* the work was done, needs tool or environment knowledge, has a natural when / when-not boundary) → skill.
+A lesson from an incident is written as a **rule** — a conclusion, regularity, or adaptation to apply in later tasks. A **skill** is the consolidated form of an accumulated cluster of rules (or knowledge that is not an artifact constraint at all — research findings, tool knowledge, per [Procedural Skills](procedural-skills.md)). Rules never turn into skills one by one at write time.
 
-Signals of a misfiled unit (closed list; `kind-mismatch` needs at least one, and is always a proposal):
-
-| Signal | Reads as |
-|--------|----------|
-| `multi-step` | the directive orders two or more steps |
-| `actor-subject` | the directive's subject is the agent's process — measure, consult, run with a flag, before X do Y |
-| `subnumbered-growth` | the id or body grows sub-clauses (`X.1`, `X.2`) |
-| `no-artifact-check` | no `check` is derivable from the artifact |
-| `artifact-constraint-in-skill` | a skill Pitfall reads "never X in the artifact" — a rule candidate |
-
-Undeterminable → the kind stays as it is, reported `unobserved`; on a harvest write the owner comes from the coverage rung of [Experience Capture](experience-capture.md) unchanged.
+- **Signal.** Audit groups each category's rules by effective selector (unit `applies_to`, else the category's, else the category itself) and reports `skill-candidate` (advisory) for a group strictly above `consolidation_min` that no skill already lists in full. The agent may also see a cluster while adding the rule that completes it.
+- **Decision.** The agent's: does the cluster describe one coherent how-to, do these rules fire together in a typical task, can a boundary be named? No verdict forces or blocks consolidation.
+- **Execution** (agent-initiated, no permission prompt — harvest policy of [Experience Capture](experience-capture.md); visible in the commit diff): create the skill — `when_to_use` from the shared selector, body = the order and manner of applying the cluster, the cluster's rule ids as links; `promotion` = `established` when the cluster holds a rule with evidence `exercised` or above, else `candidate`; freshness `current`. The rules stay rules and keep activating by their selectors. A rule the agent judges a pure procedure step may be **folded** into the skill body and retired — body and digest line removed, index entry `name: {id}, moved_to: {skill path}`, one `structural-event` line in the category file. Folding is a deletion: it runs through an independent clean-context review first (`REVIEW_REQUIRED` otherwise — the skill is still created, the rule stays). No `when_to_use` derivable → stop (`BOUNDARY_MISSING`). Never changes an id.
+- **Skill → rule.** A skill Pitfall that reads as an artifact constraint ("never X in the code") is written as a rule per Write hygiene; the skill keeps a one-line pointer to the rule id.
 
 ## Write hygiene
 
 Every write — [rule phase](../phases/rule.md), [skill phase](../phases/skill.md), the Experience Capture harvest, onboard Step 5 — in this order:
 
-1. Kind test → owner (`rule` / `skill`).
+1. Owner: a lesson from an incident → `rule`; `skill` only for knowledge that is not an artifact constraint, or as a consolidation (above). In doubt → rule.
 2. Heading with an id unique in the catalogue, directive (within `directive_max`, never truncated), severity from the closed set; auto-written severity defaults to `should`, a `must` only through an independent clean-context review.
 3. Selector: inherit the category or narrow it; a widening unit selector is refused (`SELECTOR_WIDENS`).
 4. Bounded body with provenance; a body over `unit_body_max` at write time is refused (`NARRATIVE_IN_BODY`) — move the narrative to the provenance target or the narrative log, keep `Why` within `rationale_max`.
 5. Digest line and index entry updated **in the same edit**; create the digest when the file crosses `digest_min`.
 
 A skill without an Applicability Boundary is refused (`BOUNDARY_MISSING`, [Procedural Skills](procedural-skills.md)); a domain `description` is one scope line within `directive_max`, with no inline file lists or history comments.
-
-## Reclassification
-
-Executed only with the developer's confirmation from a `kind-mismatch` report or an explicit request (`NOT_CONFIRMED` otherwise). Never changes an id (`ID_MUTATION` refusal).
-
-- **rule → skill.** Create the skill: `when_to_use` from `Applies to` + selector, `when_not` from the body's exceptions, `version_or_context_scope` from provenance; `promotion` = `established` when the unit's evidence state is `exercised` or above, else `candidate`; freshness `current`, stamped today; provenance kept. Remove the unit body and its digest line; keep the index entry as `name: {id}, moved_to: {skill path}`; append one `structural-event` line to the category file (history content filter of Docs Scaling). No `when_to_use` derivable → stop and ask the author.
-- **skill → rule.** Write the Pitfall as a unit per Write hygiene (severity default `should`); replace the Pitfall text in the skill with a one-line pointer to the rule id.
 
 ## Compaction and split
 
@@ -133,13 +119,13 @@ Closed set, measured mechanically in the [audit](../phases/audit.md) `rules` / `
 | `anchor-coverage` | unit heading without `{#id}`; duplicate anchor in the catalogue | apply (missing) · defect (duplicate) | add `{#id}` from the heading id; report the duplicate |
 | `severity-vocab` | severity outside the closed set or outside the heading | apply | normalize per the table below; report every rename |
 | `summary-accumulation` | category `summary` / domain `description` over `directive_max`, or a list of directives / files / comments | apply | one scope line |
-| `unit-verbosity` | body over `unit_body_max`, `Why` over `rationale_max`, or directive over `directive_max` | propose | compaction; for a directive — split or reclassify, never truncate |
-| `kind-mismatch` | kind test disagrees with the current kind, ≥1 signal | propose | reclassification |
-| `knowledge-overload` | probe: per phase of the closed set, rules (aliases excluded) whose `phases` is empty or contains the phase; over `activation_budget` (skills: per domain, advisory) | propose | remedies (closed): narrow selectors · split the category by selector · reclassify procedural units · merge duplicates · lower to `prefer` — never a `must` |
+| `unit-verbosity` | body over `unit_body_max`, `Why` over `rationale_max`, or directive over `directive_max` | propose | compaction; for a directive — split, never truncate |
+| `skill-candidate` | per category, rules grouped by effective selector; a group strictly above `consolidation_min` not yet listed in full by a skill | advisory | cluster listed; consolidation at the agent's discretion |
+| `knowledge-overload` | probe: per phase of the closed set, rules (aliases excluded) whose `phases` is empty or contains the phase; over `activation_budget` (skills: per domain, advisory) | propose | remedies (closed): narrow selectors · split the category by selector · consolidate the cluster into a skill · merge duplicates · lower to `prefer` — never a `must` |
 | `split-planned` / `split-required` | file words over `full_read_limit` / `soft_split` | propose | split |
 | `selector-missing` | category without `applies_to` | advisory | report `always-on` + a selector hint from the category name |
 
-Apply = derived layers regenerated from headings, no confirmation. Propose = content changes, executed by the rule / skill phase only after confirmation. `--dry-run` turns every class into a report line. Semantic-duplicate detection stays as the audit already defines it.
+Apply = derived layers regenerated from headings, no confirmation. Propose = content changes, executed by the rule / skill phase only after confirmation. Advisory = reported, acted on at the agent's discretion. `--dry-run` turns every class into a report line. Semantic-duplicate detection stays as the audit already defines it.
 
 **Severity normalization** (applied at write and by audit; each rename reported): `recommended` / "рекомендується" → `should` · `advisory` / `optional` / "бажано" / "краще" → `prefer` · `mandatory` / `required` / `never` / "заборона" → `must` · no mapping → `should` with an `unobserved` note. Normalization never raises an ambiguous value to `must`; a `must` stays `must`.
 
@@ -149,7 +135,7 @@ A catalogue written before this discipline migrates without a big bang:
 
 - **Derived layers now, by audit** — digest, index `rules[]`, anchors, severity vocabulary, de-accumulated summaries: regeneration from the existing headings, content untouched.
 - **Heading form lazily** — at the unit's first substantive edit; audit lists `heading-legacy`.
-- **Content by proposal** — compaction, reclassification, split, overload remedies; the developer confirms in batches, the rule / skill phase executes.
+- **Content by proposal** — compaction, split, overload remedies; the developer confirms in batches, the rule / skill phase executes. `skill-candidate` clusters are the agent's call.
 - **Selector hints** for categories without `applies_to` (e.g. `testing` → `phases: [test, verify]`, `paths: [test/**]`) are proposals only, never written automatically.
 
 ## Where it is wired
@@ -157,11 +143,11 @@ A catalogue written before this discipline migrates without a big bang:
 | Touchpoint | What it carries |
 |------------|-----------------|
 | [SKILL.md → Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding) | "Load what's relevant" is computed by selectors; the unit form and digest in Project Rules |
-| [rule phase](../phases/rule.md) | Unit template, kind test, same-edit digest/index, index fields, severity normalization, execution of confirmed proposals |
-| [skill phase](../phases/skill.md) | One-line domain description, optional `applies_to`, body read on trigger, lead + Contents above `full_read_limit` |
-| [audit](../phases/audit.md) Steps 6–7 | The verdict table above with its apply / propose split and the overload probe |
+| [rule phase](../phases/rule.md) | Unit template, owner rule, same-edit digest/index, index fields, severity normalization, execution of confirmed proposals |
+| [skill phase](../phases/skill.md) | Consolidation of a rule cluster, one-line domain description, optional `applies_to`, body read on trigger, lead + Contents above `full_read_limit` |
+| [audit](../phases/audit.md) Steps 6–7 | The verdict table above with its apply / propose / advisory split and the overload probe |
 | [Application Enforcement](application-enforcement.md) | The relevant set as the pointer source of the Pre-Action Marker where no plan Required Knowledge exists |
-| [Experience Capture](experience-capture.md) | The kind test at the coverage rung when choosing `rule` vs `skill` |
+| [Experience Capture](experience-capture.md) | Owner at the coverage rung: incident lesson → rule; consolidation and folding follow its autonomy policy (write freely, delete through review) |
 | [onboard](../phases/onboard.md) Step 5 · [review](../phases/review.md) | Rules written in the unit form with category selectors; compliance check reads the relevant set |
 | [Docs Scaling](docs-scaling.md) | Thresholds table (the only place values live), ranged reading, history content filter, ID_MUTATION, `name.log.md` |
 
@@ -169,6 +155,6 @@ A catalogue written before this discipline migrates without a big bang:
 
 - Advisory: no gate criterion, no severity semantics, no precedence (current skill > prior) changes; the knowledge gate stays mandatory.
 - The budget is an audit signal, never a gate filter: nothing is dropped, no `must` is lowered.
-- Derived layers are regenerated; unit content changes only by confirmed proposal. Reclassification, compaction, and split are never automatic.
+- Derived layers are regenerated; compaction and split only by confirmed proposal; consolidation is the agent's decision, folding a rule away goes through independent review.
 - Thresholds are consumed only by measurement; a numeric finding without its measurement is `unobserved`.
 - Not in scope: `docs/` (Docs Scaling), enforcement tiers (Application Enforcement), evidence states (Evidence Discipline), deciding what a project's rules should say.

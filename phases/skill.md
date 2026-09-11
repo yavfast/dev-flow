@@ -61,14 +61,14 @@ Do NOT save:
 
 1. **Read** `.dev_flow/skills/_index.yaml` — identify candidate domains by topic match.
 2. **Read** `_index.yaml` for each candidate domain — find specific skill files by `topics` field.
-3. **Load** the matched index entries with their Applicability Boundary (`when_to_use` is the skill's directive) — never the full tree; read a skill body only on a trigger: the boundary alone does not decide the action, a pitfall is suspected, an example is needed, the skill is being edited or reclassified.
+3. **Load** the matched index entries with their Applicability Boundary (`when_to_use` is the skill's directive) — never the full tree; read a skill body only on a trigger: the boundary alone does not decide the action, a pitfall is suspected, an example is needed, the skill is being edited or consolidated.
 4. **Return** the relevant knowledge or note that no skill exists yet.
 
 ### Creating or Updating a Skill
 
 1. **Read root `_index.yaml`** — identify the appropriate domain path.
 2. **Read domain `_index.yaml`** — check if a matching skill already exists.
-2a. **Kind test.** A lesson a reviewer can check from the artifact alone (a "never X in the code" constraint) is a rule — route to the [rule phase](rule.md); a how-to-perform procedure with a when / when-not boundary is a skill; undeterminable → the kind stays as requested, noted `unobserved`. See [Knowledge Scaling → Kind test](../references/knowledge-scaling.md#kind-test-rule-vs-skill).
+2a. **Owner, then consolidation.** A lesson from an incident is a rule — route it to the [rule phase](rule.md); write a skill directly only for knowledge that is not an artifact constraint. A skill also forms from an accumulated cluster of rules (audit `skill-candidate`, or your own observation) — your call whether the cluster is worth one: `when_to_use` from the shared selector (none derivable → stop, `BOUNDARY_MISSING`), body = how the cluster is applied, the rule ids linked; the rules stay rules. Folding a rule into the skill body (its index entry becomes `moved_to`) is a deletion — independent clean-context review first; refused → the skill is still created and the rule stays a rule. See [Knowledge Scaling → Consolidation](../references/knowledge-scaling.md#consolidation-rules--skill).
 3. **Determine domain path** — if ambiguous, ask (max 2 questions).
 4. **Write or update** the skill file using the standard template.
 5. **Update** the domain `_index.yaml` and root `_index.yaml`.
@@ -178,7 +178,7 @@ Step 1: Read root _index.yaml (~20 lines)
 Step 2: Match task topic → candidate domains (by domains[].topics)
 Step 3: Read _index.yaml for each candidate domain (~30 lines, typically 1-2)
 Step 4: Match topic → skill files (by skills[].topics)
-Step 5: Load the matched entries + their Applicability Boundary (`when_to_use` is the skill's directive); read a body only on a trigger — the boundary alone does not decide the action, a pitfall is suspected, an example is needed, the skill is being edited or reclassified
+Step 5: Load the matched entries + their Applicability Boundary (`when_to_use` is the skill's directive); read a body only on a trigger — the boundary alone does not decide the action, a pitfall is suspected, an example is needed, the skill is being edited or consolidated
 ```
 
 Match at Steps 2 and 4 uses `topics[]`, plus `applies_to` (paths / phase) where an entry declares it. If no domain matches at Step 2 — stop. Cost: one small file read. A skill file above `full_read_limit` is read ranged by heading ([Knowledge Scaling → Activation protocol](../references/knowledge-scaling.md#activation-protocol)).
@@ -194,4 +194,4 @@ If `.dev_flow/skills/` does not exist, create the directory structure with empty
 - If new research contradicts an existing skill — update the skill and add a note in "Pitfalls".
 - A tool/framework **version drift** past the skill's freshness stamp demotes it to `stale`: re-ground and re-stamp before relying on it (see [Procedural Skills](../references/procedural-skills.md)).
 - Skills may reference related rules (e.g., a skill about message bus → rule `MessageBusForCrossLayerCommunication`).
-- A skill file above `full_read_limit` carries a lead summary and a `## Contents` section and gets a `split-planned` verdict from audit (`split-required` above `soft_split`); a split moves sections verbatim into a new file in the same domain — the domain index routes, ids never change. A skill Pitfall that reads as an artifact constraint is a rule candidate (`kind-mismatch`, proposed by audit, executed only when confirmed). See [Knowledge Scaling](../references/knowledge-scaling.md).
+- A skill file above `full_read_limit` carries a lead summary and a `## Contents` section and gets a `split-planned` verdict from audit (`split-required` above `soft_split`); a split moves sections verbatim into a new file in the same domain — the domain index routes, ids never change. A skill Pitfall that reads as an artifact constraint is written as a rule ([rule phase](rule.md)), the skill keeping a one-line pointer. See [Knowledge Scaling](../references/knowledge-scaling.md).

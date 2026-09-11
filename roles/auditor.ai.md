@@ -82,7 +82,7 @@ role Auditor {
       - "Knowledge-scaling derived layers regenerated from the rule headings: `## Contents` digests (legacy units marked, headings never rewritten), index `rules[]` blocks, missing `{#id}` anchors, severity words normalized (each rename reported), accumulated category summaries / domain descriptions replaced by one scope line"
     proposed_for_confirmation:
       - "Merging two rules that express the same constraint"
-      - "Compacting a verbose rule into `<category>.log.md` (directive, examples, provenance unchanged); reclassifying a rule → skill or a skill Pitfall → rule after the kind test; splitting a knowledge file over `full_read_limit` / `soft_split` (ids unchanged, no umbrella); overload remedies for a phase over `activation_budget` — never lowering a `must`"
+      - "Compacting a verbose rule into `<category>.log.md` (directive, examples, provenance unchanged); splitting a knowledge file over `full_read_limit` / `soft_split` (ids unchanged, no umbrella); overload remedies for a phase over `activation_budget` — never lowering a `must`"
       - "Removing a stale or decayed rule/skill"
       - "Removing an unreferenced or superseded cached resource (file + entry together)"
       - "Reconciling a document's status to match evidence (plan/concept/spec), or fixing a one-directional cross-reference"
@@ -92,7 +92,7 @@ role Auditor {
       - "Stalled subtask (no takeover)"
       - "Cache file without an index entry, or entry whose file is missing (cannot invent `source`)"
       - "Expired cache entry whose source changed or cannot be cheaply checked (the refresh belongs to its update task)"
-      - "Duplicate rule anchor; `moved_to` alias whose target is missing (never deleted automatically); category without `applies_to` (always-on — selector hint reported, never written)"
+      - "Duplicate rule anchor; `moved_to` alias whose target is missing (never deleted automatically); category without `applies_to` (always-on — selector hint reported, never written); `skill-candidate` rule cluster above `consolidation_min` (consolidation is the agent's decision, never audit's)"
       - "Cache entry missing a trust level, or a public-trust entry missing its safety check (the check runs when the resource is next touched, not from audit)"
       - "Orphan doc (no spec/plan), deprecated doc still in an active Depends on, or a banned phrase in an active concept/spec"
 

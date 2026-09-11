@@ -163,7 +163,7 @@ Rules documents in `.dev_flow/rules/` are living documents. They can be updated:
 - By **user request** — explicit instruction to add, modify, or remove a rule.
 
 When updating rules:
-1. Edit the relevant `.dev_flow/rules/{category}.md` file in the unit form (directive in the heading, bounded body — [rule phase](rule.md)); a reviewer's lesson that is a procedure rather than a checkable constraint goes to a skill instead (kind test).
+1. Edit the relevant `.dev_flow/rules/{category}.md` file in the unit form (directive in the heading, bounded body — [rule phase](rule.md)); a lesson from the review is a rule; skills form later from accumulated clusters ([Knowledge Scaling](../references/knowledge-scaling.md)).
 2. Record `Provenance` (the review's task file) in the unit body.
 3. Update the category's `## Contents` digest line and `.dev_flow/rules/_index.yaml` in the same edit.
 4. Existing code is NOT required to be retroactively fixed.
