@@ -2,6 +2,16 @@
 
 Cross-cutting conventions that keep the cost of finding and reading a fragment constant as the `docs/` corpus grows: a grep-first reading protocol, in-document navigation (Contents + lead summary), an adaptive history policy, a split policy for documents that outgrow one file, and the corpus mechanics they rest on (anchors, index router, self-sufficient headings). Every phase that reads or writes pipeline documents applies these conventions; the mechanical checks run in the audit phase (report only) and the mechanical fixes in the propagate phase. Advisory: no gate criterion and no verdict set changes. Scope: pipeline documents in `docs/` — spikes and `ext_adoption/` are exempt; the knowledge catalogues `.dev_flow/rules/` and `.dev_flow/skills/` consume the named constants through [Knowledge Scaling](knowledge-scaling.md).
 
+## Contents
+
+- [Reading protocol (grep-first)](#reading-protocol-grep-first) — How a document is consumed in fragments: whole-file, small-file, known-ID and topic paths, and when to delegate
+- [Thresholds](#thresholds) — The single source of this skill's numeric thresholds, with the metric each one is measured by
+- [Contents and lead summary](#contents-and-lead-summary) — Lead-summary content, Contents item format, the service-section exclusion list, maintenance rule
+- [History policy](#history-policy) — The unconditional entry-class filter, medium selection by vcs and churn, the immutable core, medium switching
+- [Split policy](#split-policy) — When a document splits, into what shape, and what a split may never do to an ID
+- [Index router](#index-router) — What `docs/_index.md` carries and what belongs nowhere near it
+- [Self-sufficient headings](#self-sufficient-headings) — Wording a heading so it survives being read without its parents
+
 ## Reading protocol (grep-first)
 
 A pipeline document is consumed in fragments, not whole. Choose the path by goal:
@@ -48,6 +58,7 @@ Consumption rule: each constant is read only by a cheap mechanical count inside 
     - [NN. Section Title](#SP_XXX_NN) — one-line annotation of what the section defines
 
 - Items list **substantive h2 sections only** — never h3, never service sections. The link text matches the heading text verbatim; item order matches section order; each substantive h2 has exactly one item; the annotation is non-empty and states content, not a restatement of the title.
+- A heading inside a fenced block is **not a section** — Contents, anchor-coverage and h3-density measurements skip fenced content.
 - **Plans have no Contents section** — the linked Progress list serves that role: each Progress item links to its phase anchor (`- [ ] [P1 — Name](#PL_XXX_P1)`).
 - Maintenance: the edit that adds, renames, or removes an h2 (or a plan phase) updates the matching Contents (Progress) item **in the same edit**. New documents get Contents from the template. Existing documents get it lazily at the first substantive edit; a one-off backfill applies only to files above `hard_split`.
 

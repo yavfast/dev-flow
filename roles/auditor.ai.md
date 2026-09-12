@@ -14,7 +14,7 @@ role Auditor {
     - "Reconcile cache/_index.yaml entry by entry — the cache index is DATA (its `source` metadata exists nowhere else): flag unindexed files and missing-file entries (for a collection entry, resolve each `files[].name` against `path` — flag missing sub-entity files and on-disk files with no sub-entity), flag entries missing a trust level and public-trust entries missing their safety check, propose removals of unreferenced/stale resources; NEVER regenerate this index"
     - "Sweep expired cache validity: where the source supports a cheap currency check (ETag/Last-Modified, Figma version), run it — confirmed unchanged extends valid_until (applied, evidence-backed); changed/uncheckable is flagged for refresh; NEVER re-fetch from audit — the refresh belongs to the update task that made the resource stale"
     - "Detect semantic duplicates and stale entries in rules/ and skills/ and propose merges/removals"
-    - "Reconcile docs/ integrity (the docs scope): index↔disk, each document's status lifecycle vs evidence (plan all-phases-done → completed; deprecated still referenced), bidirectional Depends-on/Used-by cross-references, orphans, freshness, and duplicated value sets (a set enumerated in more than one document — or restated within one — must list the same members; reconcile toward the owning document, never toward a copy); groom the glossary, sweep open decisions/backlogs/todos/spikes, and run docs↔code drift detection — applying derived/index fixes, proposing status/link changes, routing document content fixes to propagate"
+    - "Reconcile docs/ integrity (the docs scope): index↔disk, each document's status lifecycle vs evidence (plan all-phases-done → completed; deprecated still referenced), bidirectional Depends-on/Used-by cross-references, orphans, freshness (report-only), and duplicated value sets (a set enumerated in more than one document — or restated within one — must list the same members; reconcile toward the owning document, never toward a copy); groom the glossary, sweep open decisions/backlogs/todos/spikes, and run docs↔code drift detection — applying derived/index fixes, proposing status/link changes, routing document content fixes to propagate"
     - "(code scope) Parse the free-form `audit code <intent>` into scope/lenses/depth/mode/preview — never prompt for flags; default unparsed fields and report the assumption; error NO_SCOPE if a named scope resolves to nothing (no silent whole-codebase fallback)"
     - "(code scope) Fan out one read-only CodeAuditLens subagent per lens (parallel) over the Shared Bottom-Up Analysis walk; drop to REDUCED mode (no conformance lenses) without documented architecture/rules and recommend onboard"
     - "(code scope) Consolidate all lens Findings as a single writer: dedup, cross-module duplication clusters, abstraction candidates, docs↔code drift, cross-lens conflicts (preserved, never averaged), priority = f(max severity, blast_radius, effort)"
@@ -95,6 +95,7 @@ role Auditor {
       - "Duplicate rule anchor; `moved_to` alias whose target is missing (never deleted automatically); category without `applies_to` (always-on — selector hint reported, never written); `skill-candidate` rule cluster above `consolidation_min` (consolidation is the agent's decision, never audit's)"
       - "Cache entry missing a trust level, or a public-trust entry missing its safety check (the check runs when the resource is next touched, not from audit)"
       - "Orphan doc (no spec/plan), deprecated doc still in an active Depends on, or a banned phrase in an active concept/spec"
+      - "Stale `Updated:` date on a document nothing else changed (report-only; corrected at the document's next substantive edit)"
 
   workflow:
     scope_gate:
@@ -117,7 +118,7 @@ role Auditor {
       - "Sweep expired valid_until: cheap currency check where possible (extend when unchanged); flag changed/uncheckable for refresh — never re-fetch"
       - "Apply index reconciliation; propose merges/removals"
     groom_docs:
-      - "Reconcile docs/ integrity (docs scope): index↔disk (regenerate the derived _index.md), document status lifecycle vs evidence, bidirectional cross-references, orphans, freshness, duplicated value sets (diff every copy of an enumerated set against the owning document)"
+      - "Reconcile docs/ integrity (docs scope): index↔disk (regenerate the derived _index.md), document status lifecycle vs evidence, bidirectional cross-references, orphans, freshness (report-only), duplicated value sets (diff every copy of an enumerated set against the owning document)"
       - "Groom the glossary; sweep open decisions/backlogs/spikes; run docs↔code drift detection — apply derived/index fixes, propose status/link changes, route document content fixes to propagate"
     report:
       - "Emit the structured audit report (Applied / Reflection / Proposed / Flagged / Clean)"

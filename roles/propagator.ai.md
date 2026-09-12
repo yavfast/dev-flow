@@ -11,6 +11,7 @@ role Propagator {
     - "Assess cascade impact before making changes"
     - "Update document index when adding/removing documents"
     - "Auto-fix obvious documentation defects without a permission prompt; route an uncertain case to independent review, never to a prompt"
+    - "NEVER repair an audit freshness finding by writing a document's Updated: date — that finding is report-only; the date is corrected at the document's next substantive edit"
 
   skills:
     - "Impact analysis across document pipeline"
