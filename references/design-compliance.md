@@ -2,7 +2,7 @@
 
 Cross-cutting sub-procedure of the **Verify** phase (and available on demand through `do` — "does this match the design?"). When a change touches user-facing UI that has a design source of truth, a dedicated validator compares the implementation against that source **property by property** and reports every deviation with evidence. It does not fix code — deviations feed the normal Verify fix cycle (fix → Test → Review → Verify).
 
-This reference is **application-type-agnostic**: the same procedure applies to web, mobile (Android/iOS), desktop, and terminal (TUI) applications — only the inspection tooling differs (see Step 3).
+**Application-type-agnostic** — web, mobile, desktop and TUI share the procedure; only the inspection tooling differs (Step 3).
 
 ## When it runs
 
@@ -12,7 +12,7 @@ This reference is **application-type-agnostic**: the same procedure applies to w
 
 ## Execution shape
 
-The check runs as a **read-only, clean-context validator subagent** — the same shape as pre-commit review ([Delegation for Focus](delegation.md)): the diff author's rationalizations don't leak into the comparison, and the noisy material (design exports, screenshots, computed-style dumps) stays out of the main context. The subagent returns the compliance report — conclusion, not dump; raw artifacts go to the project workspace `/tmp/{project-slug}/`, and durable baselines (reference screenshots, design exports) are promoted to `.dev_flow/cache/` per [Resource Cache](cache.md).
+The check runs as a **read-only, clean-context validator subagent** — the same shape as pre-commit review ([Delegation for Focus](delegation.md)): the noisy material (design exports, screenshots, computed-style dumps) stays out of the main context. The subagent returns the compliance report — conclusion, not dump; raw artifacts go to the project workspace `/tmp/{project-slug}/`, and durable baselines (reference screenshots, design exports) are promoted to `.dev_flow/cache/` per [Resource Cache](cache.md).
 
 Visual comparison is judgment-heavy — pick the subagent model by that nature, never by a hardcoded name ([Delegation → model fit](delegation.md#fit-the-model-to-the-task--by-its-nature-not-its-name)). Use whatever inspection tools the runtime actually offers (design-tool MCP, browser automation, emulator/simulator control, screenshot capture); when a tool is missing, degrade from rendered inspection to source + tokens (Step 3) and state so in Coverage. If the check recurs in a project, grow a **specialist role** under `.dev_flow/roles/` that knows its screens and design system ([Named specialists](delegation.md#named-specialists-and-the-routing-reflex)).
 
@@ -32,7 +32,7 @@ If no source of truth exists, stop and report that compliance cannot be validate
 
 ## Step 1b — Enumerate the FULL component: every variant and state (mandatory)
 
-The node, mockup, or screen you were handed is usually a **single frame or a demo instance**, NOT the complete component. It shows only the states someone happened to place there. Treating the visible states as the full set is the single most common way this check misses defects (e.g. hover/pressed decorations).
+The node, mockup, or screen you were handed is usually a **single frame or a demo instance**, NOT the complete component. Treating the visible states as the full set is how this check misses defects (e.g. a hover/pressed decoration).
 
 Before comparing, discover every variant and state the design defines:
 
@@ -41,7 +41,7 @@ Before comparing, discover every variant and state the design defines:
 - **Cover the platform's state axes**, where the design defines them: interaction states (hover, pressed/ripple, focus, selected, disabled, drag), content states (loading, empty, error), color schemes (light/dark themes), text scaling / dynamic type, orientation and size classes / breakpoints, RTL.
 - For each state found, pull its spec and record what visually distinguishes it from the resting state — **especially decorative elements** (indicator lines, underlines, border changes, background tints, icons), not just text color.
 
-Produce an explicit inventory of states to validate. This inventory drives Step 4.
+Produce an explicit inventory of states to validate; Step 4 validates against it.
 
 ## Step 2 — Identify the implementation
 

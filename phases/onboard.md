@@ -30,7 +30,7 @@ This phase is optional — it is needed only once, when adopting dev-flow for a 
 
 ## Working Directory
 
-All intermediate artifacts are stored in `.dev_flow/onboard/`. This directory persists across sessions, enabling incremental progress.
+All intermediate artifacts are stored in `.dev_flow/onboard/`.
 
 ```
 .dev_flow/onboard/
@@ -47,7 +47,7 @@ All intermediate artifacts are stored in `.dev_flow/onboard/`. This directory pe
 
 ## Procedure Steps
 
-> **Shared walk (single-source).** Steps 2–4 below — map structure → build dependency layers → walk modules bottom-up extracting entities/contracts/deps — are onboard's binding of the one **[Shared Bottom-Up Analysis](../references/code-audit.md#shared-bottom-up-analysis)** procedure, which the `audit code` scope reuses. The canonical walk lives in that reference; onboard does not keep a second copy of it — these steps describe only how onboard *consumes* the walk's output (the `onboard/` checkpoints and doc generation). A lens subagent consumes the same walk to *audit* against existing docs; onboard consumes it to *generate* them.
+> **Shared walk (single-source).** Steps 2–4 below — map structure → build dependency layers → walk modules bottom-up extracting entities/contracts/deps — are onboard's binding of the one **[Shared Bottom-Up Analysis](../references/code-audit.md#shared-bottom-up-analysis)** procedure, which the `audit code` scope reuses. The canonical walk lives there; these steps describe only how onboard *consumes* its output — the `onboard/` checkpoints and doc generation.
 
 ### Step 1: Initialize workspace
 
@@ -81,11 +81,9 @@ For each module in `queue.yaml`, starting from Layer 0, run the per-module step 
 3. **Update `queue.yaml`:** mark module as `analyzed`.
 4. **Update `state.yaml`:** increment `modules_analyzed` counter.
 
-**Parallelization:** Modules within the same layer have no cross-dependencies and can be analyzed by separate subagents simultaneously.
-
 ### Step 5: Extract project rules
 
-After analyzing all modules, extract coding rules, patterns, and style conventions into `.dev_flow/rules/`. This step uses cross-module analysis to identify consistent patterns across the codebase.
+After analyzing all modules, extract coding rules, patterns, and style conventions into `.dev_flow/rules/`.
 
 1. Read existing linting/formatting configs (`.editorconfig`, `.eslintrc`, `.prettierrc`, `ruff.toml`, `checkstyle.xml`, `.golangci.yml`, etc.).
 2. Analyze 5-10 representative files per module layer for recurring patterns.
@@ -111,13 +109,13 @@ After analyzing all modules, extract coding rules, patterns, and style conventio
 7. Flag inconsistencies (same pattern done differently in different modules) in `issues.md`.
 8. Update `state.yaml`: `step: rules_extracted`.
 
-**Important:** Rules apply to **new code only** — do not require refactoring existing code. Rules documents are living documents — they are updated during implement, review, and propagate phases when new patterns are discovered.
+**Important:** Rules apply to **new code only** — do not require refactoring existing code.
 
 **Role:** [onboard-rules-extractor.ai.md](../roles/onboard-rules-extractor.ai.md)
 
 ### Step 5a: Initialize skills knowledge base
 
-After extracting rules, establish the domain knowledge hierarchy in `.dev_flow/skills/`. Skills capture project-specific expertise about technologies and patterns — distinct from rules (which govern code style) and from docs (which describe the system itself).
+After extracting rules, establish the domain knowledge hierarchy in `.dev_flow/skills/`. Skills capture project-specific expertise about technologies and patterns.
 
 1. **Identify domains** — from `layers.md`, `project_structure.md`, and module analyses, determine which technology areas require project-specific knowledge:
    - Which third-party SDKs, APIs, or frameworks have project-specific configuration?
@@ -140,9 +138,9 @@ After extracting rules, establish the domain knowledge hierarchy in `.dev_flow/s
 
 ### Step 5b: Extract project glossary
 
-Using the cross-module analysis, extract the project's **canonical domain vocabulary** into `docs/_glossary.md`. This gives the doc-generation step (Step 6) one agreed term per concept, so the same referent is named the same way across all generated documents.
+Using the cross-module analysis, extract the project's **canonical domain vocabulary** into `docs/_glossary.md`.
 
-Runs **after** Step 4 (all modules analyzed) so the vocabulary is drawn from the complete module set; running it earlier would miss terms from unanalyzed modules.
+Runs **after** Step 4 (all modules analyzed).
 
 1. Collect domain nouns recurring across modules (entities, key value objects, core events) — **domain terms only**, not general tech (timeouts, DI, interceptors).
 2. Where several words denote one concept, pick the canonical term and list the rest as `_Avoid_` aliases; where a term is used two ways, record it under *Flagged ambiguities*.
@@ -216,8 +214,6 @@ After the user reviews and approves the generated documentation:
 2. Generated docs in `docs/` are now part of the dev-flow pipeline.
 
 ## Session Continuity
-
-The procedure is designed for **incremental execution across multiple sessions:**
 
 - Every step updates `state.yaml` with the current progress.
 - `queue.yaml` tracks per-module status: `pending → analyzed → docs_generated`.
@@ -297,7 +293,7 @@ If detected, annotate `project_structure.md` with workspace boundaries.
 
 ### Layer Computation (Step 3)
 
-For workspaces, build layers at **these levels**:
+For workspaces, build layers at these levels:
 
 1. **Package-level graph:** Which packages depend on which (from workspace config, lock files, `imports`).
 2. **Module-level graph within each package:** Standard import-based analysis.

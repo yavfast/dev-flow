@@ -4,23 +4,26 @@
 
 Write code following the implementation plan. Code is a derived artifact from the specification — never write code without an up-to-date plan.
 
+## Role Responsible
+
+This phase is handled by **Implementer**: [roles/implementer.ai.md](../roles/implementer.ai.md).
+
 ## Rules
 
-1. **Follow the plan phases in order.** Respect dependencies between phases.
-2. **Follow SOLID and pluggability principles** as defined in [solid-architecture reference](../references/solid-architecture.md). If `.dev_flow/rules/` defines alternative architectural conventions — project rules take precedence.
-3. **Reference traceable IDs in code comments:**
-   ```python
-   # [C_ACS_03_01] PermissionInterceptor — enforcement pattern
-   class PermissionInterceptor:
-       ...
-   ```
-4. **Implement ALL fields from specification tables.** Do not skip optional fields — implement them with their default values.
-5. **Use immutable structures** where the spec says "immutable after creation".
-6. **Implement all error cases** from the spec's Errors tables.
-7. **Update the plan status** after completing each phase:
-   - Change `[TODO]` to `[IN PROGRESS]` when starting
-   - Change `[IN PROGRESS]` to `[DONE]` when the phase's verification passes (workflow steps 6-11)
-   - Update the checkbox in the Progress section
+- **Follow the plan phases in order.** Respect dependencies between phases.
+- **Follow SOLID and pluggability principles** as defined in the [solid-architecture reference](../references/solid-architecture.md). If `.dev_flow/rules/` defines alternative architectural conventions — project rules take precedence.
+- **Implement ALL fields from specification tables.** Do not skip optional fields — implement them with their default values.
+- **Use immutable structures** where the spec says "immutable after creation".
+- **Implement all error cases** from the spec's Errors tables.
+- **Reference traceable IDs in code comments.**
+
+```python
+# [C_ACS_03_01] PermissionInterceptor — enforcement pattern
+class PermissionInterceptor:
+    ...
+```
+
+- **Update the plan status** after completing each phase: `[TODO]` → `[IN PROGRESS]` when starting, `[IN PROGRESS]` → `[DONE]` when the phase's verification passes (workflow steps 6-11), and tick the checkbox in the Progress section.
 
 ## Gate Check Before Starting
 
@@ -49,7 +52,7 @@ Before writing code, verify:
 
 **Design-source check (UI work).** When implementing UI from a design source of truth (design-tool link, tokens, mockups), implement **every variant and state the design defines** — not just the ones visible in the handed frame — and use the design's tokens instead of hardcoded near-matches: Verify will validate the result property by property against that source. See [Design Compliance](../references/design-compliance.md).
 
-**Role check:** If you'll delegate any step (run tests, verify, a wide search) to a subagent, check `.dev_flow/roles/_index.yaml` first and reuse a fitting base role or project overlay instead of re-deriving one. See [Roles](../references/roles.md).
+**Role check.** If you'll delegate any step (run tests, verify, a wide search) to a subagent, check `.dev_flow/roles/_index.yaml` first and reuse a fitting base role or project overlay instead of re-deriving one. See [Roles](../references/roles.md).
 
 **Framework check.** When `docs/_framework.md` exists, load it alongside `docs/_index.md` — it is the project's architectural map (core abstractions · layers · extension points · shared utilities · conventions, maintained by onboard and the [`audit code` scope](audit.md#step-9--code-scope-the-whole-codebase-audit)). New code MUST respect the layer boundaries and extension points it records; the map links down to the `.dev_flow/rules/` that carry the enforceable detail. No-op while the file is absent.
 
@@ -61,34 +64,29 @@ Before writing code, verify:
 
 ## Implementation Workflow
 
-```
-1. Read the plan phase you're implementing — incl. its `Verify:` field (the
-   definition-of-done: what Test/Verify will check on completion)
-2. Read the referenced specification sections
-3. Write code that satisfies ALL spec contracts and the phase's `Verify:` checklist
-4. Add traceable ID comments linking back to concept/spec
-5. Add/update tests covering spec's error cases and invariants — see [Test phase](testing.md)
-6. Run functional tests (unit → mock) covering the changed code
-7. Fix any test failures (code must satisfy the spec)
-8. Run pre-commit review (clean-context subagent) — see [Review phase](review.md)
-9. Fix any blocking issues from the review, re-run tests if needed
-10. Run verification (regression, integration, live) — see [Verify phase](verify.md)
-11. If Verify fails → fix code → re-run steps 6-10
-12. Update plan phase status to [DONE]
-13. Update plan Progress checkboxes
-14. Reflection checkpoint — harvest rules/skills, auto-applied through the
-    structural gate (see [Reflection](#reflection--harvest-rules-and-skills) below)
-15. Commit sign-off — changed files, review verdict, intent verdict; "Ready to commit?"
-    and wait (SKILL.md → Developer Checkpoints)
-```
+1. Read the plan phase you are implementing, including its `Verify:` field — the definition-of-done that Test and Verify check on completion.
+2. Read the referenced specification sections.
+3. Write code that satisfies ALL spec contracts and the phase's `Verify:` checklist.
+4. Add traceable ID comments linking back to concept/spec.
+5. Add or update tests covering the spec's error cases and invariants — see [Test phase](testing.md).
+6. Run functional tests (unit → mock) covering the changed code.
+7. Fix any test failures — code must satisfy the spec.
+8. Run pre-commit review (clean-context subagent) — see [Review phase](review.md).
+9. Fix any blocking issues from the review; re-run tests if needed.
+10. Run verification (regression, integration, live) — see [Verify phase](verify.md).
+11. If Verify fails → fix code → re-run steps 6-10.
+12. Update the plan phase status to [DONE].
+13. Update the plan Progress checkboxes.
+14. Reflection checkpoint — harvest rules/skills, auto-applied through the structural gate; see [Reflection](#reflection--harvest-rules-and-skills) below.
+15. Commit sign-off — changed files, review verdict, intent verdict; "Ready to commit?" and wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)).
 
-## Delegation for focus
+## Delegation for Focus
 
-Steps 6, 8, and 10 (run tests, review, verify) flood the context with output that *writing the code* never needs. Keep the implementation here — it needs the full plan and spec — but delegate those verification steps to a subagent and take back only the verdict. See **[Delegation for Focus](../references/delegation.md)**.
+Delegate steps 6, 8 and 10 (run tests, review, verify) to a subagent and take back only the verdict; keep the implementation itself in this context. See **[Delegation for Focus](../references/delegation.md)**.
 
 ## Reflection — harvest rules and skills
 
-At the phase/subtask boundary, before asking for commit approval, run the [Transition Checkpoint](../references/experience-capture.md) over the work item just closed. This is where the project's knowledge base improves automatically — implementation is the primary **rule auto-discovery** touchpoint:
+At the phase/subtask boundary, before asking for commit approval, run the [Transition Checkpoint](../references/experience-capture.md) over the work item just closed.
 
 - **Rule from a recurring pattern.** If the plan phase or the code surfaced an architectural constraint, naming convention, or error-handling pattern not yet in `.dev_flow/rules/` — write it as a rule automatically (default severity `should`, or `prefer`). See [Project Rules → Auto-discovery](../SKILL.md#project-rules) and the [rule phase](rule.md).
 - **Skill from non-trivial knowledge.** If research during the task produced broadly-useful, non-obvious technology knowledge — write/update a skill through the [skill phase](skill.md) non-triviality filter, so the next task starts ahead.
@@ -97,7 +95,7 @@ At the phase/subtask boundary, before asking for commit approval, run the [Trans
 
 ## When the Spec Pushes Back
 
-"Code must satisfy the spec" assumes the spec is right. If implementation surfaces evidence it is not — two defensible readings of a contract, a constraint that cannot hold, a plan technology decision that does not work as assumed — do **not** pick a reading silently and do not bend the code to a document you have evidence is wrong. Stop the affected work item and escalate to the owning document: see **[Upstream Escalation](../references/escalation.md)**.
+If implementation surfaces evidence the spec is wrong — two defensible readings of a contract, a constraint that cannot hold, a plan technology decision that does not work as assumed — do **not** pick a reading silently and do not bend the code to a document you have evidence is wrong. Stop the affected work item and escalate to the owning document: see **[Upstream Escalation](../references/escalation.md)**.
 
 ## Anti-Patterns
 

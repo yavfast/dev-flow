@@ -11,7 +11,7 @@
 
 ## Purpose
 
-Accept any natural-language request and route it to the appropriate dev-flow phase. The agent interprets intent from context, asks clarifying questions when needed, and executes the correct phase sequence automatically.
+Accept any natural-language request and route it to the appropriate dev-flow phase.
 
 This is the **default command** — any invocation of `/dev-flow` without a recognized phase keyword falls through to `do`.
 
@@ -89,13 +89,13 @@ Analyze the freeform request against the loaded context to determine:
 | **Learn from an external repo** | "adopt", "analyze repo", "розбери репозиторій", "проаналізуй репо", "що взяти з X", "what can we borrow from", "which ideas from X are useful here" — a *named external repository* (path or URL) is the subject | adopt — [External Repo Adoption](../references/repo-adoption.md) |
 | **Plan only** | "plan", "сплануй", no code changes mentioned | plan |
 
-When the intent is **ambiguous**, ask 1–2 targeted clarifying questions before routing. Do **not** start executing before the intent is clear.
+When the intent is **ambiguous**, ask targeted clarifying questions before routing (capped at Step 3). Do **not** start executing before the intent is clear.
 
 If the request requires knowledge nobody has yet (unfamiliar domain, unverified library capability, unknown solution space) — route through [research](research.md) *first*, then continue to the design phases with the findings.
 
 ### Change Classes
 
-For change requests (not questions/research), classify the change **before** routing — this is what scales the pipeline ceremony to the size of the change, in one explicit decision instead of per-phase skip rules:
+For change requests (not questions/research), classify the change **before** routing:
 
 | Class | What it is | Route |
 |-------|-----------|-------|
@@ -104,7 +104,7 @@ For change requests (not questions/research), classify the change **before** rou
 | **Architectural** | New capability, new entity, changed mechanism or boundary | concept → spec → plan → **design sign-off** → implement → full pipeline → **commit sign-off** |
 | **Internal refactor** | Structure changes, contracts identical | [Refactoring Protocol](plan.md#refactoring-protocol) (plan-only workflow — carries its own **design sign-off** and **commit sign-off**) |
 
-When unsure between two classes, take the heavier one — under-classifying is how drift starts. When the class hinges on how far the change reaches, run the [Impact Walk](../references/impact.md) — the radius (docs / code bindings / active tasks) is the evidence. The [propagation matrix](propagate.md#change-type-propagation-matrix) remains the per-document authority on what must be updated; change classes decide where the route *starts*.
+When unsure between two classes, take the heavier one. When the class hinges on how far the change reaches, run the [Impact Walk](../references/impact.md) — the radius (docs / code bindings / active tasks) is the evidence. The [propagation matrix](propagate.md#change-type-propagation-matrix) remains the per-document authority on what must be updated; change classes decide where the route *starts*.
 
 ### Step 3: Ask clarifying questions (if needed)
 
@@ -159,12 +159,7 @@ After confirming intent, invoke the appropriate dev-flow phase(s) in order:
 
 ### Step 5: Check documentation impact
 
-After code changes are implemented (in Scenarios A, B, or C), verify whether related documentation artifacts need updating:
-
-1. **Specifications** — does the change alter behavior described in any `*.sp.md`? (new fields, changed contracts, different error handling, new UI interactions).
-2. **Concepts** — does the change affect architectural assumptions in any `*.concept.md`? (new integration points, changed mechanisms, expanded scope).
-3. **Plans** — does the change complete or invalidate tasks in any `*.plan.md`?
-4. **Tests** — do existing tests need updating, or should new test cases be added to cover the new/changed behavior?
+After code changes are implemented (Scenarios A, B, C), check the affected artifacts — specs, concepts, plans, tests — against the [change-type propagation matrix](propagate.md#change-type-propagation-matrix).
 
 If updates are needed:
 - For small doc changes — apply them as part of the current phase.
@@ -175,16 +170,7 @@ If updates are needed:
 
 For a **new task**, set the header `Autonomy` field and fill the task file's `## Intent` section with what Step 2 captured (goal / target state / expected result) — it is the reference every later check compares against ([Task Intent](../references/task-intent.md)). If the user restates the goal mid-task, update the section and re-check open work against it.
 
-After every phase step, in `.dev_flow/tasks/task_<ID>.md`:
-- In **your own Subtask block** (the one whose `Author` is your session): check off completed steps in Progress, set the next step, append a one-line entry to that block's Activity bullet list.
-- In the **task header**: refresh `Last updated` (targeted Edit on that field).
-
-If this step also crosses a **phase boundary** (e.g. spec completed, plan starts):
-- Update your Subtask's `Status` (e.g. `done`, `review-pending`).
-- Targeted Edit on `.dev_flow/active_context.md` and `.dev_flow/tasks/_index.md` to update your task's row (Phase, Status, Contributors, Updated).
-- Append a Shared Activity Log entry tagged `[your-id] — <event>`.
-
-Re-read each index file immediately before editing it — see [status phase: Targeted-edit safety](status.md#targeted-edit-safety).
+Then follow the [status write protocol](status.md#write-protocol) for step-end and phase-boundary updates — your own Subtask block, the task header, the dashboard and catalog rows, re-reading each index immediately before the targeted edit.
 
 Never rewrite another contributor's Subtask block or their tagged entries in shared sections. To respond to or build on another contributor's work, add your own Coordination Note tagged with your session id.
 
@@ -192,13 +178,8 @@ Never rewrite another contributor's Subtask block or their tagged entries in sha
 
 If the user ends the session (or after completing a full phase chain):
 1. **Intent verdict (on completion).** When reporting the task done or stopping at the commit sign-off, compare the outcome to the task's `## Intent` (Expected result) and state `intent: met / partially met / diverged (+why)` in the report — a divergence is surfaced, never silently absorbed. Skip for a mid-task hand-off. See [Task Intent](../references/task-intent.md).
-2. In **your own Subtask block** — set `Status` (`review-pending` / `done` / `blocked`), append a wrap-up entry to its Activity list. Optionally add a Coordination Note about hand-off (`[your-id] — stepping away, anyone may pick up from <here>`).
-3. In the task **header** — refresh `Last updated`. If all Subtasks across all contributors are `done`, set the task-level `Status: done`.
-4. Targeted Edit on the dashboard and catalog:
-   - If task-level `Status: done` → move your task's row from "Active Tasks" to "Recently Completed".
-   - Otherwise → update Status / Updated columns in place.
-5. **Surface queued follow-ups.** If the task became `done`, scan `.dev_flow/todos/` and plan backlogs for `queued` records triggered `after task_<this ID>` (fixes deferred *because their context overlapped this task*). List each and offer to run it next via `/dev-flow do …` — a suggestion, not an auto-run; the executed work passes its own gates and commit approval. See [todo phase](todo.md).
-6. Run hygiene checks (Shared Activity Log cap, per-subtask Activity cap, file size) and archive overflow to `.dev_flow/session_history/` if triggered — see [status phase](status.md).
+2. Run the [status write protocol → on task completion](status.md#write-protocol) — Subtask `Status` and wrap-up Activity entry, header `Last updated` (task-level `Status: done` only when every contributor's subtask is done), the dashboard and catalog row move, and the [hygiene caps](status.md#context-hygiene) with overflow archived to `.dev_flow/session_history/`. Optionally add a hand-off Coordination Note (`[your-id] — stepping away, anyone may pick up from <here>`).
+3. **Surface queued follow-ups.** If the task became `done`, scan `.dev_flow/todos/` and plan backlogs for `queued` records triggered `after task_<this ID>` (fixes deferred *because their context overlapped this task*). List each and offer to run it next via `/dev-flow do …` — a suggestion, not an auto-run; the executed work passes its own gates and commit approval. See [todo phase](todo.md).
 
 ## Routing Decision Tree
 
@@ -215,7 +196,7 @@ User request received
 │       └─ concept → spec → plan → design sign-off → implement → … → commit sign-off
 │
 ├─ Reports a defect ("fix", "виправи", "падає", crash, error description)
-│   └─ fix (analyze → plan fix → design sign-off → implement → verify → commit sign-off)
+│   └─ fix
 │
 ├─ Describes documentation update
 │   └─ propagate / review
@@ -236,10 +217,10 @@ User request received
 │       └─ research (time-boxed spike)
 │
 ├─ A named external repository is the subject ("what's worth taking from X")
-│   └─ adopt (analyze at concept altitude → advisory adoption document)
+│   └─ adopt
 │
 ├─ Work to file for later (deferred idea, or a fix noticed mid-task to run after it)
-│   └─ todo (find docs → assess feasibility → file a planning record with a trigger)
+│   └─ todo
 │
 ├─ Knowledge missing to even start a concept
 │   └─ research → then concept with the findings
@@ -248,7 +229,7 @@ User request received
 │   └─ subtask (delegate to subagent)
 │
 └─ Unclear
-    └─ Ask 1–2 clarifying questions, then re-route
+    └─ Ask clarifying questions (Step 3 cap), then re-route
 ```
 
 ## Output Style

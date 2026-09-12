@@ -2,10 +2,6 @@
 
 Shared sub-procedure for the **Ask**, **Do**, **Propagate**, **Review**, and **Todo** phases, for [Consequence Forecasting](consequence-forecasting.md) (an anticipation's blast-radius) and for the [`audit code` scope](../phases/audit.md#step-9--code-scope-the-whole-codebase-audit) (finding blast-radius) — with optional uses in audit's task-overlap check and interviews. It is **not** a standalone pipeline stage and has no command — invoke it from inside a phase whenever a decision needs to know *what a change would touch*. The natural user entry is `/dev-flow ask` ("what breaks if …?").
 
-## Why this exists
-
-"What does this change touch?" is the pipeline's most repeated question, and hand-walks reliably miss edges (`Used by` drifts; code bindings are invisible from documents). The walk makes the answer deterministic and cheap: one bidirectional pass over metadata that already exists — `Depends on` / `Used by`, cross-type fields, `Implements:` references, traceable IDs in code — returning the **radius, not the documents**.
-
 ## Input
 
 One starting point:
@@ -48,7 +44,7 @@ Impact of SP_AUTH_02_01 (downstream):
 
 The counts feed the consuming phase's thresholds (propagate's ">3 documents" boundary check, do's change classes, ask's scope estimate). Raw grep output stays out of the report.
 
-## Where it is consumed
+## Where it is consumed — thin pointers
 
 | Consumer | Use |
 |----------|-----|
@@ -64,6 +60,6 @@ The counts feed the consuming phase's thresholds (propagate's ">3 documents" bou
 ## Boundaries
 
 - **Read-only.** The walk changes nothing; the drift it surfaces is routed to [propagate](../phases/propagate.md).
-- **As good as the metadata.** Missing `Used by` rows and uncommented code shrink the radius silently — which is exactly why asymmetry findings are part of the output: each run repairs the map a little, improving the next run.
+- **As good as the metadata.** Missing `Used by` rows and uncommented code shrink the radius silently — which is why asymmetry findings (step 5) are part of the output.
 - **Delegate the grep.** The walk is search-heavy and floods context — a textbook [focus delegation](delegation.md): the helper returns the radius and the findings; full match lists stay in a workspace file referenced by path.
 - **Same machinery as drift detection.** The [drift detection algorithm](../phases/propagate.md#drift-detection-algorithm) collects the same IDs globally (orphans, stale docs); the Impact Walk queries one node's neighborhood. Reuse the collection approach — don't maintain two.

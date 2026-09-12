@@ -1,14 +1,14 @@
 # Documentation Formatting — Conventions for All Generated Doc Files
 
-Cross-cutting formatting rules for **every documentation file the pipeline produces or edits** — spikes, concepts, specs, plans, epics, task files, indexes, rules, skills. Apply them whenever a phase writes Markdown; they are conventions of the *source text*, independent of how any renderer displays it.
+Cross-cutting formatting rules for **every documentation file the pipeline produces or edits** — spikes, concepts, specs, plans, epics, task files, indexes, rules, skills. Apply them whenever a phase writes Markdown; they are conventions of the *source text*, independent of how any renderer displays it. The rules this reference delegates to [Docs Scaling](docs-scaling.md) carry that reference's own scope, which exempts spikes and `ext_adoption/`.
 
-**Scope boundary.** This reference owns the *mechanics* — line breaks, list and table shape, heading hierarchy. Its counterpart [Output Styles](output-styles.md) owns the *register* — which language, how complex, and how a pointer to another document is carried. The two are orthogonal and cite each other rather than overlap.
+**Scope boundary.** This reference owns the *mechanics* — line breaks, list and table shape, heading hierarchy. Its counterpart [Output Styles](output-styles.md) owns the *register* — which language, how complex, and how a pointer to another document is carried.
 
 ## The core rule — no hard wraps inside a sentence or paragraph
 
 **One paragraph = one logical line.** Never insert a line break in the middle of a sentence or paragraph to keep lines under some column width (80, 100, 120 — any). Let long lines stay long; editors soft-wrap them. A line break in a doc file appears only *between* block elements: paragraphs, list items, table rows, headings, code fences.
 
-**Why this must be stated explicitly.** LLMs inherit an ~80-column hard-wrap habit from their training corpora (man pages, mailing lists, docstrings, commit messages) and will reintroduce it unless instructed otherwise. Rendered Markdown hides the problem — renderers merge single newlines into flowing text — while soft-wrap editors and diffs expose it: editing one word re-flows every following line of the paragraph, turning a one-word change into a multi-line diff that buries the real edit. This reference is the standing override; do not "helpfully" re-wrap for readability.
+**Standing override.** LLMs re-introduce ~80-column hard wraps by habit and renderers hide the result; do not "helpfully" re-wrap for readability. A re-flowed paragraph turns a one-word change into a multi-line diff that buries the real edit.
 
 ```md
 <!-- WRONG — hard-wrapped mid-sentence -->
@@ -40,7 +40,7 @@ The cache index is checked before every expensive fetch, and a cached copy is re
 
 - **One list item = one line**, however long it gets. Do not wrap a long item onto continuation lines; if an item is truly too long, that is a signal to split it into sub-items, not to wrap it.
 - **One table row = one line.** Never break a cell across lines; keep cell text tight instead.
-- **Blank line between block elements** — before/after every heading, list, table, and code fence.
+- **Blank line between block elements** — before/after every heading, list, table, and code fence; a list or table may follow its lead-in line (the one ending in `:`) directly.
 - **Consistent heading hierarchy** — no skipped levels; structural headings stay exactly as the phase templates define them (they carry traceable anchors like `{#C_XXX_01}`).
 
 ## No wholesale reformatting
@@ -54,7 +54,7 @@ The documentation **body** follows the project's documentation language (set by 
 ## Quick checklist (before saving any doc file)
 
 - [ ] No line break inside any sentence or paragraph
-- [ ] Blank line between all block elements
+- [ ] Blank line between all block elements (a lead-in line may abut its list or table)
 - [ ] Each list item and table row on a single line
 - [ ] Template-defined headings and anchors untouched
 - [ ] Only touched text re-formatted — no file-wide reflow

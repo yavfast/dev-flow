@@ -4,7 +4,7 @@ Cross-cutting reference for how dev-flow's subagent roles are organized, found, 
 
 ## Why this exists
 
-A role is the reusable description of *who* does a piece of work — responsibilities, capabilities, and the contract for what it returns. Writing it once keeps behavior and shared protocols ("conclusion, not the dump") consistent instead of re-stated in every prompt, and what a run teaches persists so the next one starts ahead.
+A role is the reusable description of *who* does a piece of work — responsibilities or capabilities, plus the contract for what it returns.
 
 ## Layers
 
@@ -21,13 +21,13 @@ The base carries the contract; the overlay carries the project specifics. A role
 Roles are written in one of the framings below — a **convention**, not a fixed schema (these files are prose projections; see the closing note). Pick the framing that fits what the role is:
 
 - **Obligation framing** — `responsibilities` + binding `rules` (+ a `skills` gate + `workflow`). Use it for **gated pipeline executors** whose output must pass a validation gate: concept/spec/plan authors, implementer, tester, reviewer, propagator, auditor, context-tracker, the onboard-* roles, the orchestrator. These roles *must* do certain things, so they state duties and binding rules.
-- **Bounded-autonomy framing** — `capabilities` (what it MAY do) + `constraints` (hard `NEVER`s). Use it for **read-only or self-directing roles** that sit outside the strict gate chain: `advisor` (read-only Q&A), `researcher` (time-boxed spike, no gates), `subtask-executor` (delegated full participant — it also carries `responsibilities`, as a deliberate hybrid). `todo-planner` (deferred-work capture, files one record, no gates) is the same shape. These roles act with judgement inside guardrails, so framing them as capability + limit is clearer than a duty list.
+- **Bounded-autonomy framing** — `capabilities` (what it MAY do) + `constraints` (hard `NEVER`s). Use it for **read-only or self-directing roles** that sit outside the strict gate chain: `advisor` (read-only Q&A), `researcher` (time-boxed spike, no gates), `code-audit-lens` (read-only per-lens auditor), `subtask-executor` (delegated full participant — it also carries `responsibilities`, as a deliberate hybrid). `todo-planner` (deferred-work capture, files one record, no gates) is the same shape. These roles act with judgement inside guardrails, so framing them as capability + limit is clearer than a duty list.
 
 Both framings typically carry the shared spine (`title`/`description`/`inputs`/`outputs` — a lean role like `advisor` or `todo-planner` keeps only what it needs) and a `workflow` step list (structured `step_N:` entries, or a short prose block for a simple role). Everything else is role-specific and added freely. Don't normalise a role into the other framing for uniformity's sake; choose by whether the role is *obligated* or *autonomous*.
 
 ## Base roles by phase
 
-These are the base roles the skill ships, by phase (paths relative to the skill root). Some phases use several roles; a few are handled inline without a subagent. A project overlay or specialization with the same concern takes precedence over its base where it applies.
+These are the base roles the skill ships, by phase (paths relative to the skill root). A project overlay or specialization with the same concern takes precedence over its base where it applies.
 
 | Phase | Base role | Purpose |
 |-------|-----------|---------|
@@ -51,17 +51,17 @@ These are the base roles the skill ships, by phase (paths relative to the skill 
 | Status / all phases | [context-tracker.ai.md](../roles/context-tracker.ai.md) | Reads, writes, and regenerates the per-task context model under `.dev_flow/` (task files + dashboard + catalog) |
 | Audit | [auditor.ai.md](../roles/auditor.ai.md) | Revises the whole `.dev_flow/` tree: reconciles task state, compacts + reflects on closed tasks, grooms rules/skills/cache; also orchestrates the opt-in `code` scope (intent → lens fan-out → consolidation → refactoring plan, stops at the gate) |
 | Audit (`code` scope) | [code-audit-lens.ai.md](../roles/code-audit-lens.ai.md) | Read-only per-lens subagent for `audit code`: audits the codebase through one projection (architecture / security / duplication / …) and returns Findings — conclusions, not dumps. Fanned out one per lens, in parallel |
-| Adopt (service command, not a phase) | — (no base role; a clean-context **read-only** subagent briefed from the procedure) | The two expensive steps of [External Repo Adoption](repo-adoption.md) — reading the external repository, and assessing its concepts against this project — delegated when the source would flood the main context. Not `researcher`: that role's contract starts from a spike file and returns an exploration log, neither of which an adopt run has |
+| Adopt (service command, not a phase) | — (no base role; a clean-context **read-only** subagent briefed from the procedure) | Reading the external repository and assessing its concepts against this project ([External Repo Adoption](repo-adoption.md)). Not `researcher` — that contract starts from a spike file and returns an exploration log |
 | Ask | [advisor.ai.md](../roles/advisor.ai.md) | Read-only Q&A about code and feasibility |
 | Todo | [todo-planner.ai.md](../roles/todo-planner.ai.md) | Captures future work — finds relevant docs, assesses feasibility, files one planning record (plan backlog item or `.dev_flow/todos/` entry) with a return trigger; builds nothing |
 | Subtask | [subtask-executor.ai.md](../roles/subtask-executor.ai.md) | Full dev-flow participant with delegated rights — assembles its own context, executes a secondary task end to end, escalates real decisions to its initiator, reports fully |
 | Do (default) | [dev-flow-orchestrator.ai.md](../roles/dev-flow-orchestrator.ai.md) | Interprets freeform requests and routes to the right phases |
 
-**Specialist focus helpers** are a *kind of project specialization*, **not shipped base roles**. When a noisy task-type recurs in a project — wide code search, log/trace triage, screenshot analysis — create a project-tailored specialist under `.dev_flow/roles/` (the "new specialization" path in [Creating or extending a role](#creating-or-extending-a-role)) and route to it by description (the [delegation routing reflex](delegation.md#named-specialists-and-the-routing-reflex)). The skill ships none: a generic specialist can't know this project's log format or UI. Their experience store is **hybrid** — narrow operational heuristics accumulate in a role-local memory file (`.dev_flow/roles/<name>.memory.md`, the same way overlays accumulate project specifics), while broadly-useful lessons are **auto-applied** to `.dev_flow/skills/` at end-of-burst via [Experience Capture](experience-capture.md) (structural gate; a doubtful promotion routes to independent review). They warm-start from the memory file, store only distilled heuristics (never raw payload), and stay read-only. Because that memory is self-written per call and ungated, each heuristic is a *falsifiable, evidence-scoped observation*, not an absolute verdict — an over-stated one poisons later warm-starts, and a caller acting on the helper's load-bearing conclusion should spot-check it against primary evidence (see [Delegation for Focus](delegation.md#named-specialists-and-the-routing-reflex)).
+**Specialist focus helpers** are a *kind of project specialization*, **not shipped base roles**. When a noisy task-type recurs in a project — wide code search, log/trace triage, screenshot analysis — create a project-tailored specialist under `.dev_flow/roles/` (the "new specialization" path in [Creating or extending a role](#creating-or-extending-a-role)) and route to it by description (the [delegation routing reflex](delegation.md#named-specialists-and-the-routing-reflex)). The skill ships none: a generic specialist can't know this project's log format or UI. Role-local memory (`.dev_flow/roles/<name>.memory.md`) accumulates the way an overlay does; broadly-useful lessons are **auto-applied** to `.dev_flow/skills/` at end-of-burst via [Experience Capture](experience-capture.md) (structural gate; a doubtful promotion routes to independent review). They warm-start from that memory, store only distilled heuristics, and stay read-only. Because it is self-written per call and ungated, each heuristic is a *falsifiable, evidence-scoped observation*, never an absolute verdict — spot-check a load-bearing one against primary evidence ([Delegation for Focus](delegation.md#the-habit-that-makes-it-pay-off)).
 
 ## The project role index
 
-A project's `.dev_flow/roles/` carries an `_index.yaml` — a one-line-per-role catalogue (role name → what it specializes, what project specifics it adds), serving the same purpose for roles as `.dev_flow/rules/_index.yaml` does for rules. It is the first place to look before writing a new role, so you reuse an existing one instead of duplicating it. Like the other indexes it's a derived view: if it drifts from the actual role files, any contributor can rebuild it from them. Add a line to it whenever you create a role, and keep each line short — the index is for *finding* a role, the role file holds the detail.
+A project's `.dev_flow/roles/` carries an `_index.yaml` — a one-line-per-role catalogue (role name → what it specializes, what project specifics it adds). It is the first place to look before writing a new role, so you reuse an existing one instead of duplicating it. Like the other indexes it's a derived view: if it drifts from the actual role files, any contributor can rebuild it from them. Add a line to it whenever you create a role, and keep each line short — the index is for *finding* a role, the role file holds the detail.
 
 ## Using an existing role
 
@@ -69,7 +69,7 @@ Before delegating a step or running a phase, check what already fits — don't r
 1. The phase's **base role** in the skill's `roles/` — the portable default.
 2. Any **overlay or specialization** under `.dev_flow/roles/` (start from its `_index.yaml`) — these refine or replace the base for this project, so they win where they apply.
 
-Point the subagent at the role(s) that fit and let it read them. If a project overlay exists for the phase, it's almost always the one to use.
+Point the subagent at the role(s) that fit and let it read them.
 
 ## Creating or extending a role
 
@@ -86,4 +86,4 @@ Use `inherits: [base-role, …]` to build on what exists — read it as "take th
 - Project specifics **accumulate in the overlay** over time, the same way `rules/` and `skills/` do: when a subagent hits an operational detail of its role (a flag, a path, a gotcha), record it in the overlay so the next run inherits it for free.
 - What proves **broadly useful and isn't project-specific** is a candidate to lift up into the skill's base roles, so other projects get it too.
 
-These are **projections, not formal specs** — recommended views the agent applies with judgment, not programs with inheritance semantics. A strong model authoring a role for a weaker one to execute should write it plain and unambiguous up front; that clarity is the author's job, not a runtime resolution mechanism. Don't encode merge rules or conflict-resolution machinery here.
+These are **projections, not formal specs** — recommended views the agent applies with judgment, not programs with inheritance semantics. A strong model authoring a role for a weaker one to execute should write it plain and unambiguous up front. Don't encode merge rules or conflict-resolution machinery here.

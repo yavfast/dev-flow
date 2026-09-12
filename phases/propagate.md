@@ -6,6 +6,10 @@ When a change is needed, propagate it through the pipeline in the correct order 
 
 Propagate flows an **already-made** decision top-down. The bottom-up path — when a downstream phase discovers the document itself is wrong and the correcting decision has yet to be made — is [Upstream Escalation](../references/escalation.md): escalate up first, then propagate down.
 
+## Role Responsible
+
+This phase is handled by **Propagator**: [roles/propagator.ai.md](../roles/propagator.ai.md).
+
 ## Propagation Order
 
 | Step | Action | When to skip |
@@ -17,7 +21,7 @@ Propagate flows an **already-made** decision top-down. The bottom-up path — wh
 | 5 | Run Test → Review → Verify → Commit | Follow the main pipeline phases |
 | 6 | Update document index | Only if no new/removed concepts |
 
-**Anti-pattern:** "I'll just fix the code and update the spec later." This ALWAYS leads to drift. The spec update takes 5 minutes now but 2 hours to reconstruct later.
+**Anti-pattern:** "I'll just fix the code and update the spec later." This ALWAYS leads to drift.
 
 ## Context Loading
 
@@ -36,7 +40,6 @@ Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../S
 - When spec data structures change — update all field tables, invariants, and contracts.
 - When a domain term is renamed or retired — update `docs/_glossary.md` so it never lags the documents.
 - The `Updated` date in metadata MUST be refreshed on every edit.
-- Stale documents are worse than no documents.
 
 ## Auto-fix obvious defects (no permission prompt)
 
@@ -64,8 +67,6 @@ Every edit to a concept, specification, or plan must update:
 
 ## Change-Type Propagation Matrix
 
-Use this matrix to determine which documents to update based on the type of change:
-
 | Change type | Concept | Spec | Plan | Code | Test |
 |-------------|---------|------|------|------|------|
 | New optional field | — | + | — | + | + |
@@ -87,7 +88,7 @@ Legend: `+` = update required, `—` = no update needed.
 
 ## Drift Detection Algorithm
 
-When you suspect documents may be out of sync with code, follow this algorithm to identify stale documents. This is a manual procedure — adapt the specific commands to your OS and toolchain.
+This is a manual procedure — adapt the specific commands to your OS and toolchain.
 
 ### Step 1: Collect traceable IDs from code
 

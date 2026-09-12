@@ -75,9 +75,7 @@ Record `<name>`, the HEAD commit, and the origin URL. A non-git directory record
 | `UPDATE` | analysis exists, both commits present, and they differ | Incremental over the commit range |
 | `METADATA` | analysis exists, both commits present and equal | Refresh the analysis date; leave the body untouched |
 
-Incrementality needs a commit on both ends. A non-git source has none, so every run of it is a full one.
-
-`METADATA` skips re-deriving the adoption document too — unless `--readopt` was given. The target project moves faster than the source, so re-deriving is available on request rather than charged on every run.
+`METADATA` skips re-deriving the adoption document too — unless `--readopt` was given.
 
 ### Step 4 — Produce the source analysis
 
@@ -118,7 +116,7 @@ Every concept in the source analysis gets exactly one verdict.
 |-------|------|--------|
 | `high` | Solves a known problem of the target, fits the stack, has a concrete integration point, and the effort-to-value ratio is favourable | Where it lives in the source (1–3 paths) · which target problem or traceable ID it attaches to · what exactly to take · effect and cost · which target contracts it risks |
 | `medium` | Useful but needs an architectural choice, conflicts with an existing concept, or depends on something unbuilt | The same, plus an explicit ruling: **take / defer / decline** |
-| `low` | Outside the target's scope, contradicts its non-goals, or already solved another way | Name and one sentence of reason. Nothing more — elaborating a rejection is wasted work |
+| `low` | Outside the target's scope, contradicts its non-goals, or already solved another way | Name and one sentence of reason. Nothing more |
 
 A `medium` without a ruling is invalid: "needs a decision" with no decision is deferred work with no owner.
 
@@ -140,7 +138,7 @@ Writing rules:
 - **All paths are relative markdown links** from the adoption document's own location.
 - **Cite the target's traceable IDs** where they exist — the document must connect to what is already there, not float beside it.
 - **Updating an existing document** preserves its changelog and appends a dated row. Concepts unchanged since the last run keep their text.
-- **An empty `high` section is a valid result** — write it, and say so plainly. Never promote a `medium` to make the document look useful; the scale stops meaning anything the first time it happens.
+- **An empty `high` section is a valid result** — write it, and say so plainly. Never promote a `medium` to make the document look useful.
 
 ### Step 9 — Report
 

@@ -2,10 +2,6 @@
 
 Shared sub-procedure for the **Do**, **Plan**, **Implement**, **Fix**, **Verify**, and **Subtask** phases. It is **not** a standalone pipeline stage and has no command — it activates whenever a task starts (capture) and at the moments listed below (check). The **Task Intent** is the *why* behind a request: the goal it serves, the target state it aims at, and the result the user will judge it by.
 
-## Why this exists
-
-A request states an *action*; the *reason* for it usually stays in the user's head. An agent optimizing for the literal action can complete it perfectly and still miss the point — or follow the letter into a result the user never wanted. Captured once at intake, the intent makes every later decision checkable against the goal instead of the wording, and makes "done" mean "the expected result exists", not "the described steps were performed".
-
 ## The Intent record
 
 Captured in the task file (see the [task template](../templates/task_context.md) → `## Intent`):
@@ -23,7 +19,7 @@ Rules for the record:
 - **Sources:** the request wording, the active task context, prior conversation, a linked ticket's description/acceptance criteria ([Ticket Tracker Integration](ticket-tracker.md)).
 - **It changes only by the user's word.** A recorded intent is not re-litigated mid-task; when the user restates the goal, update the record and re-check open work against it (a widened goal may re-class the change — see [do → Change Classes](../phases/do.md#change-classes)).
 
-For pipeline-scale work the intent flows downstream into the documents: the concept's *Philosophy / Core Principle* ("why this feature exists") and the plan's *Goal* section are its durable homes. The task-file record is what exists for **every** task — including fixes and trivial routes that never touch `docs/`.
+For pipeline-scale work the intent also lands in the concept's *Philosophy / Core Principle* and the plan's *Goal*. Every other task carries only the task-file record — fixes included — except the trivial route below.
 
 ## Capture — at intake
 

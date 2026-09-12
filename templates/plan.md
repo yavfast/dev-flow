@@ -25,7 +25,7 @@
 ## Required Knowledge
 
 <!-- Rules/skills this plan's work must apply — the source of truth for the
-     per-burst Knowledge Activation (references/application-enforcement.md).
+     per-burst Knowledge Activation (`references/application-enforcement.md`, dev-flow skill).
      Skill use / create / update are tracked items. Delete the section only
      if nothing applies. -->
 
@@ -39,7 +39,7 @@
 <!-- A plan has no Contents section — this linked list serves that role: every item for an
      authored phase links to its phase anchor (a [backlog] item has no phase section yet, so
      no link). Update the matching item in the same edit that adds/renames/removes a phase.
-     See references/docs-scaling.md. -->
+     See `references/docs-scaling.md` (dev-flow skill). -->
 
 - [ ] [Phase 1 — {name}](#PL_XXX_P1)
 - [ ] [Phase 2 — {name}](#PL_XXX_P2)
@@ -83,7 +83,7 @@ Items deferred from the current implementation cycle (each names the trigger tha
 ## Design Decisions  {#PL_XXX_DEC}
 
 <!-- One record per contested technology fork surfaced via Interview Mode. Delete
-     this section if no technology choice was contested. See references/interview-mode.md. -->
+     this section if no technology choice was contested. See `references/interview-mode.md` (dev-flow skill). -->
 
 ### DEC_01 — {short question}  {#PL_XXX_DEC_01}
 
@@ -105,7 +105,7 @@ Items deferred from the current implementation cycle (each names the trigger tha
 
 ## Changelog
 
-<!-- Optional when vcs is the primary history medium — see references/docs-scaling.md (History policy).
+<!-- Optional when vcs is the primary history medium — see the History policy in `references/docs-scaling.md` (dev-flow skill).
      Entry classes only: incident / ambiguous-decision / structural-event; an event outside these
      classes is not written (TRIVIAL_ENTRY refusal — progress lives in the Progress checklist).
      One entry = one logical line. -->

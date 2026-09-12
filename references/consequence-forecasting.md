@@ -1,10 +1,6 @@
 # Consequence Forecasting — Phase-Scaled Lookahead + YAGNI-gate
 
-Cross-cutting sub-procedure for the **decision-making** phases — concept, spec, plan, implement, fix — plus [todo](../phases/todo.md)'s at-capture YAGNI-gate. It is **not** a standalone pipeline stage and has no command — it is an **advisory** discipline invoked inside a phase whenever a *material* decision is about to be made. It does not add a new pass/fail gate; it informs the decision the phase was already making.
-
-## Why this exists
-
-Locally-correct decisions drift either **myopically** (a need missed now, costly retrofit later) or **speculatively** (building for an imagined future with no trigger). Live A/B verification showed lookahead helps **non-monotonically** — the lever is not how far you look but the discipline around it: scale the look to the phase, and gate every anticipation into a *seam or a record*, never premature work.
+Cross-cutting sub-procedure for the **decision-making** phases — concept, spec, plan, implement, fix — plus [todo](../phases/todo.md)'s at-capture YAGNI-gate. It is **not** a standalone pipeline stage and has no command — it is an **advisory** discipline invoked inside a phase whenever a *material* decision is about to be made. It guards a decision that is **myopic** (a need missed now, costly to retrofit) or **speculative** (built for an imagined future with no trigger).
 
 ## The discipline: forecast → YAGNI-gate → decide
 
@@ -17,7 +13,7 @@ At a material decision point (skip trivial changes — scale by [change-class](.
 
 ## Forecasting Altitude — set by the phase
 
-Descending the pipeline: **scope narrows, fidelity sharpens, gate strictness rises** (monotonic). A coarse high-altitude forecast gives *direction*; a precise low-altitude one gives *correctness*.
+Descending the pipeline: **scope narrows, fidelity sharpens, gate strictness rises** (monotonic).
 
 | Phase | Scope | Horizon — what you forecast | Gate strictness | Typical verdict bias |
 |-------|-------|-----------------------------|-----------------|----------------------|
@@ -42,11 +38,11 @@ Each anticipation gets exactly one verdict. Discriminators, cheap (don't expand 
 
 **No silent deferral.** Every `seam`/`drop` leaves a record (backlog with trigger / open decision / a logged note) — "not now" is never lost. Strictness rises as altitude lowers: at `implement`, speculative future-need builds default to `drop`.
 
-Worked contrast (from the verify): a URL shortener's **abuse handling** has a day-one trigger (public links) and a costly retrofit → **build now**; a **multi-tenancy** posture on an email-on-signup launch has no near-term trigger and imposes a present tax → **drop + record**.
+Worked contrast: a URL shortener's **abuse handling** has a day-one trigger (public links) and a costly retrofit → **build now**; a **multi-tenancy** posture on an email-on-signup launch has no near-term trigger and imposes a present tax → **drop + record**.
 
 ## The one-step check (lowest altitude, free)
 
-Before any non-trivial action — including when the fuller forecast was skipped for a trivial change — ask: *what is the inevitable next step, and does it undo or absorb this action?* If yes, the action is self-cancelling friction — drop or replace it. (Example: creating a branch whose only sequel is an immediate fast-forward merge + delete.) "Self-cancelling" means **no surviving effect** — if the cancelling step still *buys* something real (a review gate, a CI run, isolation a teammate relies on), the action is not self-cancelling and stands. This is the YAGNI-gate collapsed to a single free check.
+Before any non-trivial action — including when the fuller forecast was skipped for a trivial change — ask: *what is the inevitable next step, and does it undo or absorb this action?* If yes, the action is self-cancelling friction — drop or replace it. (Example: creating a branch whose only sequel is an immediate fast-forward merge + delete.) "Self-cancelling" means **no surviving effect** — if the cancelling step still *buys* something real (a review gate, a CI run, isolation a teammate relies on), the action is not self-cancelling and stands.
 
 ## Where it is wired
 
@@ -61,12 +57,12 @@ An advisory **"Forecast check"** line sits in each decision-making phase, pointi
 | [fix](../phases/fix.md) | consequences of the fix; the one-step check on the diagnosis loop |
 | [todo](../phases/todo.md) | the at-capture verdict on a deferral — trigger choice and whether to file at all (YAGNI-gate) |
 
-**Not** review or verify: those are *checking* phases, not decision phases — adding a forecast there is the scope creep this discipline teaches you to `drop`.
+**Not** review or verify: those are *checking* phases, not decision phases.
 
 ## Boundaries
 
 - **Advisory, not a gate.** It never blocks a phase; it improves the decision the phase makes. It runs only at *material* decisions — trivial changes keep just the one-step check (no ceremony).
 - **Distinct from [Impact Walk](impact.md), and composes it.** Impact Walk is **reactive** — the blast-radius of an *already-decided* change across the *existing* doc/code/task graph. Consequence forecasting is **proactive** — *hypothetical* futures shaping a *not-yet-made* decision. Forecasting *calls* Impact Walk for blast-radius; it does not duplicate it.
-- **Credit foresight that changes a decision, not a ritual list.** An explicit "anticipated uses" section that alters nothing earns nothing; a capable agent's good decision already encodes foresight implicitly (verify finding).
-- **Stay bounded.** A fixed, small set of discriminator questions per anticipation — never an open-ended hypothetical tree. More deliberation past the point of decision *reduces* quality (the overthinking inverted-U).
+- **Credit foresight that changes a decision, not a ritual list.** An explicit "anticipated uses" section that alters nothing earns nothing; a capable agent's good decision already encodes foresight implicitly.
+- **Stay bounded.** A fixed, small set of discriminator questions per anticipation — never an open-ended hypothetical tree. More deliberation past the point of decision *reduces* quality.
 - **Harvest.** Recurring deferrals and what a trigger taught become rules/skills via [Experience Capture](experience-capture.md) — auto-applied through the structural gate (no permission prompt; would-be `must`/contradictions go to independent review).

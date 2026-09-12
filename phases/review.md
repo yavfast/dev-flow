@@ -20,11 +20,11 @@ Validate pipeline gates, detect conflicts between documents, manage deprecation,
 
 **Before any commit**, a code review of the changes MUST be performed by a **subagent with a clean context** — it sees only the diff and the spec, without the implementer's accumulated assumptions.
 
-This clean-context review also **realizes the `sampled-verifier` tier** of [Application Enforcement](../references/application-enforcement.md): for a high-stakes procedure, the fresh, cross-model reviewer judging conformance to the documented procedure (as a rubric) is exactly the external verifier that the acting agent's self-attestation can never be.
+This clean-context review also **realizes the `sampled-verifier` tier** of [Application Enforcement](../references/application-enforcement.md).
 
-A checkable guard on the reviewer itself: **2+ consecutive substantive diffs** (non-trivial change class) reviewed with **zero actionable findings** (blocking/should-fix, not nits) is a `verifier-rubber-stamp` tripwire. Re-running the same reviewer cannot fix itself — surface to the user; switch model if the harness has one.
+A checkable guard on the reviewer itself: **2+ consecutive substantive diffs** (non-trivial change class) reviewed with **zero actionable findings** (blocking/should-fix, not nits) is a `verifier-rubber-stamp` tripwire. Surface it to the user; switch model if the harness has one.
 
-Its symmetric twin guards the opposite failure — a loop that never converges. Findings carry a computed **materiality**, a recurring non-`must` finding trips `review-non-convergence` and leaves the loop as a `contested` todo, and a repeat round reads only the delta from its baseline. Procedure: **[Review Convergence](../references/review-convergence.md)**.
+Findings carry a computed **materiality**, a recurring non-`must` finding trips `review-non-convergence` and leaves the loop as a `contested` todo, and a repeat round reads only the delta from its baseline. Procedure: **[Review Convergence](../references/review-convergence.md)**.
 
 ### Pre-Commit Review Procedure
 
@@ -98,7 +98,7 @@ Its symmetric twin guards the opposite failure — a loop that never converges. 
 
 After the review passes, proceed to the [Verify phase](verify.md) for regression, integration, and live testing. Do NOT commit directly after review — verification must pass first.
 
-### Review -> Verify Gate
+### Gate Check (Review -> Verify)
 
 - [ ] Pre-commit review by a clean-context subagent passes (no blocking issues)
 - [ ] Warnings presented to user and acknowledged
@@ -111,7 +111,7 @@ Run gate checks before advancing to the next pipeline stage. The canonical, comp
 
 ## Hallucination-Risk Heuristics
 
-Since the primary consumer of specifications is an LLM (AI agent), specs must be precise enough to prevent hallucinated implementations. During review, check each specification against these heuristics:
+During review, check each specification against these heuristics:
 
 ### Red Flags (block — must fix before advancing to plan)
 
@@ -153,8 +153,6 @@ When `.dev_flow/rules/` exists, review new or modified code against the project 
 
 ### Rules Compliance Check
 
-During the pre-commit code review of new or modified code:
-
 1. Read `.dev_flow/rules/_index.yaml` (by category block when it is above `full_read_limit`) and match category `applies_to` selectors against the changed files and the `review` phase (always-on categories included) — the [Knowledge Scaling](../references/knowledge-scaling.md) activation protocol.
 2. Take the matched categories' `rules[]` from the index, filter by unit selector → the relevant set of directives; over `activation_budget` drops nothing and lowers no severity; read a rule's body (ranged by its anchor) only on a trigger — the directive does not decide the case, a violation is suspected or found, an example is needed, the rule itself is under edit.
 3. Check new code against rules by severity:
@@ -169,11 +167,7 @@ During the pre-commit code review of new or modified code:
 
 ### When Rules Are Updated
 
-Rules documents in `.dev_flow/rules/` are living documents. They can be updated:
-- During **onboard** — initial extraction from existing code.
-- During **implement** — when a new pattern is established or discovered.
-- During **review** — when a reviewer identifies an undocumented convention.
-- By **user request** — explicit instruction to add, modify, or remove a rule.
+Rules are living documents ([rule phase](rule.md)); a review finding is one of the moments they change.
 
 When updating rules:
 1. Edit the relevant `.dev_flow/rules/{category}.md` file in the unit form (directive in the heading, bounded body — [rule phase](rule.md)); a lesson from the review is a rule; skills form later from accumulated clusters ([Knowledge Scaling](../references/knowledge-scaling.md)).
@@ -181,7 +175,7 @@ When updating rules:
 3. Update the category's `## Contents` digest line and `.dev_flow/rules/_index.yaml` in the same edit.
 4. Existing code is NOT required to be retroactively fixed.
 
-**Reflection.** A reviewer finding that "this convention keeps being violated" is the review phase's [Experience Capture](../references/experience-capture.md) harvest: write it as a rule automatically through the [rule phase](rule.md) (default `should`; a would-be `must` or a contradiction routes to independent review first; the developer sees it in the commit diff), rather than an ad-hoc note that evaporates with the review's clean context.
+**Reflection.** A reviewer finding that "this convention keeps being violated" is the review phase's [Experience Capture](../references/experience-capture.md) harvest: write it as a rule automatically through the [rule phase](rule.md) (default `should`; a would-be `must` or a contradiction routes to independent review first; the developer sees it in the commit diff).
 
 ## Conflict Resolution Protocol
 
@@ -212,7 +206,7 @@ To enumerate a document's dependents and code bindings when checking a conflict 
 
 ### Changelog Audit
 
-During review, verify that all concepts, specifications, and plans have up-to-date Changelog tables reflecting significant changes since their creation.
+During review, verify that concepts, specifications, and plans have Changelog entries that pass the [Docs Scaling](../references/docs-scaling.md) content filter.
 
 ## Deprecation & Removal
 
@@ -236,7 +230,7 @@ During review, verify that all concepts, specifications, and plans have up-to-da
 ### Removal Policy
 
 A deprecated or draft document can be deleted when:
-- Its `Updated` date is older than 3 months, AND
+- Its `Updated` date is older than `stale_after` ([Docs Scaling](../references/docs-scaling.md)), AND
 - No working code references its traceable IDs.
 
 Before deleting:

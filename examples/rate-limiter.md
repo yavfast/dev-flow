@@ -23,6 +23,11 @@ A minimal walkthrough showing the **core** concept-driven development pipeline (
 >
 > Prevents agents from overwhelming external APIs by enforcing per-agent call rate limits.
 
+## Contents
+
+- [1. Philosophy](#C_RLM_01) — what problem the limiter solves and which constraints bound it
+- [2. Domain Model](#C_RLM_02) — the RateBucket entity and the acquire flow
+
 ## 1. Philosophy  {#C_RLM_01}
 
 ### 1.1. Core Principle  {#C_RLM_01_01}
@@ -70,6 +75,15 @@ Exceeding the limit causes the call to be delayed, not rejected.
 > **Used by:** —
 > **Plan:** [rate_limiter.plan.md](./rate_limiter.plan.md)
 
+## Contents
+
+- [01. Data Structures](#SP_RLM_01) — the RateBucket fields and their constraints
+- [02. Contracts](#SP_RLM_02) — acquire/refill signatures, errors, and processing logic
+- [03. Validation Rules](#SP_RLM_03) — input validation and the invariants that must hold
+- [04. State Transitions](#SP_RLM_04) — the bucket's states and what moves it between them
+- [05. Verification Criteria](#SP_RLM_05) — what Test and Verify check for each contract
+- [06. Reversibility](#SP_RLM_06) — how the limiter is disabled and rolled back
+
 ## 01. Data Structures  {#SP_RLM_01}
 
 ### 01_01. RateBucket  {#SP_RLM_01_01}
@@ -104,6 +118,7 @@ Processing:
         ELSE:
             wait = (1 - bucket.tokens) / bucket.refill_rate
             SLEEP(wait)
+            REFILL(bucket)
             bucket.tokens -= 1
             RETURN wait
 
@@ -207,20 +222,20 @@ Implement token-bucket rate limiting for per-agent LLM calls.
 | Algorithm | Token bucket | Simple, well-understood |
 
 ## Progress
-- [ ] Phase 1 — RateBucket data model
-- [ ] Phase 2 — Integration with LLMRouter
+- [ ] [Phase 1 — RateBucket data model](#PL_RLM_P1)
+- [ ] [Phase 2 — Integration with LLMRouter](#PL_RLM_P2)
 
 ## Phases
 
-### Phase 1 — RateBucket (`engine/rate_limiter.py`) [TODO]
+### Phase 1 — RateBucket (`engine/rate_limiter.py`) [TODO]  {#PL_RLM_P1}
 **Depends on:** none
 **Implements:** [SP_RLM_01](./rate_limiter.sp.md#SP_RLM_01) + [SP_RLM_03](./rate_limiter.sp.md#SP_RLM_03) (validation lives with the model)
 **Verify:** [SP_RLM_05_02](./rate_limiter.sp.md#SP_RLM_05_02) invariants (tokens never exceed capacity)
 
-### Phase 2 — LLMRouter Integration [TODO]
+### Phase 2 — LLMRouter Integration [TODO]  {#PL_RLM_P2}
 **Depends on:** Phase 1
 **Implements:** [SP_RLM_02](./rate_limiter.sp.md#SP_RLM_02) + [SP_RLM_04](./rate_limiter.sp.md#SP_RLM_04) (transitions realized by acquire/refill)
-**Verify:** [SP_RLM_05_01](./rate_limiter.sp.md#SP_RLM_05_01) (allow under limit, reject when empty) + [SP_RLM_05_03](./rate_limiter.sp.md#SP_RLM_05_03) integration scenario
+**Verify:** [SP_RLM_05_01](./rate_limiter.sp.md#SP_RLM_05_01) (allow under limit, delay when empty) + [SP_RLM_05_03](./rate_limiter.sp.md#SP_RLM_05_03) integration scenario
 
 ## Changelog
 
@@ -248,7 +263,7 @@ from dataclasses import dataclass, field
 class RateBucket:
     agent_id: str
     capacity: int = 10
-    tokens: float = field(default=None)
+    tokens: float | None = None
     refill_rate: float = 1.0
     last_refill: float = field(default_factory=time.time)
 
@@ -412,7 +427,7 @@ Steps:
 
 ## Step 8 — Commit
 
-Commit sign-off: changed files, review verdict, intent verdict; "Ready to commit?" — commit on the developer's yes (SKILL.md → Developer Checkpoints).
+Commit sign-off: changed files, review verdict, intent verdict; "Ready to commit?" — commit on the developer's yes ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)).
 
 ```
 All checks passed:

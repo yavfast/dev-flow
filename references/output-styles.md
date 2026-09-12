@@ -2,16 +2,14 @@
 
 Cross-cutting sub-procedure of **every phase that writes a documentation file or answers the developer**. Not a pipeline stage, no command. **Advisory:** loading the project file is a gate, applying a profile is judgment at the moment of writing — it adds no gate criterion. Text *mechanics* belong to [Documentation Formatting](formatting.md); this reference owns the *register* — language, semantic complexity, and how a pointer to another document is carried.
 
-## Why this exists
-
-dev-flow writes to two surfaces with different readers. **Documentation** is read mostly by an agent (a later session, a subagent, the clean-context reviewer) and skimmed by the developer — a cross-reference there **replaces** a restatement, which is what keeps one canonical statement per concern. **Chat** is read by the person deciding right now; the link is not followable (in an Interview Mode dialog it often does not render as a link at all), so a reference there **needs** a restatement. Same asymmetry, opposite conclusions: in a document a link saves words, in chat it costs them. And the price of a half-understood sentence differs — a document gets re-read, a chat message gets acted on.
-
 ## The surfaces
 
 | Surface | Reader | What is written there |
 |---------|--------|----------------------|
 | `documentation` | Agent first, skimming developer second | Concept, spec, plan, spike, epic, task file, index, rule file, skill file, `_glossary.md`, `_framework.md` |
 | `chat` | The developer, deciding from this message | Phase report, Interview Mode question, commit-approval request, explanation, `ask` answer, relayed subtask report |
+
+In a document a cross-reference **replaces** a restatement; in chat it **needs** one, because the jump is not followable there.
 
 Commit messages belong to neither — they keep their own conventions ([Git Workflow](../SKILL.md#git-workflow-integration)).
 
@@ -40,11 +38,11 @@ Blocked by SP_RL_02_03 (docs/rate_limiter.sp.md) — the token-bucket refill
 contract: it caps a burst at 100, and the new endpoint asks for 500.
 ```
 
-**[Interview Mode](interview-mode.md) is the sharpest case.** In an options dialog the question text *is* the whole context: markup may not render, the jump does not work, and the answer is irreversible by the definition of a fork. Self-containment there is the condition for an informed choice, not a nicety.
+**[Interview Mode](interview-mode.md) is the sharpest case** — its question and options must be self-contained.
 
 ## English register — ASD-STE100
 
-When the text is in English, the target register on both surfaces is **ASD-STE100** (Simplified Technical English). The skill names the standard as an orientation: it ships neither its rule set nor its dictionary, and claims no compliance with it. A project that wants concrete register rules writes them into its own profile (next section).
+English text on both surfaces targets **ASD-STE100** (Simplified Technical English), named as an orientation only — the skill ships neither its rule set nor its dictionary. A project that wants concrete register rules writes them into its own profile.
 
 ## The project file — `.dev_flow/output_styles.md`
 

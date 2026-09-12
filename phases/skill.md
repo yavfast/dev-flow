@@ -115,7 +115,7 @@ updated: {YYYY-MM-DD}
 
 ## Procedural Skills
 
-A skill is distilled **procedural** memory (*how to use X here / how to do Y here*), and its retrieval carries **precedence** over the model's general prior. See [Procedural Skills](../references/procedural-skills.md) for the full discipline; the contract:
+A skill is distilled **procedural** memory (*how to use X here / how to do Y here*). See [Procedural Skills](../references/procedural-skills.md) for the full discipline; the contract:
 
 - **Additive fields** over the template: `kind: procedural`; a `## Applicability Boundary` body section (**mandatory** — `when_to_use` / `when_not` / `version_or_context_scope`; a skill without one is rejected); a freshness stamp (`written_against` version/context + `state: current|stale`, optional for a pure-process skill); `promotion: candidate|established` (+ a scope note while `candidate`); an **optional** `check` field — the signal proving the procedure fired, never an invented command (see [Evidence Discipline](../references/evidence-discipline.md)).
 - **Retrieval precedence:** a *current* matching skill outranks the general prior; a *stale* one must be re-grounded + re-stamped before it can override fresh research; **no match never blocks** (fall back to prior + research); a `candidate` applied outside its scope falls back (no forced reuse).
@@ -123,7 +123,7 @@ A skill is distilled **procedural** memory (*how to use X here / how to do Y her
 
 Creation/update is auto-harvested by [Experience Capture](../references/experience-capture.md) (no permission prompt); curation (prune/merge/restamp, surface conflicts) runs in [audit](audit.md)'s `skills` scope.
 
-## `_index.yaml` Format (YAML)
+## `_index.yaml` Format
 
 Root `_index.yaml` (`.dev_flow/skills/_index.yaml`):
 
@@ -171,7 +171,7 @@ skills:
 
 ## Loading Algorithm
 
-The index chain is the navigation layer. **Never load the full `.dev_flow/skills/` tree.**
+**Never load the full `.dev_flow/skills/` tree.**
 
 ```
 Step 1: Read root _index.yaml (~20 lines)
@@ -181,11 +181,11 @@ Step 4: Match topic → skill files (by skills[].topics)
 Step 5: Load the matched entries + their Applicability Boundary (`when_to_use` is the skill's directive); read a body only on a trigger — the boundary alone does not decide the action, a pitfall is suspected, an example is needed, the skill is being edited or consolidated
 ```
 
-Match at Steps 2 and 4 uses `topics[]`, plus `applies_to` (paths / phase) where an entry declares it. If no domain matches at Step 2 — stop. Cost: one small file read. A skill file above `full_read_limit` is read ranged by heading ([Knowledge Scaling → Activation protocol](../references/knowledge-scaling.md#activation-protocol)).
+Match at Steps 2 and 4 uses `topics[]`, plus `applies_to` (paths / phase) where an entry declares it. If no domain matches at Step 2 — stop. A skill file above `full_read_limit` is read ranged by heading ([Knowledge Scaling → Activation protocol](../references/knowledge-scaling.md#activation-protocol)).
 
 ## Initialization
 
-If `.dev_flow/skills/` does not exist, create the directory structure with empty `_index.yaml` files before proceeding. See [onboard phase](onboard.md) for the full initialization procedure that runs during project onboard.
+If `.dev_flow/skills/` does not exist, create the directory structure with empty `_index.yaml` files before proceeding. See [onboard phase](onboard.md) for the full initialization procedure.
 
 ## Skills Are Living Documents
 

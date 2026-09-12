@@ -4,6 +4,10 @@
 
 Break the specification into actionable phases with concrete technology choices, file paths, and task tracking. This is where language, framework, and library decisions are made.
 
+## Role Responsible
+
+This phase is handled by **PlanAuthor**: [roles/plan-author.ai.md](../roles/plan-author.ai.md).
+
 ## Key Rules
 
 - **Goal restates the intent:** The plan's Goal section restates the task's recorded intent (goal / target state / expected result — see [Task Intent](../references/task-intent.md)) for this plan's scope, so phases are checked against *why* the work exists, not only against the spec.
@@ -13,7 +17,7 @@ Break the specification into actionable phases with concrete technology choices,
 - **Backlog section:** Out-of-scope items go to the backlog at the bottom. Each item names the **trigger** that returns it to scope (event or date) or an owner who decides — an untriggered backlog item is a hidden "later" ([audit](audit.md) flags them).
 - **Declare Required Knowledge:** list the rules/skills this plan's work must apply, plus any skill *use / create / update* as tracked work items. This is the source of truth for the per-burst [Knowledge Activation](../references/application-enforcement.md) — re-surfaced beside each implementation burst, not just loaded once.
 - **No orphaned phases:** Every phase must reference which spec sections it implements.
-- **Per-phase verification checklist:** Every phase carries a `Verify:` field beside `Implements:` — the spec Verification Criteria (`SP_XXX_05_*`) covering the contracts it implements, plus any phase-local acceptance check the spec does not carry. It is the phase's definition-of-done and the ready, reusable checklist that [Test](testing.md) and [Verify](verify.md) consume — so completing a phase yields a clear picture of what to check, not a re-derivation from the whole spec.
+- **Per-phase verification checklist:** Every phase carries a `Verify:` field beside `Implements:` — the spec Verification Criteria (`SP_XXX_05_*`) covering the contracts it implements, plus any phase-local acceptance check the spec does not carry. It is the phase's definition-of-done and the ready, reusable checklist that [Test](testing.md) and [Verify](verify.md) consume.
 - **Pseudocode, not production code:** Include short sketches to clarify intent, but do not write full implementation.
 - **Formatting:** Follow [Documentation Formatting](../references/formatting.md) — no hard line wraps inside sentences or paragraphs; one paragraph = one logical line.
 
@@ -27,7 +31,7 @@ Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../S
 
 ## Interview Mode for Technology Decisions
 
-The plan is where technology is chosen — language, framework, library, persistence, concurrency model — and these are precisely forks with two or more viable, hard-to-reverse options. The Technology Decisions table records *what* was chosen; when a choice is genuinely contested (e.g. two libraries that both fit, a build-vs-buy call, a sync strategy), do not pick silently. Run an interview: present 2–4 options with your **recommended answer**, reach consensus with the developer, and capture the *why* in **Design Decisions** so the Technology Decisions row has a traceable rationale behind it.
+Technology forks — language, framework, library, persistence, concurrency model — are hard to reverse. The Technology Decisions table records *what* was chosen; when a choice is genuinely contested (e.g. two libraries that both fit, a build-vs-buy call, a sync strategy), do not pick silently. Run an interview: present 2–4 options with your **recommended answer**, reach consensus with the developer, and capture the *why* in **Design Decisions**.
 
 A rule, an existing concept, or a documented convention that already settles a choice is **not** a decision point — follow it and cite it. Interview only the genuinely open technology forks. See **[Interview Mode](../references/interview-mode.md)**.
 
@@ -77,14 +81,14 @@ Rules/skills this plan's work must apply — the source of truth for the per-bur
 
 ## Progress
 
-- [x] Phase 1 — Data models
-- [ ] Phase 2 — Parser (current)
-- [ ] Phase 3 — Integration
+- [x] [Phase 1 — Data models](#PL_XXX_P1)
+- [ ] [Phase 2 — Parser (current)](#PL_XXX_P2)
+- [ ] [Phase 3 — Integration](#PL_XXX_P3)
 - [backlog] Phase 4 — Admin UI
 
 ## Phases
 
-### Phase 1 — Data Models (`engine/model.py`) [DONE]
+### Phase 1 — Data Models (`engine/model.py`) [DONE]  {#PL_XXX_P1}
 
 **Depends on:** none
 **Implements:** [SP_XXX_01](./spec.sp.md#SP_XXX_01)
@@ -98,7 +102,7 @@ What to create:
 Notes:
 - All fields from SP_XXX_01_01 table must be represented
 
-### Phase 2 — Parser (`engine/parser.py`) [IN PROGRESS]
+### Phase 2 — Parser (`engine/parser.py`) [IN PROGRESS]  {#PL_XXX_P2}
 
 **Depends on:** Phase 1
 **Implements:** [SP_XXX_02](./spec.sp.md#SP_XXX_02)
@@ -114,7 +118,7 @@ Pseudocode sketch:
         model = build_model(input)
         RETURN model
 
-### Phase 3 — Integration [TODO]
+### Phase 3 — Integration [TODO]  {#PL_XXX_P3}
 
 **Depends on:** Phases 1, 2
 **Implements:** [SP_XXX_03](./spec.sp.md#SP_XXX_03)
@@ -187,7 +191,7 @@ When a code change restructures modules, files, or internal organization **witho
 ### Refactor Phase Format in Plan
 
 ```markdown
-### Phase N — Refactor: {description} [TODO]
+### Phase N — Refactor: {description} [TODO]  {#PL_XXX_PN}
 
 **Type:** refactor (no spec changes)
 **Depends on:** {phases whose file paths will change}
@@ -213,5 +217,5 @@ Post-refactor updates:
 
 ## Staleness Detection
 
-- If the `Updated` date is more than 3 months old and related code changed — the plan is stale.
-- If a phase has `[IN PROGRESS]` status older than 2 months — reassess whether it's abandoned.
+- If the `Updated` date is older than `stale_after` ([Docs Scaling](../references/docs-scaling.md)) and related code changed — the plan is stale.
+- If a phase has held `[IN PROGRESS]` longer than `phase_stalled_after` (same source) — reassess whether it is abandoned.

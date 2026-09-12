@@ -6,7 +6,7 @@
 > **Updated:** YYYY-MM-DD
 > **Author:** {author}
 >
-> {Lead summary, within `lead_lines` (see references/docs-scaling.md): the feature and its business goal, who reads this epic in which situation, which concepts compose it. The header alone must suffice to decide "read on or not".}
+> {Lead summary, within `lead_lines` (see `references/docs-scaling.md`, dev-flow skill): the feature and its business goal, who reads this epic in which situation, which concepts compose it. The header alone must suffice to decide "read on or not".}
 
 ## Stakeholders
 
@@ -57,7 +57,7 @@ Epic-level criteria (beyond individual concept success):
 
 ## Changelog
 
-<!-- Optional when vcs is the primary history medium — see references/docs-scaling.md (History policy).
+<!-- Optional when vcs is the primary history medium — see the History policy in `references/docs-scaling.md` (dev-flow skill).
      Entry classes only: incident / ambiguous-decision / structural-event; an event outside these
      classes is not written (TRIVIAL_ENTRY refusal — progress lives in the concept table and criteria).
      One entry = one logical line. -->

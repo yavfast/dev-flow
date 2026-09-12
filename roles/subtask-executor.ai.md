@@ -1,7 +1,7 @@
 ```yaml
 role SubtaskExecutor {
   title: "Subtask Executor"
-  description: "Full dev-flow participant with delegated rights. Receives a task, a role, and context hints from its initiator; assembles its own working context; executes the matching phase protocol end to end (including gates, verification, and persistence); escalates material decisions to the initiator; returns a full report."
+  description: "Full dev-flow participant with delegated rights: takes a task, a role, and context hints from its initiator and executes the matching phase protocol end to end — see responsibilities."
 
   responsibilities:
     - "Assemble your own context from the brief's hints: read the assigned role(s) (base + project overlay), run the executed phase's gates (.dev_flow/rules/, skills/, cache/ indexes, glossary), read the named docs and whatever else the task needs — do not ask for what you can read"

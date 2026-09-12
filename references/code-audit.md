@@ -1,6 +1,6 @@
 # Code Audit — Lens Registry, Shared Analysis & Refactoring Playbook
 
-The committed reference behind the [`audit code` scope](../phases/audit.md#step-9--code-scope-the-whole-codebase-audit). The phase doc carries the *procedure* (stages, gates, hand-off); this reference carries the *detail* — the full lens menu and per-lens checklists, the bottom-up module walk shared with onboard, the SOLID/DRY heuristics, the antipattern catalogue, and the refactoring playbook. It is loaded by the audit `code` scope and by onboard (for the shared walk); it is **not** a standalone pipeline stage.
+The committed reference behind the [`audit code` scope](../phases/audit.md#step-9--code-scope-the-whole-codebase-audit). The phase doc carries the *procedure* (stages, gates, hand-off); this reference carries the *detail*. It is loaded by the audit `code` scope and by onboard (for the shared walk); it is **not** a standalone pipeline stage.
 
 What keeps it honest:
 
@@ -55,7 +55,7 @@ Domain-specific (added when the domain applies): `a11y` (accessibility), `i18n` 
 
 ### Sub-angle folding
 
-Many review angles are *sub-cases* of a base lens, not peers. They fold into the base lens's checklist instead of becoming their own lens:
+Sub-cases of a base lens fold into its checklist instead of becoming their own lens:
 
 | sub-angle | folds into |
 |-----------|-----------|
@@ -117,7 +117,7 @@ Static audit only — **never run or execute exploits**. Mirrors [review](../pha
 
 - **Injection** — SQL/NoSQL/command/template injection; unparameterized queries; unsanitized input reaching an interpreter.
 - **SSRF / path traversal** — user-controlled URLs/paths reaching a fetch or file op without validation.
-- **Insecure crypto** — weak/again-deprecated algorithms, hard-coded keys/IVs, missing salt, `Math.random` for tokens.
+- **Insecure crypto** — weak or deprecated algorithms, hard-coded keys/IVs, missing salt, `Math.random` for tokens.
 - **Unsafe deserialization** — untrusted data into a deserializer that can instantiate arbitrary types.
 - **Secret/credential exposure** — keys, tokens, passwords in source, config, or logs.
 - **Missing authz** — an action/endpoint without an access check; broken object-level authorization.
@@ -188,7 +188,7 @@ The single, dependency-ordered module walk reused by **both** onboard (its modul
 
 ## SOLID / DRY Heuristics
 
-The judgement layer for the `architecture`, `standards`, `patterns`, and `duplication` lenses. Generic baseline — **`.dev_flow/rules/` always wins** where it speaks (project rules override generic guidance). Full principles in the [SOLID reference](solid-architecture.md); the audit-specific *smells* that flag each:
+The judgement layer for the `architecture`, `standards`, `patterns`, and `duplication` lenses. Generic baseline — **`.dev_flow/rules/` always wins** where it speaks. Full principles in the [SOLID reference](solid-architecture.md); the audit-specific *smells* that flag each:
 
 | Principle | Smell that flags a violation |
 |-----------|------------------------------|

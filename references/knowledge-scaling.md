@@ -1,6 +1,6 @@
 # Knowledge Scaling — Keeping Rules and Skills Cheap to Apply as They Grow
 
-Cross-cutting conventions for `.dev_flow/rules/` and `.dev_flow/skills/`: the form of a knowledge unit (directive in the heading, bounded body), a machine-matchable applicability selector, a digest at the top of every category file, the index as a derived router, an activation protocol that computes the relevant set instead of "loading the area", the consolidation of accumulated rules into a skill, and the audit verdicts that keep all of it in shape. Every phase with a knowledge gate applies the activation protocol; the rule, skill, and audit phases apply the rest. Advisory: no gate criterion, no severity semantics, and no precedence rule changes. Thresholds are named here and defined once in [Docs Scaling → Thresholds](docs-scaling.md#thresholds); they are consumed only by mechanical measurement — nobody counts by hand.
+Cross-cutting conventions for `.dev_flow/rules/` and `.dev_flow/skills/`: how a knowledge unit is formed, selected, indexed, activated, consolidated, and audited. Every phase with a knowledge gate applies the activation protocol; the rule, skill, and audit phases apply the rest. Advisory: no gate criterion, no severity semantics, and no precedence rule changes. Thresholds are named here and defined once in [Docs Scaling → Thresholds](docs-scaling.md#thresholds); they are consumed only by mechanical measurement — nobody counts by hand.
 
 ## Contents
 
@@ -91,8 +91,6 @@ Runs at every knowledge gate and at every per-burst re-trigger of [Application E
 6. Read a unit's **body** only on a trigger from this closed list: the directive alone does not decide the concrete action · a violation is suspected or found (review, tripwire) · a Correct/Incorrect example is needed · the unit itself is being edited or consolidated. Read it ranged — from `{#id}` to the next h2 ([Docs Scaling → Reading protocol](docs-scaling.md#reading-protocol-grep-first)).
 
 Degradation: an index that does not parse as YAML → match by category names and phase name from the text, record `unobserved` with the reason, continue. Only phase known (concept, ask, todo) → phase match plus always-on; paths-only categories stay silent by design.
-
-The relevant set is what the Pre-Action Marker carries as pointers where no plan Required Knowledge exists.
 
 ## Consolidation (rules → skill)
 

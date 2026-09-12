@@ -2,11 +2,11 @@
 
 Cross-cutting sub-procedure of [review](../phases/review.md) and [verify](../phases/verify.md) (round mode), and of [review](../phases/review.md), [propagate](../phases/propagate.md), [audit](../phases/audit.md), [implement](../phases/implement.md) and [fix](../phases/fix.md) (unsolicited checks), and the session working memory in [Resource Cache](cache.md) (re-reads). Not a pipeline stage and no command.
 
-Advisory throughout — no gate criterion changes. What changes is the work done inside a phase.
+Advisory throughout — no gate criterion changes.
 
 ## Why this exists
 
-Each discipline states a trigger to do **more** and rarely states the condition under which to do **nothing**; the bounds that exist are local and do not generalize to their neighbours. But an unnecessary check is not free caution — it spends the context whose loss is the drift [Application Enforcement](application-enforcement.md) exists to fight, and its findings dilute the real ones. **A check is an action, so it has a precondition:** something must have changed, or be unknown, for the check to have a subject.
+**A check is an action, so it has a precondition:** something must have changed, or be unknown, for the check to have a subject. An unnecessary check is not free caution — it spends context and its findings dilute the real ones.
 
 ## The rule
 
@@ -20,7 +20,7 @@ An entry condition is **computed from a fact outside the acting agent's own pros
 
 Absence of a fact always favours the check. A project with no vcs, no ledger, or a fresh session runs everything, exactly as before.
 
-**A new check declares its kind.** Any check added to dev-flow names which of the conditions below governs it. One that declares none is unconditional and always runs — the safe default, never a licence to invent a fourth kind.
+**A new check declares its kind.** Any check added to dev-flow names which of the conditions below governs it. One that declares none is unconditional and always runs — the safe default, never a licence to invent a new kind.
 
 ## Signal — unsolicited comparison
 
@@ -57,7 +57,7 @@ None fired → use what is already in context. Elapsed time alone is not an inva
 
 Boundaries:
 
-- **`read-before-write` is not weakened.** A shared file (task file, index, external ticket) is re-read before **every** write, unconditionally — the ledger never answers for it. The rule exists because other contributors write concurrently, and a state comparison you compute yourself cannot see a same-second write.
+- **`read-before-write` is not weakened.** A shared file (task file, index, external ticket) is re-read before **every** write, unconditionally — the ledger never answers for it.
 - **Knowledge gates are untouched.** `.dev_flow/rules/_index.yaml` and `.dev_flow/skills/_index.yaml` stay mandatory at phase start. Re-triggering knowledge at the moment of action stays pointer-only per [Application Enforcement](application-enforcement.md), so it never re-reads a body either.
 
 The ledger of what was read — target, state reference, time, extent — lives in the [session working memory](cache.md#session-working-memory-l1). No entry means "not read", never "read long ago".
@@ -78,17 +78,13 @@ The ledger of what was read — target, state reference, time, extent — lives 
 
 **A confirm round that does not confirm escalates.** If the diff does not do what the finding prescribed, or a previously green test is not green, the round **replays as `full`** with the clean-context reviewer. A `confirm` round has two outcomes only — the finding closes, or the full round runs. It never closes a finding it did not confirm.
 
-D2 lives in the artifact, never in the fixer's opinion: the prescription was written before the fix existed. D3 and D4 close "the fix may have broken something nearby" — a diff outside the named locations fails the discriminator.
-
 The first pre-commit review round is always `full`. The same discriminator set scopes the [verify](../phases/verify.md) fix cycle.
 
 ## Suppression is written, never silent
 
 A **suppressed check** — one the signal gate did not open — writes a record: what was not checked, which condition failed, and the **named missing fact**. It enters the phase report as evidence state `unobserved` per [Evidence Discipline](evidence-discipline.md). A reason states the absent fact ("no signal is true for this file"), not an intention ("judged unimportant").
 
-An unrun and unmentioned check is indistinguishable from a completed one.
-
-A reused read and a `confirm` round write **no** suppression record: nothing was skipped there. The re-read was unnecessary, and the round ran.
+A reused read and a `confirm` round write **no** suppression record: nothing was skipped there.
 
 These cases refuse the suppression outright — run the check instead:
 

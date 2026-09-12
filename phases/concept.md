@@ -3,6 +3,7 @@
 ## Contents
 
 - [Purpose](#purpose) — a concept answers "what" and "why": idea, architecture, mechanisms, philosophy
+- [Role Responsible](#role-responsible) — The ConceptAuthor role that executes this phase
 - [Language Independence](#language-independence) — no languages, frameworks, or libraries in a concept
 - [Pre-Concept Checklist](#pre-concept-checklist) — the questions to answer first; unverified answers go to research or an open decision
 - [Reuse Check](#reuse-check) — mandatory search of existing concepts, code, and `docs/ext_adoption/` before creating a new concept
@@ -11,7 +12,7 @@
 - [Authoring Principles](#authoring-principles) — ideas over implementation, domain language, diagrams, boundaries, criticality header, formatting, Contents, changelog
 - [Interview Mode for Design Decisions](#interview-mode-for-design-decisions) — surface material forks as interviews; open decisions vs banned deferrals; forecast check
 - [Banned Phrases](#banned-phrases) — table of deferral phrases ("temporarily", "for now", "TBD", …) with what to write instead
-- [Structure](#structure) — the concept file template: header fields, §1–§4 anchored sections, Design Decisions (DEC records), Changelog
+- [Structure](#structure) — points at `templates/concept.md` for the concept file structure
 - [Spike / Exploration (Optional)](#spike--exploration-optional) — when to run a research spike before or during authoring and how to reference it
 - [Concept Granularity](#concept-granularity) — when to split, when to keep together, rule of thumb; size thresholds from Docs Scaling
 - [Epic / Feature Group](#epic--feature-group) — create an `*.epic.md` when 3+ related concepts have ordering dependencies
@@ -19,6 +20,10 @@
 ## Purpose
 
 A concept describes the idea, architecture, mechanisms, and philosophy. It answers "what" and "why", not "how to implement".
+
+## Role Responsible
+
+This phase is handled by **ConceptAuthor**: [roles/concept-author.ai.md](../roles/concept-author.ai.md).
 
 ## Language Independence
 
@@ -38,18 +43,16 @@ Before creating a new concept, answer these questions. If any answer is unclear 
 
 ## Reuse Check
 
-**Mandatory before creating a new concept.** Prevents duplication and "reinventing the wheel".
+**Mandatory before creating a new concept.**
 
 1. Search existing concepts (`docs/*.concept.md`) for overlapping domain entities or mechanisms.
 2. Search the codebase for existing implementations that partially solve the problem.
 3. If overlap found — justify why a new concept is needed instead of extending the existing one.
 4. Document findings in section "1.2 Design Constraints" or as a spike.
 
-If reuse check reveals that the problem is already covered — extend the existing concept instead.
-
 **External prior art.** Steps 1–2 search *inside* the project. When `docs/ext_adoption/` exists, read the adoption documents relevant to this concept's domain — an external repository may already have solved the problem, and the adoption document carries the relevance verdict and the integration risk. Cite it as the concept's origin (`Spike:` or a provenance note), the way a spike is cited. If no adoption document covers a domain where external prior art plainly exists, [`/dev-flow adopt <repo>`](../references/repo-adoption.md) produces one. Advisory only — it informs the concept, never authorizes it.
 
-This is the design-altitude, once-per-concept check. Its code-altitude counterpart — searching for an existing function/class before writing a new one, and building for reuse — is [Code Reuse](../references/code-reuse.md), applied per action burst in implement/fix.
+Code-altitude counterpart, applied per action burst in implement/fix: [Code Reuse](../references/code-reuse.md).
 
 ## Context Loading
 
@@ -83,9 +86,7 @@ Boundary: the glossary says *what a word means*; this concept's Domain Model (§
 
 ## Interview Mode for Design Decisions
 
-Concepts are where the biggest, least-reversible choices are made — and where they are easiest to hide. When authoring surfaces **two or more materially different ways forward** (a different domain model, a different boundary, a different mechanism), do **not** pick one silently and bury it in the prose. Stop and run an interview: present the fork to the developer with 2–4 options and your **recommended answer**, reach a consensus, and record the outcome.
-
-The developer holds context you don't (roadmap, business constraints, team) and owns the consequences; an architectural mistake set here is expensive to undo once it reaches code. A cheap question now beats an expensive reversal later.
+When authoring surfaces **two or more materially different ways forward** (a different domain model, a different boundary, a different mechanism), do **not** pick one silently and bury it in the prose. Stop and run an interview: present the fork to the developer with 2–4 options and your **recommended answer**, reach a consensus, and record the outcome.
 
 See **[Interview Mode](../references/interview-mode.md)** for the full procedure — when a fork counts as a decision point (and when it does not), how to frame options with a recommendation, sequential vs batched questions, and the valid outcomes (consensus vs documented open alternatives with a resolution trigger). Record every proposed, resolved, or open decision in the concept's **Design Decisions** section.
 
@@ -95,7 +96,7 @@ See **[Interview Mode](../references/interview-mode.md)** for the full procedure
 
 ## Banned Phrases
 
-Reject or flag the following phrases in any concept. They signal deferred decisions that become permanent technical debt:
+Reject or flag the following phrases in any concept.
 
 | Phrase | Problem | What to write instead |
 |--------|---------|----------------------|
@@ -108,92 +109,11 @@ Reject or flag the following phrases in any concept. They signal deferred decisi
 
 ## Structure
 
-```markdown
-# Concept Name  {#C_XXX}
-
-> **Code:** C_XXX
-> **Status:** active | draft | deprecated
-> **Created:** YYYY-MM-DD
-> **Updated:** YYYY-MM-DD
-> **Author:** agent / human name
-> **Owner:** role / team / module responsible for long-term maintenance
-> **Complexity:** low | medium | high (estimated maintenance burden)
-> **Criticality:** peripheral | supporting | core | critical (weight in the whole application; optional)
->
-> **Depends on:** [C_YYY](./other.concept.md)
-> **Used by:** [C_ZZZ](./another.concept.md)
-> **Spike:** {[name.spike.md](./name.spike.md) or "—"}
-> **Specification:** [SP_XXX](./name.sp.md)
-> **Plan:** [name.plan.md](./name.plan.md)
->
-> Brief one-paragraph description.
-
-## 1. Philosophy  {#C_XXX_01}
-
-### 1.1. Core Principle  {#C_XXX_01_01}
-Why this feature exists, what problem it solves.
-
-### 1.2. Design Constraints  {#C_XXX_01_02}
-Architectural boundaries and invariants.
-
-## 2. Domain Model  {#C_XXX_02}
-
-### 2.1. Key Entities  {#C_XXX_02_01}
-Entities, responsibilities, and relationships.
-Use diagrams to show relationships.
-
-### 2.2. Data Flows  {#C_XXX_02_02}
-How data moves through the system.
-
-## 3. Mechanisms  {#C_XXX_03}
-
-### 3.1. Core Algorithm  {#C_XXX_03_01}
-High-level logic in prose or abstract pseudocode. NOT code.
-
-### 3.2. Edge Cases  {#C_XXX_03_02}
-Error scenarios, boundary conditions, degradation strategies.
-
-## 4. Integration Points  {#C_XXX_04}
-
-### 4.1. Dependencies  {#C_XXX_04_01}
-What other concepts this depends on (with [C_XXX] references).
-
-### 4.2. API Surface  {#C_XXX_04_02}
-What this concept exposes (abstract contracts, not signatures).
-
-## 5. Design Decisions  {#C_XXX_DEC}
-
-ADR-style record of every material fork surfaced via Interview Mode. Omit the
-section only if authoring surfaced no decision points. One record per decision:
-
-### DEC_01 — {short question}  {#C_XXX_DEC_01}
-
-> **Status:** proposed | resolved | resolved (delegated) | open
-> **Date:** YYYY-MM-DD
-
-**Question:** {the fork, in one sentence}
-
-**Options considered:**
-| Option | Consequence |
-|--------|-------------|
-| A — {approach} | {what it commits us to} |
-| B — {approach} | {what it commits us to} |
-
-**Decision:** {chosen option, or "OPEN — see resolution trigger"}
-**Rationale:** {why this option / what trade-off it optimises for}
-**Rejected because:** {one line per rejected option}
-**Resolution trigger:** {open decisions only: the event/date by which this must close}
-
-## Changelog
-
-| Date | Change |
-|------|--------|
-| YYYY-MM-DD | Initial version |
-```
+File structure: [templates/concept.md](../templates/concept.md).
 
 ## Spike / Exploration (Optional)
 
-Before writing a concept, you may need to explore an idea: research libraries, prototype approaches, or discuss trade-offs. This is formalized as a **spike** — a lightweight, time-boxed exploration that feeds into the concept. Spikes are executed by the **[research phase](research.md)** (`/dev-flow research`, alias `spike`) — it owns the cost gate, the delegation to the researcher subagent, the spike rules, and persisting durable findings to `.dev_flow/skills/`.
+A **spike** is a time-boxed exploration that feeds the concept, executed by the **[research phase](research.md)** (`/dev-flow research`, alias `spike`).
 
 ### When to Spike
 
@@ -205,7 +125,7 @@ Before writing a concept, you may need to explore an idea: research libraries, p
 
 When any of these hold mid-authoring, pause the concept, run the [research phase](research.md), then resume with the findings. Reference the spike from the concept: `Spike: [name.spike.md](./name.spike.md)`.
 
-See [research phase](research.md) for the full procedure and spike rules, and the [spike template](../templates/spike.md) for the file structure.
+Spike file structure: [spike template](../templates/spike.md).
 
 ## Concept Granularity
 

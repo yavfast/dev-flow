@@ -2,10 +2,6 @@
 
 Shared sub-procedure for the **Implement**, **Test**, **Review**, **Verify**, and **Fix** phases; [audit](../phases/audit.md) routes wrong-document findings here, and it applies unchanged inside delegated [subtasks](../phases/subtask.md). It is **not** a standalone pipeline stage — it runs *inside* a downstream phase the moment evidence shows the defect lives in an upstream document (spec, plan, concept) rather than in the code.
 
-## Why this exists
-
-"Code must satisfy the spec" is right for code bugs — but sometimes a downstream phase is where reality falsifies the *document*, and without a sanctioned path an agent either **bends the code** to a spec it has evidence is wrong or **silently edits the spec** to match the code (the exact drift the pipeline exists to prevent). Escalation is the third path: stop, fix the owning document through its own discipline, re-pass its gate, resume. [Propagate](../phases/propagate.md) flows an *already-made* decision top-down; escalation *creates* that decision bottom-up mid-pipeline — escalate up, then propagate down.
-
 ## When to trigger
 
 Escalate when evidence from a downstream phase points at an upstream artifact:

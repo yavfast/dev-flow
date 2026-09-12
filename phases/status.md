@@ -4,6 +4,7 @@
 
 - [Purpose](#purpose) — What status loads into a session; owns the read/write protocol every phase follows; reports drift, audit resolves it
 - [Command](#command) — `/dev-flow status [task_id]` syntax — dashboard summary without argument, single-task detail with one
+- [Roles](#roles) — Each phase role updates its own subtask block; ContextTracker is the dedicated read/write/regenerate worker
 - [Context Files](#context-files) — `.dev_flow/` layout, source-of-truth rule (task files win over derived indexes), templates, legacy single-file migration
 - [Collaboration Model (read first)](#collaboration-model-read-first) — Table of who may edit each region of a shared task file; no exclusive locking, no time-based takeover
 - [Read Protocol](#read-protocol) — Re-attention first, then Steps 1–5: read dashboard, read task file, validate freshness, output templates, continuation
@@ -11,7 +12,6 @@
 - [Regeneration Procedure](#regeneration-procedure) — How any contributor rebuilds `active_context.md` and `tasks/_index.md` from task headers, incl. Deferred (todos)
 - [Salience Markers](#salience-markers) — `{s:pin|noise|superseded→}` vocabulary, written form, task-scoped expiry, how dev-flow compaction honours salience
 - [Context Hygiene](#context-hygiene) — Canonical caps (10 log entries, ~300-line task, ~80-line dashboard), activity content filter, session history archive
-- [Roles](#roles) — Each phase role updates its own subtask block; ContextTracker is the dedicated read/write/regenerate worker
 
 ## Purpose
 
@@ -19,7 +19,7 @@ Load the active development context into the session so you can quickly resume w
 
 Status also defines the **read/write protocol** that every other phase follows when touching the context files — read this whenever you need to update task state safely under multiple AI contributors.
 
-For the periodic whole-directory revision — reconciling task state with reality, trimming the dashboard, compacting and reflecting on closed tasks, and grooming `rules/`/`skills/` — see the [audit phase](audit.md). Where `status` *reports* drift, `audit` *resolves* it, building on this protocol's regeneration and archive procedures.
+For the periodic whole-directory revision see the [audit phase](audit.md): `status` *reports* drift, `audit` *resolves* it, building on this protocol's regeneration and archive procedures.
 
 ## Command
 
@@ -29,6 +29,11 @@ For the periodic whole-directory revision — reconciling task state with realit
 
 - No argument — show all active tasks (dashboard summary).
 - Optional `task_id` — show the detailed state for one specific task file.
+
+## Roles
+
+- Each phase role updates its own subtask block as it runs.
+- **ContextTracker** ([context-tracker.ai.md](../roles/context-tracker.ai.md)) is the dedicated read/write/regenerate worker; invoke it when context needs refreshing without executing a phase.
 
 ## Context Files
 
@@ -83,7 +88,7 @@ A task file is **shared** between multiple AI contributors. Each contributor app
 
 ## Read Protocol
 
-**Re-attention first (after a compaction or subtask switch).** Before re-reading the task files, re-read the **session working memory** area — the L1 notes / parameters / reminders / reads that survive a compaction (see [Resource Cache → Session Working Memory](../references/cache.md#session-working-memory-l1)). It is small and whole-re-readable, and it restores the working focus the dropped transcript held. The dashboard and task files (below) remain the durable source of truth; working memory just rebuilds *attention* cheaply.
+**Re-attention first (after a compaction or subtask switch).** Before re-reading the task files, re-read the **session working memory** area — the L1 notes / parameters / reminders / reads that survive a compaction (see [Resource Cache → Session Working Memory](../references/cache.md#session-working-memory-l1)).
 
 ### Step 1: Read the dashboard
 
@@ -223,11 +228,11 @@ Before any `Edit` on `active_context.md`, `tasks/_index.md`, or shared sections 
 3. Apply the targeted edit (insert / update / remove your own content).
 4. If the row or block you expect is not where you expect — the file changed. Re-locate by Task ID / Author tag and re-apply.
 
-If two contributors update the same row at nearly the same time (e.g. both update Last updated in a header), the later write wins on that single field — that is acceptable because the field's content is interchangeable. The contributors' own subtask blocks and tagged entries are untouched.
+If two contributors update the same row at nearly the same time, the later write wins on that field; their subtask blocks and tagged entries are untouched.
 
 ### Append-only logs
 
-Inside a task file, never rewrite Coordination Notes, Shared Activity Log, or per-subtask Activity. Always append (newest at top for log/notes, newest at bottom for per-subtask Activity within a block). This means a contributor that mistakenly opens a stale copy and appends an entry still produces a valid log — at worst with one duplicated line, never with lost history.
+Inside a task file, never rewrite Coordination Notes, Shared Activity Log, or per-subtask Activity. Always append (newest at top for log/notes, newest at bottom for per-subtask Activity within a block).
 
 ### How a contributor leaves a task
 
@@ -253,7 +258,7 @@ Regeneration is a full rewrite — only do it when targeted edits cannot recover
 
 ## Salience Markers
 
-Compaction is where context is lost, and dev-flow archives by **age** — oldest first, whether or not it still matters. Salience markers let the author of an entry record *how much it matters*, so a dev-flow-owned compaction keeps the signal and sheds the noise instead of going purely by age.
+A salience marker lets the author of an entry record how much it matters, so dev-flow-owned compaction evicts by salience before age.
 
 A marker attaches to a single **entry** — a Shared Activity Log line, a Coordination Note, a Relevant Context row, or a per-subtask Activity entry — never to a whole document (that axis is the document `Status`).
 
@@ -284,7 +289,7 @@ A marker has **no weight of its own**; its weight is conditioned on its owning t
 - `normal` if the entry has no token, **or** if the owning task is closed / off the active dashboard / out of focus;
 - otherwise the token's value.
 
-So `pin` means "survive while this task is active" — not "survive forever". When the task closes or loses focus its markers go inert (effective `normal`); this is what stops completed tasks clogging the active context. A durable lesson does **not** rely on a `pin` surviving closure — it is harvested into a rule/skill *before* the task closes (see [Experience Capture](../references/experience-capture.md), whose harvest-before-demote ordering runs the reflection before markers are demoted).
+So `pin` means "survive while this task is active" — not "survive forever". When the task closes or loses focus its markers go inert (effective `normal`). A durable lesson does **not** rely on a `pin` surviving closure — it is harvested into a rule/skill *before* the task closes (see [Experience Capture](../references/experience-capture.md), whose harvest-before-demote ordering runs the reflection before markers are demoted).
 
 ### How the protocol treats markers
 
@@ -292,7 +297,7 @@ So `pin` means "survive while this task is active" — not "survive forever". Wh
 - **Re-grade by appending, never editing.** Logs are append-only, so you do not edit an entry to change its marker. To supersede an entry, append a new tagged note that references the original (`{s:superseded→…}` points at the successor).
 - **`superseded` keeps the trail.** Never evict a `superseded` entry whose successor would also be gone — the successor must survive.
 - **Compaction honours effective salience.** When this protocol's archiving or [audit](audit.md) Step 3 reduces a set of entries, a `pin` (of an active task) is retained, `noise`/`superseded` are evicted first, and only then does the existing age rule apply to the `normal` remainder. Evicted entries are **archived to `session_history/`, never lost** (the non-destructive rule still holds).
-- **Over-pinning is self-correcting.** There is no hard cap on `pin` count; [audit](audit.md) flags a task whose `pin` ratio is implausibly high and proposes a re-grade (advisory).
+- **Over-pinning.** No hard cap on `pin` count; [audit](audit.md) flags a task whose `pin` ratio is implausibly high and proposes a re-grade (advisory).
 
 **dev-flow compaction only.** Markers are honoured by dev-flow's *own* compaction (this protocol, audit). The **runtime's** context-summary is not a dev-flow-owned event — there a `pin` is at most conveyed as in-context phrasing (advisory). The durable copy in the task file is what dev-flow compaction honours.
 
@@ -353,8 +358,3 @@ which log, original timestamp, entry.]
 5. Set the file's `Last updated` timestamp.
 
 **Do not** delete session history files automatically — they are the audit trail.
-
-## Roles
-
-- Each phase role updates its own subtask block as it runs.
-- **ContextTracker** ([context-tracker.ai.md](../roles/context-tracker.ai.md)) is the dedicated read/write/regenerate worker; invoke it when context needs refreshing without executing a phase.

@@ -4,6 +4,7 @@
 
 - [Purpose](#purpose) — Streamlined investigate → plan → implement → verify path for bugs that need no new concept or spec
 - [Command](#command) — `/dev-flow fix <problem description>` syntax (freeform, any language) with example invocations
+- [Role Responsible](#role-responsible) — The Implementer role used for the implementation step
 - [Procedure](#procedure) — Steps 0–6: skills/ticket check, analyze (confidence gate), plan + design sign-off, implement, verify, docs, reflect
 - [Diagnosis (optional)](#diagnosis-optional) — When the confidence gate fails: cost gate options A/B/C, the diagnosis loop, missing-seam finding, delegation, artifacts
 - [Interview Mode in Fix](#interview-mode-in-fix) — Root-cause and fix-strategy forks, sanctioned stop-gap, where decisions are recorded, advisory checks, spotted defects
@@ -32,6 +33,10 @@ The description is freeform, in any language. It can be a bug report, error mess
 /dev-flow fix ClassCastException in EventHandler.onInit when payload is null
 ```
 
+## Role Responsible
+
+This phase is handled by **Implementer**: [roles/implementer.ai.md](../roles/implementer.ai.md) for the implementation step; analysis and planning stay with the orchestrating agent.
+
 ## Procedure
 
 ### Step 0: Check skills and roles
@@ -51,7 +56,7 @@ If you'll delegate the diagnosis loop or verification (see the **Delegation** no
 5. **Check related code** — look for the same pattern elsewhere that may have the same bug (if it's a pattern-level issue, not a one-off).
 
 **Confidence gate — diagnose only when you must.** After analysis:
-- **Confident, located cause** corroborated by the provided evidence → go straight to Step 2. Do **not** reproduce or build a feedback loop — the evidence already establishes the bug, so reproduction here only burns time and tokens. (Correctness is still confirmed at Step 4 Verify.)
+- **Confident, located cause** corroborated by the provided evidence → go straight to Step 2. Do **not** reproduce or build a feedback loop — the evidence already establishes the bug. (Correctness is still confirmed at Step 4 Verify.)
 - **No confident cause** — you cannot locate it, cannot tell a real bug from expected behavior, or several causes stay equally plausible → enter the optional [Diagnosis](#diagnosis-optional) sub-step.
 
 ### Step 2: Plan the fix
@@ -114,7 +119,7 @@ A fix is the highest-yield **rule auto-discovery** moment: a bug just proved a g
 
 ## Diagnosis (optional)
 
-An optional sub-step of **Step 1**, entered only when the confidence gate fails — you have no confident, evidence-corroborated cause. Most fixes arrive with enough evidence to skip it: reproduction is often costlier than the fix, so skipping is the default and *entering* is the justified choice.
+An optional sub-step of **Step 1**, entered only when the confidence gate fails — you have no confident, evidence-corroborated cause. Skipping is the default; *entering* is the justified choice.
 
 **Before diagnosing — get context and a plan.** Do not start reproducing blindly. First gather the context the diagnosis needs and decide *how* you will obtain a pass/fail signal and roughly what it will cost. Then apply the cost gate.
 
@@ -124,9 +129,9 @@ An optional sub-step of **Step 1**, entered only when the confidence gate fails 
 - `C` — **Request an artifact** from the developer — repro steps, a HAR/log/crash dump, a timestamped screen recording, or environment access — rather than reconstructing it. (For a manual/UI repro, a structured human-in-the-loop script keeps the signal usable.)
 
 **The diagnosis loop (path A):**
-1. **Build a feedback loop** — a fast, deterministic pass/fail signal for the bug. It need **not** be a unit test: a failing test, a CLI/curl diff, a replayed trace, a throwaway harness, or — where a human must act — an adb/live check are all valid. Build the right loop and the bug is most of the way fixed.
+1. **Build a feedback loop** — a fast, deterministic pass/fail signal for the bug. It need **not** be a unit test: a failing test, a CLI/curl diff, a replayed trace, a throwaway harness, or — where a human must act — an adb/live check are all valid.
 2. **Reproduce** — run the loop; confirm it shows the **user's** symptom, not a nearby one (wrong bug → wrong fix). For flaky bugs, raise the reproduction *rate* until it is debuggable rather than chasing a clean repro.
-3. **Falsifiable hypotheses** — 3–5, ranked, each stating a prediction ("if X is the cause, changing Y makes it disappear"). A hypothesis with no prediction is a vibe — sharpen or drop it. Show the ranked list to the developer when they hold deciding context (a cheap checkpoint); proceed on your ranking if they are away.
+3. **Falsifiable hypotheses** — 3–5, ranked, each stating a prediction ("if X is the cause, changing Y makes it disappear"). A hypothesis with no prediction is sharpened or dropped. Show the ranked list to the developer when they hold deciding context (a cheap checkpoint); proceed on your ranking if they are away.
 4. **Instrument** — one variable at a time; debugger / REPL over logs, logs over "log everything and grep". Tag every temporary log with a unique prefix (`[DEBUG-a4f2]`) so cleanup is a single `grep` (removed at Step 4). For performance regressions, measure first (baseline / profiler), then fix.
 
 **No correct test seam is itself a finding.** If the bug cannot be locked down because the code has no seam exercising the real bug pattern (tangled callers, hidden coupling), do not fake it with a shallow test that gives false confidence — **record the missing seam** as a finding and route it upward (Step 5 → a `*.concept.md` note or a rule), the same way an architectural decision would be surfaced.
@@ -137,12 +142,12 @@ An optional sub-step of **Step 1**, entered only when the confidence gate fails 
 
 ## Interview Mode in Fix
 
-A bug fix hides two forks that are easy to resolve silently and expensive to get wrong. When either is *material* — the options lead to genuinely different code or different long-term cost — do **not** pick one quietly. Surface it with marked options (`A`/`B`/`C`) and a recommended answer, per [Interview Mode](../references/interview-mode.md). Most bugs have one obvious fix, so the over-asking discipline applies hard here: trigger this only on a real fork.
+A bug fix hides forks that are easy to resolve silently and expensive to get wrong. When one of them is *material* — the options lead to genuinely different code or different long-term cost — do **not** pick one quietly. Surface it with marked options (`A`/`B`/`C`) and a recommended answer, per [Interview Mode](../references/interview-mode.md). Most bugs have one obvious fix, so the over-asking discipline applies hard here: trigger this only on a real fork.
 
 - **Root cause (Step 1).** When several plausible causes lead to *different* fixes and the developer likely holds the deciding context ("does it happen only after re-login?"), present the ranked hypotheses as options and let them confirm — rather than betting on the top-ranked one.
 - **Fix strategy (Step 2).** The same cause often admits a quick **band-aid**, a **structural** fix, and a **workaround**, with very different long-term cost. Surface them; recommend one.
 
-**The sanctioned stop-gap.** The Banned Phrases rule forbids silent "temporary" fixes — but sometimes you genuinely must ship a stop-gap *now* (prod is down). Interview Mode's **open decision with a resolution trigger** is exactly how: record the band-aid as the chosen action **and** the proper fix as OPEN with a concrete trigger ("resolve by #123 / next sprint"). That converts a silent band-aid — which rots into permanence — into a tracked, owned decision.
+**The sanctioned stop-gap.** The Banned Phrases rule forbids silent "temporary" fixes — but sometimes you genuinely must ship a stop-gap *now* (prod is down). Interview Mode's **open decision with a resolution trigger** is exactly how: record the band-aid as the chosen action **and** the proper fix as OPEN with a concrete trigger ("resolve by #123 / next sprint").
 
 **Where the decision is recorded** (a code fix usually has no design document of its own):
 - Fix **changes a contract** → it propagates (Step 5) to the affected `*.sp.md` / `*.concept.md`; record the decision in that document's **Design Decisions** section.
@@ -150,9 +155,9 @@ A bug fix hides two forks that are easy to resolve silently and expensive to get
 
 **Verification economy.** Diagnosis widens fast. A comparison outside this fix and unasked for runs only on a signal, and a re-read of what is already in context needs an invalidator; a skipped check is written as `unobserved` with the absent fact, and a substantive remaining suspicion is filed as a `todo`. A signal you cannot compute is not a false one — run the check in full. See [Verification Economy](../references/verification-economy.md).
 
-**Knowledge activation (per-burst).** Re-trigger the skill/rule gate at the moment of action — before each fix/diagnosis burst re-surface the applicable rules/skills (a relevant skill's pitfalls, the violated invariant's rule) with a pointer-only Pre-Action Marker, rather than relying on a phase-start load that has since drifted. For a high-stakes change escalate to a deterministic tripwire or sampled cross-model verifier where the runtime allows; self-attestation is never the control. See [Application Enforcement](../references/application-enforcement.md).
+**Knowledge activation (per-burst).** Re-trigger the skill/rule gate at the moment of action — before each fix/diagnosis burst re-surface the applicable rules/skills (a relevant skill's pitfalls, the violated invariant's rule) with a pointer-only Pre-Action Marker. For a high-stakes change escalate to a deterministic tripwire or sampled cross-model verifier where the runtime allows; self-attestation is never the control. See [Application Enforcement](../references/application-enforcement.md).
 
-**Reuse check (advisory).** If the fix adds a helper, validator, or constant, search for an existing one before creating it (the `docs/_framework.md` map, `.dev_flow/skills/`, then a codebase symbol/behaviour search) — call an exact match, extend a near-match rather than fork it, escalate if reuse needs a contract change. A duplicated helper is how the same bug class re-enters elsewhere. See [Code Reuse](../references/code-reuse.md).
+**Reuse check (advisory).** If the fix adds a helper, validator, or constant, search for an existing one before creating it (the `docs/_framework.md` map, `.dev_flow/skills/`, then a codebase symbol/behaviour search) — call an exact match, extend a near-match rather than fork it, escalate if reuse needs a contract change. See [Code Reuse](../references/code-reuse.md).
 
 **Forecast check (advisory).** Forecast the consequences of the fix at *implement/fix altitude* — what else this change touches — and keep the free one-step check on the diagnosis loop (does the next probe/edit undo the last?). The gate is **strict**: expanding the fix's scope to speculative nearby improvements with no trigger defaults to `drop + record` (a backlog note), not into this fix. See [Consequence Forecasting](../references/consequence-forecasting.md).
 
@@ -197,6 +202,8 @@ Route to the full pipeline instead when:
 
 ## Relation to Other Phases
 
-- Documentation impact is checked in **Step 5** — propagate is triggered automatically when specs or concepts need updating.
-- If the fix reveals an undocumented pattern, suggest adding a **rule**.
-- The fix does NOT touch any file under `.dev_flow/tasks/` or the dashboard `active_context.md` unless this agent is already a contributor on the task being worked on (i.e., it has its own Subtask block there). If you are running `/dev-flow fix` as a standalone command, create a fresh task file for the fix and add yourself as the first contributor.
+| Phase | Relation |
+|-------|----------|
+| [propagate](propagate.md) | Documentation impact is checked in **Step 5**; propagate is triggered when specs or concepts need updating |
+| [rule](rule.md) | If the fix reveals an undocumented pattern, suggest adding a rule |
+| [status](status.md) | The fix does **NOT** touch any file under `.dev_flow/tasks/` or the dashboard `active_context.md` unless this agent is already a contributor on the task (it has its own Subtask block there). Running `/dev-flow fix` standalone → create a fresh task file and add yourself as the first contributor |

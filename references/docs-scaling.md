@@ -34,8 +34,10 @@ The single source of numeric thresholds in this skill. Other files name a consta
 | `digest_min` | 5 units | h2 units in a knowledge file above which a digest is required |
 | `activation_budget` | 20 units | items in one relevant set at a knowledge gate; per phase in the audit overload probe |
 | `consolidation_min` | 5 rules | rules of one category sharing an effective selector; above it audit reports a `skill-candidate` cluster |
+| `stale_after` | 3 months | age of a document's `Updated` date above which it is treated as stale (review, plan staleness, removal candidacy) |
+| `phase_stalled_after` | 2 months | age of a plan phase held at `[IN PROGRESS]` above which it is reassessed as abandoned |
 
-Consumption rule: each constant is read only by a cheap mechanical count inside the audit checks or the reading protocol above. Authors and reviewers never count words, characters, sections, or entries by hand — they respond to report verdicts and write by habit ("one paragraph — one statement"; "a section you cannot scan is a split candidate"). During authoring the values are order-of-magnitude orientation, nothing more. Boundary semantics: a trigger fires strictly above its threshold, never at equality. A numeric review finding ("exceeds N words") requires the mechanical measurement attached as provenance; without it the claim is `unobserved`, not a severity finding. A threshold whose cheap measurement is unavailable degrades to judgment without the number — work never stops for a recount.
+Consumption rule: each constant is read only by a cheap mechanical count inside the audit checks or the reading protocol above. Authors and reviewers never count words, characters, sections, or entries by hand — they respond to report verdicts and write by habit ("one paragraph — one statement"; "a section you cannot scan is a split candidate"). Boundary semantics: a trigger fires strictly above its threshold, never at equality. A numeric review finding ("exceeds N words") requires the mechanical measurement attached as provenance; without it the claim is `unobserved`, not a severity finding. A threshold whose cheap measurement is unavailable degrades to judgment without the number — work never stops for a recount.
 
 ## Contents and lead summary
 

@@ -4,8 +4,6 @@
 
 Answer questions about the project's codebase, architecture, or feasibility of new functionality — **without making any changes** to code, docs, or active context.
 
-This is a read-only, advisory phase. It explores the codebase, analyzes existing concepts/specs/plans, and provides a well-grounded answer.
-
 ## Command
 
 ```

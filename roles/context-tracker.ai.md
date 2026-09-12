@@ -97,7 +97,6 @@ role ContextTracker {
       - "To continue a stalled line of work, add a NEW Subtask block referencing the original."
 
   concurrency_model:
-    principle: "Section ownership + targeted edits + read-before-write + append-only logs give tolerance without locking."
     rules:
       - "Each edit to the dashboard/catalog touches exactly one row identified by Task ID"
       - "Each edit inside a task file touches either the caller's Subtask block or the caller's tagged entry in a shared section"
@@ -116,12 +115,7 @@ role ContextTracker {
     recently_completed_cap: 5
     session_history_dir: ".dev_flow/session_history/"
     session_history_naming: "session_YYYY-MM-DD.md"
-    archive_triggers:
-      - "Shared Activity Log exceeds 10 entries in a task file"
-      - "Any per-subtask Activity exceeds 10 entries"
-      - "Task file exceeds ~300 lines (archive done subtask blocks first)"
-      - "Dashboard exceeds ~80 lines"
-      - "Recently Completed in dashboard exceeds 5 entries"
+    archive_triggers: "Any cap above is exceeded; on the task-file cap, archive done subtask blocks first"
     archive_procedure:
       - "Create/append to .dev_flow/session_history/session_YYYY-MM-DD.md"
       - "Move oldest overflow content (log entries, completed subtask blocks, completed task files) into the appropriate section"

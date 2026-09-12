@@ -12,7 +12,7 @@ Shared sub-procedure for the **Concept**, **Specification**, **Plan**, and **Fix
 
 ## Why this exists
 
-A silently-picked option buried in a large document stops looking like a choice and ossifies into code before anyone catches it. The developer owns the consequences and holds context you don't (roadmap, business constraints, team) — at a material fork your job is to make the fork **visible** with a framed recommendation, not to guess well: a cheap question now beats an expensive reversal later.
+The developer owns the consequences and holds context you don't (roadmap, business constraints, team). At a material fork, make the fork **visible** with a framed recommendation instead of picking silently.
 
 ## When to trigger
 
@@ -27,7 +27,7 @@ If all hold, the decision goes through the interview. If any fails, decide it yo
 
 ### Do NOT interview on
 
-Over-asking is its own failure — it trains the developer to rubber-stamp, and the real decisions drown in noise. Skip the interview and just decide (mention the choice in passing) when:
+Skip the interview and just decide (mention the choice in passing) when:
 
 - There is an **obvious default** the developer would not second-guess (naming a private field, ordering two independent validation checks).
 - The choice is **trivially reversible** — a rename, an internal helper boundary.
@@ -48,7 +48,7 @@ If you don't yet know the options, run a spike first — the [research phase](..
 
 ### 0. Gather full context first
 
-An interview is only as good as the context behind it. A half-informed question wastes the developer's attention and builds the decision on a wrong premise — so before you surface any fork, make sure you actually understand it:
+Before you surface any fork, make sure you understand it:
 
 - **Read the relevant code** — what does the system do *today*? Existing patterns, the de-facto answer if one already exists, and the constraints the current implementation imposes on the options.
 - **Read the relevant docs** — the concept/spec/plan in play (or, in a fix, the task file, fix report, and any affected spec/concept), applicable `.dev_flow/rules/`, and the **prior Design Decisions (`DEC_NN`)**. A fork may already be settled by an earlier decision record — cite it, don't re-open it.
@@ -56,11 +56,9 @@ An interview is only as good as the context behind it. A half-informed question 
 
 Anything you could have answered yourself from code or docs is **not** a question for the developer — it is homework you owe *before* asking. Reserve the interview for what genuinely cannot be answered from existing artifacts: forks whose right answer depends on context that lives only in the developer's head — business priorities, roadmap, team constraints that were never written down.
 
-The boundary is clean: **code and docs tell you everything already known or decided; the interview is for what isn't.**
-
 ### 1. Collect the decision points
 
-While authoring, keep a running list of decision points rather than interrupting at each one. Finish a coherent chunk of the document, then surface the forks together. This respects the developer's attention and lets you order dependent decisions.
+While authoring, keep a running list of decision points rather than interrupting at each one. Finish a coherent chunk of the document, then surface the forks together.
 
 ### 2. Order them
 
@@ -69,9 +67,9 @@ While authoring, keep a running list of decision points rather than interrupting
 
 ### 3. Frame each decision — always with a recommendation
 
-Every decision is presented as a **question with 2–4 concrete options**, and you **always include your own recommended answer**. The recommendation is not optional: it does the developer's pre-reading for them and turns "analyse this from scratch" into "confirm or correct my reasoning."
+Every decision is presented as a **question with 2–4 concrete options**, and you **always include your own recommended answer**.
 
-**Give every option a stable, unambiguous marker** — `A`, `B`, `C`, `D`. The marker is the option's name for the rest of its life: the developer answers by it, you record it under it in the Design Decisions section, and later documents and code reference it. Keep the same letters across the question, the recorded record, and any follow-up — do not renumber. This is what lets the developer reply tersely (`B`) **or compose an answer out of the options** (`A, but with C's cap`, `B without the queue part`) instead of re-typing the whole approach. The recommended option is `A` (put it first) and is marked `(Recommended)`.
+**Give every option a stable, unambiguous marker** — `A`, `B`, `C`, `D`. Keep the same letters across the question, the recorded record, and any follow-up — do not renumber. The developer answers by marker (`B`) **or composes across them** (`A, but with C's cap`, `B without the queue part`). The recommended option is `A` (put it first) and is marked `(Recommended)`.
 
 For each option give, briefly:
 - **Marker + what it is** — `A — {approach}` in one line.
@@ -83,7 +81,7 @@ For the recommendation, add **why** you'd choose it — the trade-off you're opt
 
 Whichever channel you use, the options carry their markers (§3) so the developer can answer by marker or compose across them.
 
-**The question must stand on its own.** This is the sharpest case of the `chat` register ([Output Styles](output-styles.md)): in an options dialog the text *is* the whole context — markup may not render, the jump does not work, and the answer is irreversible by the definition of a fork. So every document, path, or traceable ID named in a question or an option carries a short description of what it is, in the developer's language, at low semantic complexity. A developer who has to open a link to understand an option cannot make an informed choice.
+**The question must stand on its own.** This is the sharpest case of the `chat` register ([Output Styles](output-styles.md)): in an options dialog the text *is* the whole context — markup may not render, the jump does not work, and the answer is irreversible by the definition of a fork. So every document, path, or traceable ID named in a question or an option carries a short description of what it is, in the developer's language, at low semantic complexity.
 
 **When the `AskUserQuestion` tool is available** (Claude Code), use it — it is built for exactly this: 2–4 options, recommended option first labelled `(Recommended)`, and the developer can always choose "Other". **Prefix each option's label with its marker** (`A — Fixed window (Recommended)`, `B — Sliding window`, …) and put the consequence in the description. The marker matters even here: when the developer picks "Other" to amend or combine options, they cite the markers (`like A but cap at 100, per C`), and your reply is unambiguous. Batch up to 4 *independent* decisions into one call.
 
@@ -112,7 +110,7 @@ Each decision then ends in exactly one of these terminal states:
   - the candidate options with their trade-offs, **and**
   - a **resolution trigger** — the concrete event or date by which it must be closed (e.g. "decide before Plan phase", "resolve once load-test numbers exist", "open until C_SYNC ships").
 
-  An open decision **without** a resolution trigger is just a hidden deferral (a "TBD" / "for now") — reject it (see the Banned Phrases in the [concept](../phases/concept.md) and [specification](../phases/specification.md) phases). The resolution trigger is what distinguishes a deliberate, bounded deferral from rot.
+  An open decision **without** a resolution trigger is just a hidden deferral (a "TBD" / "for now") — reject it (see the Banned Phrases in the [concept](../phases/concept.md) and [specification](../phases/specification.md) phases).
 
   **Open decisions have a lifecycle, not just a record.** When the missing information is *researchable* (numbers, prior art, library facts), the trigger should name the research — and the [research phase](../phases/research.md) is the sanctioned way to close it: the spike brings back findings, the developer decides, the record flips to `resolved`. The [audit phase](../phases/audit.md) sweeps all `DEC_NN` records for **expired triggers** (the named event/date has passed) and proposes the closing route — so an open decision cannot silently outlive its trigger.
 
@@ -125,7 +123,7 @@ A **delegated subagent** (a phase author, or a task-delegated [subtask](../phase
 1. **Escalate up the chain.** Present the fork to the initiator in the standard form — markered options + a recommended answer, independent questions batched. The initiator answers from the main-task picture it holds, or relays to the developer what only the developer can decide, and the answer comes back down.
 2. **No live channel** (a one-shot run, batch work)? Checkpoint instead: record each decision point in Design Decisions as **`proposed`** (options, consequences, recommended answer) and surface the list in the report; `open` is reserved for a fork that waits on information nobody has yet. The initiator then answers and **continues the same subagent** (its assembled context is the asset), or runs the interview with the developer itself and flips each record to `resolved`.
 
-Either way nothing slips through: a `proposed` record is presented at the design sign-off before any code edit, and the gate (below) will not pass while a material decision is `open` without a trigger.
+Either way nothing slips through: a `proposed` record is presented at the design sign-off before any code edit, and the phase's validation gate will not pass while a material decision is `open` without a trigger.
 
 ## Recording — the Design Decisions section
 

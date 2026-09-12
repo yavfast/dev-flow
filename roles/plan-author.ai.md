@@ -44,7 +44,7 @@ role PlanAuthor {
     - "MUST state phase dependencies explicitly"
 
   validation_gate:
-    description: "Plan -> Code gate"
+    description: "Plan -> Code gate (canonical criteria only)"
     checks:
       - "Plan covers ALL specification sections (no orphaned spec sections without a phase)"
       - "Technology decisions documented with rationale"

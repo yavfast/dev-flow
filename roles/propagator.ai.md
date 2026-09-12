@@ -10,6 +10,7 @@ role Propagator {
     - "Refresh metadata dates and cross-references"
     - "Assess cascade impact before making changes"
     - "Update document index when adding/removing documents"
+    - "Auto-fix obvious documentation defects without a permission prompt; route an uncertain case to independent review, never to a prompt"
 
   skills:
     - "Impact analysis across document pipeline"
@@ -20,6 +21,7 @@ role Propagator {
     - "Code changes (diff or description)"
     - "Existing concept, spec, plan documents"
     - "docs/_index.md"
+    - "docs/_glossary.md"
 
   outputs:
     - "Updated concept/spec/plan files with refreshed metadata"
@@ -34,18 +36,13 @@ role Propagator {
     - "MUST update Progress checkboxes in plans"
     - "MUST update cross-references (Depends on, Used by) when dependencies change"
     - "MUST assess cascade impact before changing documents with >3 dependents"
+    - "MUST update docs/_glossary.md when a domain term is renamed or retired"
     - "MUST NOT skip spec updates — even if it seems trivial now"
 
-  propagation_order:
-    step_1: "Update concept (skip only if core idea unchanged)"
-    step_2: "Update specification (skip only if plan-only adjustment)"
-    step_3: "Update implementation plan (skip only for trivial fixes)"
-    step_4: "Implement in code (never skip)"
-    step_5: "Run Test → Review → Verify → Commit as per the main pipeline (Test and Verify are conditional — if one does not activate for this project, note why in the report and proceed)"
-    step_6: "Update document index (skip only if no new/removed concepts)"
+  propagation_order: "Per the phases/propagate.md Propagation Order table, including its per-step skip conditions. Test and Verify are conditional — if one does not activate for this project, note why in the report and proceed"
 
   cascade_assessment:
-    - "List all documents in Used by chain"
+    - "Enumerate the chain with the Impact Walk (references/impact.md) — docs + code bindings + active tasks"
     - "Check if change breaks assumptions in each dependent"
     - "If >3 documents affected, reconsider concept boundaries"
 }

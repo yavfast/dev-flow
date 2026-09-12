@@ -2,7 +2,7 @@
 
 ## Contents
 
-- [Purpose](#purpose) — subagent as full participant with delegated rights; the context economy; one contributor model
+- [Purpose](#purpose) — Subagent as full participant with delegated rights; the context economy; one contributor model
 - [Command](#command) — `/dev-flow subtask` syntax and example invocations
 - [Role Responsible](#role-responsible) — SubtaskExecutor combined with the executed phase's base role and overlay
 - [Delegation Shapes](#delegation-shapes) — focus vs task delegation table: writes, dialogue, report, rule of thumb
@@ -19,7 +19,7 @@
 
 Offload a secondary task to a subagent so the main conversation keeps its context and focus on the primary work. The subagent is a **full dev-flow participant with delegated rights**: the initiator hands it the task, a role, and context *hints* — the subagent assembles its own working context from there, executes the matching phase protocol end to end, talks to its initiator when a real decision needs one, and returns a **full report**.
 
-The economy is the point. The initiator spends a few lines on the brief instead of pre-reading material into its own context; all the noisy assembly (reading docs, loading rules/skills, running tools) happens in the subagent's context; what comes back is the condensed, complete result. Delegation buys focus only if both sides hold their end: the initiator doesn't pre-chew, the subagent doesn't dump.
+The initiator does not pre-chew and the subagent does not dump: the brief is a few lines of pointers, the noisy assembly happens in the subagent's context, and what comes back is the condensed, complete result.
 
 **One contributor model for everyone.** A task-delegated subagent follows the same [multi-contributor rules](../SKILL.md#multi-contributor-tolerance) as any peer AI session: it owns its own Subtask block and its tagged entries, never rewrites others' content, uses targeted edits and read-before-write on shared files. The `/dev-flow subtask` command and the "Subtask block" in a task file are two ends of the same concept — the command spawns a contributor; the block is where that contributor's thread lives.
 
@@ -206,7 +206,7 @@ Complete in **coverage**, conclusion in **style** — every section present, raw
 
 Multiple subtasks can be spawned simultaneously when they are **independent**. Launch them in a single turn using multiple Agent tool calls.
 
-Shared `.dev_flow/` files tolerate this by design (contributor rules: read-before-write, own blocks, targeted edits). Source files do not — use the brief's **Scope** to give parallel subtasks disjoint file areas, and keep work that touches the initiator's active files out of delegation entirely.
+Shared `.dev_flow/` files tolerate this by design. Source files do not — use the brief's **Scope** to give parallel subtasks disjoint file areas, and keep work that touches the initiator's active files out of delegation entirely.
 
 ## Output Style
 

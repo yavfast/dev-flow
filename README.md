@@ -8,7 +8,7 @@ A [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skill that enfor
 - [The Pipeline](#the-pipeline) — phase chain with gates, the command per phase, the service commands
 - [Installation](#installation) — where the skill directory goes
 - [Quick Start](#quick-start) — first commands for a greenfield project and for taking over an existing codebase
-- [How It Works](#how-it-works) — traceable IDs, gates, two-stage testing and clean-context review, interview mode, spikes, todos, external repo adoption, task intent, escalation, cache, tracker tickets, session continuity
+- [How It Works](#how-it-works) — the mechanisms behind the pipeline: IDs, gates, review and its bounds, design decisions, research, todos, adoption, intent, escalation, cache, tickets, continuity
 - [File Structure](#file-structure) — what dev-flow creates inside a project (`docs/`, `.dev_flow/`)
 - [Skill Structure](#skill-structure) — the layout of this skill: `SKILL.md`, phases, references, templates, roles
 - [Key Principles](#key-principles) — the standing rules in one list
@@ -33,7 +33,7 @@ Most projects suffer from a common pattern: documentation is written once and fo
 Concept → [Gate] → Spec → [Gate] → Plan → [Gate] → Code → [Gate] → Test → [Gate] → Review → [Gate] → Verify → Commit → Propagate
 ```
 
-Each transition has a **validation gate** that checks completeness before advancing:
+Each transition has a **validation gate** that checks completeness before advancing. Test and Verify are **conditional** — they run when the project has tests and a defined way to run them. Review is always performed by a clean-context subagent.
 
 | Phase | Command | What it does |
 |-------|---------|-------------|
@@ -60,7 +60,7 @@ Additional commands:
 | `/dev-flow skill <request>` | Manage project technology knowledge |
 | `/dev-flow subtask <task>` | Delegate a secondary task to a subagent — a full dev-flow participant that builds its own context and reports fully |
 | `/dev-flow status` | Show current state, resume previous session |
-| `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — reconcile state, trim context, compact closed tasks, groom rules/skills/cache, check docs integrity (index/statuses/refs/orphans/freshness/duplicated sets) |
+| `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — reconcile state, trim context, compact closed tasks, groom rules/skills/cache, check docs integrity |
 | `/dev-flow audit code <intent>` | Opt-in whole-codebase audit (architecture/SOLID/DRY/security via parallel lenses) → prioritized refactoring plan + run report (timestamped, in `.dev_flow/audit/`) + framework map; read-only, hands off to the pipeline |
 | `/dev-flow do <request>` / `/dev-flow <anything>` | Freeform — interprets intent and auto-routes to the right phase (the default command) |
 
@@ -191,6 +191,8 @@ Every document section gets an immutable identifier:
 | Plan | `PL_XXX` | `PL_RLM` |
 | Epic | `E_XXX` | `E_ACM` |
 
+Design decisions get their own IDs (`C_XXX_DEC_01`, `SP_XXX_DEC_02`, …). Full set: [SKILL.md → Traceable Identifiers](SKILL.md#traceable-identifiers).
+
 These IDs appear as comments in code, linking implementation back to design:
 
 ```python
@@ -209,8 +211,6 @@ class RateLimiter:
 
 ### Validation Gates
 
-Each gate checks specific criteria before allowing advancement:
-
 | Gate | Checks |
 |------|--------|
 | Concept → Spec | No contradictions, dependencies listed, scope bounded |
@@ -226,53 +226,31 @@ Each gate checks specific criteria before allowing advancement:
 > settlement, rollback strategy, self-validation) live in
 > [SKILL.md → Validation Gates](SKILL.md#validation-gates).
 
-### Two-Stage Testing
-
-- **Test** (Phase 5) — functional tests only (unit + mock), covering changed code
-- **Verify** (Phase 7) — regression, integration, and live testing after review passes
-
-If Verify finds issues: fix → Test → Review → Verify (cycle repeats).
-
 ### Pre-Commit Review
 
-Code review is performed by a **clean-context subagent** — a fresh AI instance that hasn't seen the implementation process. This eliminates implementer blind spots and catches issues that the original author would miss:
-
-- Spec compliance (all contracts, error cases, invariants implemented)
-- Plan completeness (all tasks addressed)
-- Project rules compliance
-- SOLID principles (unless project rules override)
-- Security, naming, code quality
+Code review is performed by a **clean-context subagent** — a fresh AI instance that hasn't seen the implementation process. This eliminates implementer blind spots and catches issues the original author would miss: spec compliance, plan completeness, project rules, SOLID, and the usual security/naming/quality dimensions. The check matrix is in [`phases/review.md`](phases/review.md).
 
 ### Review Convergence
 
-Two agents can disagree forever about a detail that does not matter. On a large project that turns the review loop into an infinite ping-pong over, say, the states of a button that carries no weight in the module at all. dev-flow bounds the loop — see [`references/review-convergence.md`](references/review-convergence.md):
+Two agents can disagree forever about a detail that does not matter — on a large project that turns the review loop into an infinite ping-pong over, say, the states of a button that carries no weight in the module at all. dev-flow bounds the loop: a document declares its **criticality** once, when the question is cheap; the reviewer states a finding's severity and never decides whether it blocks — that verdict is **computed** from the two, so "this does not matter here" stops being one agent's opinion. A non-`must` finding raised twice unresolved leaves the loop as a **`contested`** todo carrying both readings, while a `must` or security finding blocks **without limit** — the mechanism terminates arguments, never defects. A repeat round reads only the delta since the previous baseline.
 
-- **Declared criticality.** A concept header, and optionally a single mechanism or contract, declares its weight — `peripheral` / `supporting` / `core` / `critical`. The author states it once, when the question is cheap. It is optional, and its absence lowers nothing.
-- **Computed materiality.** The reviewer states a finding's **severity** as before, and never states whether it may block. That verdict — `blocking` / `advisory` / `deferrable` — is computed from severity plus the declared criticality, so "this does not matter here" stops being one agent's opinion.
-- **The `review-non-convergence` tripwire.** A non-`must` finding raised a second time unresolved leaves the loop as a **`contested`** todo carrying *both* readings, instead of spawning a third round. A `must` finding and a security finding block **without limit** — the mechanism terminates arguments, never defects.
-
-A repeat round also stops re-reading the whole diff: it reads the delta since the previous round's baseline, plus every still-open finding, plus every area declared `critical`.
+Criticality values, materiality verdicts and the tripwire: [`references/review-convergence.md`](references/review-convergence.md).
 
 ### Verification Economy
 
-The opposite failure of a missed check is a check with no subject: comparing code comments against docs when nothing suggests they diverge, re-reading a document already in context, re-reviewing a one-line fix the reviewer itself prescribed. That is not free caution — it spends the context the plan and the spec need, and its findings dilute the real ones. So every check carries an **entry condition** — see [`references/verification-economy.md`](references/verification-economy.md):
+The opposite failure of a missed check is a check with no subject: comparing code comments against docs when nothing suggests they diverge, re-reading a document already in context, re-reviewing a one-line fix the reviewer itself prescribed. That is not free caution — it spends the context the plan and the spec need, and its findings dilute the real ones. So every check carries an **entry condition**: a **signal** that gives it a subject, an **invalidator** that justifies a re-read, and **confirm discriminators** that let a contained fix be checked mechanically instead of re-reviewed.
 
-- **Signal.** A comparison nobody asked for runs only when something gives it a subject: the file is in the diff, a traceable ID it references changed, a test failed, the developer asked, or `audit` is running. Corpus-wide sweeps keep their declared home in `propagate` and `audit`.
-- **Invalidator.** A file already read this session is re-read only after a compaction, a change under you, your own edit, a task switch, a different fragment, or a request. Elapsed time is not an invalidator. `read-before-write` on shared files and the mandatory knowledge indexes are untouched.
-- **Confirm discriminators.** A repeat review round runs as a mechanical `confirm` when the finding was neither `must` nor a security class, the review named one concrete fix, the diff stayed inside the named locations, nothing else changed, and the green tests are still green. Anything else is a full round.
+Each condition is computed from a fact outside the agent's own prose — a diff, a file state, an exit code — never from "it looks fine to me". When the fact cannot be computed, the check runs in full; a check that does not run is **written down** as `unobserved` with the missing fact. `must` findings, security findings, `read-before-write` on shared files and the mandatory knowledge gates are never economized.
 
-Every condition is computed from a fact outside the agent's own prose — a diff, a file state, an exit code — never from "it looks fine to me". When the fact cannot be computed, the check runs in full. And a check that does not run is **written down** as `unobserved` with the missing fact, so the boundary of what was verified stays visible.
+The conditions in full: [`references/verification-economy.md`](references/verification-economy.md).
 
 ### Interview Mode
 
 The biggest architectural mistakes are made silently. When authoring a **concept**, **specification**, **plan**, or a **fix** hits a real fork — two or more viable, hard-to-reverse options (including the classic "band-aid vs proper fix") — dev-flow does **not** quietly pick one and bury it where no reviewer will catch it. Instead it stops and runs a short **interview**: it presents the fork with 2–4 marked options (A/B/C) and a **recommended answer**, and asks the developer to decide.
 
-Why the developer and not the AI? Because the developer holds the full context (roadmap, business constraints, team) and owns the consequences. Each fork ends in one of two ways:
+Why the developer and not the AI? Because the developer holds the full context (roadmap, business constraints, team) and owns the consequences. A fork ends **resolved** — a consensus choice recorded with its rationale and the rejected alternatives — or **open**, with a **resolution trigger** naming the event or date by which it must close. An open decision without a trigger is a hidden "TBD" and is rejected.
 
-- **Resolved** — a consensus choice, recorded with its rationale and the rejected alternatives.
-- **Open** — for research/exploratory work, the alternatives are kept but documented with a **resolution trigger** (the event or date by which the choice must be closed). An open decision without a trigger is just a hidden "TBD" and is rejected.
-
-Every fork lands in a traceable **Design Decisions** (ADR-style) section of the document, and the validation gates won't pass while a material decision is still open without a trigger. See [`references/interview-mode.md`](references/interview-mode.md).
+Every fork lands in a traceable **Design Decisions** (ADR-style) section, and the validation gates will not pass while a material decision is open without a trigger. See [`references/interview-mode.md`](references/interview-mode.md).
 
 ### Research Spikes
 
@@ -280,17 +258,19 @@ Interview Mode chooses among *known* options — but sometimes the options thems
 
 ### Capturing Future Work
 
-Not every change is ready to start. The **todo phase** (`/dev-flow todo <description>`) captures one without starting it: it finds the documentation the work would touch, assesses its execution prospect (feasibility + scope), and files a single planning record with a **return trigger** — into an owning plan's backlog if one exists, otherwise into `.dev_flow/todos/`. Flavors: a **deferred** "maybe later" idea, or a **queued follow-up** — a defect you spot *while* working on the current task that you can't fix now because the contexts overlap (and a parallel `subtask` can't help, since it needs disjoint scope). It's filed as `queued` with trigger `after task_<ID>`; when that task completes, dev-flow surfaces it and offers to run it next. The command works out which flavor, how urgent, and what trigger from the state of the relevant plans and tasks — not from how you phrased it (the description may have no timing words at all) — and may even tell you to just do it now. It builds nothing and passes through no gates; a later `do`/`plan` run executes it. Agents file todos too: when one spots an out-of-scope, deferrable defect mid-work, it spawns a cheap subagent running the todo flow (or files a trivial one inline) — capturing the finding without derailing its current task. This completes a clean routing triad — `ask` analyzes and writes nothing, **`todo` analyzes and files for later**, `do` analyzes and acts now — and reuses the existing backlog/trigger discipline so a "later" never quietly becomes permanent (audit grooms the register). See [`phases/todo.md`](phases/todo.md).
+Not every change is ready to start. The **todo phase** (`/dev-flow todo <description>`) captures one without starting it: it finds the documentation the work would touch, assesses feasibility, and files a single planning record with a **return trigger** — into an owning plan's backlog if one exists, otherwise into `.dev_flow/todos/`. It works out the flavor, the urgency and the trigger from the state of the relevant plans and tasks, not from how you phrased it, and may well tell you to just do it now. It builds nothing; a later `do`/`plan` run executes it.
+
+Agents file todos too, so an out-of-scope defect spotted mid-work is captured instead of chased. This completes the routing triad — `ask` analyzes and writes nothing, **`todo` analyzes and files for later**, `do` analyzes and acts now. See [`phases/todo.md`](phases/todo.md).
 
 ### Learning From External Repositories
 
-The concept phase's Reuse Check asks "what already exists?" — and looks only inside your project. But genuinely new ideas usually come from someone else's engineering. **`/dev-flow adopt <repo>`** is the sanctioned way in. Give it a local path or a URL (a remote repo is cloned into `ext_repos/` at your project root, which the run adds to `.gitignore`), and it analyzes the repository at **concept altitude** — ideas, mental models, architectural trade-offs, not APIs — into `docs/ext_adoption/<name>.concept.md`, then **automatically** produces `docs/ext_adoption/<name>.md`: what your project already has, which of the source's concepts are `high` relevance (with the integration point, cost, and risk), which are `medium` (with an explicit take/defer/decline ruling), which are `low` (one line of why not), the **derived ideas** that exist only at the intersection of the two projects, and a recommended order sorted by effect over cost.
+The concept phase's Reuse Check asks "what already exists?" — and looks only inside your project. But genuinely new ideas usually come from someone else's engineering. **`/dev-flow adopt <repo>`** is the sanctioned way in. Give it a local path or a URL (a remote repo is cloned into `ext_repos/` at your project root, which the run adds to `.gitignore`), and it analyzes the repository at **concept altitude** — ideas, mental models, architectural trade-offs, not APIs — into `docs/ext_adoption/<name>.concept.md`, then automatically produces `docs/ext_adoption/<name>.md`: what to borrow, what to skip, and in what order.
 
-These documents are **advisory** — no traceable ID, no gate, not a backlog. They inform whoever writes the concept; they never authorize a change. The boundary is mechanical: a run writes the two documents, the clone, one `.gitignore` line, and the ordinary task context — never your code, specs, plans, or todo register. Re-run it later and it goes incremental: it diffs the source's commits since the one it recorded, leaves unchanged concepts byte-identical, and appends to the changelog. An empty `high` section is a valid result, written and stated plainly — knowing a repository has nothing for you is worth recording, so nobody analyzes it twice. See [`references/repo-adoption.md`](references/repo-adoption.md).
+These documents are **advisory** — no traceable ID, no gate, not a backlog. A run writes the two documents, the clone, one `.gitignore` line and the task context — never your code, specs, plans or todo register. A later re-run goes incremental against the commit it recorded. See [`references/repo-adoption.md`](references/repo-adoption.md).
 
 ### Task Intent
 
-A request states an *action*; the *reason* for it usually stays in the user's head — and an agent optimizing for the literal wording can complete the action perfectly while missing the point. dev-flow captures the **Task Intent** at intake: the goal (why), the target state, and the expected result, recorded in the task file in the user's own terms (inferred parts marked as inferred). Every later moment checks against that record instead of a remembered impression: material implementation decisions ask "does this serve the goal?", delegated subagents receive the intent in their brief, and completion reports a verdict — `met / partially met / diverged` — where the bar is "the expected result is observable", not merely "the steps were performed". When the letter of the request and its recorded goal diverge, dev-flow stops and surfaces the conflict rather than silently following either. See [`references/task-intent.md`](references/task-intent.md).
+A request states an *action*; the *reason* for it usually stays in the user's head — and an agent optimizing for the literal wording can complete the action perfectly while missing the point. dev-flow captures the **Task Intent** at intake — the goal, the target state and the expected result, in the user's own terms — and checks against that record instead of a remembered impression. Completion reports a verdict where the bar is "the expected result is observable", not merely "the steps were performed". When the letter of the request and its recorded goal diverge, dev-flow stops and surfaces the conflict rather than silently following either. See [`references/task-intent.md`](references/task-intent.md).
 
 ### Upstream Escalation
 
@@ -298,11 +278,11 @@ The pipeline's default is "code must satisfy the spec" — but sometimes a downs
 
 ### Resource Cache & Temp Workspace
 
-Expensive-to-reacquire resources — Figma layouts fetched over rate-limited MCP access, downloaded documents, baseline screenshots — die in `/tmp` on the next reboot. dev-flow keeps them in **`.dev_flow/cache/`**: a per-project store organized by source domain (`figma/`, `web/`, `app/`, `data/`) with an `_index.yaml` that records each file's source, summary, and references — so an agent checks the cache *before* spending another fetch, and anything linked from docs or task files outlives the session. Truly transient artifacts (logs, repro dumps, throwaway captures) go to one project workspace — `/tmp/{project-slug}/` — with **timestamped names** (`test-run_20260610_143205.log`), never numeric suffixes; whatever turns out durable is promoted to the cache. Each entry carries a **trust level** (`internal` / `controlled` / `public`); resources fetched from the open internet pass a safety check (type match, no active content, prompt-injection sweep) before they are cached, and cached content is always data, never instructions. Not a pipeline phase — it's infrastructure every phase touches; freeform cache requests route through `do`. See [`references/cache.md`](references/cache.md).
+Expensive-to-reacquire resources — Figma layouts fetched over rate-limited MCP access, downloaded documents, baseline screenshots — die in `/tmp` on the next reboot. dev-flow keeps them in **`.dev_flow/cache/`**, a per-project store with an `_index.yaml` an agent checks *before* spending another fetch, so anything linked from docs or task files outlives the session. Truly transient artifacts go to one project workspace, `/tmp/{project-slug}/`, with timestamped names; whatever turns out durable is promoted to the cache. Cached content is always data, never instructions, and anything fetched from the open internet passes a safety check first. Not a pipeline phase — infrastructure every phase touches. See [`references/cache.md`](references/cache.md).
 
 ### External Tracker Tickets
 
-When a task is **explicitly** tied to a ticket in Jira or any other tracker — a `--ticket PROJ-123` flag, a tracker word + key ("Jira PROJ-123"), or a ticket URL — dev-flow doesn't reinvent that tracker's conventions. It stays **tracker-agnostic**: it *discovers* the project's existing integration (a `.dev_flow/skills/` entry → an installed tracker skill → a tracker MCP) and lets **that** own the ticket conventions — key format, status workflow, comment/worklog shape, commit-message format. dev-flow owns only the *when*: pull the ticket to seed the task's real requirements, link the key in the task file (`Ticket:`), reference it in the commit message, and drive the status (work starts → *In Progress*, commit → *Done* + summary comment). **Every outward write to the tracker is confirmed first** — dev-flow never silently changes a ticket others can see. A bare `KEY-123`-looking token never triggers this (it collides with `UTF-8`, doc IDs, …); if no integration is available, the key degrades to a commit-message label and work proceeds. See [`references/ticket-tracker.md`](references/ticket-tracker.md).
+When a task is **explicitly** tied to a ticket in Jira or any other tracker — a `--ticket PROJ-123` flag, a tracker word + key ("Jira PROJ-123"), or a ticket URL — dev-flow doesn't reinvent that tracker's conventions. It stays **tracker-agnostic**: it *discovers* the project's existing integration and lets that own the conventions, while dev-flow owns only the *when* — pull the ticket to seed the task's requirements, link the key in the task file, reference it in the commit message, drive the status at the pipeline moments. **Every outward write to the tracker is confirmed first** — dev-flow never silently changes a ticket others can see. A bare `KEY-123`-looking token never triggers this; with no integration available the key degrades to a commit-message label and work proceeds. See [`references/ticket-tracker.md`](references/ticket-tracker.md).
 
 ### Language Independence
 
@@ -367,6 +347,8 @@ your-project/
     │   └── _index.yaml
     ├── evidence/                   # Intervention ledger (absent → reconcile no-op)
     │   └── ledger.yaml
+    ├── onboard/                    # Intermediate onboard state (supports --resume)
+    ├── audit/                      # `audit code` run reports and refactoring plans
     └── cache/                      # Durable resources (gitignore by default)
         ├── _index.yaml
         ├── figma/                  # Design exports
@@ -379,85 +361,16 @@ your-project/
 
 ```
 dev-flow/
-├── SKILL.md              # Main skill definition and pipeline
-├── phases/               # 19 phase definitions
-│   ├── research.md
-│   ├── concept.md
-│   ├── specification.md
-│   ├── plan.md
-│   ├── implement.md
-│   ├── testing.md
-│   ├── review.md
-│   ├── verify.md
-│   ├── propagate.md
-│   ├── onboard.md
-│   ├── fix.md
-│   ├── ask.md
-│   ├── todo.md
-│   ├── do.md
-│   ├── rule.md
-│   ├── skill.md
-│   ├── status.md
-│   ├── subtask.md
-│   └── audit.md
-├── roles/                # 19 AI-DSL subagent roles
-│   ├── researcher.ai.md
-│   ├── concept-author.ai.md
-│   ├── spec-author.ai.md
-│   ├── plan-author.ai.md
-│   ├── implementer.ai.md
-│   ├── reviewer.ai.md
-│   ├── tester.ai.md
-│   ├── propagator.ai.md
-│   ├── advisor.ai.md
-│   ├── todo-planner.ai.md
-│   ├── context-tracker.ai.md
-│   ├── dev-flow-orchestrator.ai.md
-│   ├── onboard-coordinator.ai.md
-│   ├── onboard-analyzer.ai.md
-│   ├── onboard-docgen.ai.md
-│   ├── onboard-rules-extractor.ai.md
-│   ├── subtask-executor.ai.md
-│   ├── auditor.ai.md
-│   └── code-audit-lens.ai.md   # read-only per-lens subagent for `audit code`
-├── templates/            # Document templates
-│   ├── concept.md
-│   ├── specification.md
-│   ├── plan.md
-│   ├── epic.md
-│   ├── spike.md
-│   ├── active_context.md       # Dashboard
-│   ├── task_context.md         # Per-task file
-│   ├── tasks_index.md          # tasks/_index.md
-│   └── todo_index.md           # .dev_flow/todos/_index.md
-├── references/           # Cross-cutting procedures & guidelines
-│   ├── interview-mode.md        # Surfacing design forks to the developer
-│   ├── escalation.md            # Upstream escalation (doc wrong, not code)
-│   ├── delegation.md            # Delegation for focus (subagents)
-│   ├── impact.md                # Impact Walk — blast radius of a change
-│   ├── task-intent.md           # Task Intent — capture the goal/expected result, check work against it
-│   ├── ticket-tracker.md        # External tracker tickets (Jira/etc.) — discover skill/MCP, confirmed writes
-│   ├── consequence-forecasting.md  # Phase-scaled lookahead + YAGNI-gate (forecast → build/seam/drop)
-│   ├── code-reuse.md            # Search before create + build for reuse (code-altitude, YAGNI-gated)
-│   ├── experience-capture.md    # Transition Checkpoint — distill, demote, promote; auto-applied lessons
-│   ├── application-enforcement.md  # Per-burst knowledge re-activation (loaded ≠ applied)
-│   ├── procedural-skills.md     # Skills as procedural memory — freshness, promotion, curation
-│   ├── knowledge-scaling.md     # Rules/skills at scale — directive-first units, selectors, digests, relevant set, rule-cluster → skill consolidation, audit verdicts
-│   ├── evidence-discipline.md   # Evidence states (present→wired→exercised→outcome-supported, plus unobserved) + coverage rung, skill check, intervention ledger, report ceiling
-│   ├── review-convergence.md    # Declared criticality → computed finding materiality; review-non-convergence tripwire → contested todo; incremental round scope
-│   ├── verification-economy.md  # Entry condition per check: signal / invalidator / confirm discriminators; suppression written as unobserved
-│   ├── design-compliance.md     # Validate a UI implementation against its design source of truth
-│   ├── formatting.md            # Formatting conventions for every generated documentation file
-│   ├── output-styles.md         # Two registers — documentation (agent-first) vs chat (deciding developer); project profiles in .dev_flow/output_styles.md
-│   ├── cache.md                 # Resource cache + /tmp workspace discipline
-│   ├── roles.md                 # Base vs project-overlay roles
-│   ├── glossary.md              # Project domain vocabulary
-│   ├── code-audit.md            # `audit code` lens registry + shared walk + refactoring playbook
-│   ├── repo-adoption.md         # `adopt` — analyze an external repo, produce the advisory adoption document
-│   └── solid-architecture.md
-└── examples/             # End-to-end walkthrough
-    └── rate-limiter.md
+├── SKILL.md        # Pipeline, gates, checkpoints, commit rules, context protocol
+├── README.md       # This file
+├── phases/         # One file per pipeline and service phase
+├── roles/          # AI-DSL subagent role definitions
+├── templates/      # Document templates — concept, spec, plan, epic, spike, context files
+├── references/     # Cross-cutting procedures and conventions
+└── examples/       # End-to-end walkthrough
 ```
+
+Annotated router for phases, references, templates and the example: [SKILL.md → Phase Details & Templates](SKILL.md#phase-details--templates). Roles are catalogued in [`references/roles.md`](references/roles.md).
 
 ## Key Principles
 

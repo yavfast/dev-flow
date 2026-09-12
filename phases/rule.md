@@ -35,7 +35,7 @@ The request is a freeform description in any language. Interpret the intent and 
 2a. **Owner.** A lesson from an incident is a rule. Route to the [skill phase](skill.md) only knowledge that is not an artifact constraint, or a consolidation of an accumulated rule cluster ([Knowledge Scaling → Consolidation](../references/knowledge-scaling.md#consolidation-rules--skill)). In doubt — a rule.
 
 3. **Determine rule properties:**
-   - **Category:** naming | structure | architecture | error-handling | style — or an additional category (concurrency / performance / security / testing / ui / data; see Categories below)
+   - **Category:** naming | structure | architecture | error-handling | style — or an additional category (concurrency / performance / security / testing / ui / data; see [Rule Categories](#rule-categories) below)
    - **Severity:** must | should | prefer — closed set; normalize any other word (see [Severity Normalization](#severity-normalization)); never auto-write a `must` (an independent clean-context review confirms it first)
    - **Rule id:** PascalCase, concise (e.g., `NoMPrefixForFields`, `EnumOverConstants`), or the project's `PREFIX-NNN` scheme when one exists; unique in the catalogue, immutable once written
    - **Directive:** one imperative logical line, within `directive_max`; over the limit → split into two rules (never truncate)
@@ -147,7 +147,7 @@ Additional categories (created on demand when rules don't fit standard ones):
 | ui | `ui.md` | View patterns, layouts, animations, accessibility |
 | data | `data.md` | DB operations, ORM, queries, migrations |
 
-New category files are created automatically when the first rule for that category is added. Each file follows the same header format as standard categories.
+New category files are created automatically when the first rule for that category is added.
 
 ## Severity Levels
 
@@ -163,4 +163,4 @@ If `.dev_flow/rules/` does not exist, create the directory with empty category f
 
 ## Rules Are Living Documents
 
-Rules apply to **new code only** — no retroactive refactoring required. Updated during: onboard, implement, review, or by user request. Reading a rules catalogue at a gate follows the [Knowledge Scaling](../references/knowledge-scaling.md) activation protocol: category blocks by selector → digests → the relevant set of directives; a body only on a trigger.
+Rules apply to **new code only** — no retroactive refactoring required. Updated during: onboard, implement, review, propagate, or by user request. Reading a rules catalogue at a gate follows the [Knowledge Scaling](../references/knowledge-scaling.md) activation protocol: category blocks by selector → digests → the relevant set of directives; a body only on a trigger.

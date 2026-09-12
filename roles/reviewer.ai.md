@@ -53,8 +53,8 @@ role Reviewer {
     - "MUST follow resolution process: identify -> prioritize -> update -> propagate -> verify"
     - "Documents with Status: draft or deprecated are excluded from conflict checks"
     - "MUST verify no new conflicts introduced by resolution"
-    - "MUST flag documents with Updated date >3 months old as potentially stale"
-    - "MUST flag plans with IN PROGRESS phases >2 months old"
+    - "MUST flag documents whose Updated date exceeds stale_after (references/docs-scaling.md) as potentially stale"
+    - "MUST flag plans with IN PROGRESS phases exceeding phase_stalled_after"
     - "Pre-commit review MUST run as a subagent with clean context"
     - "MUST NOT assign materiality to a finding — it is computed (references/review-convergence.md)"
     - "MUST NOT lower a declared Criticality to win an argument — a wrong declaration is an upstream escalation"
@@ -65,7 +65,6 @@ role Reviewer {
 
   pre_commit_review:
     description: "Code review performed before commit by a subagent with clean context"
-    why_clean_context: "The agent that wrote the code has accumulated assumptions that may blind it to issues. A fresh subagent sees only the diff and the spec — same perspective as a human reviewer."
     inputs:
       - "Git diff of all changes"
       - "Relevant specification (*.sp.md)"
@@ -145,7 +144,7 @@ role Reviewer {
       - "Update _index.md"
       - "Update Used by references in dependent documents"
     removal_conditions:
-      - "Updated date older than 3 months"
+      - "Updated date older than stale_after"
       - "No working code references traceable IDs"
       - "No active documents list it in Depends on"
 

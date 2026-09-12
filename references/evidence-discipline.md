@@ -33,7 +33,7 @@ Runs inside [Experience Capture](experience-capture.md)'s harvest, before a dura
 
 Directive, not blocking: it recommends and requires a recorded reason; the caller may still create the artifact. `covered` without a named covering artifact is invalid.
 
-Owner menu: `rule` · `skill` · `drop` · `none` (covered) · `needs-evidence`. The first three mirror the harvest's own owner choice plus its drop branch; the last two are non-targets. **Narrowest durable owner wins; defaulting to `skill` is forbidden** — a `rule` carries a constraint, a `skill` a procedure, `drop` a narrow one-off.
+Owner menu: `rule` · `skill` · `drop` · `none` (covered) · `needs-evidence`. `rule`, `skill` and `drop` mirror the harvest's own owner choice; `none` and `needs-evidence` are non-targets. **Narrowest durable owner wins; defaulting to `skill` is forbidden** — a `rule` carries a constraint, a `skill` a procedure, `drop` a narrow one-off.
 
 ## Consumer 2 — the skill `check` field
 
@@ -81,5 +81,4 @@ Opening a ledger entry can fail (`EVD_NO_TRIGGER`, `EVD_DUPLICATE_ENTRY`) inside
 
 - **No numeric scores.** States are discrete; a confidence or maturity number is rejected.
 - **One owner for the vocabulary.** Defined here, cited everywhere; never redefined locally.
-- **Scoped to the delta** — each consumer covers only what no existing discipline already does.
 - **Same-window validation proves repair state, never later effectiveness.**

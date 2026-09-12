@@ -4,10 +4,6 @@ Shared sub-procedure for the **Implement**, **Fix**, and **Verify** phases (and 
 
 **Delegation shapes.** This reference covers **focus delegation** — a single noisy *step* inside your own phase run: minimal rights, no `.dev_flow/` writes, stage-and-report, no dialogue. Delegating a whole secondary *task* is the [subtask phase](../phases/subtask.md) — there the subagent is a **full dev-flow participant with delegated rights**: it assembles its own context, joins the task file as a contributor, persists skills/cache per the phase protocols, and can converse with its initiator. The moment a delegated step outgrows one exchange, it is a subtask.
 
-## Why this exists
-
-Main-context focus — the plan, the spec, the task state — is the scarce resource, and noisy secondary output (full test logs, builds, screenshots, wide searches, reproduction traces) erodes it: a thousand lines of passing-test output buys one bit of information. Hand that work to a subagent with its own context and keep only the conclusion.
-
 ## Where the line falls
 
 **Keep in the main context — the core.** Work that needs the full plan + spec + rules, or that *is* the focus:
@@ -28,9 +24,7 @@ Handing these off hands off the focus itself — there's nothing left to protect
 
 A delegated subagent returns the **conclusion, not the dump**: a verdict plus what's actionable, with the full log written to a file and referenced by path — under the project workspace `/tmp/{project-slug}/` with a timestamped name, per the [Resource Cache](cache.md) workspace discipline. In this focus shape, anything durable among the artifacts is promoted to `.dev_flow/cache/` by the calling agent — the helper only stages. (A task-delegated subagent persists per the phase protocol itself; see the [subtask phase](../phases/subtask.md).)
 
-*The report is the conclusion, not the transcript* — otherwise the noise simply relocates into the subagent's report and the main context floods just the same, now with an extra hop.
-
-There is a flip side to keeping only the conclusion: you deliberately did **not** read the raw material, so the helper's framing is all you have — and a plausible-but-wrong verdict rides that trust straight into your work. So when a delegated conclusion is **load-bearing** — it will drive a code change, block a fix, or land in a document — spot-check the *specific* claim against primary evidence before acting: open the one file the verdict turns on, re-derive the one number. That is cheap and targeted, not a re-read of the dump — and it is what stands between a wrong conclusion and a real defect, especially across a **nested** hop where the conclusion is now two levels removed from anyone who saw the evidence.
+When a delegated conclusion is **load-bearing** — it will drive a code change, block a fix, or land in a document — spot-check the *specific* claim against primary evidence before acting: open the one file the verdict turns on, re-derive the one number. That is targeted, not a re-read of the dump, and it applies again at every **nested** hop.
 
 Review already works this way for a second reason — a clean-context subagent reads the diff without the author's rationalizations, so its judgment is unbiased. Verify and diagnosis share the shape; they just optimize for focus rather than impartiality.
 
@@ -43,11 +37,11 @@ A delegated step can run on a different model than the main agent, chosen by the
 - Work that needs judgment (untangling a root cause, weighing an architectural option) wants a stronger one.
 - When unsure, prefer the stronger one — a wrong result costs more than the tokens saved.
 
-Describe the *nature* of the task and let the orchestrator map it to whatever model is configured. **Never hardcode model names** — they age, and they tie the skill to one provider. Keep the name→tier mapping in the orchestrator's config, the same way the engine resolves providers by convention rather than a whitelist. The choice then survives new models arriving and current ones retiring.
+Describe the *nature* of the task and let the orchestrator map it to whatever model is configured. **Never hardcode model names** — they age, and they tie the skill to one provider. Keep the name→tier mapping in the orchestrator's config.
 
 ## Scenarios
 
-A quick reference for the recurring steps. "Delegate?" is a default, not a law — a trivial one-test run isn't worth the overhead of a subagent, and a genuinely tangled diagnosis might need the main agent's full context. Use judgment.
+"Delegate?" is a default, not a law — a trivial one-test run isn't worth the overhead of a subagent, and a genuinely tangled diagnosis might need the main agent's full context. Use judgment.
 
 | Step (phase) | Delegate? | Subagent returns | Fits |
 |--------------|-----------|------------------|------|
@@ -66,7 +60,7 @@ A quick reference for the recurring steps. "Delegate?" is a default, not a law �
 
 ## Named specialists and the routing reflex
 
-Some noisy steps recur enough in a given project to be worth a **named, reusable helper** rather than an ad-hoc subagent each time — a wide/structural **code search**, triaging a large **log/trace**, analysing a **screenshot/image**. When that pattern appears, create a **project-specific specialist role** under `.dev_flow/roles/` (the "new specialization" path in [Roles](roles.md)) and route to it thereafter. These are **not shipped with the skill**: a generic `log-analyst` cannot know your log format, nor a `screenshot-analyst` your UI — so a specialist is born where that knowledge lives, the project, tailored to its log formats, its screens, its module layout.
+Some noisy steps recur enough in a given project to be worth a **named, reusable helper** rather than an ad-hoc subagent each time — a wide/structural **code search**, triaging a large **log/trace**, analysing a **screenshot/image**. When that pattern appears, create a **project-specific specialist role** under `.dev_flow/roles/` (the "new specialization" path in [Roles](roles.md)) and route to it thereafter. These are **not shipped with the skill** — create the specialist in the project, tailored to its log formats, screens, and module layout.
 
 A specialist is a **read-only focus helper**: it owns one task-signature, returns the conclusion (not the dump), stages raw output in the workspace by path, and stays out of `.dev_flow/` task context, the contributor list, and commits — its one writable target is its own role-local memory.
 

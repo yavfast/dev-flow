@@ -2,10 +2,6 @@
 
 Cross-cutting sub-procedure of the **code-writing** phases — [implement](../phases/implement.md) and [fix](../phases/fix.md) (a *glance* from [plan](../phases/plan.md) when it names shared utilities). It is **not** a standalone pipeline stage and has no command — an **advisory** discipline applied at the moment code is written. It adds no new pass/fail gate; it informs the code the phase was already going to write.
 
-## Why this exists
-
-Reuse is settled once, high up: the concept phase's [Reuse Check](../phases/concept.md#reuse-check) prevents a *duplicate concept*. Nothing carries that discipline down to where functions and classes are actually typed — so two failure modes leak through: **duplication in** (re-implementing a helper/validator/constant that already exists because nobody searched) and **duplication later** (writing single-use code a near consumer then copy-pastes). This closes the gap at code altitude, per-action-burst, the way [Application Enforcement](application-enforcement.md) re-triggers the knowledge gate.
-
 ## The discipline
 
 Each half is scaled by [change-class](../phases/do.md#change-classes) — skip for a trivial one-liner.
@@ -34,7 +30,7 @@ This never overrides [Minimality](../SKILL.md#validation-gates): a reuse seam wi
 
 ## Restraint — resist over-DRY
 
-Two snippets that merely *look* alike are not a reuse target if they **change for different reasons** — folding them couples unrelated concerns and creates a worse problem than the duplication. Same shape ≠ same responsibility. This mirrors the `duplication` lens's over-DRY caveat in [Code Audit](code-audit.md).
+Two snippets that merely *look* alike are not a reuse target if they **change for different reasons** — folding them couples unrelated concerns and creates a worse problem than the duplication. Same shape ≠ same responsibility.
 
 ## Relationship to existing mechanisms
 

@@ -6,7 +6,7 @@ After code changes, run **functional tests** (unit + mock) covering the changed 
 
 Integration and live tests are handled separately in the [Verify phase](verify.md), which runs after Review.
 
-The `test` command is flexible — it can create new tests, edit existing ones, run tests, or execute complex test scenarios.
+The `test` command can create new tests, edit existing ones, run tests, or execute complex test scenarios.
 
 ## Activation Condition
 
@@ -35,6 +35,10 @@ The target is optional. Without it, tests are determined from the current active
 
 Integration and live tests are **not** run here — they belong to the [Verify phase](verify.md) (`/dev-flow verify integration …`, `/dev-flow verify live …`).
 
+## Role Responsible
+
+This phase is handled by **Tester**: [roles/tester.ai.md](../roles/tester.ai.md).
+
 ## Test Categories (This Phase)
 
 This phase covers **functional tests only** — fast, isolated checks of the changed code:
@@ -43,8 +47,6 @@ This phase covers **functional tests only** — fast, isolated checks of the cha
 |-------|------|---------|-------------|
 | 1 | **Unit tests** | Verify individual functions/methods in isolation | Always — after any code change |
 | 2 | **Functional / Mock tests** | Verify behavior with mocked dependencies | When code interacts with external services or complex subsystems |
-
-**Integration and live tests** are handled in the [Verify phase](verify.md), which runs after Review.
 
 **Rule:** Run only the tests that cover the changed code. Do not run the full test suite — that is the job of regression testing in the Verify phase.
 

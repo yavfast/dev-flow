@@ -10,14 +10,14 @@
 > **Used by:** {list of [SP_ZZZ](./path) references, or "—"}
 > **Plan:** [name.plan.md](./name.plan.md)
 >
-> {Lead summary, within `lead_lines` (see references/docs-scaling.md): what this specification defines, who reads it in which situation, what parts it consists of. The header alone must suffice to decide "read on or not".}
+> {Lead summary, within `lead_lines` (see `references/docs-scaling.md`, dev-flow skill): what this specification defines, who reads it in which situation, what parts it consists of. The header alone must suffice to decide "read on or not".}
 
 ## Contents
 
 <!-- Substantive h2 sections only (no h3, no service sections); one item per section, in order;
      annotation states what the section defines, not a restatement of the title.
      Update the matching item in the same edit that adds/renames/removes an h2.
-     See references/docs-scaling.md. -->
+     See `references/docs-scaling.md` (dev-flow skill). -->
 
 - [01. Data Structures](#SP_XXX_01) — {which entities and fields it defines}
 - [02. Contracts](#SP_XXX_02) — {which operations it specifies}
@@ -133,10 +133,12 @@ Transition rules:
 | Dependent modules | {Which specs reference this one? What breaks if removed?} |
 | External contracts | {Published APIs or events that consumers depend on?} |
 
+If full rollback is not possible — document the minimum safe state and the manual steps required.
+
 ## 07. Design Decisions  {#SP_XXX_DEC}
 
 <!-- One record per material fork surfaced via Interview Mode. Delete this section
-     if spec authoring surfaced no decision points. See references/interview-mode.md. -->
+     if spec authoring surfaced no decision points. See `references/interview-mode.md` (dev-flow skill). -->
 
 ### DEC_01 — {short question}  {#SP_XXX_DEC_01}
 
@@ -158,7 +160,7 @@ Transition rules:
 
 ## Changelog
 
-<!-- Optional when vcs is the primary history medium — see references/docs-scaling.md (History policy).
+<!-- Optional when vcs is the primary history medium — see the History policy in `references/docs-scaling.md` (dev-flow skill).
      Entry classes only: incident / ambiguous-decision / structural-event; an event outside these
      classes is not written (TRIVIAL_ENTRY refusal — progress lives in plan/task checklists).
      One entry = one logical line. -->

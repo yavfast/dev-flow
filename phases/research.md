@@ -2,7 +2,7 @@
 
 ## Contents
 
-- [Purpose](#purpose) — what a spike is, its outputs (spike file + durable skills), and its on-demand, non-pipeline status
+- [Purpose](#purpose) — What a spike is, its outputs (spike file + durable skills), and its on-demand, non-pipeline status
 - [Command](#command) — `/dev-flow research` / `spike` syntax and example invocations
 - [Role Responsible](#role-responsible) — Researcher subagent vs main agent duties; panel fan-out for many-sided topics
 - [Entry Points](#entry-points) — table of triggering phases (do, concept, interview, ask, audit) and their signals
@@ -75,7 +75,7 @@ The main agent frames the spike, receives the conclusion, persists durable knowl
 
 ## Cost Gate
 
-Research can sink unbounded time and tokens. Before starting, frame it explicitly (same discipline as the [fix phase's diagnosis gate](fix.md)):
+Before starting, frame it explicitly (same discipline as the [fix phase's diagnosis gate](fix.md)):
 
 1. **Questions** — 1–3 specific questions the spike must answer. Not "learn about X" but "can X do Y under constraint Z?".
 2. **Scope** — which sources are in bounds: `codebase` (read existing code/docs), `external` (web, package registries, official docs), `prototype` (throwaway code in a scratch area). Combine as needed.
@@ -111,22 +111,22 @@ For trivially small lookups, the main agent may run Step 2 inline — but any in
 
 ### Step 2b: Perspective panel (optional)  {#step-2b-perspective-panel-optional}
 
-When the cost gate chose `panel` mode, the same investigation is fanned out across **parallel perspective researchers** — one Researcher subagent per lens, each examining the *same* framed questions through a *different* viewpoint. This is the [Delegation for Focus](../references/delegation.md) fan-out: the panel spends its context on the breadth; the main agent keeps only each lens's conclusion.
+When the cost gate chose `panel` mode, the same investigation is fanned out across **parallel perspective researchers** — one Researcher subagent per lens, each examining the *same* framed questions through a *different* viewpoint. This is the [Delegation for Focus](../references/delegation.md) fan-out.
 
-1. **Choose the perspectives — topic-dependent, never a fixed list.** Pick the 2–5 lenses through which this topic's answer genuinely differs. Common lenses: **theoretical** (what the literature/spec says is correct), **practical** (what works in production, with the rough edges), **conservative** (lowest-risk, proven, reversible), **progressive** (newer/bolder approaches and where they pay off), **analogues** (alternative or related approaches — how comparable or adjacent problems are solved elsewhere; prior art and sibling techniques worth borrowing or explicitly ruling out), **user** (the consumer's experience and expectations), **designer** (interaction/ergonomics/aesthetics), plus topic-specific ones — **security**, **operational/SRE**, **cost**, **performance**, **maintenance**, **regulatory**. Choose lenses that will *actually disagree* on this topic; drop any that would just restate another.
-2. **Brief each researcher with its lens** — the shared framed questions + scope + a per-perspective time-box, plus the instruction to investigate and report *from that perspective only* (its strongest case, its preferred option, what it considers a dealbreaker). Each is the standard read-only [Researcher](../roles/researcher.ai.md); only the lens in the brief differs. **Time-box:** each lens carries its *own* box and they run concurrently, so the panel's wall-clock is one box but its total cost is their sum (≈ N× a single spike) — this is the multiplied cost the Cost Gate surfaced. A lens that spends its box concludes on its own, independent of the others.
+1. **Choose the perspectives — topic-dependent, never a fixed list.** Pick the 2–5 lenses through which this topic's answer genuinely differs. Common lenses: **theoretical** (what the literature/spec says is correct), **practical** (what works in production, with the rough edges), **conservative** (lowest-risk, proven, reversible), **progressive** (newer/bolder approaches and where they pay off), **analogues** (prior art — how adjacent problems are solved elsewhere), **user** (the consumer's experience and expectations), **designer** (interaction/ergonomics/aesthetics), plus topic-specific ones — **security**, **operational/SRE**, **cost**, **performance**, **maintenance**, **regulatory**. Choose lenses that will *actually disagree* on this topic; drop any that would just restate another.
+2. **Brief each researcher with its lens** — the shared framed questions + scope + a per-perspective time-box, plus the instruction to investigate and report *from that perspective only* (its strongest case, its preferred option, what it considers a dealbreaker). Each is the standard read-only [Researcher](../roles/researcher.ai.md); only the lens in the brief differs. **Time-box:** each lens carries its *own* box and they run concurrently, so the panel's wall-clock is one box but its total cost is their sum (≈ N× a single spike). A lens that spends its box concludes on its own, independent of the others.
 3. **Spawn the panel in parallel** and pick each subagent's model by the nature of its lens (a measurement-heavy lens may want a stronger model than a survey lens) — never a hardcoded name; see [Delegation for Focus](../references/delegation.md#fit-the-model-to-the-task--by-its-nature-not-its-name).
-4. **Each researcher returns its lens conclusion** — **the conclusion, not the dump** (lens-specific findings, candidate option, dealbreakers), staging any raw material in the workspace by path. The **main agent** writes each into a labelled `### Perspective: <lens>` sub-section of the spike's Exploration Log: the parallel researchers do **not** write the shared spike file themselves, which would mean N subagents clobbering one `docs/*.spike.md` concurrently (the spike file has no multi-contributor write tolerance). Collecting-then-writing keeps assembly single-writer, in the agent that owns the synthesis.
+4. **Each researcher returns its lens conclusion** — **the conclusion, not the dump** (lens-specific findings, candidate option, dealbreakers), staging any raw material in the workspace by path. The **main agent** writes each into a labelled `### Perspective: <lens>` sub-section of the spike's Exploration Log: the parallel researchers do **not** write the shared spike file themselves, which would mean N subagents clobbering one `docs/*.spike.md` concurrently (the spike file has no multi-contributor write tolerance).
 
 A panel of one is just a `single` spike — do not dress a narrow factual lookup as a panel (see Anti-Patterns).
 
 ### Step 2c: Synthesize the panel  {#step-2c-synthesize-the-panel}
 
-The panel produces N partial views; the **main agent owns the synthesis** — this is the "main agent forms the unified report" half of the design and it is *not* delegated. From the returned conclusions:
+The panel produces N partial views; the **main agent owns the synthesis** — it is *not* delegated. From the returned conclusions:
 
 - **Merge and dedupe** findings into the spike's single Alternatives Considered table — one row per distinct approach, annotated with which perspective(s) favour or reject it.
 - **Surface contradictions, do not flatten them.** Where lenses genuinely disagree (conservative vs progressive, user vs operational), record the conflict explicitly as a **decision input** — the trade-off is itself the finding, and it feeds the [interview](../references/interview-mode.md)/concept rather than being silently resolved inside the spike.
-- **Convergence is also a finding.** When lenses chosen to disagree instead *agree*, say so — cross-perspective consensus is a strong, low-risk signal for the concept, not a wasted panel. (If they agreed because they were never going to differ, that is the lens-theater anti-pattern, caught at framing, not here.)
+- **Convergence is also a finding.** When lenses chosen to disagree instead *agree*, say so — a cross-perspective signal for the concept.
 - **Spot-check load-bearing conclusions.** A panel conclusion is two hops from the evidence; before a cross-lens verdict drives the concept, spot-check the *specific* claim it turns on against primary evidence (per [Delegation for Focus](../references/delegation.md#the-habit-that-makes-it-pay-off)).
 - Write **one unified Conclusion** (Step 3) covering all perspectives — the spike has a single verdict, with the per-lens recommendations and unresolved tensions visible beneath it.
 
@@ -136,9 +136,9 @@ Set the spike status: `concluded` (questions answered), `inconclusive` (time-box
 
 ### Step 4: Persist durable knowledge & artifacts
 
-This step is the **end-of-investigation reflection** touchpoint of [Experience Capture](../references/experience-capture.md) — the same "harvest the durable lesson" move that implement/fix and audit perform, here at the close of a spike.
+This step is the **end-of-investigation reflection** touchpoint of [Experience Capture](../references/experience-capture.md).
 
-Findings that pass the [skill phase's non-triviality filter](skill.md) are saved to `.dev_flow/skills/` **by the agent running this phase** — main agent or task-delegated executor; its helper subagents do not write `.dev_flow/`. This is the owner of the rule "web research → consolidated skill": research is the **sanctioned consolidation point** (the producing side of skills), so it *writes* the skill directly rather than only proposing it — the non-triviality filter is the gate. If the spike also surfaced a hard project **constraint** (a library limit, a version floor), harvest that as a [rule](rule.md) too — written automatically through the structural gate (default `should`, never auto-`must`; a would-be `must`/contradiction goes to independent review) — rather than burying it in the skill body. The next task starts ahead either way.
+Findings that pass the [skill phase's non-triviality filter](skill.md) are saved to `.dev_flow/skills/` **by the agent running this phase** — main agent or task-delegated executor; its helper subagents do not write `.dev_flow/`. This is the owner of the rule "web research → consolidated skill": research is the **sanctioned consolidation point** (the producing side of skills), so it *writes* the skill directly rather than only proposing it — the non-triviality filter is the gate. If the spike also surfaced a hard project **constraint** (a library limit, a version floor), harvest that as a [rule](rule.md) too — written automatically through the structural gate (default `should`, never auto-`must`; a would-be `must`/contradiction goes to independent review) — rather than burying it in the skill body.
 
 The same split applies to **artifacts**: staged files the spike's conclusions rest on — or that were expensive to fetch (rate-limited Figma access, large downloads) — are promoted from the workspace to `.dev_flow/cache/` with index entries (see [Resource Cache](../references/cache.md)); the rest of the staging area is left to die with `/tmp`. Record promoted files under the spike's "Artifacts to keep".
 

@@ -17,7 +17,7 @@ Discrete, author-declared, optional. Never a number, never a score, never assign
 | `core` | The functionality the area exists for |
 | `critical` | Failure breaks the application or violates security or data integrity |
 
-Declaration levels, both optional:
+Declaration levels, each optional:
 
 - **application** — `Criticality:` in the concept header. The weight of this module inside the whole application. One per concept. A spec inherits its concept's line through `Concept:`.
 - **module** — `Criticality:` under a concept mechanism section (`§3.x`) or a spec entity/contract section (`§01_xx`, `§02_xx`). The weight of this part inside its own module.
@@ -58,13 +58,13 @@ Finding identity is `(normalized location + type)` — the dedup key of the audi
 - Any other `blocking` finding gets at most two rounds. The same identity raised a second time unresolved fires the tripwire.
 - `deferrable` spawns no round; it routes immediately.
 
-Symmetric twin of the `verifier-rubber-stamp` tripwire in [Application Enforcement](application-enforcement.md) — same deterministic form, opposite failure direction. Both fire together when both hold; neither cancels the other.
+Symmetric twin of the `verifier-rubber-stamp` tripwire in [Application Enforcement](application-enforcement.md), opposite failure direction. Both fire together when both hold; neither cancels the other.
 
 Round count is bounded by (distinct `must` + security findings, each of which someone must fix) + 2.
 
 ## The `contested` route
 
-A tripped or `deferrable` finding leaves the loop as a todo record of flavor `contested` — the third beside `candidate` and `queued`. It carries **both** readings, the reviewer's and the author's, so the next session does not re-derive the argument.
+A tripped or `deferrable` finding leaves the loop as a todo record of flavor `contested`, beside `candidate` and `queued`. It carries **both** readings, the reviewer's and the author's, so the next session does not re-derive the argument.
 
 - Not speculative — the YAGNI-gate does not drop it.
 - Does not surface when the originating task completes — that would reopen the argument right after the commit.
@@ -88,7 +88,7 @@ Otherwise the round reads **delta ∪ carry-over ∪ always-in-scope**:
 
 An empty delta with a non-empty carry-over is a legitimate round. Every part empty means no round is needed.
 
-The report names `scope_mode`, the round mode, and the reason for a full round. A narrowed scope with no named reason violates the no-silent-truncation rule.
+The report names the round's scope, the round mode, and the reason for a full round. A narrowed scope with no named reason violates the no-silent-truncation rule.
 
 Scope and mode are independent: scope says **what the round reads**, mode says **who performs it**. A `confirm` round reads the fix diff against the prescribed fix; `must` and security findings never reach it (discriminator D1).
 

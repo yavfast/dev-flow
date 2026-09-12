@@ -5,6 +5,7 @@
 - [Purpose](#purpose) — what Verify covers beyond unit tests: regression, integration, live end-to-end checks
 - [Delegation](#delegation) — run verification in a clean-context subagent; where run logs/screenshots go and what is promoted to cache
 - [Command](#command) — `/dev-flow verify [target]` syntax and target examples (module, integration, live, regression)
+- [Role Responsible](#role-responsible) — The Tester role, here at the regression/integration/live levels
 - [Activation Condition](#activation-condition) — the triggers that activate the phase; skip recorded as `unobserved`, never clean
 - [Verification Categories](#verification-categories) — levels 1–3 table (regression/integration/live), live-test kinds, design compliance check for UI
 - [Context Loading](#context-loading) — skill/rule gates for the verified area plus per-burst re-activation with Pre-Action Marker
@@ -19,11 +20,9 @@
 
 After functional tests pass and code review is approved, verify the changes at a broader scope: regression testing, integration testing, and live verification (launching the app/service to check end-to-end behavior).
 
-This phase catches issues that unit/mock tests cannot — broken integrations, configuration problems, UI regressions, and real-world service interactions.
-
 ## Delegation
 
-This is the noisiest phase in the pipeline — regression suites, integration logs, live runs, screenshots — and almost none of that output needs to reach the main context. Run verification through a subagent (the clean-context shape Review uses): it returns a verdict plus the failures that matter, with full logs in a file referenced by path. See **[Delegation for Focus](../references/delegation.md)**.
+Run verification through a subagent (the clean-context shape Review uses): it returns a verdict plus the failures that matter, with full logs in a file referenced by path. See **[Delegation for Focus](../references/delegation.md)**.
 
 **Artifacts.** Run output and screenshots go to the project workspace — `/tmp/{project-slug}/logs/` and `/tmp/{project-slug}/screenshots/`, timestamped (`{name}_YYYYMMDD_HHMMSS.{ext}`), never numeric suffixes. A capture worth keeping across sessions (e.g. a reference screenshot future runs compare against) is promoted to `.dev_flow/cache/app/` by the agent running this phase (focus helpers stage and report). See [Resource Cache](../references/cache.md).
 
@@ -44,6 +43,10 @@ The target is optional. Without it, verification scope is determined from the cu
 /dev-flow verify live api endpoints        # Run live tests against real API
 /dev-flow verify regression                # Run full regression test suite
 ```
+
+## Role Responsible
+
+This phase is handled by **Tester**: [roles/tester.ai.md](../roles/tester.ai.md) — the same role as [Test](testing.md), at the regression/integration/live levels.
 
 ## Activation Condition
 
@@ -86,7 +89,7 @@ Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../S
 
 ## Safe Testing Principle
 
-Integration and live tests operate on real data and real services. The primary rule: **never damage or delete user data during verification.**
+**Never damage or delete user data during verification.**
 
 ### Guidelines
 
@@ -115,25 +118,16 @@ When in doubt, treat the operation as destructive.
 
 ## Verification Workflow
 
-```
-1. Determine which verification levels are needed based on the changes — start from
-   the implemented plan phase's `Verify:` field: it names the spec Verification
-   Criteria (SP_XXX_05_*) and acceptance checks for this phase, and is the reusable
-   basis for live scenarios and the manual checklist below. Beside those criteria,
-   re-read the task file's `## Intent`: the bar is "the recorded expected result is
-   observable", not merely "tests pass" ([Task Intent](../references/task-intent.md))
-2. Ask user permission before creating new integration/live test scenarios
-3. Run verification level by level (regression → integration → live)
+1. Determine which verification levels the changes need — start from the implemented plan phase's `Verify:` field: it names the spec Verification Criteria (`SP_XXX_05_*`) and acceptance checks for this phase, and is the reusable basis for live scenarios and the manual checklist below. Beside those criteria, re-read the task file's `## Intent`: the bar is "the recorded expected result is observable", not merely "tests pass" ([Task Intent](../references/task-intent.md)).
+2. Ask user permission before creating new integration/live test scenarios.
+3. Run verification level by level (regression → integration → live).
 4. If any verification fails:
-   a. Analyze the failure — a code bug, config issue, environment problem,
-      or a spec/plan defect? (the latter → escalate upstream first,
-      see Upstream Escalation: ../references/escalation.md)
-   b. Fix the root cause
-   c. Re-run functional tests (Test phase) on the fix
-   d. Re-run code review (Review phase) on the fix
-   e. Re-run the failed verification level and all subsequent levels
-5. All verification passes → reflect (harvest rules/skills, auto-applied through the structural gate — see Reflection below) → proceed to commit approval
-```
+   - Analyze the failure — a code bug, a config issue, an environment problem, or a spec/plan defect? The last one → escalate upstream first, see [Upstream Escalation](../references/escalation.md).
+   - Fix the root cause.
+   - Re-run functional tests ([Test phase](testing.md)) on the fix.
+   - Re-run code review ([Review phase](review.md)) on the fix.
+   - Re-run the failed verification level and all subsequent levels.
+5. All verification passes → reflect (harvest rules/skills, auto-applied through the structural gate — see [Reflection](#reflection--harvest-verification-lessons) below) → proceed to commit approval.
 
 ### Fix Cycle
 
@@ -147,7 +141,7 @@ Verify fails
   → Re-run verification from the failed level
 ```
 
-This cycle repeats until all verification passes. Each iteration is smaller because the fix is targeted.
+This cycle repeats until all verification passes.
 
 **Scope each re-run to the fix.** A contained fix of a prescribed finding that is neither `must` nor a security class re-runs as a `confirm` round — **every test that was green stays green**, plus a diff check against the prescribed fix — instead of the full Test + clean-context Review pass. The `confirm` round *is* the re-run the gate criterion below asks for, at the scope the fix earned. Any discriminator false or undeterminable → the full re-run above; a round that does not confirm replays as `full`.
 
@@ -194,7 +188,7 @@ For integration and live tests that require setup:
 
 ## Reflection — harvest verification lessons
 
-Once verification passes, run the [Transition Checkpoint](../references/experience-capture.md) before commit approval. Verify is where reality first tests the integrated system, so its lessons are about how things *break together*:
+Once verification passes, run the [Transition Checkpoint](../references/experience-capture.md) before commit approval.
 
 - **Rule from a recurring failure mode.** A regression that a convention would have prevented, a flaky-test pattern, an integration contract that needed a guard — write a rule automatically (default `should`; testing-area rules live under `.dev_flow/rules/testing.md`). See [Project Rules → Auto-discovery](../SKILL.md#project-rules).
 - **Skill from a verification gotcha.** A non-obvious environment setup, a sandbox/seed-data trick, a known-pitfall in a live integration — write/update a skill through the [skill phase](skill.md) non-triviality filter.

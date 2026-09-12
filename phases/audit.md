@@ -4,6 +4,7 @@
 
 - [Purpose](#purpose) — What the whole-directory sweep reconciles, the opt-in `code` scope, corpus-wide comparison home, phases it composes
 - [Command](#command) — `/dev-flow audit [scope] [--dry-run]` syntax, the scope list, the Scope → steps table, invocation examples
+- [Role Responsible](#role-responsible) — The Auditor role and the per-lens fan-out of the `code` scope
 - [When to Run](#when-to-run) — Sweep triggers: cadence, status-reported drift, hygiene caps, lagging headers/doc statuses; `code` cadence, reduced mode
 - [Guiding Principles](#guiding-principles) — Reconcile not fabricate, non-destructive, source-of-truth order, safe under contention, apply-safe/propose
 - [Procedure](#procedure) — Steps 1–9: inventory, reconcile, compact & reflect, dashboard, catalog, rules, skills, docs/cache (7a–7e), report, code
@@ -14,13 +15,11 @@
 
 ## Purpose
 
-`.dev_flow/` accumulates drift the normal phases never catch (each touches only the slice it owns): stale dashboard rows, task headers lagging documents and git, verbose closed tasks, duplicate or stale rules/skills. Audit is the periodic **whole-directory sweep** that reconciles every task's recorded state against ground truth, trims the dashboard to what is actually active, compacts and reflects on closed work so its lessons survive while its noise is archived, grooms the `rules/`, `skills/`, and `cache/` catalogues — and reconciles the integrity of the `docs/` set itself (index, statuses, cross-references, orphans, freshness, glossary, duplicated value sets, docs↔code drift) through the `docs` scope. It is the write-heavy cousin of [status](status.md): `status` *reports* drift, `audit` *resolves* it.
+`.dev_flow/` accumulates drift the normal phases never catch: stale dashboard rows, task headers lagging documents and git, verbose closed tasks, duplicate or stale rules/skills. Audit is the periodic **whole-directory sweep** that reconciles every task's recorded state against ground truth, trims the dashboard to what is actually active, compacts and reflects on closed work so its lessons survive while its noise is archived, grooms the `rules/`, `skills/`, and `cache/` catalogues — and reconciles the integrity of the `docs/` set itself (index, statuses, cross-references, orphans, freshness, glossary, duplicated value sets, docs↔code drift) through the `docs` scope. It is the write-heavy cousin of [status](status.md): `status` *reports* drift, `audit` *resolves* it.
 
 A separate, opt-in **`code` scope** ([Step 9](#step-9--code-scope-the-whole-codebase-audit)) extends the same "reconcile the project to reality" idea to the *source code itself*: it audits the whole codebase through parallel lenses (architecture / SOLID / DRY / security / …), consolidates the findings, and emits a prioritized **refactoring plan** plus a run report — written under `.dev_flow/audit/` with a timestamped name (not into `docs/`) — plus a `docs/_framework.md` map update. Like every other scope it is **non-committing** — it stops at the Plan→Code gate and hands the plan off to the standard pipeline; it never edits source or commits.
 
 Audit is also the **declared home of a corpus-wide comparison**. A sweep with no per-file signal belongs here or in [propagate](propagate.md), not inside an unrelated task — running the command **in the matching scope** is itself the entry condition (`audit-run`) — a `code`-scope run does not open a `docs` sweep. See [Verification Economy](../references/verification-economy.md).
-
-Audit composes existing phases rather than reinventing them — it leans on the [status](status.md) regeneration procedure for the indexes, the [rule](rule.md) and [skill](skill.md) phases for catalogue edits, [propagate](propagate.md) when a reconciliation reveals that docs and code disagree, and (for the `code` scope) the [implement](implement.md)/[review](review.md)/[verify](verify.md) phases to *execute* the refactoring plan it produces.
 
 ## Command
 
@@ -64,6 +63,10 @@ Each scope runs a defined subset of the [procedure](#procedure); `all` runs the 
 /dev-flow audit code лише зміни з останнього релізу, прев'ю-план  # incremental + preview-only (no hand-off)
 ```
 
+## Role Responsible
+
+This phase is handled by **Auditor**: [roles/auditor.ai.md](../roles/auditor.ai.md) — the `code` scope fans out [code-audit-lens.ai.md](../roles/code-audit-lens.ai.md), one per lens.
+
 ## When to Run
 
 - Periodically (e.g. end of a milestone, before a release, on a cadence).
@@ -76,17 +79,15 @@ Each scope runs a defined subset of the [procedure](#procedure); `all` runs the 
 
 ## Guiding Principles
 
-These shape every step below — read them first, they are the difference between a clean-up and a data-loss incident.
-
 1. **Reconcile, don't fabricate.** A task's real state is determined by evidence: the status of its linked concept/spec/plan in `docs/`, and the git history for its traceable ID. Change a recorded state only when evidence supports it. When evidence is missing or contradictory, **flag it in the report and leave the file unchanged** — never invent a status to make the dashboard look tidy.
 2. **Non-destructive by default.** History is moved, never deleted. Overflow logs, completed subtask blocks, and closed task files go to `.dev_flow/session_history/`, not to `/dev/null`. Indexes are regenerable, so they may be rewritten freely — with one exception: **`cache/_index.yaml` is data, not a derived view** (its `source` metadata exists nowhere else), so it is only ever reconciled entry by entry, never regenerated (see [Resource Cache](../references/cache.md)). Task files and history are not regenerable either — they are only ever appended to or relocated intact.
 3. **Source-of-truth order.** Task files win over the dashboard and catalog (those are derived). For task *reality*, `docs/` document status and git win over the task header. For rules/skills, the files on disk win over their `_index.yaml`. For the cache, disk decides *existence* (a missing file orphans its entry) but the index owns *metadata* (`source`/`summary` cannot be rebuilt from disk) — flag mismatches, never drop or regenerate entries wholesale (Step 7d).
 4. **Safe under contention.** Audit may run while other contributors hold open subtasks. It may fully rewrite *derived* indexes and *closed* task files, but it must never rewrite a live contributor's Subtask block or their tagged entries in shared sections — those are reconciled only with targeted edits, and only the header/status fields. Re-read immediately before each write.
-5. **Apply the safe, propose the judgement.** Derived/reversible changes (index regen, dashboard trim, archival of done work, header reconciliation backed by git) are applied directly and reported. Judgement calls (merging two rules, deleting a skill, removing a cached resource) are **proposed for confirmation** — this mirrors the rule/skill phases, where removal requires explicit intent. Reflection-harvested lessons follow their own gate instead: written **automatically** through the structural [rule](rule.md)/[skill](skill.md) gate (never an auto-`must`; a contradiction routes to independent review), visible in the commit diff — see Step 3.
+5. **Apply the safe, propose the judgement.** Derived/reversible changes (index regen, dashboard trim, archival of done work, header reconciliation backed by git) are applied directly and reported. Judgement calls (merging two rules, deleting a skill, removing a cached resource) are **proposed for confirmation**. Reflection-harvested lessons follow their own gate instead: written **automatically** through the structural [rule](rule.md)/[skill](skill.md) gate (never an auto-`must`; a contradiction routes to independent review), visible in the commit diff — see Step 3.
 
 ## Procedure
 
-Run the steps in order; later steps assume earlier ones have settled the state they depend on. Skip steps outside the requested `scope`.
+Run the steps in order. Skip steps outside the requested `scope`.
 
 ### Step 1 — Inventory & freshness
 
@@ -120,7 +121,7 @@ A task is **closed** when every subtask is `done` and its deliverable is committ
 **Reflect** — harvest lessons before they are buried. This is the task-close **Transition Checkpoint** of [Experience Capture](../references/experience-capture.md) — the same auto-apply reflection, not a parallel path; its *harvest-before-demote* ordering is why it runs before any salience demotion on the closing task:
 - Distill what the closed task *taught* that is not already captured. A reusable coding constraint or convention → write a rule automatically (apply the [rule](rule.md) phase's category/severity model; default `should`, never auto-`must`). Project-specific technology knowledge, gotchas, or research results → write/update a skill (apply the [skill](skill.md) phase's non-triviality filter — only what a senior dev arriving fresh would not already know). A would-be `must`, or a rule/skill that contradicts an existing one, routes to an independent clean-context review first. A blocker that recurred → note it so the same class is prevented.
 - Feed durable insights **forward** into `rules/`/`skills/` so the knowledge outlives the task; let the rest be archived.
-- **Optional `/dream` delegation:** if a reflection/`dream` skill is installed in this environment, delegate the reflection to it for a deeper retrospective; if not, perform the inline distillation above. Audit does not depend on `/dream`.
+- **Optional `/dream` delegation:** if a reflection/`dream` skill is installed in this environment, delegate the reflection to it for a deeper retrospective; if not, perform the inline distillation above.
 
 **Retire** — a fully-compacted closed task that is older than the retention window (default ~30 days, per the [tasks index](../templates/tasks_index.md)) is moved in its entirety to `session_history/` and dropped from the catalog.
 
@@ -147,7 +148,7 @@ Regenerate `tasks/_index.md` from the task headers: Active and Recently Complete
 
 ### Step 7 — Revise `skills/`
 
-Curation of **procedural skills** — edit **incrementally, never a bulk rewrite** of the catalogue (avoids context-collapse / brevity-bias rot); see [Procedural Skills → Curation](../references/procedural-skills.md):
+Curation of **procedural skills** — edit **incrementally, never a bulk rewrite** of the catalogue; see [Procedural Skills → Curation](../references/procedural-skills.md):
 
 1. **Index ↔ disk** — reconcile the root and per-domain `_index.yaml` against the actual skill files (add missing, remove orphaned entries, fix `topics`/`file` fields) using the [skill](skill.md) phase's index format.
 2. **Semantic duplicates / overlap** — flag skills covering the same topic or bleeding across domains; propose a merge into the better-placed file.
@@ -160,7 +161,7 @@ Curation of **procedural skills** — edit **incrementally, never a bulk rewrite
 
 ### Step 7a — Groom `docs/_glossary.md` (if present)
 
-Runs under scope `docs` (and `all`). Steps 7a–7c and 7e together constitute the **`docs` scope**. Keep the project glossary lean and true (see [Glossary](../references/glossary.md)):
+Runs under scope `docs` (and `all`). Keep the project glossary lean and true (see [Glossary](../references/glossary.md)):
 
 1. **Duplicates** — merge terms that denote the same concept under different names; keep the canonical one, fold the rest into its `_Avoid_` list. Do not auto-delete — propose the merge.
 2. **Stale ambiguities** — for each entry under *Flagged ambiguities*, check whether the conflict is now settled in the documents; if so, resolve it (canonical term + `_Avoid_`) and drop the flag.
@@ -195,7 +196,7 @@ Run the [drift detection algorithm](propagate.md#drift-detection-algorithm) from
 
 ### Step 7e — Revise `docs/` integrity (scope `docs` / under `all`)
 
-Grouped with Steps 7a–7c as the **`docs` scope**. Where 7a–7c groom the glossary, sweep deferrals, and detect docs↔code drift, 7e reconciles the documentation set itself. `docs/_index.md` is a **derived** view (regenerable per the [status regeneration procedure](status.md#regeneration-procedure)); the documents are the source of truth.
+Grouped with Steps 7a–7c as the **`docs` scope**. `docs/_index.md` is a **derived** view (regenerable per the [status regeneration procedure](status.md#regeneration-procedure)); the documents are the source of truth.
 
 1. **Index ↔ disk** — reconcile `docs/_index.md` against the actual `docs/*.concept.md|*.sp.md|*.plan.md|*.epic.md`: add missing entries, drop entries for files that no longer exist, fix stale one-line descriptions and a wrong `Status` column. Below the >5-doc threshold where no `_index.md` is required (see [SKILL.md → File Organization](../SKILL.md#file-organization)), skip. The index is derived, so regenerate it freely when it has drifted.
 2. **Status lifecycle reconciliation** — reconcile documents whose recorded `Status` disagrees with evidence (mirrors Step 2 for tasks, using the [status vocabulary](../SKILL.md#document-status-vocabulary)). A status that **mechanically contradicts hard evidence** is an obvious defect and is **auto-fixed** (a plan `in-progress` whose phases are all `[DONE]` → `completed`; the index `Status`-column following an evidence-backed reconciliation). A status change that is a genuine **judgement call** (a concept/spec long `draft` with active dependents; a `deprecated` doc still named in an active `Depends on` or referenced by live code IDs → an incomplete migration) is **flagged**, not auto-changed; an uncertain case goes to independent review.
@@ -221,7 +222,7 @@ A check that could not be run — a *blocked* path, not the no-op of an absent d
 
 ### Step 9 — `code` scope: the whole-codebase audit
 
-The opt-in `code` scope is its **own multi-stage procedure**, not a subset of Steps 1–8 — it audits *source code*, where the rest of audit reconciles the `.dev_flow/` + `docs/` workspace. It owns three read-only stages — **RunAnalysis → Consolidate → ProducePlan** — preceded by **ParseIntent** (step 0), and stops at the Plan→Code gate; execution is the standard pipeline (**HandOff**). The full lens menu, per-lens checklists, the shared bottom-up walk, the SOLID/DRY heuristics, the antipattern catalogue, and the refactoring playbook live in **[references/code-audit.md](../references/code-audit.md)** — this step is the orchestration; that reference is the detail.
+The opt-in `code` scope is its **own multi-stage procedure**, not a subset of Steps 1–8 — it audits *source code*, where the rest of audit reconciles the `.dev_flow/` + `docs/` workspace. It owns the read-only stages — **RunAnalysis → Consolidate → ProducePlan** — preceded by **ParseIntent** (step 0), and stops at the Plan→Code gate; execution is the standard pipeline (**HandOff**). The full lens menu, per-lens checklists, the shared bottom-up walk, the SOLID/DRY heuristics, the antipattern catalogue, and the refactoring playbook live in **[references/code-audit.md](../references/code-audit.md)**.
 
 **Scope guiding constraints** (layered on audit's *non-committing* character):
 
@@ -268,7 +269,7 @@ If consolidation yields no actionable findings, the plan is empty, HandOff is a 
 
 ## Report Structure
 
-Use this template so the result is scannable:
+Use this template:
 
 ```
 ━━━ /dev-flow audit — <scope> <(dry-run)?> ━━━
@@ -356,7 +357,7 @@ For the **`code` scope** (Step 9) the output is the refactoring plan itself, sum
 
 ## Dry-Run
 
-`--dry-run` performs Steps 1–7e as analysis only and emits the Step 8 report without touching disk. Use it to preview a sweep, to review proposed merges and removals before committing to them, or to audit a shared `.dev_flow/` you do not want to mutate. The report distinguishes what *would* be applied from what would be proposed.
+`--dry-run` performs Steps 1–7e as analysis only and emits the Step 8 report without touching disk. The report distinguishes what *would* be applied from what would be proposed.
 
 The **`code` scope** is read-only w.r.t. source through the plan regardless of any flag — its `--dry-run` equivalent is **preview-only intent** (e.g. "audit code … preview plan"), which runs ParseIntent + RunAnalysis + Consolidate + ProducePlan and then *stops* without offering the hand-off. (ProducePlan still writes the plan + report to `.dev_flow/audit/` and updates the framework map; those are derived artifacts, not source.)
 

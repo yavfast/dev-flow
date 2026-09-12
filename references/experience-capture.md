@@ -4,10 +4,10 @@ Cross-cutting sub-procedure for every phase. Like [Delegation for Focus](delegat
 
 ## Why this exists
 
-Compaction archives by **age** — the bulky raw turns of a solved problem survive while the lesson inside them is lost. Design commitments:
+Design commitments:
 
 - **Store the distillation, not the transcript.** What survives is a short summary plus any durable lesson — never the raw turns, which are referenced by path if kept at all.
-- **Trust structure, not self-assessment.** An agent's numeric self-rating ("importance 8/10", "confidence 90%") is unreliable. So reflection fires on **deterministic structural events** dev-flow already logs, and salience is recorded with the **discrete markers** of [Salience Markers](../phases/status.md#salience-markers) — never a self-scored number.
+- **Trust structure, not self-assessment.** Reflection fires on **deterministic structural events** dev-flow already logs, and salience is recorded with the **discrete markers** of [Salience Markers](../phases/status.md#salience-markers) — never a self-scored number ("importance 8/10", "confidence 90%").
 
 North star: durable task state stays **complete in L2** (`.dev_flow/`) so the transcript is disposable and a fresh session restarts from files deterministically (see the [memory tiers](cache.md#memory--data-tiers-l0l1l2)).
 
@@ -17,7 +17,7 @@ A **segment** is a coherent stretch of work on one topic or task, bounded by two
 
 ## Transition Checkpoint — the primary cadence
 
-At a transition, run a **checkpoint** over the segment that is closing. This formalizes behavior good agents already do ad hoc; the value is doing it *reliably, at known boundaries*.
+At a transition, run a **checkpoint** over the segment that is closing.
 
 **Detecting a transition.** Anchor on **structural** signals — `phase-boundary`, `task-switch`, `subtask-done` — which are deterministic events dev-flow already records. **Semantic** signals (a visible topic-shift, an explicit marker you raise) are a best-effort secondary: useful for an intra-phase checkpoint, but **never the sole basis when a structural signal is also available**, and self-detected topic boundaries alone are never a valid trigger (that is the self-assessment trap again).
 
@@ -28,8 +28,6 @@ At a transition, run a **checkpoint** over the segment that is closing. This for
 3. **Demote the raw turns** of the segment — re-grade them `{s:noise}`, or `{s:superseded→<summary>}` when the summary replaces them.
 4. **Apply durable lessons** (next section) — auto-written through structural gates; a doubtful write goes to independent review first.
 5. **Close the segment**, and **promote** the durable part of working memory to L2 (see [Relation to working memory](#relation-to-working-memory)).
-
-The pinned summary now survives a dev-flow compaction while the raw turns are evicted first — the signal kept, the noise shed.
 
 ## Harvest before demote (ordering invariant)
 
@@ -68,15 +66,15 @@ Between checkpoints, an individual response can still carry salience and signal 
 | salience | the entry's `{s:…}` value (`pin` / `normal` / `noise`) |
 | `transition?` | does this response close a segment (fire a checkpoint)? |
 
-**Factual fields only.** A subjective numeric self-score — confidence %, quality N/10 — is **not permitted**; it is the unreliable signal the whole design avoids. The durable copy is the **task-file entry**; a *visible* footer is optional and reserved for semantically complex responses (it need not appear on every turn).
+**Factual fields only.** A subjective numeric self-score — confidence %, quality N/10 — is **not permitted**. The durable copy is the **task-file entry**; a *visible* footer is optional and reserved for semantically complex responses (it need not appear on every turn).
 
-**Pre-action sibling.** The same fact-only, pointer-only idiom runs *forward* as well as back: [Application Enforcement](application-enforcement.md)'s **Pre-Action Marker** re-surfaces the applicable rules/skills (+ their freshness) *before* an action burst, where this trailer reports *after* one. Same format, opposite direction — one machinery, no new format.
+**Pre-action sibling.** The same fact-only, pointer-only idiom runs *forward* as well as back: [Application Enforcement](application-enforcement.md)'s **Pre-Action Marker** re-surfaces the applicable rules/skills (+ their freshness) *before* an action burst, where this trailer reports *after* one.
 
 ## Context pressure — a tiered, proxy-driven trigger
 
 A checkpoint can also fire because the context is filling up — but assessed by **proxy, never by introspection, and never by riding the harness's own compaction**:
 
-- **Signal** — `window_fill` if (and only if) the runtime exposes it; otherwise derive pressure from **structural proxies**: turn count, task-file size, repetition signals, error rate. The trigger is portable across runtimes precisely because it does not depend on a fill number the runtime may hide.
+- **Signal** — `window_fill` if (and only if) the runtime exposes it; otherwise derive pressure from **structural proxies**: turn count, task-file size, repetition signals, error rate.
 - **Tiers** — the *pressure level* (left) names the input severity; `AssessContextPressure` returns the matching *response action* (in parentheses):
   - **ok** — nothing to do. *(action: `ok`)*
   - **moderate** — run a checkpoint now (distill + pin the summary, demote raw), stay lean. *(action: `checkpoint`)*
@@ -91,7 +89,7 @@ Experience Capture is what fires the L1→L2 movements of [session working memor
 - **At a checkpoint** — *promote to durable*: a settled decision, a confirmed parameter, a harvested lesson moves into `.dev_flow/`; the rest stays L1 scratch.
 - **After a compaction / on a subtask switch** — *re-attention*: re-read the working-memory area to rebuild focus before continuing (the [status read protocol](../phases/status.md#read-protocol) opens with this).
 
-## Where it runs (touchpoints)
+## Where it is wired
 
 | Phase / moment | How Experience Capture applies |
 |----------------|-------------------------------|
@@ -103,4 +101,4 @@ Experience Capture is what fires the L1→L2 movements of [session working memor
 
 ## A note on these guidelines
 
-This is a **projection, not a formal protocol** — heuristics the agent applies with judgment, the same footing as [Delegation for Focus](delegation.md) and [Interview Mode](interview-mode.md). A spurious checkpoint costs one cheap summary, not corruption; a missed semantic shift is caught at the next structural boundary; an over-eager cadence is flagged by audit. Don't encode rigid MUST/NEVER machinery beyond the two that are load-bearing — *factual-only trailers* and *harvest-before-demote* — and keep the rest as prose.
+This is a **projection, not a formal protocol** — heuristics the agent applies with judgment, the same footing as [Delegation for Focus](delegation.md) and [Interview Mode](interview-mode.md). Don't encode rigid MUST/NEVER machinery beyond the load-bearing ones — *factual-only trailers* and *harvest-before-demote* — and keep the rest as prose.

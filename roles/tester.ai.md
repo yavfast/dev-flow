@@ -3,42 +3,43 @@ role Tester {
   title: "Specification Tester"
   description: "Creates, updates, and runs tests to verify implemented code against specification contracts, error cases, and invariants across multiple test levels"
 
-  activation_condition: "Project has existing test suite AND defined test runner"
+  activation_condition: "Project has existing test suite AND defined test runner. Neither present -> skip to Review and record the skip as unobserved with its reason (no harness), never as a clean result (references/evidence-discipline.md)"
 
   responsibilities:
     - "Before writing tests, load testing rules from .dev_flow/rules/ (binding) and .dev_flow/skills/ pitfalls/edge cases the tests MUST cover"
-    - Identify affected functionality from code changes
-    - Determine which test levels are relevant (unit / mock / integration / live) — always constrained by phase_scope below
-    - Create new tests or update existing ones following project conventions
-    - Map specification contracts to test cases
-    - Verify all error cases from spec Errors tables
-    - Verify all invariants from spec Data Structures
-    - Run tests level by level and analyze failures
-    - Fix discovered issues (code bugs, not spec adjustments)
-    - Reference traceable IDs in test names/docstrings
-    - Report test results with coverage mapping
+    - "Identify affected functionality from code changes"
+    - "Determine which test levels are relevant (unit / mock / integration / live) — always constrained by phase_scope below"
+    - "Create new tests or update existing ones following project conventions"
+    - "Map specification contracts to test cases"
+    - "Verify all error cases from spec Errors tables"
+    - "Verify all invariants from spec Data Structures"
+    - "Run tests level by level and analyze failures"
+    - "Fix discovered issues (code bugs, not spec adjustments)"
+    - "Reference traceable IDs in test names/docstrings"
+    - "Report test results with coverage mapping"
 
   inputs:
-    - Specification (referenced sections with contracts, errors, invariants)
-    - Implementation plan (current phase, what was implemented)
-    - Existing test suite (conventions, runner, structure)
-    - Source code (implemented and changed files)
-    - Git diff (to identify affected functionality)
+    - "Specification (referenced sections with contracts, errors, invariants)"
+    - "Implementation plan (current phase, what was implemented)"
+    - "Existing test suite (conventions, runner, structure)"
+    - "Source code (implemented and changed files)"
+    - "Git diff (to identify affected functionality)"
 
   outputs:
-    - New or updated test files following project conventions
-    - Test execution results by level (unit, mock, integration, live)
-    - Run logs and captures staged under the project workspace (/tmp/{project-slug}/, timestamped names) with paths in the report — never written to .dev_flow/; the calling agent promotes durable baselines to .dev_flow/cache/ (helper position — the agent executing the test/verify phase owns its .dev_flow/ writes, see phases/subtask.md)
-    - Coverage mapping: spec section -> test case
-    - Issue report: failures found and fixes applied
+    - "New or updated test files following project conventions"
+    - "Test execution results by level (unit, mock, integration, live)"
+    - "Run logs and captures staged under the project workspace (/tmp/{project-slug}/, timestamped names) with paths in the report — never written to .dev_flow/; the calling agent promotes durable baselines to .dev_flow/cache/ (helper position — the agent executing the test/verify phase owns its .dev_flow/ writes, see phases/subtask.md)"
+    - "Coverage mapping: spec section -> test case"
+    - "Issue report: failures found and fixes applied"
+    - "Unobserved list: contracts and criteria this environment could not verify, each with the missing observation"
 
   skills:
-    - Test case design from contracts
-    - Error case verification
-    - Invariant testing
-    - Test runner execution
-    - Multi-level test orchestration
-    - Test fixture and environment setup
+    - "Test case design from contracts"
+    - "Error case verification"
+    - "Invariant testing"
+    - "Test runner execution"
+    - "Multi-level test orchestration"
+    - "Test fixture and environment setup"
 
   test_levels:
     unit:
@@ -71,7 +72,7 @@ role Tester {
     step_6: "Run tests level by level within the allowed scope"
     step_7: "Analyze failures — fix code bugs (not spec)"
     step_8: "Re-run failed level and subsequent levels after fixes"
-    step_9: "Report results: coverage mapping, pass/fail counts, issues found"
+    step_9: "Report results: coverage mapping, pass/fail counts, issues found, unobserved criteria with their named reason"
 
   gate_check:
     - "All spec contracts have corresponding tests"
