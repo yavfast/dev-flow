@@ -6,7 +6,7 @@
 - [Command](#command) — `/dev-flow do <request>` and the equivalent bare `/dev-flow <request>` syntax, with example invocations
 - [Role Responsible](#role-responsible) — DevFlowOrchestrator role file that handles this command
 - [Procedure](#procedure) — Steps 1–7: load context + gates, interpret intent (intent table, Change Classes), clarify, route Scenarios A–D, wrap-up
-- [Routing Decision Tree](#routing-decision-tree) — ASCII tree from request shape to target phase: continue, change, fix, docs, status, catalogues, audit, ask, adopt, todo
+- [Routing Decision Tree](#routing-decision-tree) — ASCII tree from request shape to target phase: resume, checkpoint, change, fix, docs, status, catalogues, audit, ask, adopt, todo
 - [Output Style](#output-style) — Chat vs documentation registers and the Style gate the orchestrator passes to the executing phase
 
 ## Purpose
@@ -71,7 +71,8 @@ Analyze the freeform request against the loaded context to determine:
 
 | Intent type | Indicators | Routed to |
 |-------------|-----------|-----------|
-| **Continue** | "continue", "resume", "де зупинились", active context has a next step | Resume active task |
+| **Continue / re-enter** | "continue", "resume", "продовжуй", "де зупинились", a fresh session with no new information, active context has a next step | [resume](status.md#resume--re-enter-a-task-in-a-fresh-session) — it establishes state first, then continues via Scenario A |
+| **Fix the state before leaving** | "checkpoint", "збережи стан", "зафіксуй контекст", "закінчую сесію", "save the session", "hand this over", "I'm hitting the context limit" | [checkpoint](status.md#checkpoint--fix-the-task-for-a-session-boundary) |
 | **Add/change feature** | UI element, field, behavior description, "додай", "зміни", "add", "change" | spec → plan → implement |
 | **New feature or idea** | Broad new capability, no existing documents match | concept → spec → plan → implement |
 | **Fix documentation** | "update docs", "propagate", "оновити специфікацію" | propagate |
@@ -126,6 +127,8 @@ Limit to **maximum 3 questions** per invocation. If still ambiguous — propose 
 After confirming intent, invoke the appropriate dev-flow phase(s) in order:
 
 #### Scenario A — Continue active task
+
+This is also where [`resume`](status.md#resume--re-enter-a-task-in-a-fresh-session) lands once it has established state: resume reconciles and decides, Scenario A executes.
 
 1. Re-read the active task (document + next step from context).
 2. Resume execution: load the relevant documents and continue from **Next step**.
@@ -187,7 +190,12 @@ If the user ends the session (or after completing a full phase chain):
 User request received
 │
 ├─ "continue" / "resume" / no new info
-│   └─ Read dashboard → open task file → resume your own Subtask block
+│   └─ resume → read dashboard + task file, reconcile against the tree,
+│              continue when unambiguous, else ask; nothing active → offer work
+│
+├─ "checkpoint" / "save the state" / "ending the session" / context limit reached
+│   └─ checkpoint → distil, close doc drift, satisfy the readiness set,
+│                  write the handoff record into the dashboard
 │
 ├─ Describes UI/API/behavior change
 │   ├─ Small (affects 1–2 spec sections)

@@ -42,8 +42,12 @@ role DevFlowOrchestrator {
 
   routing_scenarios:
     continue:
-      signal: "User says 'continue', 'resume', or provides no new information while active context has a pending next step"
-      action: "Read active context next step → resume execution from that exact point"
+      signal: "User says 'continue', 'resume', 'продовжуй', or provides no new information while active context has a pending next step"
+      action: "resume (phases/status.md): establish state, reconcile the record against the working tree, continue via Scenario A when the picture is unambiguous — otherwise present the brief and ask; nothing active → present the work offer"
+
+    checkpoint_session:
+      signal: "'checkpoint', 'збережи стан', 'зафіксуй контекст', 'закінчую сесію', 'save the session', 'hand this over', a stated context or usage limit"
+      action: "checkpoint (phases/status.md): distil the open segment, close documentation drift, satisfy the readiness set, write the handoff record into the dashboard — never commits, never writes the working tree"
 
     small_change:
       signal: "User describes a specific UI element, field, behavior, or API change to an existing feature"

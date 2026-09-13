@@ -59,7 +59,9 @@ Additional commands:
 | `/dev-flow rule <request>` | Manage project coding rules |
 | `/dev-flow skill <request>` | Manage project technology knowledge |
 | `/dev-flow subtask <task>` | Delegate a secondary task to a subagent — a full dev-flow participant that builds its own context and reports fully |
-| `/dev-flow status` | Show current state, resume previous session |
+| `/dev-flow status` | Show current state — report only, changes nothing |
+| `/dev-flow checkpoint [note]` | Fix the current task into durable state at a session boundary — distil, close doc drift, make the task handoff-ready, record how to resume |
+| `/dev-flow resume [task_id]` | Re-enter in a fresh session — establish state, continue when the picture is unambiguous, else offer the next work |
 | `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — reconcile state, trim context, compact closed tasks, groom rules/skills/cache, check docs integrity |
 | `/dev-flow audit code <intent>` | Opt-in whole-codebase audit (architecture/SOLID/DRY/security via parallel lenses) → prioritized refactoring plan + run report (timestamped, in `.dev_flow/audit/`) + framework map; read-only, hands off to the pipeline |
 | `/dev-flow do <request>` / `/dev-flow <anything>` | Freeform — interprets intent and auto-routes to the right phase (the default command) |
@@ -296,7 +298,9 @@ Work state is persisted in a **collaborative per-task** model so multiple AI age
 - `.dev_flow/active_context.md` — lightweight dashboard listing active tasks and recently completed ones (links to the task files).
 - `.dev_flow/tasks/_index.md` — directory catalog with conventions and lists.
 
-Resume anytime with `/dev-flow status` (lists active tasks) or `/dev-flow status <task_id>` (details for one task).
+Inspect state with `/dev-flow status` (lists active tasks) or `/dev-flow status <task_id>` (details for one task); pick the work back up with `/dev-flow resume`.
+
+**Ending a session deliberately.** When a context or usage limit is closing in, run `/dev-flow checkpoint` — it distils the open segment, closes documentation drift, makes the task file answer *what / where / why / next* on its own, and writes a one-line handoff record into the dashboard's `## Resume` section. In the fresh session, `/dev-flow resume` reads that record back, reconciles it against the working tree, and continues the work when the picture is unambiguous; with nothing active it offers the next work from the todo register and the unfinished phases of in-progress plans. Neither command commits, writes the working tree, or triggers the runtime's own compaction.
 
 **Collaboration rules:** each contributor owns its own **Subtask block** inside a task file and its own tagged entries in shared sections. Contributors may add new entries but never rewrite another contributor's content. Shared files (dashboard, catalog, task headers) use **targeted edits** (single row/field) and can be rebuilt from the task files when they drift. There is no time-based ownership takeover — if a subtask stalls, add a new subtask block referencing the original instead of editing it.
 
@@ -323,7 +327,7 @@ your-project/
 │   └── other-repo/
 │
 └── .dev_flow/
-    ├── active_context.md           # Dashboard of active tasks
+    ├── active_context.md           # Dashboard of active tasks (+ `## Resume` handoff records)
     ├── output_styles.md            # Project style profiles (documentation / chat registers)
     ├── tasks/                      # Per-task context files (source of truth)
     │   ├── _index.md

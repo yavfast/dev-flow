@@ -78,9 +78,11 @@ A checkpoint can also fire because the context is filling up — but assessed by
 - **Tiers** — the *pressure level* (left) names the input severity; `AssessContextPressure` returns the matching *response action* (in parentheses):
   - **ok** — nothing to do. *(action: `ok`)*
   - **moderate** — run a checkpoint now (distill + pin the summary, demote raw), stay lean. *(action: `checkpoint`)*
-  - **high + degradation** — ensure the task files are fully checkpointed and **always-resumable**, then **recommend a graceful session handoff** to the developer: a deterministic restart-from-files via the [status phase](../phases/status.md), not a lossy auto-compact. *(action: `recommend-handoff`)*
+  - **high + degradation** — ensure the task files are fully checkpointed and **always-resumable**, then **recommend a graceful session handoff** to the developer: a deterministic restart-from-files, not a lossy auto-compact. The recommendation is a command, not a wish — [`/dev-flow checkpoint`](../phases/status.md#checkpoint--fix-the-task-for-a-session-boundary) fixes the task and writes the handoff record, and the fresh session opens with [`/dev-flow resume`](../phases/status.md#resume--re-enter-a-task-in-a-fresh-session). *(action: `recommend-handoff`)*
 
-**Honest boundary.** The agent cannot prevent a harness auto-compact, nor reliably read the window fill. So `recommend-handoff` is exactly that — a recommendation to the developer, backed by the standing duty to keep task files always-resumable — not an action the agent can force. It must **never** trigger an automatic compaction, and must never decide the tier from self-assessment.
+**Two senses of "checkpoint".** The `moderate` tier's action is *this* procedure — the in-context Transition Checkpoint above. The `checkpoint` **command** is the developer-invoked form: it runs the same distillation and then does what a structural boundary does not — closes documentation drift, satisfies the handoff readiness set, and records where to restart. One is how the agent stays lean; the other is how a session ends.
+
+**Honest boundary.** The agent cannot prevent a harness auto-compact, nor reliably read the window fill. So `recommend-handoff` is exactly that — a recommendation to the developer, backed by the standing duty to keep task files always-resumable — not an action the agent can force. It must **never** trigger an automatic compaction, never run the `checkpoint` command on the developer's behalf, and never decide the tier from self-assessment.
 
 ## Relation to working memory
 
@@ -94,6 +96,7 @@ Experience Capture is what fires the L1→L2 movements of [session working memor
 | Phase / moment | How Experience Capture applies |
 |----------------|-------------------------------|
 | implement / fix / verify | Checkpoint at phase and subtask boundaries; trailer on complex responses; context-pressure assessed as the session grows |
+| [`checkpoint` command](../phases/status.md#checkpoint--fix-the-task-for-a-session-boundary) | Its first movement **is** a Transition Checkpoint invocation, run out of band because the developer's invocation is the transition; harvest still precedes demotion |
 | [audit](../phases/audit.md) Step 3 (reflect) | The reflect step **is** a checkpoint invocation — harvest lessons from a closing task and auto-apply them as rules/skills through the structural gate |
 | [research](../phases/research.md) Step 4 | Persisting durable spike findings is the same harvest-and-auto-apply move |
 | Specialist end-of-burst | A project specialist accrues role-local heuristics **per call** (it self-writes its own memory, so the next call warm-starts on them); this per-call append is **ungated** (only the skill promotion below passes a gate), so — applying "trust structure, not self-assessment" to memory *content* — each heuristic is written as a *falsifiable, evidence-scoped observation*, never an absolute verdict (an over-stated one poisons later warm-starts). At **end-of-burst** this procedure harvests the burst's heuristics and *auto-applies* the broadly-useful ones as skills through the structural gate (hybrid store — role-local memory + skills) |

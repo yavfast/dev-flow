@@ -1,24 +1,14 @@
 ---
 name: dev-flow
 description: >
-  Feature development workflow following concept-spec-plan-implementation pipeline
-  with traceable IDs. Use when: creating concept/spec/plan files, planning new features,
-  modifying existing functionality, fixing bugs (analyze, fix, verify),
-  propagating changes across concept-spec-plan-code, reviewing the documentation
-  pipeline or code before commit, assessing impact of architectural changes,
-  asking questions about the codebase or feasibility of changes (read-only),
-  researching unknowns before committing to a design (spike),
-  capturing future work as todos, delegating secondary tasks to subagents,
-  onboarding an existing codebase (reverse-engineer docs from code),
-  resuming a previous session or checking status, auditing and grooming
-  project context (.dev_flow/, docs/) or the whole codebase,
-  managing project coding rules and knowledge skills,
-  analyzing an external repository to decide what to borrow for THIS project and
-  writing the result into docs/ext_adoption/ ("adopt", "analyze repo", "adoption",
-  "what can we take from X", "which ideas from X are useful here", "розбери репозиторій",
-  "проаналізуй репо", "що корисного взяти", "що запозичити") — prefer this over a
-  standalone repo-analysis skill whenever the project uses dev-flow (docs/ or .dev_flow/ present),
-  or working with concept/spec documents.
+  Concept-driven pipeline with traceable IDs: concept -> spec -> plan -> code -> test -> review -> verify;
+  per-task context in .dev_flow/ survives session limits.
+  Use in a project with docs/ or .dev_flow/ for any feature, bug-fix, or docs work: concept/spec/plan authoring, implementation, tests, verification,
+  pre-commit review, code->docs propagation, impact assessment, read-only codebase/feasibility questions,
+  research spikes, todos, subtask delegation, codebase onboarding, status, project rules and knowledge skills,
+  auditing .dev_flow/ and docs/, session checkpoint/resume ("save state", "continue where we left off"),
+  and analyzing an external repo for what to borrow ("adopt", "analyze this repo")
+  — preferred over a standalone repo-analysis skill.
 user-invocable: true
 argument-hint: "[phase] [target]"
 ---
@@ -73,7 +63,9 @@ Each transition includes a validation gate to prevent drift.
 | — | `/dev-flow fix <problem>` | Analyze bug, plan fix, implement, verify | Fixed code + build/test result |
 | — | `/dev-flow rule <request>` | Add, edit, remove, or list coding rules (freeform) | Updated `.dev_flow/rules/` |
 | — | `/dev-flow skill <request>` | Find, add, update, or remove project knowledge skills | Updated `.dev_flow/skills/` |
-| — | `/dev-flow status` | Show current state, resume previous session | Status summary |
+| — | `/dev-flow status` | Show current state — report only, changes nothing | Status summary |
+| — | `/dev-flow checkpoint [note]` | Fix the current task into durable state at a session boundary — distil, close doc drift, make the task handoff-ready, record how to resume | Handoff record + checkpoint report |
+| — | `/dev-flow resume [task_id]` | Re-enter in a fresh session — establish state, continue the task when the picture is unambiguous, else offer the next work | Resume brief + continued work (or a work offer) |
 | — | `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — reconcile task state with reality, trim context, compact closed tasks, groom rules/skills/cache, check docs integrity (index/statuses/refs/orphans/freshness/duplicated sets/scaling); opt-in `code` scope audits the whole codebase → refactoring plan | Audit report + cleaned context (or, for `code`, a refactoring plan) |
 | — | `/dev-flow adopt <repo>` | Analyze an external repository at concept altitude and produce the adoption document for this project (what to borrow, what to skip, in what order) | `docs/ext_adoption/*.concept.md` + `docs/ext_adoption/*.md` |
 | — | `/dev-flow ask <question>` | Read-only Q&A about code or feasibility — no changes | Answer + optional next-step suggestion |
@@ -191,6 +183,8 @@ Stops in every route where the main agent presents its work to the developer and
 dev-flow keeps a **collaborative per-task context** in `.dev_flow/` so several agents can work one project in parallel. A task file is a shared document: each contributor owns the parts it adds and never rewrites another's. The full read/write protocol, regeneration procedure, and archive flow live in the [status phase](phases/status.md).
 
 **Memory tiers.** L0 = the live transcript (lost on compact); L1 = session scratch — the [session working memory](references/cache.md#session-working-memory-l1) (notes / params / reminders / reads) plus the `/tmp/{project-slug}/` data cache (survives compact, not restart); L2 = `.dev_flow/` (durable). [Experience Capture](references/experience-capture.md) promotes L1 → L2; [salience markers](phases/status.md#salience-markers) decide what survives a compaction. Write to working memory as you work (parameter set, non-obvious fact, deferred action, every file read) and re-read the whole area whenever the thread is lost; a file already read this session, unchanged and uninvalidated, is not read again ([Verification Economy](references/verification-economy.md)).
+
+**The session boundary has a verb on each side.** [`checkpoint`](phases/status.md#checkpoint--fix-the-task-for-a-session-boundary) fixes the current task into L2 on demand — distil the segment, close documentation drift, satisfy the readiness set, write the handoff record into the dashboard's `## Resume` section; [`resume`](phases/status.md#resume--re-enter-a-task-in-a-fresh-session) reads it back in a fresh session, reconciles the record against the working tree, and continues the work when the picture is unambiguous — otherwise it asks, and with nothing active it offers the next work. Neither commits, neither writes the tree, neither triggers the runtime's own compaction.
 
 Layout of `.dev_flow/`: [status phase → Context Files](phases/status.md#context-files).
 
@@ -338,7 +332,7 @@ Each rule is one h2 unit — directive and severity in the heading over a bounde
 | [Propagate](phases/propagate.md) | Docs ↔ code drift; mechanical auto-fixes |
 | [Fix](phases/fix.md) | Analyze → plan → fix → verify; diagnosis loop; rule detection |
 | [Rule](phases/rule.md) · [Skill](phases/skill.md) | Manage `.dev_flow/rules/` and `.dev_flow/skills/`; index formats |
-| [Status](phases/status.md) · templates [task_context](templates/task_context.md), [active_context](templates/active_context.md), [tasks_index](templates/tasks_index.md) | Context protocol, regeneration, salience markers, hygiene, archive |
+| [Status](phases/status.md) · templates [task_context](templates/task_context.md), [active_context](templates/active_context.md), [tasks_index](templates/tasks_index.md) | Context protocol, regeneration, salience markers, hygiene, archive; also owns `checkpoint` (fix a session boundary) and `resume` (re-enter) |
 | [Audit](phases/audit.md) | `.dev_flow/` + `docs/` revision; opt-in `code` scope |
 | [Ask](phases/ask.md) · [Todo](phases/todo.md) · [todo_index template](templates/todo_index.md) | Read-only Q&A · future work with a return trigger |
 | [Subtask](phases/subtask.md) | Delegate a secondary task to a full dev-flow participant |

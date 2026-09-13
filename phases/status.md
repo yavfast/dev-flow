@@ -1,14 +1,16 @@
-# Phase: Status — Restore Session Context
+# Phase: Status — Session Context, Checkpoint & Resume
 
 ## Contents
 
-- [Purpose](#purpose) — What status loads into a session; owns the read/write protocol every phase follows; reports drift, audit resolves it
-- [Command](#command) — `/dev-flow status [task_id]` syntax — dashboard summary without argument, single-task detail with one
-- [Roles](#roles) — Each phase role updates its own subtask block; ContextTracker is the dedicated read/write/regenerate worker
+- [Purpose](#purpose) — What this phase loads, fixes, and re-enters; owns the read/write protocol every phase follows; reports drift, audit resolves it
+- [Command](#command) — The three invocations: `status [task_id]` reports, `checkpoint [note]` fixes a session boundary, `resume [task_id]` re-enters
+- [Roles](#roles) — Each phase role updates its own subtask block; ContextTracker is the dedicated read/write/regenerate/checkpoint/resume worker
 - [Context Files](#context-files) — `.dev_flow/` layout, source-of-truth rule (task files win over derived indexes), templates, legacy single-file migration
 - [Collaboration Model (read first)](#collaboration-model-read-first) — Table of who may edit each region of a shared task file; no exclusive locking, no time-based takeover
 - [Read Protocol](#read-protocol) — Re-attention first, then Steps 1–5: read dashboard, read task file, validate freshness, output templates, continuation
 - [Write Protocol](#write-protocol) — Working-memory promotion; updates at phase start / step end / phase end / completion; targeted-edit safety, append-only
+- [Checkpoint — Fix the Task for a Session Boundary](#checkpoint--fix-the-task-for-a-session-boundary) — On-demand fixation at a session boundary: four movements, readiness set R1–R7, the handoff record, what it must not do
+- [Resume — Re-enter a Task in a Fresh Session](#resume--re-enter-a-task-in-a-fresh-session) — Re-entry in a fresh session: reconcile against the tree, the unambiguous test, the brief, the work offer
 - [Regeneration Procedure](#regeneration-procedure) — How any contributor rebuilds `active_context.md` and `tasks/_index.md` from task headers, incl. Deferred (todos)
 - [Salience Markers](#salience-markers) — `{s:pin|noise|superseded→}` vocabulary, written form, task-scoped expiry, how dev-flow compaction honours salience
 - [Context Hygiene](#context-hygiene) — Canonical caps (10 log entries, ~300-line task, ~80-line dashboard), activity content filter, session history archive
@@ -16,6 +18,8 @@
 ## Purpose
 
 Load the active development context into the session so you can quickly resume where you (or other contributors) left off, without re-reading all documents from scratch.
+
+This phase owns the whole **session boundary**, not just the report: `status` tells you where things stand, [`checkpoint`](#checkpoint--fix-the-task-for-a-session-boundary) fixes a task into durable state before a session ends, and [`resume`](#resume--re-enter-a-task-in-a-fresh-session) re-enters it in a fresh one. The three share one protocol, so a task written by any of them is readable by all.
 
 Status also defines the **read/write protocol** that every other phase follows when touching the context files — read this whenever you need to update task state safely under multiple AI contributors.
 
@@ -25,15 +29,18 @@ For the periodic whole-directory revision see the [audit phase](audit.md): `stat
 
 ```
 /dev-flow status [task_id]
+/dev-flow checkpoint [note]
+/dev-flow resume [task_id]
 ```
 
-- No argument — show all active tasks (dashboard summary).
-- Optional `task_id` — show the detailed state for one specific task file.
+- **`status`** — report state. No argument shows all active tasks (dashboard summary); an optional `task_id` shows the detailed state for one task file. Reports only — it changes nothing.
+- **`checkpoint`** — fix the caller's current task into durable state at a session boundary, with an optional one-line note recording why the boundary happened. See [Checkpoint](#checkpoint--fix-the-task-for-a-session-boundary).
+- **`resume`** — establish where the work stands, continue it when the picture is unambiguous, or offer the next work. An optional `task_id` selects the task. See [Resume](#resume--re-enter-a-task-in-a-fresh-session).
 
 ## Roles
 
 - Each phase role updates its own subtask block as it runs.
-- **ContextTracker** ([context-tracker.ai.md](../roles/context-tracker.ai.md)) is the dedicated read/write/regenerate worker; invoke it when context needs refreshing without executing a phase.
+- **ContextTracker** ([context-tracker.ai.md](../roles/context-tracker.ai.md)) is the dedicated worker for every mode of this phase — read, write, regenerate, checkpoint, resume; invoke it when context needs refreshing without executing a phase.
 
 ## Context Files
 
@@ -168,14 +175,16 @@ For `/dev-flow status <task_id>`:
    • Spec docs/auth.sp.md — added by session-def
 ```
 
-### Step 5: Offer continuation
+### Step 5: Offer continuation (`status` only)
+
+This step belongs to the `status` report. [`resume`](#resume--re-enter-a-task-in-a-fresh-session) uses Steps 1–3 and then runs its **own** decision — it never falls into this step, or the two would argue over whether to ask.
 
 After displaying a summary, ask the user:
 
 > "Would you like to continue from where you left off,
 > or start something new? (continue / new)"
 
-If the user says **continue** — proceed as `/dev-flow do continue` on the chosen task. The orchestrator will resume your own Subtask block if you have one, or add a new one if not.
+If the user says **continue** — hand off to [`resume`](#resume--re-enter-a-task-in-a-fresh-session) on the chosen task (`/dev-flow resume <task_id>`): it reconciles the recorded state against the working tree before any work starts, and joins the task under the [write protocol](#when-a-phase-starts-on-a-task).
 
 ## Write Protocol
 
@@ -241,6 +250,161 @@ There is no "abandon" or "release ownership" operation. To leave gracefully:
 2. Optionally add a Coordination Note: `HH:MM [your-id] — stepping away, <next-contributor-or-anyone> can continue from <here>`.
 3. Do not remove yourself from `Contributors` — the historical record stays.
 
+## Checkpoint — Fix the Task for a Session Boundary
+
+A session ends for reasons that have nothing to do with the work: a context window fills, a usage limit is reached, a machine is closed, an agent is replaced. `checkpoint` is the developer-invoked act that makes the current task answerable **without the transcript**, so the next session restarts from files instead of from memory.
+
+It is the [Transition Checkpoint](../references/experience-capture.md#transition-checkpoint--the-primary-cadence) run out of band — the developer's invocation *is* the transition — plus the two things a structural boundary does not do: it makes the documentation truthful, and it writes down where to start.
+
+**"Checkpoint" in three senses.** The *command* is this section. The *Transition Checkpoint* is the reflection procedure it invokes in movement 1 — also fired at ordinary phase and subtask boundaries by the [write protocol](#write-protocol). A *developer checkpoint* is neither: it is a stop where the agent waits for the developer ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)).
+
+**When to run it.** Before ending a session with work still open; when [context pressure](../references/experience-capture.md#context-pressure--a-tiered-proxy-driven-trigger) reaches `recommend-handoff`; before handing a task to another contributor; before any long interruption.
+
+**Before the movements.** If the dashboard is unparseable, run the [regeneration procedure](#regeneration-procedure) first; if the task file is over its line cap, run the [archive cycle](#session-history-archive) first; then checkpoint.
+
+### The four movements
+
+Run them in order — each one assumes the previous has landed.
+
+1. **Distil.** Run the [Transition Checkpoint](../references/experience-capture.md#transition-checkpoint--the-primary-cadence) over the open segment — that reference owns the steps and their ordering.
+2. **Reconcile the documentation.** Run the [propagate](propagate.md) drift check over the artifacts this task touched. Close the mechanical gaps in place; record anything larger as a Blocking Issue rather than leaving it for the next session to discover. A checkpoint never changes a document's lifecycle status.
+3. **Make the task handoff-ready.** Walk the readiness set below and repair what is missing, by targeted edit inside your own regions only.
+4. **Record the handoff.** Write the instruction line into the dashboard's `## Resume` section, refresh the derived rows (`Last updated`, dashboard, catalog), and echo the same line to the developer so the boundary is visible in the conversation as well as on disk. When a `note` was given, also append it verbatim as a Coordination Note tagged with your agent-id.
+
+### Readiness set
+
+The task file must answer *what / where / why / next* on its own. Walk these seven elements; a repair that needs a decision you cannot make becomes a Blocking Issue instead of a guess.
+
+| # | Element | Where | Satisfied when | Repair |
+|---|---------|-------|----------------|--------|
+| R1 | Current work item | `## Current Work Item` | Document, pipeline phase, and traceable ID match what is actually in progress | Targeted Edit on the row |
+| R2 | Intent | `## Intent` | Goal, target state, expected result present — or the task is a trivial route that legitimately has none | Fill from the request wording ([Task Intent](../references/task-intent.md)) |
+| R3 | Next action | your Subtask `Progress` | Exactly one unchecked item is marked `**Next:**` and reads as an **action**, not a topic | Rewrite the item as an action |
+| R4 | Blockers | `## Blocking Issues` | Every live blocker recorded; every resolved one marked resolved | Add or resolve your own entries |
+| R5 | Decisions | task file or the affected document | No material fork unrecorded; `proposed` / `open` records name their state and trigger ([Interview Mode](../references/interview-mode.md)) | Record the fork; never resolve it by your own hand |
+| R6 | Pointer set | `## Relevant Context` | Every document and file the next session must open is listed | Append rows tagged with your agent-id |
+| R7 | Tree disposition | your Subtask `Activity` or a Coordination Note | Uncommitted work described, or the tree stated clean | One line naming branch and dirty/clean |
+
+### The handoff record
+
+One markdown list item per checkpointed active task, in a `## Resume` section of `.dev_flow/active_context.md` placed directly after the lead paragraph and before `## Active Tasks`. The section is omitted entirely when no active task has been checkpointed.
+
+```markdown
+- `/dev-flow resume task_C_AUTH` — `implement` — next: extract PasswordValidator from the login handler — branch `feat/auth`, 3 files modified — 2026-05-20 14:40
+```
+
+Order of parts: the exact invocation, the pipeline phase, the next **action**, the working tree as the checkpoint saw it, the developer's note when one was given, the timestamp.
+
+Rules:
+- **One record per Task ID** — a second checkpoint of the same task **replaces** its line; records never accumulate.
+- **A resume does not consume it** — the record stays until a later checkpoint replaces it or [regeneration](#regeneration-procedure) drops it with its closed task. Re-entering a task twice reads the same record twice.
+- The record is **derived data**: it repeats nothing that the task file plus the working tree do not already say, and it is rebuilt by the [regeneration procedure](#regeneration-procedure), never treated as a source of truth.
+- It carries no secrets, no diffs, no command output, and no path under the `/tmp` workspace.
+
+### What a checkpoint must not do
+
+- **Never writes the working tree** — no commit, stash, checkout, or branch switch. The tree is read (branch + porcelain status) and described.
+- **Never marks work done.** A checkpoint does not set a subtask or a task `done`, and does not advance a document's lifecycle status — finishing work is the finishing phase's act.
+- **Writes only** inside `.dev_flow/` and the documentation artifacts movement 2's drift check names as stale. Anything outside that set is reported, not edited.
+- **Never touches another contributor's** subtask block or tagged entries; a checkpoint of a task you do not own is announced in Coordination Notes, not written into their block.
+
+### Checkpoint errors
+
+| Code | Condition | What to do |
+|------|-----------|-----------|
+| `NO_CONTEXT` | `.dev_flow/` absent | Create it from the templates, proceed, and report this as the first checkpoint |
+| `NO_OPEN_TASK` | No active task, and none owned by the caller | Report it, name the route that would open one, write nothing |
+| `AMBIGUOUS_TASK` | Caller owns no subtask and several tasks are active | Ask which task to checkpoint; write nothing until answered |
+| `UNREPAIRABLE` | A readiness element needs a decision the caller cannot make | Record it as a Blocking Issue, continue with the rest, name it in the report |
+
+### Report
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ checkpoint — task_C_AUTH
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✏️  Repaired    R3 next action, R6 pointer set
+📄  Docs        auth.sp.md §02 synced; concept drift → blocker [session-abc]
+🎓  Harvested   rule naming/validator-suffix (should)
+🌳  Tree        branch feat/auth — 3 files modified, nothing committed
+▶️  Record      `/dev-flow resume task_C_AUTH` — `implement` — next: extract PasswordValidator
+                from the login handler — branch `feat/auth`, 3 files modified — 2026-05-20 14:40
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+## Resume — Re-enter a Task in a Fresh Session
+
+`resume` is the first action of a context that has no other information. It establishes where the work stands, continues it when the picture is unambiguous, and offers the next work when nothing is active.
+
+It composes what this file already defines — the [read protocol](#read-protocol) for state and the [write protocol](#write-protocol) for joining — and hands continuation to the `do` phase's [Scenario A](do.md#scenario-a--continue-active-task). It is legal mid-session, not only in a fresh one: there it re-reads state and reports.
+
+### The three movements
+
+1. **Re-attend, then read.** Re-read the [session working memory](../references/cache.md#session-working-memory-l1) area first — it survives a compaction — then the dashboard's `## Resume` section, the dashboard tables, and the relevant task files through the [read protocol](#read-protocol), **Steps 1–3 only** — Step 4's summary block and Step 5's continuation question belong to `status`, and resume runs its own decision below instead.
+2. **Reconcile against reality.** Compare the recorded state with the working tree: branch, uncommitted changes, and whether the artifacts the task claims to have produced exist. The record is a **claim**; the tree is the **evidence**. Emit one verdict — `matches` · `diverged (<what>)` · `unverifiable (<why>)` — and never silently trust a claim the tree contradicts.
+3. **Decide and act.** Take exactly one branch:
+
+| State | Branch | Action |
+|-------|--------|--------|
+| No `.dev_flow/` | — | Report that there is no context; suggest [onboard](onboard.md) or [concept](concept.md); write nothing |
+| One task, unambiguous | `continued` | Continue it, announcing what was picked up |
+| One task, ambiguous or diverged | `chosen` | Present the brief with the verdict, ask, then act on the answer |
+| Several tasks | `chosen` | Present the briefs, ask which, then act on the answer |
+| `task_id` names a closed task | `chosen` | Show it as closed (status, close date); offer to reopen or to start follow-up work explicitly; never auto-continue |
+| No active task | `offered` | Present the work offer — offers, never an auto-run |
+| No active task and nothing to offer | `empty` | Say so; suggest opening new work; invent nothing |
+
+### The unambiguous test
+
+Continue **without asking** only when *all* of these hold; otherwise present the brief and ask:
+
+- Exactly one task is selected — one active task, or an explicit `task_id`.
+- The task has a `Next` item that names an action.
+- The task has **no live Blocking Issue**.
+- The header's `Last updated` is inside the [freshness threshold](#step-3-validate-freshness).
+- The reconciliation verdict is `matches`.
+
+`Autonomy: full` does **not** bypass this test — autonomy governs [developer checkpoints](../SKILL.md#developer-checkpoints), not whether the recorded premise is still true.
+
+### The resume brief
+
+Bounded by construction: the readiness set read back, plus the verdict. Never the previous transcript, never a document's full text.
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ resume — task_C_AUTH (continuing)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📌  Work item   auth.sp.md — spec — SP_AUTH
+🎯  Intent      let users skip 2FA enrolment on first login
+▶️  Next        extract PasswordValidator from the login handler
+⚠️  Blockers    (rendered only when live — a task with one is never auto-continued)
+🔗  Pointers    docs/auth.sp.md · docs/auth.plan.md · src/auth/login.ts
+🌳  Tree        matches the record — branch feat/auth, 3 files modified
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+Continuation itself follows the [write protocol](#when-a-phase-starts-on-a-task): resume your own Subtask block if you have one, otherwise join the task as a new contributor with a fresh block and a Coordination Note.
+
+### The work offer
+
+When nothing is active, assemble the offer from two sources and present it **ordered**:
+
+1. `queued` records in `.dev_flow/todos/` (and plan backlogs) whose trigger has passed — deferred *because* their context overlapped a task that has since closed.
+2. Unfinished phases of plans whose `Status` is `in-progress` — work already started.
+3. `candidate` records in `.dev_flow/todos/` — parked intent.
+
+At most five entries; state the total when the list truncates. Each entry names its source, its reference, what the work is, the trigger it was waiting for (for a `queued` record — and whether it has passed), and the invocation that would start it. Nothing in the offer runs until the developer picks it — the executed work then passes its own gates and commit approval. See [todo](todo.md).
+
+### Resume errors
+
+| Code | Condition | What to do |
+|------|-----------|-----------|
+| `NO_CONTEXT` | `.dev_flow/` absent | Report it, suggest onboard or concept, write nothing |
+| `UNKNOWN_TASK` | `task_id` given, no such file | List the active tasks and ask |
+| `TASK_CLOSED` | `task_id` names a task with `Status: done` or one under `session_history/` | Show it as closed; offer reopen or follow-up work; never auto-continue |
+| `STATE_MISMATCH` | The record contradicts the working tree | Present both, record a Blocking Issue, ask before acting |
+| `TASK_BLOCKED` | The selected task has live Blocking Issues | Present them; never auto-continue |
+
 ## Regeneration Procedure
 
 When the indexes look wrong (missing rows, stale entries, conflict markers, file corrupted), any contributor may rebuild them:
@@ -250,6 +414,7 @@ When the indexes look wrong (missing rows, stale entries, conflict markers, file
 3. Rewrite `active_context.md`:
    - Active table from files with `Status` ∈ {in-progress, blocked, review-pending}.
    - Recently Completed from files with `Status: done`, sorted by Last updated desc, keeping the latest 5.
+   - **`## Resume`** section from the existing handoff records: keep a record only while its task is in the rebuilt Active table, keep the latest record per Task ID, drop the rest. A record is never *invented* here — regeneration reproduces what a [checkpoint](#checkpoint--fix-the-task-for-a-session-boundary) wrote or omits the section entirely.
    - **Deferred (todos)** section from `.dev_flow/todos/_index.md` + plan backlogs: counts of `candidate`/`queued`, plus a flag line for any record bound to an already-closed plan/task. Omit the section if there are no todos.
 4. Rewrite `tasks/_index.md` the same way.
 5. Append a regeneration entry to the Shared Activity Log of one of your active task files (`HH:MM [your-id] — regenerated indexes`), or to a coordination task if you have none.
@@ -314,7 +479,7 @@ So `pin` means "survive while this task is active" — not "survive forever". Wh
 3. **Activity content filter (canonical):** a Shared Activity Log or per-subtask Activity entry records only `incident` / `ambiguous-decision` / `structural-event` events (classes defined in [Docs Scaling](../references/docs-scaling.md)); an event outside these classes is not written (the TRIVIAL_ENTRY refusal) — progress lives in the Progress checklists.
 4. **Description:** describes the active understanding. New paragraphs are additive (signed by contributor). When the description grows past ~3 paragraphs, consider consolidating into one paragraph in a Coordination Note discussion first.
 5. **Subtask blocks:** completed (done) subtask blocks may be archived once the task file exceeds ~300 lines.
-6. **Dashboard size:** if `active_context.md` exceeds ~80 lines, prune Recently Completed and archive overflow.
+6. **Dashboard size:** if `active_context.md` exceeds ~80 lines, prune Recently Completed and archive overflow. Handoff records in `## Resume` count against the cap like any other content — one line per interrupted task, and the section disappears when the last one is dropped.
 7. **No large blobs:** never store logs, diffs, full command output, or verbose narratives in any context file. Reference a file instead.
 
 ### Session history archive
