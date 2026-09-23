@@ -37,6 +37,8 @@ A delegated step can run on a different model than the main agent, chosen by the
 - Work that needs judgment (untangling a root cause, weighing an architectural option) wants a stronger one.
 - When unsure, prefer the stronger one — a wrong result costs more than the tokens saved.
 
+**The affordable fan-out is a profile fact, not a guess.** `.dev_flow/profile/user.md` (`budget`, `ai_access`) says which tier is in play, how many parallel expensive subagents are allowed, and whether another provider is reachable. Unknown and the decision needs it → ask via the consent dialog; recorded `declined` → never ask, assume conservatively and say so. A subagent never asks for consent itself — it hands the observation to its initiator. See [Adaptation Profile](adaptation-profile.md).
+
 Describe the *nature* of the task and let the orchestrator map it to whatever model is configured. **Never hardcode model names** — they age, and they tie the skill to one provider. Keep the name→tier mapping in the orchestrator's config.
 
 ## Scenarios

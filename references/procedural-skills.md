@@ -29,7 +29,7 @@ The agent's declarative reasoning never switches off — a loaded skill **shifts
 
 ## Promotion & freshness (structural signals, never a self-score)
 
-- **Birth & promotion** (auto-harvested by [Experience Capture](experience-capture.md) — no permission prompt): a hard fix / a repeated tool-or-process pitfall / research consolidation that passes Non-Triviality → write/update the skill. One hard case → `candidate` scoped to its context; a **second convergent use** → `established` + generalize the boundary. (One case is a *case*, not yet a *schema* — mirrors "auto-write defaults to `should`, never `must`".)
+- **Birth & promotion** (auto-harvested by [Experience Capture](experience-capture.md) — no permission prompt): a hard fix / a repeated tool-or-process pitfall / research consolidation that passes Non-Triviality → write/update the skill — never a fact about the developer or the machine, which belongs to `.dev_flow/profile/` under its consent regime ([Adaptation Profile](adaptation-profile.md)). One hard case → `candidate` scoped to its context; a **second convergent use** → `established` + generalize the boundary. (One case is a *case*, not yet a *schema* — mirrors "auto-write defaults to `should`, never `must`".)
 - **Freshness** drives demotion: on version/context drift the skill goes `stale` (loses precedence over fresh research) until re-grounded + re-stamped → `current`. A re-stale of an `established` skill demotes like any other; promotion is not reset.
 
 ## Curation (audit `skills` scope)

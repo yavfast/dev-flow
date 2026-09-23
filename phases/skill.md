@@ -54,6 +54,7 @@ Do NOT save:
 - Standard language syntax or build tool basics
 - Knowledge fully derivable by reading the codebase
 - Information already in `onboard/analysis/`
+- A fact about the **developer or the machine** — their language, manner, limits, provider access, hardware, devices, installed tooling. That is `.dev_flow/profile/` under its consent regime, and a category recorded `declined` is dropped rather than re-homed here. See [Adaptation Profile](../references/adaptation-profile.md)
 
 ## Procedure
 

@@ -8,7 +8,7 @@
 - [Role Responsible](#role-responsible) — The Tester role, here at the regression/integration/live levels
 - [Activation Condition](#activation-condition) — the triggers that activate the phase; skip recorded as `unobserved`, never clean
 - [Verification Categories](#verification-categories) — levels 1–3 table (regression/integration/live), live-test kinds, design compliance check for UI
-- [Context Loading](#context-loading) — skill/rule gates for the verified area plus per-burst re-activation with Pre-Action Marker
+- [Context Loading](#context-loading) — skill/rule/profile gates for the verified area plus per-burst re-activation with Pre-Action Marker
 - [Safe Testing Principle](#safe-testing-principle) — never damage user data: test accounts/entities, ask before real data, what counts as destructive
 - [Verification Workflow](#verification-workflow) — level-by-level procedure, fix cycle with `confirm`-scoped re-runs, upstream escalation, manual checklist
 - [Reflection — harvest verification lessons](#reflection--harvest-verification-lessons) — Transition Checkpoint: auto-apply rules/skills from failure modes and gotchas, never a `must`
@@ -84,6 +84,8 @@ Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../S
 **Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml` and load skills for the verified functionality — integration specifics, environment setup, known pitfalls. See [skill phase](skill.md).
 
 **Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml` and load testing rules (test environments, CI conventions); verification MUST follow them. See [rule phase](rule.md).
+
+**Profile check (gate).** Read `.dev_flow/profile/environment.md` — `devices` and `software` say which live scenarios are runnable at all. A `devices`/`software` entry is always stale before you rely on it: run the cheap presence check first. Not confirmed → update the entry (value, state, date) — writing only once the store is verified git-ignored (a non-git project has nothing to verify and the write proceeds), never a secret — and record the scenario `unobserved` with the missing observation boundary, never as passed. No entry means `unknown`, not `absent`. See [Adaptation Profile](../references/adaptation-profile.md).
 
 **Knowledge activation (per-burst).** Re-trigger the gate above at the moment of action — before each verification burst (live run, integration scenario) re-surface the applicable rules/skills with a pointer-only Pre-Action Marker; a long verify session drifts from what was loaded. Prefer a deterministic tripwire on a non-model signal (exit code / log / diff) over self-report, and escalate high-stakes conformance to a sampled cross-model verifier where the runtime allows. Self-attestation is never the control. See [Application Enforcement](../references/application-enforcement.md).
 
@@ -191,7 +193,7 @@ For integration and live tests that require setup:
 Once verification passes, run the [Transition Checkpoint](../references/experience-capture.md) before commit approval.
 
 - **Rule from a recurring failure mode.** A regression that a convention would have prevented, a flaky-test pattern, an integration contract that needed a guard — write a rule automatically (default `should`; testing-area rules live under `.dev_flow/rules/testing.md`). See [Project Rules → Auto-discovery](../SKILL.md#project-rules).
-- **Skill from a verification gotcha.** A non-obvious environment setup, a sandbox/seed-data trick, a known-pitfall in a live integration — write/update a skill through the [skill phase](skill.md) non-triviality filter.
+- **Skill from a verification gotcha.** A non-obvious environment setup, a sandbox/seed-data trick, a known-pitfall in a live integration — write/update a skill through the [skill phase](skill.md) non-triviality filter — never a fact about the developer or the machine, which belongs to `.dev_flow/profile/` under its consent regime ([Adaptation Profile](../references/adaptation-profile.md)) — a machine's own tooling and devices are profile facts, not skills.
 
 **Auto-apply, no permission prompt** — written through the structural rule/skill gate; **never auto-write a `must`**, and route a would-be `must` or a contradiction to an [independent clean-context review](../references/delegation.md) first. Every write is visible in the commit diff. Then distill the segment (the noisy run output stays in the workspace, referenced by path), demote raw turns, and promote durable parts to the task file. See **[Experience Capture](../references/experience-capture.md)**.
 

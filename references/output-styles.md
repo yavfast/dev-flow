@@ -59,9 +59,11 @@ One file holds every profile of the project. Shape mirrors `.dev_flow/rules/*.md
 - {directive}
 ```
 
+**Personal preferences overlay this file on `chat` only.** `.dev_flow/profile/user.md` holds what one developer wants for themselves (their language, brevity, how options are presented) and is applied last on the `chat` surface, as the narrowest selector; on `documentation` it carries no weight, because a document is a team artifact. A preference about the project belongs here; a preference about oneself belongs in the profile. See [Adaptation Profile](adaptation-profile.md).
+
 **Selection.** The shipped default for the surface is the base layer; matching project profiles overlay it in ascending order of narrowness (surface-only first, phase- or condition-scoped last). Equal narrowness → the project profile wins. A profile that does not parse (no `Applies to:`, unknown surface, empty directives) is skipped and mentioned in the phase report; the rest of the file still works.
 
-**Adaptive maintenance.** Create the file lazily — at the first preference the developer actually states, not up front. Write a directive when they state or correct one ("shorter", "docs in English", "no bare links"); when you are merely *guessing* at a taste, ask first, then write. A [Transition Checkpoint](experience-capture.md) that harvests a durable style lesson files it here, not into rules or skills. A preference that is really a code convention routes to [`/dev-flow rule`](../phases/rule.md) instead.
+**Adaptive maintenance.** Create the file lazily — at the first preference the developer actually states, not up front. Write a directive when they state or correct one, **routed by addressee**: a preference about the project's output ("docs in English", "no bare links") is written here; a preference about *this developer* ("answer me shorter", "talk to me in Ukrainian") belongs to `.dev_flow/profile/user.md` under its consent regime and is never written here, because this file may be committed ([Adaptation Profile](adaptation-profile.md)). When you are merely *guessing* at a taste, ask first, then write. A [Transition Checkpoint](experience-capture.md) that harvests a durable style lesson applies the same addressee test, and files it into neither rules nor skills. A preference that is really a code convention routes to [`/dev-flow rule`](../phases/rule.md) instead.
 
 ## Restraints
 

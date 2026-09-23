@@ -242,4 +242,4 @@ User request received
 
 ## Output Style
 
-The orchestrator answers in the `chat` register and writes documents in the `documentation` register. See [Output Styles](../references/output-styles.md) — it also carries the **Style gate** (`.dev_flow/output_styles.md`) the orchestrator passes to the executing phase alongside rules and skills.
+The orchestrator answers in the `chat` register and writes documents in the `documentation` register. See [Output Styles](../references/output-styles.md) — it also carries the **Style gate** (`.dev_flow/output_styles.md`) the orchestrator passes to the executing phase alongside rules, skills and the [profile](../references/adaptation-profile.md).

@@ -84,6 +84,7 @@ A task-delegated subagent has the **same functional rights as the initiating age
 - **Task context** — joins the initiator's task file as a **Contributor**: adds itself to the header's `Contributors`, adds its own `### Subtask:` block, keeps it current, appends Coordination Notes and tagged entries in shared sections. Dashboard/catalog rows — targeted edits at phase boundaries, per the [rules for all phases](../SKILL.md#rules-for-all-phases). Do not create a separate task file — the subtask lives in the calling task. A read-only subtask skips the join (next bullet).
 - **Phase constraints prevail over delegated rights.** A read-only phase keeps its guarantees regardless of delegation — an `ask` subtask writes **nothing**, context files included. Likewise, a base role read in the executor seat contributes its craft (how to investigate, how to test); its *helper-position* constraints ("stage and report", "never write `.dev_flow/`") describe focus delegation and do **not** bind the phase executor. On any other genuine role conflict — ask the initiator (see [Roles](../references/roles.md)).
 - **Skills / cache / rules** — written directly by executing the owning phase's protocol: the [skill](skill.md) non-triviality filter, the [cache](../references/cache.md) worth-caching filter + entry-by-entry index discipline, the [rule](rule.md) severity model. Everything persisted is listed in the report.
+- **Profile — read yes, consent no.** `.dev_flow/profile/` is read as part of the phase's gates, and an `environmental` fact observed in the run is recorded there — never a secret, and never before the store is verified git-ignored (a non-git project has nothing to verify and the write proceeds). Every `environmental` write carries its announcement into the report. A `sensitive` fact is **not** recorded and consent is **never** requested — the consent dialog needs the developer channel, which the subagent does not hold. Hand the observation to the initiator in the report and let it decide whether the occasion has come. A category recorded `declined` is never re-raised, in the report or anywhere else. See [Adaptation Profile](../references/adaptation-profile.md).
 - **Commits — no.** Not a capability gap but the approval chain: commits require the developer's approval, and the developer channel lives with the main context. The subagent leaves the work commit-ready; the initiator runs the pre-commit review and asks the developer.
 - **Scope narrowing** — the brief may still restrict files or areas; this is what keeps **parallel** subtasks from colliding. An explicit restriction in the brief overrides the defaults above. When the scope conflicts with the task — ask the initiator, don't guess.
 
@@ -146,7 +147,7 @@ phase's no-write constraints DO prevail.
 - Join the task file as a Contributor (skip for read-only phases like `ask`):
   <.dev_flow/tasks/task_<ID>.md> — add yourself to `Contributors`, add your own
   `### Subtask:` block; never edit other contributors' content.
-- Run the phase's own gates: .dev_flow/rules/, skills/, cache/, roles/ indexes,
+- Run the phase's own gates: .dev_flow/rules/, skills/, cache/, roles/ indexes and profile/,
   docs/_glossary.md, the docs named below.
 - Read whatever else the task needs from the codebase — do not ask for what
   you can read.

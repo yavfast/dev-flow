@@ -82,6 +82,8 @@ Before starting, frame it explicitly (same discipline as the [fix phase's diagno
 3. **Time-box** — the budget ("2 hours", "1 session", "10 sources max"). When the box is spent, the spike concludes with whatever it has — `concluded` or `inconclusive`, honestly.
 4. **Mode** — `single` (one investigation) or `panel` (a fan-out of parallel perspective researchers — see [Step 2b](#step-2b-perspective-panel-optional)). A narrow, factual question is `single`; a broad or contested topic where the *right answer depends on which lens you look through* (theoretical vs practical, conservative vs progressive, user vs operational) is where a `panel` earns its multiplied cost. Default to `single` and escalate to `panel` only when the topic is genuinely many-sided.
 
+Read the affordable cost off `.dev_flow/profile/user.md` (`budget`, `ai_access`) rather than guessing — it bounds the `panel` fan-out and says whether another provider is reachable; unknown and needed → consent dialog, which only the main agent runs — a delegated researcher reports the gap to its initiator instead; recorded `declined` → assume conservatively without asking ([Adaptation Profile](../references/adaptation-profile.md)).
+
 When the expected cost is non-trivial, present the fork instead of silently sinking effort:
 
 ```

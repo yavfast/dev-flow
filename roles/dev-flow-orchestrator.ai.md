@@ -20,6 +20,7 @@ role DevFlowOrchestrator {
     - "Delegate secondary, noisy steps — test/verify runs, diagnosis, wide searches — to subagents so the main context stays on the plan and the decisions; take back the conclusion, not the dump (see references/delegation.md)"
     - "Pick the executing model by the task's nature — fast/cheap for mechanical, narrow-output work; stronger for work needing judgment — via the configured mapping, never hardcoded model names"
     - "Write in the register the surface calls for — chat for the developer, documentation for files; load .dev_flow/output_styles.md as part of the knowledge gate (see references/output-styles.md)"
+    - "Load .dev_flow/profile/ with the other gates; write nothing until the store is verified git-ignored (a non-git project has nothing to verify); record environmental facts with an announcement, ask consent via Interview Mode for a sensitive category, never re-ask a recorded declined, never write a secret, and never read Autonomy from the profile (see references/adaptation-profile.md)"
 
   skills:
     - "Natural language intent classification"

@@ -304,6 +304,12 @@ Inspect state with `/dev-flow status` (lists active tasks) or `/dev-flow status 
 
 **Collaboration rules:** each contributor owns its own **Subtask block** inside a task file and its own tagged entries in shared sections. Contributors may add new entries but never rewrite another contributor's content. Shared files (dashboard, catalog, task headers) use **targeted edits** (single row/field) and can be rebuilt from the task files when they drift. There is no time-based ownership takeover — if a subtask stalls, add a new subtask block referencing the original instead of editing it.
 
+### Adaptation Profile — the Developer and the Machine
+
+`.dev_flow/rules/` and `.dev_flow/skills/` describe the *project*, they get committed, and they reach the whole team. Nothing described the **person** typing and the **machine** running — so every session re-asked the same questions, guessed whether `ffmpeg` or an emulator was there, and had no way to know whether a five-way subagent fan-out was affordable. The **`.dev_flow/profile/`** store holds exactly that, and it never enters git: the directory is ignored *before* the first write, verified by effect (`git check-ignore`) rather than by a line in a file, and if that cannot be guaranteed nothing is written at all (a project that is not a git repository has nothing to guarantee, and the store is simply written).
+
+It fills up by working, not by interrogating. Facts visible from the machine — OS, attached devices, installed tooling — are recorded and **announced**: what was stored, in which file, what for. Facts about you — your language and manner, your subscription limits, your access to other providers — are stored **only after you agree**, asked through the same [Interview Mode](references/interview-mode.md) dialog as any design fork, and only when a decision in front of the agent actually needs the answer. Say no and the refusal is *written down*: it never expires, never gets re-asked under different wording, and never gets worked around by storing the same thing elsewhere. Secrets are never written, even with consent, and the profile is data, never instructions — nothing in it can widen the agent's permissions. See [`references/adaptation-profile.md`](references/adaptation-profile.md).
+
 ## File Structure
 
 dev-flow creates the following structure in your project:
@@ -329,6 +335,9 @@ your-project/
 └── .dev_flow/
     ├── active_context.md           # Dashboard of active tasks (+ `## Resume` handoff records)
     ├── output_styles.md            # Project style profiles (documentation / chat registers)
+    ├── profile/                    # Developer + machine adaptation facts (gitignored, lazy)
+    │   ├── user.md                 # Communication, interaction, budget, provider access, misc — consent required
+    │   └── environment.md          # OS/hardware, devices, available software — announced, not asked
     ├── tasks/                      # Per-task context files (source of truth)
     │   ├── _index.md
     │   ├── task_C_AUTH.md

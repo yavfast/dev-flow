@@ -147,7 +147,7 @@ Additional categories (created on demand when rules don't fit standard ones):
 | ui | `ui.md` | View patterns, layouts, animations, accessibility |
 | data | `data.md` | DB operations, ORM, queries, migrations |
 
-New category files are created automatically when the first rule for that category is added.
+New category files are created automatically when the first rule for that category is added. **No category holds a fact about the developer or the machine** — that is `.dev_flow/profile/`, written under its consent regime; a category recorded `declined` there is dropped, never re-homed as a rule ([Adaptation Profile](../references/adaptation-profile.md)).
 
 ## Severity Levels
 
