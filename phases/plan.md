@@ -39,7 +39,7 @@ A rule, an existing concept, or a documented convention that already settles a c
 
 ## Design Sign-off
 
-When the plan passes its gate, stop before implementation: present the Design Decisions of the change (question → options → recommendation), the documents created or changed, the files implementation will touch; wait. Skipped only under `Autonomy: full`. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
+When the plan passes its gate, stop before implementation: present the Design Decisions of the change (question → options → recommendation), the documents created or changed, the files implementation will touch, the [proportionality block](../references/proportionate-caution.md#proportionality-block); wait. Skipped only under `Autonomy: full` — a [hard-floor](../references/proportionate-caution.md#hard-floor) action stops the work even then. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
 
 ## Structure
 
@@ -180,12 +180,12 @@ When a code change restructures modules, files, or internal organization **witho
    - Add a Refactor phase with [TODO] status
    - List file moves, renames, and structural changes
    - Reference which existing plan phases are affected
-   - Design sign-off: present the Refactor phase and wait for the developer's go (SKILL.md → Developer Checkpoints)
+   - Design sign-off: present the Refactor phase and the proportionality block, and wait for the developer's go (SKILL.md → Developer Checkpoints)
 3. Implement the refactoring
 4. Run tests — all existing tests must pass without modification
 5. Update the plan: mark Refactor phase [DONE], update file paths in other phases
 6. Skip Concept and Specification updates — contracts did not change
-7. Commit sign-off — changed files, review verdict, intent verdict; "Ready to commit?" and wait
+7. Commit sign-off — changed files, review verdict, intent verdict, proportionality block; "Ready to commit?" and wait
 ```
 
 ### Refactor Phase Format in Plan

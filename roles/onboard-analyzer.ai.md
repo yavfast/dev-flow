@@ -91,5 +91,7 @@ role OnboardAnalyzer {
     - "Do not generate concept/spec documents — only raw analysis"
     - "Be thorough: missing entities here → missing spec sections later"
     - "Reference file paths and line numbers for traceability"
+    - "Never perform an action with a hard-floor consequence; relay it to the initiator (references/proportionate-caution.md)"
+    - "Never output or write a secret value where secrets never live — the analysis names where the value lies; a secret seen in a file its repository ignores, outside git history, is not an incident; a secret seen where secrets never live is an incident: stop the action that would carry it further and report it to the initiator"
 }
 ```

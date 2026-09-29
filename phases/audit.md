@@ -80,9 +80,9 @@ This phase is handled by **Auditor**: [roles/auditor.ai.md](../roles/auditor.ai.
 ## Guiding Principles
 
 1. **Reconcile, don't fabricate.** A task's real state is determined by evidence: the status of its linked concept/spec/plan in `docs/`, and the git history for its traceable ID. Change a recorded state only when evidence supports it. When evidence is missing or contradictory, **flag it in the report and leave the file unchanged** — never invent a status to make the dashboard look tidy.
-2. **Non-destructive by default.** History is moved, never deleted. Overflow logs, completed subtask blocks, and closed task files go to `.dev_flow/session_history/`, not to `/dev/null`. Indexes are regenerable, so they may be rewritten freely — with one exception: **`cache/_index.yaml` is data, not a derived view** (its `source` metadata exists nowhere else), so it is only ever reconciled entry by entry, never regenerated (see [Resource Cache](../references/cache.md)). Task files and history are not regenerable either — they are only ever appended to or relocated intact.
+2. **Non-destructive by default.** History is moved, never deleted. Overflow logs, completed subtask blocks, and closed task files go to `.dev_flow/session_history/`, not to `/dev/null` — never a task file that still holds an open proportionality row. Indexes are regenerable, so they may be rewritten freely — with one exception: **`cache/_index.yaml` is data, not a derived view** (its `source` metadata exists nowhere else), so it is only ever reconciled entry by entry, never regenerated (see [Resource Cache](../references/cache.md)). Task files and history are not regenerable either — they are only ever appended to or relocated intact.
 3. **Source-of-truth order.** Task files win over the dashboard and catalog (those are derived). For task *reality*, `docs/` document status and git win over the task header. For rules/skills, the files on disk win over their `_index.yaml`. For the cache, disk decides *existence* (a missing file orphans its entry) but the index owns *metadata* (`source`/`summary` cannot be rebuilt from disk) — flag mismatches, never drop or regenerate entries wholesale (Step 7d).
-4. **Safe under contention.** Audit may run while other contributors hold open subtasks. It may fully rewrite *derived* indexes and *closed* task files, but it must never rewrite a live contributor's Subtask block or their tagged entries in shared sections — those are reconciled only with targeted edits, and only the header/status fields. Re-read immediately before each write.
+4. **Safe under contention.** Audit may run while other contributors hold open subtasks. It may fully rewrite *derived* indexes and *closed* task files — except `## Proportionality`, whose records it only moves, never rewrites — but it must never rewrite a live contributor's Subtask block or their tagged entries in shared sections — those are reconciled only with targeted edits, and only the header/status fields. Re-read immediately before each write.
 5. **Apply the safe, propose the judgement.** Derived/reversible changes (index regen, dashboard trim, archival of done work, header reconciliation backed by git) are applied directly and reported. Judgement calls (merging two rules, deleting a skill, removing a cached resource) are **proposed for confirmation**. Reflection-harvested lessons follow their own gate instead: written **automatically** through the structural [rule](rule.md)/[skill](skill.md) gate (never an auto-`must`; a contradiction routes to independent review), visible in the commit diff — see Step 3.
 
 ## Procedure
@@ -116,6 +116,7 @@ A task is **closed** when every subtask is `done` and its deliverable is committ
 **Compact** — shrink it to durable state, archive the noise:
 - Move verbose per-subtask Activity, Coordination Notes overflow, and `done` Subtask blocks into `.dev_flow/session_history/session_YYYY-MM-DD.md` (see the [status archive procedure](status.md#session-history-archive)).
 - Order eviction by **effective salience**, not pure age (see [Salience Markers](status.md#salience-markers)): `noise`/`superseded` entries are archived first; a `pin` is retained while its task is still active and goes inert once the task closes — **Reflect** (below) harvests its lesson *before* that demotion, so nothing durable is lost when the pin expires. Flag any task — active or closing — whose `pin` ratio is implausibly high and propose a re-grade (advisory, no hard cap).
+- Proportionality: move answered pairs and created records only, never rewrite them; open rows stay in the task file ([Proportionate Caution](../references/proportionate-caution.md#proportionality-block)).
 - Leave behind a short outcome summary (1 short paragraph) plus links to the commit(s) and the archived history. The task file should read as "what this was and how it ended", not as a journal.
 
 **Reflect** — harvest lessons before they are buried. This is the task-close **Transition Checkpoint** of [Experience Capture](../references/experience-capture.md) — the same auto-apply reflection, not a parallel path; its *harvest-before-demote* ordering is why it runs before any salience demotion on the closing task:
@@ -123,7 +124,9 @@ A task is **closed** when every subtask is `done` and its deliverable is committ
 - Feed durable insights **forward** into `rules/`/`skills/` so the knowledge outlives the task; let the rest be archived.
 - **Optional `/dream` delegation:** if a reflection/`dream` skill is installed in this environment, delegate the reflection to it for a deeper retrospective; if not, perform the inline distillation above.
 
-**Retire** — a fully-compacted closed task that is older than the retention window (default ~30 days, per the [tasks index](../templates/tasks_index.md)) is moved in its entirety to `session_history/` and dropped from the catalog.
+**Open rows** — a closed task whose `## Proportionality` section still holds an open row: show those rows in the report, one fragment per task, and offer to answer; apply each answer as at a sign-off ([Proportionate Caution](../references/proportionate-caution.md#proportionality-block)). With `--dry-run`, only show them.
+
+**Retire** — a fully-compacted closed task that is older than the retention window (default ~30 days, per the [tasks index](../templates/tasks_index.md)) is moved in its entirety to `session_history/` and dropped from the catalog. A task file that still holds an open proportionality row is not retired.
 
 ### Step 4 — Trim the dashboard
 
@@ -293,6 +296,7 @@ Use this template:
    • From <closed-task>: skill <domain/Name>
 
 🟡 Proposed (need your confirmation)
+   • Open proportionality rows of closed <task>: <fragment> — answer each, or keep it open
    • Merge rule <A> into <B> (same constraint: <reason>)
    • Compact rule <id> (<n> words > unit_body_max) → <category>.log.md
    • Split <category>.md (<n> words > full_read_limit | soft_split): <id…> → <new-category>.md
@@ -351,7 +355,7 @@ For the **`code` scope** (Step 9) the output is the refactoring plan itself, sum
 
 ## Safety & Contention
 
-- Audit may run alongside other contributors. It freely rewrites **derived** files (`active_context.md`, `tasks/_index.md`) and **closed** task files, but on **live** task files it makes only targeted header/status edits and appends Coordination Notes — it never rewrites another contributor's Subtask block or tagged entries.
+- Audit may run alongside other contributors. It freely rewrites **derived** files (`active_context.md`, `tasks/_index.md`) and **closed** task files — except `## Proportionality`, whose records it only moves, never rewrites — but on **live** task files it makes only targeted header/status edits and appends Coordination Notes — it never rewrites another contributor's Subtask block or tagged entries.
 - Re-read each file immediately before writing it; if a row/block moved, re-locate by Task ID / Author tag and re-apply (see [status targeted-edit safety](status.md#targeted-edit-safety)).
 - If you suspect another contributor is mid-write on the same task, prefer flagging over rewriting, and coordinate via a Coordination Note.
 

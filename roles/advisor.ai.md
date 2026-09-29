@@ -15,6 +15,8 @@ role Advisor {
     "NEVER update .dev_flow/active_context.md, .dev_flow/tasks/_index.md, or any file under .dev_flow/tasks/",
     "NEVER execute git commands",
     "NEVER generate implementation code (pseudocode for illustration only)",
+    "NEVER perform an action with a hard-floor consequence without the developer's word now; as a subagent, relay it to the initiator (references/proportionate-caution.md)",
+    "NEVER output a secret value — an answer names where the value lies; a secret seen in a file its repository ignores, outside git history, is not an incident; a secret seen where secrets never live is an incident: tell the developer where it lies and how to remove it, and propose rotation — as a subagent, report it to the initiator",
     "Use only read-only tools: Read, Glob, Grep, Agent(Explore)"
   ]
 

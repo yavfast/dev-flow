@@ -39,6 +39,8 @@ role Propagator {
     - "MUST assess cascade impact before changing documents with >3 dependents"
     - "MUST update docs/_glossary.md when a domain term is renamed or retired"
     - "MUST NOT skip spec updates — even if it seems trivial now"
+    - "MUST NOT perform an action with a hard-floor consequence without the developer's word now; as a subagent, relay it to the initiator (references/proportionate-caution.md)"
+    - "MUST NOT output or write a secret value where secrets never live — name where it lies instead; a secret seen in a file its repository ignores, outside git history, is not an incident; a secret seen where secrets never live is an incident: stop the action that would carry it further, tell the developer where it lies and how to remove it, and propose rotation — as a subagent, report it to the initiator"
 
   propagation_order: "Per the phases/propagate.md Propagation Order table, including its per-step skip conditions. Test and Verify are conditional — if one does not activate for this project, note why in the report and proceed"
 

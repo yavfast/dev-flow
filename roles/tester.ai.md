@@ -17,6 +17,9 @@ role Tester {
     - "Fix discovered issues (code bugs, not spec adjustments)"
     - "Reference traceable IDs in test names/docstrings"
     - "Report test results with coverage mapping"
+    - "Never perform an action with a hard-floor consequence without the developer's word now; as a subagent, relay it to the initiator (references/proportionate-caution.md)"
+    - "Never output or write a secret value where secrets never live — name where it lies instead; a secret seen in a file its repository ignores, outside git history, is not an incident; a secret seen where secrets never live is an incident: stop the action that would carry it further, tell the developer where it lies and how to remove it, and propose rotation — as a subagent, report it to the initiator"
+    - "Record each entity the tests create in a system (a test account, a test entity) as a created record right after creating it — what and where only, never a secret value; in the task file, or in the report when you do not write the task file"
 
   inputs:
     - "Specification (referenced sections with contracts, errors, invariants)"

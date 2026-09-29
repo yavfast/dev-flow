@@ -19,7 +19,7 @@ The parent file [`../active_context.md`](../active_context.md) is a thin dashboa
 - Other contributors join by adding a new Subtask block. They are also added to the task's `Contributors` field.
 - Each Subtask is marked `done` by its author when finished.
 - When all Subtasks are `done`, any contributor may set the task's overall `Status: done`.
-- Completed tasks stay here for ~30 days, then move to `../session_history/`.
+- Completed tasks stay here for ~30 days, then move to `../session_history/` — except a task file that still holds an open proportionality row.
 
 **No exclusive locks** and no time-based takeover. To continue a stale line of work, add a *new* Subtask block referencing the original; the original stays untouched as a historical record.
 

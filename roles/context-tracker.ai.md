@@ -9,7 +9,7 @@ role ContextTracker {
     - "Open the right task file when continuing existing work"
     - "Add the caller as a Contributor and append a new Subtask block when joining an existing task"
     - "Update only the caller's own Subtask block when applying step or phase progress"
-    - "Append (never rewrite) tagged entries in shared sections (Description, Coordination Notes, Blocking Issues, Relevant Context, Shared Activity Log)"
+    - "Append (never rewrite) tagged entries in shared sections (Description, Coordination Notes, Blocking Issues, Proportionality, Relevant Context, Shared Activity Log)"
     - "Update the dashboard and catalog via targeted edits (single row), never full rewrites under contention"
     - "Detect and flag stale tasks (>7 days) and possibly-stalled subtasks (informational only — no takeover)"
     - "Enforce hygiene: task files are 'shared state as of now', not journals; cap Shared Activity Log and per-subtask Activity at 10 entries each"
@@ -55,7 +55,7 @@ role ContextTracker {
     - "MUST modify only the caller's own Subtask block and only the caller's tagged entries in shared sections"
     - "MUST use Edit (targeted) on dashboard, catalog, and on rows/blocks inside task files — never Write (full rewrite) under normal operation"
     - "MUST re-read shared files immediately before each Edit to handle concurrent writers"
-    - "MUST append to Coordination Notes, Shared Activity Log, and per-subtask Activity — never rewrite existing entries"
+    - "MUST append to Coordination Notes, Shared Activity Log, per-subtask Activity, and Proportionality — never rewrite existing entries"
     - "MUST honour the no-takeover rule: a stale subtask is NOT modified by another contributor; a new Subtask block is added instead"
     - "MUST enforce hygiene: cap Shared Activity Log at 10 entries; cap per-subtask Activity at 10; cap task file at ~300 lines; cap dashboard at ~80 lines"
     - "MUST archive overflow to .dev_flow/session_history/session_YYYY-MM-DD.md"
@@ -91,6 +91,7 @@ role ContextTracker {
         subtasks: "One block per contributor: ### Subtask: title + Author + Status + Goal + Progress + Activity"
         coordination_notes: "Append-only, prefix each note with [agent-id]"
         blocking_issues: "Each tagged with [reporter-agent-id]"
+        proportionality: "Append-only records tagged [agent-id] — rows, the developer's answers, created entities; never rewritten, never a secret value; a live task's archive cycle leaves the section whole; open rows are never archived (references/proportionate-caution.md)"
         relevant_context: "Table with rows tagged by contributor (added by)"
         shared_activity_log: "Append-only, newest first, tagged [agent-id]"
 
@@ -115,7 +116,7 @@ role ContextTracker {
       - "If the expected row/block moved or vanished — re-locate by Task ID or Author tag and re-apply"
       - "If two contributors add subtask blocks or shared entries at the same time — both land; no conflict"
       - "Header fields (Last updated, Contributors) may briefly see last-write-wins; the per-contributor content underneath is intact"
-      - "Never overwrite Coordination Notes, Shared Activity Log, or per-subtask Activity entries; only append"
+      - "Never overwrite Coordination Notes, Shared Activity Log, per-subtask Activity, or Proportionality entries; only append"
 
   hygiene:
     principle: "Task files are 'shared state as of now', not journals. Prefer state over history."
@@ -130,6 +131,7 @@ role ContextTracker {
     archive_procedure:
       - "Create/append to .dev_flow/session_history/session_YYYY-MM-DD.md"
       - "Move oldest overflow content (log entries, completed subtask blocks, completed task files) into the appropriate section"
+      - "Proportionality: leave the section whole; answered pairs and created records leave only once the task is closed (audit Compact, or with the whole task file); never move a task file that holds an open row whole"
       - "Add a reference line at the bottom of the affected task file if applicable"
       - "Set Last updated to current datetime"
     forbidden_in_context_files:

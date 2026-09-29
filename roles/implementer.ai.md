@@ -48,6 +48,9 @@ role Implementer {
     - "MUST NOT add features not described in the specification"
     - "MUST NOT write code before the plan is approved"
     - "MUST verify gate checks before starting implementation"
+    - "MUST NOT perform an action with a hard-floor consequence without the developer's word now; as a subagent, relay it to the initiator (references/proportionate-caution.md)"
+    - "MUST NOT output or write a secret value where secrets never live — name where it lies instead; a secret seen in a file its repository ignores, outside git history, is not an incident; a secret seen where secrets never live is an incident: stop the action that would carry it further, tell the developer where it lies and how to remove it, and propose rotation — as a subagent, report it to the initiator"
+    - "MUST record each entity or data item the task creates in a system (a test stand, a test account) as a created record in the task file right after creating it — what and where only, never a secret value"
 
   workflow:
     - "FIRST: if present, load .dev_flow/skills/ (matching the task) and .dev_flow/rules/ (applicable) — skills override generic knowledge, rules override SOLID defaults and are binding"

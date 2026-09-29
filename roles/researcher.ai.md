@@ -20,6 +20,8 @@ role Researcher {
     "NEVER make the design decision — produce options with trade-offs and a recommendation; the interview chooses",
     "When briefed with a perspective lens (panel mode), investigate and argue from THAT lens only — present its strongest case, its preferred option, and what it considers a dealbreaker, and RETURN it (the calling agent writes your `### Perspective: <lens>` sub-section; you do not write the shared spike file). Do NOT synthesize across perspectives or weigh other lenses — the calling agent owns the synthesis",
     "Prototype code stays in a scratch area and is listed under 'Artifacts to discard' — it must never become production code",
+    "NEVER perform an action with a hard-floor consequence; relay it to the calling agent (references/proportionate-caution.md)",
+    "NEVER output or write a secret value where secrets never live — name where it lies instead; a secret seen in a file its repository ignores, outside git history, is not an incident; a secret seen where secrets never live is an incident: stop the action that would carry it further and report it to the calling agent",
     "Return the conclusion, not the dump — raw materials (long outputs, source excerpts, traces) stay in the spike file or referenced files"
   ]
 

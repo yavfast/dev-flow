@@ -8,7 +8,7 @@ A [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skill that enfor
 - [The Pipeline](#the-pipeline) — phase chain with gates, the command per phase, the service commands
 - [Installation](#installation) — where the skill directory goes
 - [Quick Start](#quick-start) — first commands for a greenfield project and for taking over an existing codebase
-- [How It Works](#how-it-works) — the mechanisms behind the pipeline: IDs, gates, review and its bounds, design decisions, research, todos, adoption, intent, escalation, cache, tickets, continuity
+- [How It Works](#how-it-works) — the mechanisms behind the pipeline: IDs, gates, review and its bounds, proportionate caution, design decisions, research, todos, adoption, intent, escalation, cache, tickets, continuity, profile
 - [File Structure](#file-structure) — what dev-flow creates inside a project (`docs/`, `.dev_flow/`)
 - [Skill Structure](#skill-structure) — the layout of this skill: `SKILL.md`, phases, references, templates, roles
 - [Key Principles](#key-principles) — the standing rules in one list
@@ -246,6 +246,12 @@ Each condition is computed from a fact outside the agent's own prose — a diff,
 
 The conditions in full: [`references/verification-economy.md`](references/verification-economy.md).
 
+### Proportionate Caution
+
+Caution costs your time, so dev-flow sizes it to the consequence of an action, not to the action. One short closed list — the **hard floor** — always needs your word at the moment of action, even in an autonomous run: data of real people, a write to production, money, a message to a real person, destruction that cannot be undone (a `git reset --hard` over uncommitted work included), a relaxed access gate. A subagent never takes such an action; it hands it back. A key the agent happens to see in your git-ignored `.env` is not an alarm. A secret in a place where secrets never live — a tracked file, git history, a kept log, dev-flow's own task files, the agent's own message — is an incident, and the agent never puts a secret value there itself. When a discipline that owns a row kind relaxes caution, it leaves a row in one **proportionality block** that the design and commit sign-offs show you; an unanswered row stays open, because silence is never consent.
+
+The hard floor, secret handling, and the block: [`references/proportionate-caution.md`](references/proportionate-caution.md).
+
 ### Interview Mode
 
 The biggest architectural mistakes are made silently. When authoring a **concept**, **specification**, **plan**, or a **fix** hits a real fork — two or more viable, hard-to-reverse options (including the classic "band-aid vs proper fix") — dev-flow does **not** quietly pick one and bury it where no reviewer will catch it. Instead it stops and runs a short **interview**: it presents the fork with 2–4 marked options (A/B/C) and a **recommended answer**, and asks the developer to decide.
@@ -294,7 +300,7 @@ Concepts and specifications are **language-agnostic** — no programming languag
 
 Work state is persisted in a **collaborative per-task** model so multiple AI agents can work on the same task in parallel without conflicts:
 
-- `.dev_flow/tasks/task_<ID>.md` — one file per task (source of truth). Shared between contributors. Holds Current Work Item, Intent (goal / target state / expected result), Description (shared), per-contributor Subtask blocks, Coordination Notes, Blocking Issues, Relevant Context, and a Shared Activity Log.
+- `.dev_flow/tasks/task_<ID>.md` — one file per task (source of truth). Shared between contributors. Holds Current Work Item, Intent (goal / target state / expected result), Description (shared), per-contributor Subtask blocks, Coordination Notes, Blocking Issues, Proportionality (recorded relaxations and created entities the checkpoints show), Relevant Context, and a Shared Activity Log.
 - `.dev_flow/active_context.md` — lightweight dashboard listing active tasks and recently completed ones (links to the task files).
 - `.dev_flow/tasks/_index.md` — directory catalog with conventions and lists.
 
@@ -393,7 +399,7 @@ Annotated router for phases, references, templates and the example: [SKILL.md �
 4. **Fresh eyes before commit** — clean-context review catches what you missed
 5. **Living docs, not dead docs** — propagation keeps documentation current
 6. **Rules and skills accumulate** — project knowledge is captured and reused across sessions
-7. **The developer signs off before code and before commit** — a design sign-off after the design documents, a commit sign-off before `git commit`; skipped only when the request itself says so
+7. **The developer signs off before code and before commit** — a design sign-off after the design documents, a commit sign-off before `git commit`; skipped only when the request itself says so, and an action on the hard floor stops the work even then
 
 ## Requirements
 

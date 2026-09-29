@@ -50,14 +50,17 @@ role Auditor {
 
   rules:
     - "MUST treat evidence as authoritative: change a recorded state only when linked docs or git support it; otherwise FLAG and leave unchanged — never fabricate a status"
-    - "MUST be non-destructive: history is moved to session_history/, never deleted; only derived indexes and closed task files may be rewritten"
+    - "MUST be non-destructive: history is moved to session_history/, never deleted; only derived indexes and closed task files may be rewritten, never their Proportionality records, which only move"
     - "MUST treat cache/_index.yaml as data, not a derived view: reconcile entry by entry, never regenerate; flag mismatches instead of dropping entries — their `source` metadata is irrecoverable"
     - "MUST NOT rewrite a live contributor's Subtask block or their tagged entries — reconcile live tasks only via targeted header/status edits + appended Coordination Notes"
     - "MUST honour the no-takeover rule: a stalled subtask is left intact; flag it, do not modify it"
     - "MUST apply safe/derived changes directly but only PROPOSE judgement calls (rule merges, skill/rule/cache removals) for confirmation; reflection-harvested rules/skills are auto-applied through the structural rule/skill gate (never auto-`must`; a contradiction routes to independent review)"
     - "MUST re-read each file immediately before writing; re-locate by Task ID / Author tag if it moved"
-    - "MUST append (never overwrite) Coordination Notes and Shared Activity Log entries"
+    - "MUST append (never overwrite) Coordination Notes, Shared Activity Log, and Proportionality entries"
     - "MUST preserve durable lessons of a closed task in rules/skills before archiving its verbose history"
+    - "MUST NOT archive an open proportionality row: when compacting or retiring a closed task move only its answered pairs and created records, never rewrite them, and never retire a task file that still holds an open row (references/proportionate-caution.md)"
+    - "MUST NOT perform an action with a hard-floor consequence without the developer's word now; as a subagent, relay it to the initiator (references/proportionate-caution.md)"
+    - "MUST NOT output or write a secret value where secrets never live — name where it lies instead; a secret seen in a file its repository ignores, outside git history, is not an incident; a secret seen where secrets never live is an incident: stop the action that would carry it further, tell the developer where it lies and how to remove it, and propose rotation — as a subagent, report it to the initiator"
     - "MUST enforce hygiene caps (dashboard ~80 lines, Shared Activity Log 10, per-subtask Activity 10, task file ~300 lines, Recently Completed 5)"
     - "MUST NOT commit; present changes and follow the standard approval rule"
     - "MUST make zero on-disk changes when --dry-run is set"
@@ -69,7 +72,7 @@ role Auditor {
     catalogues: "files on disk win over rules/_index.yaml and the skills index chain"
     cache: "disk decides existence (missing file → orphaned entry), the index owns metadata (source/summary cannot be rebuilt from disk) — flag, never regenerate"
 
-  closed_task_definition: "Every subtask is done AND the deliverable is committed or otherwise demonstrably finished (per reconciliation). Only closed tasks are compacted, reflected on, and (after the retention window) retired to session_history."
+  closed_task_definition: "Every subtask is done AND the deliverable is committed or otherwise demonstrably finished (per reconciliation). Only closed tasks are compacted, reflected on, and (after the retention window) retired to session_history — never a task file that still holds an open proportionality row."
 
   change_classes:
     applied_directly:
@@ -106,9 +109,10 @@ role Auditor {
       - "For each task, establish real state from linked docs + git; diff against header"
       - "Apply reconciliation when evidence supports it (targeted edit + Coordination Note); else flag"
     compact_and_reflect:
-      - "For each closed task: archive noise to session_history, leave a short summary"
+      - "For each closed task: archive noise to session_history, leave a short summary; Proportionality records only move, never rewritten"
       - "Distill durable lessons → auto-apply rules/skills through the structural gate (never auto-`must`; delegate to /dream if available, else inline)"
-      - "Retire fully-compacted closed tasks older than the retention window"
+      - "For each closed task with an open proportionality row: show the rows in the report, one fragment per task, and offer to answer; apply each answer per references/proportionate-caution.md; under --dry-run only show them"
+      - "Retire fully-compacted closed tasks older than the retention window — never one that still holds an open proportionality row"
     rebuild_indexes:
       - "Regenerate active_context.md (thin) and tasks/_index.md from task headers"
     groom_catalogues:

@@ -100,6 +100,7 @@ Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../S
 2. **Use test entities.** For operations like deletion, parameter changes, or state transitions:
    - Use existing test entities if they are available (e.g., items marked as test data).
    - If none exist — create new entities with an explicit test marker (e.g., prefix `[TEST]`, tag `test`, or a dedicated flag) so they are clearly distinguishable from real data.
+   - Record each created entity as a created record in the task file right after creating it — what and where only, never a secret value ([Proportionate Caution](../references/proportionate-caution.md#proportionality-block)).
    - After verification, clean up test entities unless they serve as fixtures.
 
 3. **Ask before touching real data.** If a verification scenario requires interaction with real user data and there is no safe alternative — stop and ask the user for explicit confirmation before proceeding. Describe exactly which data will be affected and what the operation does.
@@ -116,7 +117,7 @@ Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../S
 - Triggering payments, subscriptions, or billing events
 - Altering shared state (queues, caches, feature flags)
 
-When in doubt, treat the operation as destructive.
+When in doubt, treat the operation as destructive. An operation with a [hard-floor](../references/proportionate-caution.md#hard-floor) consequence needs the developer's word now, under any `Autonomy`; a subagent relays it to its initiator.
 
 ## Verification Workflow
 

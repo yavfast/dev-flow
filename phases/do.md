@@ -145,16 +145,16 @@ This is also where [`resume`](status.md#resume--re-enter-a-task-in-a-fresh-sessi
    - Gate: spec → plan
    - Update `auth.plan.md` — add task for Skip button
    - Gate: plan → implement
-   - Design sign-off — DEC batch, changed docs, files to touch; wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints))
+   - Design sign-off — DEC batch, changed docs, files to touch, proportionality block; wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints))
    - Implement the change
    - Run tests if suite exists
-   - Review, then commit sign-off — changed files, review verdict, intent verdict; "Ready to commit?"
+   - Review, then commit sign-off — changed files, review verdict, intent verdict, proportionality block; "Ready to commit?"
 
 #### Scenario C — New feature (no existing documents)
 
 1. Confirm: "No existing concept found for this. I'll start from concept phase."
 2. Execute: `/dev-flow concept` → `/dev-flow spec` → `/dev-flow plan` → **design sign-off** → `/dev-flow implement` → … → review → **commit sign-off**
-3. Follow all gate checks between phases; the checkpoints are skipped only under `Autonomy: full` in the task header ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)).
+3. Follow all gate checks between phases; the checkpoints are skipped only under `Autonomy: full` in the task header ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)) — a [hard-floor](../references/proportionate-caution.md#hard-floor) action stops the work even then.
 
 #### Scenario D — Documentation only
 

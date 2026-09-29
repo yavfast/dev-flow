@@ -44,7 +44,7 @@ Pulled in only when the intent names them or the project type makes them relevan
 | `dependencies` | third-party version drift, unused/duplicate deps, known-vuln packages, license risk | lockfiles + advisories |
 | `types` | type-safety holes, `any`/`unchecked` casts, nullability gaps | the type system's strictness settings |
 | `error-handling` | error propagation, swallowed exceptions, retry/backoff, partial-failure handling | `.dev_flow/rules/error-handling.md` |
-| `config` | hard-coded config, env/secret handling, environment parity | config conventions + `security` overlap |
+| `config` | hard-coded config, env/secret handling (a secret counts only where secrets never live), environment parity | config conventions + `security` overlap |
 | `scalability` | data-volume assumptions, pagination, statelessness, hotspots under load | scalability heuristics |
 | `api` | contract stability, versioning, backward compatibility, surface minimality | published API specs |
 | `data` | schema/migration safety, integrity constraints, serialization compatibility | data specs + migrations |
@@ -119,7 +119,7 @@ Static audit only — **never run or execute exploits**. Mirrors [review](../pha
 - **SSRF / path traversal** — user-controlled URLs/paths reaching a fetch or file op without validation.
 - **Insecure crypto** — weak or deprecated algorithms, hard-coded keys/IVs, missing salt, `Math.random` for tokens.
 - **Unsafe deserialization** — untrusted data into a deserializer that can instantiate arbitrary types.
-- **Secret/credential exposure** — keys, tokens, passwords in source, config, or logs.
+- **Secret/credential exposure** — keys, tokens, passwords in a place where secrets never live ([Proportionate Caution](proportionate-caution.md#secrets)), for example tracked source or config, or a persisted log. A secret in a git-ignored file outside history is not a finding.
 - **Missing authz** — an action/endpoint without an access check; broken object-level authorization.
 - **Unsafe defaults & error leakage** — permissive defaults, verbose errors leaking internals, missing input validation / output encoding.
 - **Auth/crypto sub-angles** fold in here.

@@ -55,7 +55,7 @@ Findings carry a computed **materiality**, a recurring non-`must` finding trips 
    | No regressions | Changes don't break existing functionality | `must` |
    | No leftover artifacts | No debug code, TODOs, commented-out blocks | `should` |
    | Code quality | Naming, structure, readability follow project conventions | `prefer` |
-   | Security | No obvious vulnerabilities (injection, exposure, etc.) | `must` |
+   | Security | No obvious vulnerabilities (injection, exposure, etc.); a secret counts only where secrets never live ([Proportionate Caution](../references/proportionate-caution.md#secrets)) | `must` |
 
    The column is the finding's **severity**, on the same `must` / `should` / `prefer` axis as project rules. It is the reviewer's input to the materiality computation in step 3 — not the verdict. A check's severity is a ceiling per finding, not a floor: a reviewer states a lower severity when the concrete finding warrants it.
 

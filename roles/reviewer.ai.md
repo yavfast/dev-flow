@@ -62,6 +62,8 @@ role Reviewer {
     - "MUST name every routed contested record and the round scope in the report"
     - "MUST NOT let a must or security finding reach a confirm round, at any criticality"
     - "MUST name every check suppressed for a missing entry condition as unobserved with the absent fact (references/verification-economy.md)"
+    - "MUST NOT perform an action with a hard-floor consequence without the developer's word now; as a subagent, relay it to the initiator (references/proportionate-caution.md)"
+    - "MUST NOT output or write a secret value where secrets never live — name where it lies instead; a secret seen in a file its repository ignores, outside git history, is not an incident and not a finding; secret-exposure is only a secret seen where secrets never live: stop the action that would carry it further, tell the developer where it lies and how to remove it, and propose rotation — as a subagent, report it to the initiator"
 
   pre_commit_review:
     description: "Code review performed before commit by a subagent with clean context"
@@ -100,7 +102,7 @@ role Reviewer {
         description: "Naming, structure, readability follow project conventions"
         severity: "prefer"
       security:
-        description: "No obvious vulnerabilities (injection, exposure, etc.)"
+        description: "No obvious vulnerabilities (injection, exposure, etc.); a secret counts only where secrets never live (references/proportionate-caution.md)"
         severity: "must"
     severity_axis: "must | should | prefer — the same axis as project rules. The reviewer states severity; it never states materiality"
     results:

@@ -89,6 +89,7 @@ A task file is **shared** between multiple AI contributors. Each contributor app
 | Subtask blocks | The block's `Author` only | The author is the sole editor of their block |
 | Coordination Notes | Any contributor | Append-only entries, each prefixed `[agent-id]` |
 | Blocking Issues | Reporter only edits/resolves their own | Other contributors may comment in Coordination Notes |
+| Proportionality | Any contributor | Append-only records tagged `[agent-id]`; the developer's answer is its own record; no record is rewritten ([Proportionate Caution](../references/proportionate-caution.md#proportionality-block)) |
 | Relevant Context table | Any contributor | Append rows tagged with the contributor; don't rewrite existing rows |
 | Shared Activity Log | Any contributor | Append-only, newest first, tagged `[agent-id]` |
 
@@ -108,7 +109,7 @@ A task file is **shared** between multiple AI contributors. Each contributor app
 
 ### Step 2: Read the relevant task file
 
-For each task you want to inspect, read `tasks/task_<ID>.md`. The task file holds the detailed state: Current Work Item, Description, Subtask blocks, Coordination Notes, Blocking Issues, Relevant Context, Shared Activity Log.
+For each task you want to inspect, read `tasks/task_<ID>.md`. The task file holds the detailed state: Current Work Item, Description, Subtask blocks, Coordination Notes, Blocking Issues, Proportionality, Relevant Context, Shared Activity Log.
 
 When resuming work, focus on:
 - Your own Subtask block (if you are already a contributor).
@@ -242,7 +243,7 @@ If two contributors update the same row at nearly the same time, the later write
 
 ### Append-only logs
 
-Inside a task file, never rewrite Coordination Notes, Shared Activity Log, or per-subtask Activity. Always append (newest at top for log/notes, newest at bottom for per-subtask Activity within a block).
+Inside a task file, never rewrite Coordination Notes, Shared Activity Log, per-subtask Activity, or Proportionality records. Always append (newest at top for log/notes, newest at bottom for per-subtask Activity within a block and for Proportionality).
 
 ### How a contributor leaves a task
 
@@ -308,6 +309,7 @@ Rules:
 - **Never marks work done.** A checkpoint does not set a subtask or a task `done`, and does not advance a document's lifecycle status — finishing work is the finishing phase's act.
 - **Writes only** inside `.dev_flow/` and the documentation artifacts movement 2's drift check names as stale. Anything outside that set is reported, not edited.
 - **Never touches another contributor's** subtask block or tagged entries; a checkpoint of a task you do not own is announced in Coordination Notes, not written into their block.
+- **Never triggers the runtime's own compaction.**
 
 ### Checkpoint errors
 
@@ -337,7 +339,7 @@ Rules:
 
 `resume` is the first action of a context that has no other information. It establishes where the work stands, continues it when the picture is unambiguous, and offers the next work when nothing is active.
 
-It composes what this file already defines — the [read protocol](#read-protocol) for state and the [write protocol](#write-protocol) for joining — and hands continuation to the `do` phase's [Scenario A](do.md#scenario-a--continue-active-task). It is legal mid-session, not only in a fresh one: there it re-reads state and reports.
+It composes what this file already defines — the [read protocol](#read-protocol) for state and the [write protocol](#write-protocol) for joining — and hands continuation to the `do` phase's [Scenario A](do.md#scenario-a--continue-active-task). It is legal mid-session, not only in a fresh one: there it re-reads state and reports. The resume act itself never commits, never writes the working tree, and never triggers the runtime's own compaction; the work it continues follows that work's own phase.
 
 ### The three movements
 
@@ -482,6 +484,7 @@ So `pin` means "survive while this task is active" — not "survive forever". Wh
 5. **Subtask blocks:** completed (done) subtask blocks may be archived once the task file exceeds ~300 lines.
 6. **Dashboard size:** if `active_context.md` exceeds ~80 lines, prune Recently Completed and archive overflow. Handoff records in `## Resume` count against the cap like any other content — one line per interrupted task, and the section disappears when the last one is dropped.
 7. **No large blobs:** never store logs, diffs, full command output, or verbose narratives in any context file. Reference a file instead.
+8. **Proportionality:** no cap, and a size-triggered archive cycle leaves the section whole. Answered pairs (a row and its answer) and created records leave only once the task is closed — moved by [audit](audit.md) Compact, or with the whole task file; open rows are never archived — a task file that holds one is never moved whole ([Proportionate Caution](../references/proportionate-caution.md#proportionality-block)).
 
 ### Session history archive
 

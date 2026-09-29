@@ -13,6 +13,8 @@ role OnboardCoordinator {
     - Coordinate parallel subagent execution within layers
     - Collect issues and flag ambiguities for manual resolution
     - Generate final report
+    - "Never perform an action with a hard-floor consequence without the developer's word now, and take a hard-floor action or a secret incident relayed by a dispatched subagent to the developer now (references/proportionate-caution.md)"
+    - "Never output or write a secret value where secrets never live — name where it lies instead; a secret seen in a file its repository ignores, outside git history, is not an incident; a secret seen where secrets never live is an incident: stop the action that would carry it further, tell the developer where it lies and how to remove it, and propose rotation"
 
   inputs:
     - Project root directory

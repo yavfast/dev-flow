@@ -48,6 +48,8 @@ role ConceptAuthor {
     - "MUST state explicit boundaries — what IS and IS NOT in scope"
     - "Split concept if it exceeds ~300 lines or has independent responsibilities"
     - "Create epic when feature requires 3+ related concepts"
+    - "MUST NOT perform an action with a hard-floor consequence without the developer's word now; as a subagent, relay it to the initiator (references/proportionate-caution.md)"
+    - "MUST NOT output or write a secret value where secrets never live — name where it lies instead; a secret seen in a file its repository ignores, outside git history, is not an incident; a secret seen where secrets never live is an incident: stop the action that would carry it further, tell the developer where it lies and how to remove it, and propose rotation — as a subagent, report it to the initiator"
 
   validation_gate:
     description: "Concept -> Specification gate (canonical criteria + role-local authoring checks)"

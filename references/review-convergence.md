@@ -32,7 +32,7 @@ The reviewer assigns `severity` (`must` / `should` / `prefer`) as before, and do
 
 Overrides first, in order:
 
-1. `type` in a security class (`vuln:*`, `secret-exposure`, `missing-authz`) → `blocking`
+1. `type` in a security class (`vuln:*`, `secret-exposure`, `missing-authz`) → `blocking` (`secret-exposure` is only a secret in a place where secrets never live — [Proportionate Caution](proportionate-caution.md#secrets))
 2. `severity: must` → `blocking`
 
 Then the table (so `severity` is `should` or `prefer`):

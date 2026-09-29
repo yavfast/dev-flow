@@ -27,7 +27,7 @@ class PermissionInterceptor:
 
 ## Gate Check Before Starting
 
-**Design sign-off (stop).** Before the first code edit, the task file must show the developer's go at the design sign-off; missing → present it (DEC batch, changed docs, files to touch) and wait. No stop for a Trivial change (no design documents); otherwise skipped only under `Autonomy: full`. A `proposed` Design Decision counts as settled for the checklist below, but no code edit runs on one. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
+**Design sign-off (stop).** Before the first code edit, the task file must show the developer's go at the design sign-off; missing → present it (DEC batch, changed docs, files to touch, proportionality block) and wait. No stop for a Trivial change (no design documents); otherwise skipped only under `Autonomy: full` — a [hard-floor](../references/proportionate-caution.md#hard-floor) action stops the work even then. A `proposed` Design Decision counts as settled for the checklist below, but no code edit runs on one. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
 
 Before writing code, verify:
 - [ ] The plan covers ALL specification sections
@@ -78,7 +78,7 @@ Before writing code, verify:
 12. Update the plan phase status to [DONE].
 13. Update the plan Progress checkboxes.
 14. Reflection checkpoint — harvest rules/skills, auto-applied through the structural gate; see [Reflection](#reflection--harvest-rules-and-skills) below.
-15. Commit sign-off — changed files, review verdict, intent verdict; "Ready to commit?" and wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)).
+15. Commit sign-off — changed files, review verdict, intent verdict, proportionality block; "Ready to commit?" and wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)).
 
 ## Delegation for Focus
 
