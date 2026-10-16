@@ -18,7 +18,7 @@ Validate pipeline gates, detect conflicts between documents, manage deprecation,
 
 ## Pre-Commit Code Review
 
-**Before any commit**, a code review of the changes MUST be performed by a **subagent with a clean context** — it sees only the diff and the spec, without the implementer's accumulated assumptions.
+**Before any commit**, a code review of the changes MUST be performed by a **subagent with a clean context** — it sees the diff, the spec, and the code the diff reaches — never the implementer's accumulated assumptions.
 
 This clean-context review also **realizes the `sampled-verifier` tier** of [Application Enforcement](../references/application-enforcement.md).
 
@@ -40,6 +40,7 @@ Findings carry a computed **materiality**, a recurring non-`must` finding trips 
    - Relevant project skills (`.dev_flow/skills/`) for the changed area, if they exist
    - SOLID architecture reference (`references/solid-architecture.md`)
    - `docs/_framework.md` (the architectural map) if present
+   - Read access to the codebase — the reviewer itself greps the callers of every symbol whose signature, return value, or behaviour the diff changes; never pass the author's list ([Symbol reach](../references/impact.md#symbol-reach))
 
    **Pass the artifact + contract only — never the author's conclusion or self-assessment; frame the review adversarially** ("find what violates the spec/rules", not "is this good?"). Realizes the `sampled-verifier` contract ([Application Enforcement](../references/application-enforcement.md)).
 
@@ -52,7 +53,8 @@ Findings carry a computed **materiality**, a recurring non-`must` finding trips 
    | Rules compliance | New code follows `.dev_flow/rules/` | the rule's own severity |
    | Skill pitfalls | Change doesn't reintroduce a pitfall documented in a loaded skill | `should` (`must` if also a `must` rule) |
    | SOLID compliance | Code structure follows SOLID and pluggability principles ([reference](../references/solid-architecture.md)) unless overridden by project rules | `should` |
-   | No regressions | Changes don't break existing functionality | `must` |
+   | Code reuse | New code reuses existing functions/classes instead of re-implementing them; a new reuse seam has a real consumer ([reference](../references/code-reuse.md)); look-alikes that change for different reasons are not flagged | `should` |
+   | No regressions | Changes don't break existing functionality — checked against the callers of every changed symbol, read outside the diff | `must` |
    | No leftover artifacts | No debug code, TODOs, commented-out blocks | `should` |
    | Code quality | Naming, structure, readability follow project conventions | `prefer` |
    | Security | No obvious vulnerabilities (injection, exposure, etc.); a secret counts only where secrets never live ([Proportionate Caution](../references/proportionate-caution.md#secrets)) | `must` |

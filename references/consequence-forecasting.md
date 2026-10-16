@@ -24,6 +24,8 @@ Descending the pipeline: **scope narrows, fidelity sharpens, gate strictness ris
 
 ## The YAGNI-gate
 
+**Never-cut set — outside the gate.** A requirement of the present change, never an anticipation: validation at a trust boundary (external input, network, user files, integration responses) · error handling that prevents data loss · security controls (authorization, integrity checks) · accessibility · anything the request or a spec contract names. Build it with the change; never `drop` it, never cut it for Minimality. A limit, not a mandate: it adds no member where the code has no need of it.
+
 Each anticipation gets exactly one verdict. Discriminators, cheap (don't expand into an analysis tree — that is the overthinking failure mode):
 
 - **Is there a named, near-term trigger?** (a concrete consumer / requirement / event) — **no trigger → never `build now`** (this is the [Minimality gate](../SKILL.md#validation-gates): no consumer → cut).

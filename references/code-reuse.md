@@ -1,6 +1,6 @@
 # Code Reuse — Search Before Create, Build For Reuse
 
-Cross-cutting sub-procedure of the **code-writing** phases — [implement](../phases/implement.md) and [fix](../phases/fix.md) (a *glance* from [plan](../phases/plan.md) when it names shared utilities). It is **not** a standalone pipeline stage and has no command — an **advisory** discipline applied at the moment code is written. It adds no new pass/fail gate; it informs the code the phase was already going to write.
+Cross-cutting sub-procedure of the **code-writing** phases — [implement](../phases/implement.md) and [fix](../phases/fix.md) (a *glance* from [plan](../phases/plan.md) when it names shared utilities); [review](../phases/review.md) checks it through its `Code reuse` row. It is **not** a standalone pipeline stage and has no command — an **advisory** discipline applied at the moment code is written. It adds no new pass/fail gate; it informs the code the phase was already going to write.
 
 ## The discipline
 
@@ -12,12 +12,14 @@ Before writing a new function, class, method, util, or shared constant, look for
 
 1. **`docs/_framework.md`** shared-utilities / extension-points map (loaded on code-touch phases) and **`.dev_flow/skills/`** — the project's own catalogue of where things live.
 2. **The codebase** — symbol/definition search and a content grep for the behaviour (not just the name you'd pick). Delegate a *wide* search to a focus helper and keep the conclusion, not the dump ([Delegation for Focus](delegation.md)).
+3. **The standard library and the platform** — a language, framework, or platform feature that already does it.
+4. **An already-installed dependency.**
 
 Then:
 - **Exact equivalent exists** → call it. Do not re-implement.
 - **Near-equivalent exists** → extend/parameterize it rather than fork a copy — **unless** the two cases change for genuinely different reasons (see restraint below).
 - **Reuse needs a contract change** to the existing symbol → do not silently widen it and do not fork around it: treat the owning contract as upstream ([Upstream Escalation](escalation.md)).
-- **Nothing exists** → create it, and apply half 2.
+- **Nothing exists** → create it, and apply half 2. Never add a new dependency for what a few lines do; a new dependency is a [plan](../phases/plan.md) technology decision.
 
 ### 2. Build for reuse — YAGNI-gated
 

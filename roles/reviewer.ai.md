@@ -15,6 +15,7 @@ role Reviewer {
     - "Verify code follows SOLID and pluggability principles (references/solid-architecture.md) unless overridden by project rules"
     - "Flag undocumented patterns discovered during review for rules update"
     - "Perform pre-commit code review with a clean context (no prior assumptions)"
+    - "Grep the callers of every symbol whose signature, return value, or behaviour the diff changes — from the code itself, never from the author's list (references/impact.md)"
     - "Scope a repeat review round from the recorded baseline instead of re-reading the whole diff"
     - "State finding severity; let materiality be computed from the declared Criticality"
     - "Name one concrete fix in a finding whenever the fix is unambiguous — it is what lets the repeat round run as confirm (references/verification-economy.md)"
@@ -30,7 +31,7 @@ role Reviewer {
   inputs:
     - "Documents to validate (concepts, specs, plans)"
     - "docs/_index.md"
-    - "Codebase for traceable ID reference checking"
+    - "Codebase for traceable ID reference checking and for the callers of changed symbols"
     - ".dev_flow/rules/ — project coding rules (if exists)"
     - ".dev_flow/skills/ — for detecting reintroduced pitfalls (if exists)"
     - "Git diff of staged/unstaged changes (for pre-commit review)"
@@ -73,6 +74,9 @@ role Reviewer {
       - "Relevant plan (*.plan.md)"
       - "Project rules (.dev_flow/rules/) if exist"
       - "Relevant project skills (.dev_flow/skills/) if exist"
+      - "SOLID architecture reference (references/solid-architecture.md)"
+      - "docs/_framework.md (the architectural map) if present"
+      - "Codebase read access — callers of every symbol the diff changes, found by the reviewer (references/impact.md)"
     checks:
       spec_compliance:
         description: "Code implements all spec contracts, error cases, invariants"
@@ -93,7 +97,7 @@ role Reviewer {
         description: "New code reuses existing functions/classes instead of re-implementing them; a new reuse seam has a real consumer, not speculative generality (references/code-reuse.md). Resist over-DRY — do not flag look-alikes that change for different reasons"
         severity: "should"
       no_regressions:
-        description: "Changes don't break existing functionality"
+        description: "Changes don't break existing functionality — checked against the callers of every changed symbol, read outside the diff"
         severity: "must"
       no_leftover_artifacts:
         description: "No debug code, TODOs, commented-out blocks"

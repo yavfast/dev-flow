@@ -1,6 +1,6 @@
 # Impact Walk — Blast Radius of a Change
 
-Shared sub-procedure for the **Ask**, **Do**, **Propagate**, **Review**, and **Todo** phases, for [Consequence Forecasting](consequence-forecasting.md) (an anticipation's blast-radius) and for the [`audit code` scope](../phases/audit.md#step-9--code-scope-the-whole-codebase-audit) (finding blast-radius) — with optional uses in audit's task-overlap check and interviews. It is **not** a standalone pipeline stage and has no command — invoke it from inside a phase whenever a decision needs to know *what a change would touch*. The natural user entry is `/dev-flow ask` ("what breaks if …?").
+Shared sub-procedure for the **Ask**, **Do**, **Propagate**, **Review**, **Todo**, **Implement**, and **Fix** phases, for [Consequence Forecasting](consequence-forecasting.md) (an anticipation's blast-radius) and for the [`audit code` scope](../phases/audit.md#step-9--code-scope-the-whole-codebase-audit) (finding blast-radius) — with optional uses in audit's task-overlap check and interviews. It is **not** a standalone pipeline stage and has no command — invoke it from inside a phase whenever a decision needs to know *what a change would touch*. The natural user entry is `/dev-flow ask` ("what breaks if …?").
 
 ## Input
 
@@ -8,7 +8,8 @@ One starting point:
 
 - a **traceable ID** (`C_XXX[_NN_NN]`, `SP_XXX[_NN_NN]`, `PL_XXX`, `E_XXX`) — most precise;
 - a **document path** — resolves to its `Code:` ID;
-- a **code file** — resolves to the IDs in its traceable comments.
+- a **code file** — resolves to the IDs in its traceable comments;
+- a **code symbol** — for the [symbol reach](#symbol-reach).
 
 And a direction, defaulting to both:
 
@@ -44,6 +45,16 @@ Impact of SP_AUTH_02_01 (downstream):
 
 The counts feed the consuming phase's thresholds (propagate's ">3 documents" boundary check, do's change classes, ask's scope estimate). Raw grep output stays out of the report.
 
+## Symbol reach
+
+The code-altitude walk. Run it when a code change alters a symbol's signature, return value, or behaviour.
+
+1. Grep every caller and reference of each such symbol: definition search plus a content grep of its name.
+2. Add to the list the tests, fixtures, config, and exports that bind to it.
+3. Output the **reach list** — every site the change must reach, or leaves untouched on purpose with the reason.
+
+The reviewer greps the callers itself — never takes the author's list. Delegate a wide grep ([Delegation for Focus](delegation.md)).
+
 ## Where it is consumed — thin pointers
 
 | Consumer | Use |
@@ -51,7 +62,9 @@ The counts feed the consuming phase's thresholds (propagate's ">3 documents" bou
 | [ask](../phases/ask.md) | The procedure behind the "Impact assessment" question type — and the natural user entry ("what breaks if …?") |
 | [do](../phases/do.md) | Evidence for Change Classes when the class (trivial / standard / architectural / internal refactor) is unclear |
 | [propagate](../phases/propagate.md) | Cascade Impact Assessment; the dependents to-do list for versioning and deprecation |
-| [review](../phases/review.md) | Enumerating dependents during conflict detection and deprecation checks |
+| [review](../phases/review.md) | Enumerating dependents during conflict detection and deprecation checks; [symbol reach](#symbol-reach) of the diff, run by the reviewer |
+| [implement](../phases/implement.md) | [Symbol reach](#symbol-reach) before the first edit |
+| [fix](../phases/fix.md) | [Symbol reach](#symbol-reach) of the function the fix changes |
 | [todo](../phases/todo.md) | Bounding what a captured idea would touch (placement + at-capture feasibility snapshot) |
 | [Consequence Forecasting](consequence-forecasting.md) | Blast-radius estimate for an anticipation at the YAGNI-gate |
 | [audit](../phases/audit.md) | **`code` scope:** `blast_radius` input to finding priority; *optional:* intersecting two active tasks' radii to flag overlapping work |
@@ -59,7 +72,7 @@ The counts feed the consuming phase's thresholds (propagate's ">3 documents" bou
 
 ## Boundaries
 
-- **Read-only.** The walk changes nothing; the drift it surfaces is routed to [propagate](../phases/propagate.md).
+- **Read-only.** The walk and the symbol reach change nothing; the drift the walk surfaces is routed to [propagate](../phases/propagate.md).
 - **As good as the metadata.** Missing `Used by` rows and uncommented code shrink the radius silently — which is why asymmetry findings (step 5) are part of the output.
 - **Delegate the grep.** The walk is search-heavy and floods context — a textbook [focus delegation](delegation.md): the helper returns the radius and the findings; full match lists stay in a workspace file referenced by path.
 - **Same machinery as drift detection.** The [drift detection algorithm](../phases/propagate.md#drift-detection-algorithm) collects the same IDs globally (orphans, stale docs); the Impact Walk queries one node's neighborhood. Reuse the collection approach — don't maintain two.

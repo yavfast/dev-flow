@@ -53,7 +53,8 @@ If you'll delegate the diagnosis loop or verification (see the **Delegation** no
 2. **Locate the code** — use ai-search, grep, or read relevant files to find the area of the codebase where the problem likely originates.
 3. **Confirm the cause from the evidence** — `fix` is normally invoked with evidence already in hand (a description, screenshot, stack trace, error message). Trace the execution path and check whether that evidence **corroborates** a specific located cause (does the stack / screenshot line up with the code site?). The goal here is confirmation from what you already have — not reproduction.
 4. **Identify root cause** — distinguish root cause from symptoms. If the root cause is unclear, list hypotheses ranked by probability. If two or more hypotheses are *materially different* — they lead to different fixes — and the developer likely holds the deciding context, surface them as marked options instead of betting on the top-ranked one (see [Interview Mode in Fix](#interview-mode-in-fix)).
-5. **Check related code** — look for the same pattern elsewhere that may have the same bug (if it's a pattern-level issue, not a one-off).
+5. **Find every caller** — grep every caller of the function the fix changes ([Symbol reach](../references/impact.md#symbol-reach)). A defect in a shared function is fixed once, in that function — not per caller and not only in the path the report named.
+6. **Check related code** — look for the same pattern elsewhere that may have the same bug (if it's a pattern-level issue, not a one-off).
 
 **Confidence gate — diagnose only when you must.** After analysis:
 - **Confident, located cause** corroborated by the provided evidence → go straight to Step 2. Do **not** reproduce or build a feedback loop — the evidence already establishes the bug. (Correctness is still confirmed at Step 4 Verify.)
@@ -63,7 +64,7 @@ If you'll delegate the diagnosis loop or verification (see the **Delegation** no
 
 1. **Describe the root cause** — one paragraph explaining what goes wrong and why.
 2. **Propose the fix** — list specific changes (files, methods, what changes and why). If the same root cause admits *materially different* strategies — a quick **band-aid**, a **structural** fix, a **workaround** — with different long-term cost, surface them as marked options with a recommendation, not a single silent pick (see [Interview Mode in Fix](#interview-mode-in-fix)).
-3. **Assess impact** — note if the fix touches shared code that other features depend on.
+3. **Assess impact** — note if the fix touches shared code that other features depend on; the callers found in Step 1 are its reach.
 4. **Check rules (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml` and load rules for the code you'll change; the fix MUST comply (`must` = blocks).
 5. **Present to user** — show the analysis, the fix option(s), and the [proportionality block](../references/proportionate-caution.md#proportionality-block). Wait for approval (or the developer's chosen/composed option) before proceeding to implementation. This is the fix route's design sign-off ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)).
 
@@ -157,9 +158,9 @@ A bug fix hides forks that are easy to resolve silently and expensive to get wro
 
 **Knowledge activation (per-burst).** Re-trigger the skill/rule gate at the moment of action — before each fix/diagnosis burst re-surface the applicable rules/skills (a relevant skill's pitfalls, the violated invariant's rule) with a pointer-only Pre-Action Marker. For a high-stakes change escalate to a deterministic tripwire or sampled cross-model verifier where the runtime allows; self-attestation is never the control. See [Application Enforcement](../references/application-enforcement.md).
 
-**Reuse check (advisory).** If the fix adds a helper, validator, or constant, search for an existing one before creating it (the `docs/_framework.md` map, `.dev_flow/skills/`, then a codebase symbol/behaviour search) — call an exact match, extend a near-match rather than fork it, escalate if reuse needs a contract change. See [Code Reuse](../references/code-reuse.md).
+**Reuse check (advisory).** If the fix adds a helper, validator, or constant, search for an existing one before creating it (the `docs/_framework.md` map, `.dev_flow/skills/`, a codebase symbol/behaviour search, the standard library and platform, then an already-installed dependency) — call an exact match, extend a near-match rather than fork it, escalate if reuse needs a contract change. See [Code Reuse](../references/code-reuse.md).
 
-**Forecast check (advisory).** Forecast the consequences of the fix at *implement/fix altitude* — what else this change touches — and keep the free one-step check on the diagnosis loop (does the next probe/edit undo the last?). The gate is **strict**: expanding the fix's scope to speculative nearby improvements with no trigger defaults to `drop + record` (a backlog note), not into this fix. See [Consequence Forecasting](../references/consequence-forecasting.md).
+**Forecast check (advisory).** Forecast the consequences of the fix at *implement/fix altitude* — what else this change touches — and keep the free one-step check on the diagnosis loop (does the next probe/edit undo the last?). The gate is **strict**: expanding the fix's scope to speculative nearby improvements with no trigger defaults to `drop + record` (a backlog note), not into this fix — never a never-cut requirement ([Consequence Forecasting](../references/consequence-forecasting.md#the-yagni-gate)). See [Consequence Forecasting](../references/consequence-forecasting.md).
 
 **Spotted-defect reflex.** Root-causing routinely surfaces a *separate, unrelated* defect — distinct from scope-creep of *this* fix (forecast → `drop+record`) and from a defective spec (→ [Upstream Escalation](../references/escalation.md)). If it is out-of-scope here and deferrable, don't fold it in and don't lose it: file an agent-initiated [`todo`](todo.md) (cheap subagent, or inline if trivial). If it is urgent, surface it now instead.
 

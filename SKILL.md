@@ -336,7 +336,7 @@ Each rule is one h2 unit — directive and severity in the heading over a bounde
 | [Upstream Escalation](references/escalation.md) | Wrong doc → fix the doc, not the code |
 | [Delegation for Focus](references/delegation.md) | Noisy work to a subagent; specialist routing |
 | [Experience Capture](references/experience-capture.md) | Transition Checkpoint; harvest; trailer; context pressure |
-| [Impact Walk](references/impact.md) | Blast radius: docs, code bindings, active tasks |
+| [Impact Walk](references/impact.md) | Blast radius: docs, code bindings, active tasks; symbol reach of a code change |
 | [Task Intent](references/task-intent.md) | Goal / target / expected result at intake |
 | [Ticket Tracker Integration](references/ticket-tracker.md) | Ticket-tied tasks; tracker skill owns conventions |
 | [Consequence Forecasting](references/consequence-forecasting.md) | Forecast at altitude; YAGNI gate: build / seam / drop+record |
