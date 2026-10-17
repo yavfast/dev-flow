@@ -10,8 +10,8 @@ Adoption documents are **advisory**: no traceable ID, no validation gate, not a 
 
 - [Command](#command) — `/dev-flow adopt <repo>` with `--subpath` and `--readopt`, recognized aliases, freeform routing via do
 - [What a run may write](#what-a-run-may-write) — Closed write list (adoption concept + document, `ext_repos/`, `.gitignore`, `.dev_flow/**`) and what is never written
-- [Procedure](#procedure) — Steps 1–9: resolve, acquire workspace, run mode, source analysis, target context, verdicts, synthesis, write, report
-- [Edge cases](#edge-cases) — Situation → behaviour table: self-analysis, unreachable URL, non-git source, dirty clone, collisions, monorepo, large source
+- [Procedure](#procedure) — Steps 1–9: resolve, acquire workspace, run mode, source analysis, target context with records and the reconciliation of the previous document, verdicts, synthesis, write, report
+- [Edge cases](#edge-cases) — Situation → behaviour table: self-analysis, unreachable URL, non-git source, dirty clone, collisions, monorepo, large source, previous document, rejected item, problem with no record
 - [Delegation](#delegation) — Steps 4 and 6 may go to a read-only clean-context subagent returning concepts or verdicts, never files
 - [Boundary with the resource cache](#boundary-with-the-resource-cache) — Clones live in `ext_repos/`, not `.dev_flow/cache/`; `audit cache` does not curate them
 
@@ -108,23 +108,51 @@ Whatever exists of: `docs/_index.md`, `docs/*.concept.md` / `*.sp.md` / `*.plan.
 
 Extract the traceable ID of everything the adoption document will cite. A missing source is not an error — collect what is there.
 
+Find the records of problems by search, not by reading whole files: `.dev_flow/tasks/`, `.dev_flow/session_history/`, `.dev_flow/todos/`, `.dev_flow/rules/`, `.dev_flow/evidence/`, `docs/`. A record is only one of these:
+
+- an incident in a task file or in `session_history/`;
+- a Review Rounds row;
+- an intervention-ledger entry;
+- the `evidence.ref` of a rule;
+- a DEC record;
+- a todo;
+- a document banner or Changelog row;
+- a step of this run that met the condition.
+
+Not a record: missing protection that a search confirms, a plausible problem, a claim of the source.
+
+**Reconcile the previous adoption document** of the same source, when it exists. Each of its `high` and `medium` items and each derived idea gets exactly one state. The first match wins:
+
+| State | Condition | Evidence |
+|-------|-----------|----------|
+| `shipped` | The target implements the item fully | A commit, a shipped file, or a DEC record |
+| `rejected` | The target took the item or a part of it and then refused it | A DEC record, a document banner, a review row, or a `session_history/` or task-file entry about the refusal; name the shipped part, if any |
+| `partially` | The target implements part of the item and refused none of it | A commit, a shipped file, or a DEC record, plus what is missing |
+| `open` | No trace of implementation or refusal | Optional |
+
+An item whose concept the source removed still gets a state.
+
 ### Step 6 — Assess relevance
 
 Every concept in the source analysis gets exactly one verdict.
 
+First: a concept that matches a `rejected` item of the reconciliation is `low`, and its reason points to the refusal record. It goes higher only with a record of the problem newer than the refusal, named in the reason.
+
 | Level | Test | Record |
 |-------|------|--------|
-| `high` | Solves a known problem of the target, fits the stack, has a concrete integration point, and the effort-to-value ratio is favourable | Where it lives in the source (1–3 paths) · which target problem or traceable ID it attaches to · what exactly to take · effect and cost · which target contracts it risks |
-| `medium` | Useful but needs an architectural choice, conflicts with an existing concept, or depends on something unbuilt | The same, plus an explicit ruling: **take / defer / decline** |
+| `high` | Solves a known problem of the target — one with a record in the target (Step 5) — fits the stack, has a concrete integration point, and the effort-to-value ratio is favourable | Where it lives in the source (1–3 paths) · which target problem or traceable ID it attaches to · the record of the problem · what exactly to take · effect, as the upper bound the record supports, and cost · which target contracts it risks |
+| `medium` | Useful but needs an architectural choice, conflicts with an existing concept, depends on something unbuilt, or the problem has no record in the target | The same, with the record when one exists, plus an explicit ruling: **take / defer / decline**. With no record of the problem: only **defer** with the trigger "first observed case", or **decline** |
 | `low` | Outside the target's scope, contradicts its non-goals, or already solved another way | Name and one sentence of reason. Nothing more |
 
-A `medium` without a ruling is invalid: "needs a decision" with no decision is deferred work with no owner.
+A `medium` without a ruling is invalid: "needs a decision" with no decision is deferred work with no owner. A **defer** names its trigger.
 
 Sort `high` + `medium` by effect-over-cost, mark blockers and inter-item dependencies, and put the cheapest win first.
 
 ### Step 7 — Synthesize derived ideas
 
 Ideas that arise at the intersection of the source's concepts and the target's current gaps, but that the source does **not** already solve. Each carries an `Inspired by` naming what prompted it, and they live in their own section — synthesis must never read as borrowing.
+
+An idea that matches a `rejected` item of the reconciliation is left out. It comes back only with a record of the problem newer than the refusal, named in the idea.
 
 ### Step 8 — Write the adoption document
 
@@ -138,6 +166,7 @@ Writing rules:
 - **All paths are relative markdown links** from the adoption document's own location.
 - **Cite the target's traceable IDs** where they exist — the document must connect to what is already there, not float beside it.
 - **Updating an existing document** preserves its changelog and appends a dated row. Concepts unchanged since the last run keep their text.
+- **The "what the target already has" section carries the reconciliation** from Step 5, with its evidence.
 - **An empty `high` section is a valid result** — write it, and say so plainly. Never promote a `medium` to make the document look useful.
 
 ### Step 9 — Report
@@ -163,6 +192,9 @@ Offer, without doing it, the next steps that make sense: adding the document to 
 | `ext_repos/` already ignored, by any pattern | Change nothing |
 | Target is not a git repo | Skip the ignore step; note it in the report |
 | Source too large to read whole | Narrow to the named subsystems and record the narrowing, with its reason, in the analysis header |
+| Previous adoption document of the same source exists | Reconcile each of its `high` / `medium` items and each derived idea (Step 5); write the reconciliation into the "what the target already has" section |
+| Concept matches an item the target rejected | `low` with a pointer to the refusal record; higher only with a newer record of the problem, named in the reason |
+| Problem is plausible, but the target has no record of it | At most `medium` with **defer** and the trigger "first observed case", or **decline**. A search that confirms missing protection is not a record |
 | Adoption requested with no analysis | Run `CREATE` first — relevance cannot be assessed against concepts nobody has extracted |
 
 ## Delegation

@@ -50,7 +50,7 @@ Before creating a new concept, answer these questions. If any answer is unclear 
 3. If overlap found — justify why a new concept is needed instead of extending the existing one.
 4. Document findings in section "1.2 Design Constraints" or as a spike.
 
-**External prior art.** Steps 1–2 search *inside* the project. When `docs/ext_adoption/` exists, read the adoption documents relevant to this concept's domain — an external repository may already have solved the problem, and the adoption document carries the relevance verdict and the integration risk. Cite it as the concept's origin (`Spike:` or a provenance note), the way a spike is cited. If no adoption document covers a domain where external prior art plainly exists, [`/dev-flow adopt <repo>`](../references/repo-adoption.md) produces one. Advisory only — it informs the concept, never authorizes it.
+**External prior art.** Steps 1–2 search *inside* the project. When `docs/ext_adoption/` exists, read the adoption documents for this concept's domain: they carry the relevance verdict and the integration risk. Cite the one you use as the concept's origin (`Spike:` or a provenance note). Skip an item that the reconciliation marks `rejected`, unless the concept names a record of the problem newer than the refusal. No adoption document for a domain with plain external prior art → run [`/dev-flow adopt <repo>`](../references/repo-adoption.md). Advisory only — it informs the concept, never authorizes it.
 
 Code-altitude counterpart, applied per action burst in implement/fix: [Code Reuse](../references/code-reuse.md).
 
