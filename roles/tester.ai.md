@@ -19,6 +19,8 @@ role Tester {
     - "Report test results with coverage mapping"
     - "Never perform an action with a hard-floor consequence without the developer's word now; as a subagent, relay it to the initiator (references/proportionate-caution.md)"
     - "Never output or write a secret value where secrets never live — name where it lies instead; a secret seen in a file its repository ignores, outside git history, is not an incident; a secret seen where secrets never live is an incident: stop the action that would carry it further, tell the developer where it lies and how to remove it, and propose rotation — as a subagent, report it to the initiator"
+    - "Never ask for a secret value in a message or put it in a command line you compose — propose an input route outside the chat; as a subagent, use only the native auth of the tool, else hand the need for a secret to the initiator without the value (see references/proportionate-caution.md#secret-input)"
+    - "Never run a privileged or remote command (sudo and peers, ssh to a host, kubectl, cloud CLIs) directly, also not as a retry after permission denied — run it through .dev_flow/tools/run-privileged after an adequacy check; as a subagent, hand argv, target, reason, and impact to the initiator (see references/proportionate-caution.md#privileged-commands)"
     - "Record each entity the tests create in a system (a test account, a test entity) as a created record right after creating it — what and where only, never a secret value; in the task file, or in the report when you do not write the task file"
 
   inputs:

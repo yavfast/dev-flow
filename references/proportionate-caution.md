@@ -1,6 +1,6 @@
 # Proportionate Caution — The Hard Floor, Secrets, and the Proportionality Block
 
-Cross-cutting discipline of **every phase**. Not a pipeline stage, no command. Size caution to the consequence of an action, not to the action. The **hard floor** is the closed set of consequences that always need the developer's word now; no declaration, manifest, or autonomy mode relaxes it. A seen secret is an incident only in a place where secrets never live, and the agent never puts a secret value there. A relaxation of a listed row kind leaves a row in the **proportionality block**, which the developer checkpoints show.
+Cross-cutting discipline of **every phase**. Not a pipeline stage, no command. Size caution to the consequence of an action, not to the action. The **hard floor** is the closed set of consequences that always need the developer's word now; no declaration, manifest, or autonomy mode relaxes it. A seen secret is an incident only in a place where secrets never live, and the agent never puts a secret value there. A secret that the agent needs comes from the developer by an input route outside the chat. A privileged or remote command runs only through the privileged runner of the project. A relaxation of a listed row kind leaves a row in the **proportionality block**, which the developer checkpoints show.
 
 ## Contents
 
@@ -8,8 +8,10 @@ Cross-cutting discipline of **every phase**. Not a pipeline stage, no command. S
 - [Asking now](#asking-now) — `proceed` / `relay` / `ask-now` per action and caller
 - [Secrets](#secrets) — what a secret is; the closed list of places where secrets never live
 - [Seen and emitted secrets](#seen-and-emitted-secrets) — the reaction per event and place: continue, incident, refused, pasted
+- [Secret input](#secret-input) — a needed secret never asked for in the chat; the input routes in order of preference; subagent relay
+- [Privileged commands](#privileged-commands) — the privileged class; the runner, its boundary and steps; adequacy; projects with constant privileged work
 - [Proportionality block](#proportionality-block) — the task-file section: record forms, row kinds, append, created records, showing, archive
-- [Autonomy](#autonomy) — what `Autonomy: full` skips and what still stops the work
+- [Autonomy](#autonomy) — what `Autonomy: full` skips and what still stops the work, secret input and the runner `confirm` included
 - [Boundaries](#boundaries) — what this discipline does not change
 
 ## Hard floor
@@ -23,7 +25,7 @@ An action with any of these consequences needs the **developer's word now** — 
 | `money` | It triggers a payment, a subscription, or billing — also for an entity the task created |
 | `outward-message` | It sends an email, an SMS, a push notification, or a chat message to a real person |
 | `irreversible-destruction` | It discards content that cannot be recovered: a reset of uncommitted changes (`reset --hard`, `checkout --`, `restore`, `stash drop`), or a file removal or a replacement of the whole content, when the current task did not write that content and vcs history does not hold it. Or it deletes data outside a confirmed test target, and that data cannot be recovered |
-| `access-relaxation` | Without the developer's confirmation, it removes or bypasses a command gate, widens the permissions of the agent runtime, or creates or changes a proxy or an access-manifest entry |
+| `access-relaxation` | Without the developer's confirmation, it removes or bypasses a command gate, widens the permissions of the agent runtime, or creates or changes a proxy, an access-manifest entry, or the privileged runner ([Privileged commands](#privileged-commands)) |
 
 **Not a consequence:**
 
@@ -94,9 +96,82 @@ In every case: never repeat, copy, or store the value — except the write to an
 | Seen | A place where secrets never live | Stop the action that would carry the value further (a commit, a send, caching, a hand-off, an output). Main agent: tell the developer now where the value lies and how to remove it, and propose rotation. Subagent: report the incident to the initiator | `incident` |
 | About to emit | A place where secrets never live | Do not emit. Name where the value lies. No rotation proposal — nothing leaked | `refused` |
 | About to emit | Another place (for example, an ignored file outside history) | Write the value there without a repeat of it in any message | `continue` |
-| Pasted into the chat by the developer | — | Copy it nowhere. Tell the developer that the value is now in the transcript | `pasted` |
+| Pasted into the chat by the developer | — | Copy it nowhere. Tell the developer that the value is now in the transcript, and propose an input route for the next entry ([Secret input](#secret-input)) | `pasted` |
 
 A message of the agent is always `agent-message`: a secret value never appears in a reply.
+
+## Secret input
+
+When an action needs a secret that you do not have — a `sudo` password, a tracker login, a test-account password, a service token — never ask for the value in a message and never put it in a command line that you compose. Propose an input route: the value goes from the developer straight to the consuming process; read only the exit code and the output without the value.
+
+Take the first route whose condition holds:
+
+| Route | Condition | Means |
+|-------|-----------|-------|
+| `native-auth` | The consumer authenticates without a typed value | ssh keys and `ssh-agent`, a credential helper, the OS keyring, an existing session, a `0600` file that the tool itself reads |
+| `hidden-dialog` | The consumer has its own askpass hook, and a dialog tool is available in the current graphical session | `SSH_ASKPASS`, `GIT_ASKPASS`; for a privileged command, `SUDO_ASKPASS` / `pkexec` only inside the runner ([Privileged commands](#privileged-commands)) |
+| `wrapper` | The consumer reads the value from stdin, a file descriptor, or a child-process environment variable, and a dialog tool is available in the current graphical session | A wrapper in the project that you write on demand: it asks for the value with a hidden-input dialog tool (`zenity --password`, `kdialog --password`, `systemd-ask-password`, `pinentry`) and sends the stdout of that tool only to the consumer; it never prints, stores, or contains the value |
+| `developer-terminal` | No condition above holds — no graphical session, no dialog tool, or the consumer takes the value only as an argument | Give the exact command; the developer runs it in their own terminal with the hidden prompt of the tool or of a wrapper (`read -s`); read the result. A consumer that takes the value only as an argument: the developer reads it with `read -s` into a variable and passes the variable, then runs `unset` on it; the developer never types the value on the command line; tell the developer that the value stays visible in the process list while the tool runs |
+
+- **Graphical session** — a fact of the current session: check `$DISPLAY` / `$WAYLAND_DISPLAY` each time; never record it.
+- **Dialog tool** — a machine fact: read it from `environment.md` of the [Adaptation Profile](adaptation-profile.md), else check it and record it per that file.
+- **No echo** — run the route without verbose or trace flags (`-v`, `--debug`, `set -x`) that can print the value.
+- **Wrapper** — a project tool, never a skill file. A one-time wrapper stays in the session workspace (`/tmp/{project-slug}/`): create the directory with mode `0700`; before you write or run the wrapper, check that you own it and that its mode is `0700`. A reused wrapper goes among the project tools with the developer's knowledge.
+- **Reuse** — to reuse a value, let the tool keep it in its own store (credential helper, keyring); store it nowhere else.
+- **Subagent** — use `native-auth` only. For any other route, hand the need to the initiator without the value; never ask the initiator for the value. The initiator runs the route and the action itself, or runs the subagent again when the own store of the tool holds the value.
+- **Precedence** — a tracker integration or another skill that asks for a password in the chat yields to this route.
+- **`Autonomy: full`** — the same route; the work waits for the developer's input.
+- **Pasted anyway** — `pasted` above, and propose a route for the next entry.
+
+## Privileged commands
+
+Never run a command of the privileged class directly — also not as a retry after `permission denied`. Run it only through the **privileged runner** of the project, `.dev_flow/tools/run-privileged`.
+
+**The privileged class** — closed list of signs:
+
+| Sign | The command has it when |
+|------|-------------------------|
+| `elevation` | The program is `sudo`, `doas`, `su`, `pkexec`, `run0`, `runuser`, or `machinectl shell`; `systemctl` without `--user` with any verb except `status`, `show`, `cat`, `list-*`, `is-*`, `get-default`, `help`; a state change that polkit or the system bus authorizes (`loginctl`, `udisksctl`, `nmcli` connection or device changes, `hostnamectl` / `timedatectl` / `localectl` `set-*`, `busctl call` on the system bus); `mount` / `umount` |
+| `remote-access` | `ssh` / `mosh` to a host; `scp` / `sftp` / `rsync` with a remote side; `kubectl` / `helm` / `oc`; `aws` / `gcloud` / `az` / `doctl`; `terraform` / `pulumi` apply / destroy / import; `ansible`; a database client to a host that is not `localhost` / loopback, or to an unknown host; `systemctl -H` / `-M` |
+
+Not in the class: git transport (`fetch`, `pull`, `push`, `clone`); a package manager that fetches project dependencies; a read of a public HTTP resource; local containers; commands to `localhost` / loopback — this exclusion wins over the `remote-access` list, decided from what `ssh -G <host>` resolves (hostname, user, `ProxyJump`, `ProxyCommand`), not from the command text; it does not apply to a login as another user (a user other than the current one by `user@`, `-l`, `-o User`, or `ssh` config; any `root`) or through a proxy and a loopback port that forwards to a remote host (an `ssh -L` tunnel, `kubectl port-forward`), which counts as that host; a subcommand with no remote endpoint (`helm template` / `lint`, `kubectl kustomize`, `kubectl config view`, `--dry-run=client`).
+
+**The runner** — a project tool that you write on demand, never a skill file. It holds no secret. Its `boundary` block holds:
+
+- allowed hosts and contexts; path prefixes for privileged writes; the allowed `ssh` `-o` options;
+- `read_only` — remote read commands as full `argv` patterns with their allowed flags (for example `kubectl get pods -n <ns>`, `ssh <host> journalctl -u <unit> -n <N>`), each with the developer's declaration `personal_data: none | present`;
+- `routine` — entries `{argv_pattern, targets}`, targets as stable device paths (`/dev/disk/by-id/…`, `/dev/serial/by-id/…`) or device-host addresses; for a helper with its target fixed inside, the entry supplies the target. An `elevation` entry names only a root-owned helper. No entry names a shell, an interpreter, a wrapper, an editor, a pager, or a program that runs code or a config from a path that you can write (a build tool, a project script, a tool with a script config such as `openocd -f`).
+
+A pattern is anchored and has a fixed length: one element per position; a placeholder (`<…>`) covers one element, and the value it matches never starts with `-`.
+
+To create the runner or change it, `boundary` included, is `access-relaxation` ([hard floor](#hard-floor)). Propose that the developer installs it root-owned in a directory that you cannot write; else record its `sha256` in the answer record and compare it before each call with the latest runner answer record, archived ones included — a mismatch: do not call it, tell the developer; no record: ask the developer and record the answer.
+
+The runner takes `argv` (an argument array, not a shell string), `target`, `reason` (why the task needs it), and `impact` (what changes, where, whether a recovery exists). Steps, in order; the first that fails ends the run:
+
+| Step | Does | On failure |
+|------|------|------------|
+| `check` | Derives every target from `argv` (host, context, device, write path) and refuses a mismatch with `target`. Refuses: a shell or a session under elevation (`sudo -s` / `-i`, `su` without `-c`, `ssh` without a command — `-N` with port forwarding excepted); as the privileged program, a shell, an interpreter, a wrapper (`env`, `xargs`, `find -exec`, `nice`, `timeout`, `nohup`, `chroot`, `systemd-run`, `script`), an editor, or a pager — an edit goes through `sudoedit`; in every argument that a remote shell parses (the `ssh` / `mosh` remote command, a remote path of `scp` / `rsync`, `rsync -e` / `--rsh` / `--rsync-path`), a shell metacharacter (`` ; & \| $ ` < > ( ) * ? ~ { } ' " \ # ``, whitespace inside an element, or a newline); an `ssh` `-o` / `-F` option outside `boundary`; a secret in `argv`; a target outside `boundary`; access widening (a write path to `sudoers`, PAM, `/etc/group`, `/etc/passwd`, `/etc/shadow`; a user added to a group; recursive `chmod` / `chown` outside `boundary`); destruction outside `boundary` (`rm -r` of the root or a system path, `dd` to a device, `mkfs`, `flashrom`) — not refused for a target of a matching `routine` entry; a change of the runner | `refused: <reason>` |
+| `confirm` | Shows `argv`, `target`, `reason`, `impact`, and the `check` result in a dialog of the current graphical session — on `/dev/tty` only when the developer runs the runner; never from stdin; the developer confirms or declines there, in the same place as the password. Every time, also under `NOPASSWD`. Skipped only for: `remote-access` without `elevation` that matches `read_only` on an allowed target; `argv` that matches a `routine` entry | `declined` |
+| `execute` | `elevation`: `sudo -A -k` with `SUDO_ASKPASS`, or `pkexec`; no verbose or trace flags. `remote-access`: `native-auth` or askpass ([Secret input](#secret-input)); each element of the `ssh` remote command is quoted for the remote shell separately (`printf %q`) | exit code |
+
+The runner calls `sudo`, `ssh`, and the dialog tool by absolute path; a Python runner runs with `-I`.
+
+Read only the result: `refused`, `declined`, or the exit code and the output.
+
+- **Adequacy** — before you call the runner, make sure that the command is necessary for the task Intent, that it is the narrowest one (restart one unit, not reboot the machine), and that `impact` is true and complete. Else narrow the command or complete `impact`.
+- **Hard floor** — a consequence on the hard floor (for example, `production-write`) is still asked now in the chat; the runner then confirms the exact command. A `read_only` read is `real-data` unless its entry declares `personal_data: none`.
+- **Never feed `confirm`** — no pipe, no pty, no input automation.
+- **No graphical session** — give the developer the runner command for their own terminal.
+- **No runner** — propose to write it (the developer's word now), or give the developer the command for their own terminal.
+- **Subagent** — never call the runner. Hand `argv`, `target`, `reason`, and `impact` to the initiator.
+- **`Autonomy: full`** — `confirm` still waits for the developer; `read_only` and `routine` do not, except a hard-floor ask.
+- **Never** change `sudoers`, groups, or udev rules yourself — give the exact lines to the developer.
+
+**Projects with constant privileged work** (firmware, debugging on real devices, system images):
+
+- First remove the elevation. When the privilege is needed only for device access (a programmer, a serial port, a USB drive), propose a one-time udev rule or group (`dialout`, `plugdev`); the developer runs the lines. After that the command (`openocd`, `esptool`, `dfu-util`) is outside the class and runs directly.
+- What stays privileged goes into `routine` as a helper. Propose a root-owned helper per routine operation in a directory that you cannot write (`/usr/local/sbin/`), with its target and input path fixed inside, and one `sudoers` `NOPASSWD` line for it: the absolute path of the helper, exact arguments or none, never a wildcard. Never a `NOPASSWD` line for `dd`, `cp`, `tee`, `mount`, an editor, a pager, a shell, an interpreter, `env`, or `find`. The developer installs the helper and the line; the `routine` entry names the same helper.
+- Propose this setup when the project concept or `_framework.md` describes work with devices or system images, or when a privileged command of the same shape recurs in the task.
 
 ## Proportionality block
 
@@ -154,6 +229,8 @@ A row is **open** until an answer with the same `kind`, `ref`, and occurrence ex
 
 - Under `Autonomy: full` the developer checkpoints are skipped, as [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints) states. The block goes into the final report, without questions.
 - An action with a hard-floor consequence stops the work even then: `ask-now` does not depend on `Autonomy`.
+- A needed secret waits for the developer's input even then ([Secret input](#secret-input)).
+- The `confirm` step of the privileged runner waits for the developer even then ([Privileged commands](#privileged-commands)).
 - `resolved (delegated)` never closes a hard-floor question.
 - A confirmation that another discipline requires (a field of a test recipe, an access target) is not asked under `full`. Until it exists, the strict default applies.
 

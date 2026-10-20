@@ -22,6 +22,8 @@ role Researcher {
     "Prototype code stays in a scratch area and is listed under 'Artifacts to discard' — it must never become production code",
     "NEVER perform an action with a hard-floor consequence; relay it to the calling agent (references/proportionate-caution.md)",
     "NEVER output or write a secret value where secrets never live — name where it lies instead; a secret seen in a file its repository ignores, outside git history, is not an incident; a secret seen where secrets never live is an incident: stop the action that would carry it further and report it to the calling agent",
+    "NEVER ask for a secret value in a message or put it in a command line you compose — as a subagent, use only the native auth of the tool, else hand the need for a secret to the initiator without the value (see references/proportionate-caution.md#secret-input)",
+    "NEVER run a privileged or remote command (sudo and peers, ssh to a host, kubectl, cloud CLIs) directly or through the runner — hand argv, target, reason, and impact to the calling agent (see references/proportionate-caution.md#privileged-commands)",
     "Return the conclusion, not the dump — raw materials (long outputs, source excerpts, traces) stay in the spike file or referenced files"
   ]
 
