@@ -95,7 +95,7 @@ Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../S
 
 ### Guidelines
 
-1. **Use a dedicated test account.** If the project supports multiple accounts or tenants, always run destructive operations (delete, modify, reset) under a test account, never a real user account. Its password reaches the tool by an [input route](../references/proportionate-caution.md#secret-input), never through the chat.
+1. **Use a dedicated test account.** If the project supports multiple accounts or tenants, always run destructive operations (delete, modify, reset) under a test account, never a real user account. A sanctioned [access channel](../references/access-channels.md) to a test resource (`test` mark) runs its `write` and `destroy-test` operations without a confirmation per call. Its password reaches the tool by an [input route](../references/proportionate-caution.md#secret-input), never through the chat.
 
 2. **Use test entities.** For operations like deletion, parameter changes, or state transitions:
    - Use existing test entities if they are available (e.g., items marked as test data).
@@ -117,7 +117,7 @@ Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../S
 - Triggering payments, subscriptions, or billing events
 - Altering shared state (queues, caches, feature flags)
 
-When in doubt, treat the operation as destructive. An operation with a [hard-floor](../references/proportionate-caution.md#hard-floor) consequence needs the developer's word now, under any `Autonomy`; a subagent relays it to its initiator.
+When in doubt, treat the operation as destructive. An operation with a [hard-floor](../references/proportionate-caution.md#hard-floor) consequence needs the developer's word now, under any `Autonomy`; a subagent relays it to its initiator. A `named-hard-floor` operation of a sanctioned [access channel](../references/access-channels.md#operations) carries that word in advance, for role `main` only.
 
 ## Verification Workflow
 
@@ -183,7 +183,7 @@ Steps:
 
 For integration and live tests that require setup:
 
-1. **Check prerequisites** — required services, test databases, API keys. A missing key reaches the tool by an [input route](../references/proportionate-caution.md#secret-input), never through the chat. A command of the privileged class runs through the [privileged runner](../references/proportionate-caution.md#privileged-commands); a subagent relays it.
+1. **Check prerequisites** — required services, test databases, API keys. A missing key reaches the tool by an [input route](../references/proportionate-caution.md#secret-input), never through the chat. A command of the privileged class runs through the [privileged runner](../references/proportionate-caution.md#privileged-commands); a subagent calls it only for an operation of an [access channel](../references/access-channels.md#roles) that lists its role, else relays it.
 2. **Prepare test environment** — fixtures, seed data, mock servers.
 3. **Run the scenario** — capture output, logs, timing.
 4. **Verify results** — compare against spec expectations.

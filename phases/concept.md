@@ -38,6 +38,7 @@ Before creating a new concept, answer these questions. If any answer is unclear 
 - [ ] **What already exists?** Search existing concepts and codebase for overlapping solutions (see Reuse Check below).
 - [ ] **What is the rollback strategy?** How to undo this if it fails or is deprecated. Record in "1.2 Design Constraints".
 - [ ] **Who will maintain this?** Which role, team, or module is responsible long-term.
+- [ ] **Which access does it need?** A resource with a credential or a privilege → a channel card in `4.3 Access Channels` and a `proposed` Design Decisions record per card and per `named-hard-floor` operation ([Access Channels](../references/access-channels.md#sanction)).
 
 **Answers must rest on verified knowledge, not guesses.** If a critical answer depends on something nobody has confirmed — an unfamiliar domain, an unverified capability, an unexplored solution space — run **[research](research.md)** (`/dev-flow research`) before authoring. Proceeding on an unverified assumption is a user decision: record it as an **open** Design Decision with a resolution trigger, never as silent confidence. The Concept → Spec gate checks this.
 

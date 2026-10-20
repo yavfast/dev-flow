@@ -72,6 +72,14 @@
 
 {What this concept exposes to the rest of the system (abstract contracts, not signatures).}
 
+### 4.3. Access Channels  {#C_XXX_04_03}
+
+<!-- Optional. Only when the concept needs a resource with a credential or a privilege.
+     One card per channel, each with a Design Decisions record (`proposed`), and one record
+     per `named-hard-floor` operation. See `references/access-channels.md` (dev-flow skill). -->
+
+{Channel `<id>`: resource (system, account, endpoint value, marks); source (kind, `reauth_command`, `identity`); operations (pattern, class, targets); roles; probe.}
+
 ## 5. Design Decisions  {#C_XXX_DEC}
 
 <!-- One record per material fork surfaced via Interview Mode. Delete this section

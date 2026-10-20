@@ -154,7 +154,7 @@ This is also where [`resume`](status.md#resume--re-enter-a-task-in-a-fresh-sessi
 
 1. Confirm: "No existing concept found for this. I'll start from concept phase."
 2. Execute: `/dev-flow concept` → `/dev-flow spec` → `/dev-flow plan` → **design sign-off** → `/dev-flow implement` → … → review → **commit sign-off**
-3. Follow all gate checks between phases; the checkpoints are skipped only under `Autonomy: full` in the task header ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)) — a [hard-floor](../references/proportionate-caution.md#hard-floor) action stops the work even then.
+3. Follow all gate checks between phases; the checkpoints are skipped only under `Autonomy: full` in the task header ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)) — a [hard-floor](../references/proportionate-caution.md#hard-floor) action stops the work even then, except a `named-hard-floor` operation of a sanctioned [access channel](../references/access-channels.md) — one with `content: per-run` still waits for its `confirm`; a needed channel sanction or `reauth-required` stops only that line of work.
 
 #### Scenario D — Documentation only
 

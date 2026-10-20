@@ -7,10 +7,10 @@
 - [Role Responsible](#role-responsible) — The Auditor role and the per-lens fan-out of the `code` scope
 - [When to Run](#when-to-run) — Sweep triggers: cadence, status-reported drift, hygiene caps, lagging headers/doc statuses; `code` cadence, reduced mode
 - [Guiding Principles](#guiding-principles) — Reconcile not fabricate, non-destructive, source-of-truth order, safe under contention, apply-safe/propose
-- [Procedure](#procedure) — Steps 1–9: inventory, reconcile, compact & reflect, dashboard, catalog, rules, skills, docs/cache (7a–7e), report, code
+- [Procedure](#procedure) — Steps 1–9: inventory, reconcile, compact & reflect, dashboard, catalog, rules, skills, docs/cache/access (7a–7f), report, code
 - [Report Structure](#report-structure) — Report templates: workspace/docs sweep (applied / harvested / proposed / flagged / clean) and the `code` scope summary
 - [Safety & Contention](#safety--contention) — What audit may rewrite (derived files, closed tasks) vs targeted-only edits on live task files; re-read before write
-- [Dry-Run](#dry-run) — What `--dry-run` covers (Steps 1–7e analysis + Step 8 report, no writes) and the `code` scope's preview-only equivalent
+- [Dry-Run](#dry-run) — What `--dry-run` covers (Steps 1–7f analysis + Step 8 report, no writes) and the `code` scope's preview-only equivalent
 - [Relation to Other Phases](#relation-to-other-phases) — Table of how audit reuses status, rule, skill, cache, propagate, research, review, onboard, implement/verify
 
 ## Purpose
@@ -217,6 +217,15 @@ Grouped with Steps 7a–7c as the **`docs` scope**. `docs/_index.md` is a **deri
 
 Apply the derived/index fixes directly; **propose** status changes, reciprocal-link fixes, and removals (per *apply-safe / propose-judgement*). Document *content* fixes route through [propagate](propagate.md) — audit reports the drift, it does not rewrite design documents.
 
+### Step 7f — Revise `access/` (under `all`, when `.dev_flow/access/` exists)
+
+Report-only; never sanction, narrow, suspend, or revoke a channel ([Access Channels](../references/access-channels.md)).
+
+1. **Journal chain** — each line of `journal.log` carries the `sha256` of the previous one; a break is a finding. `journal.log` is git-ignored by effect.
+2. **Manifest ↔ sanctions** — walk the git history of `channels.yaml`: every change of permission fields is either a sanction with its quote or a removal of whole operations, targets, or roles; anything else is a finding (an edit with a recomputed hash).
+3. **Stored secrets** — no secret in the project tree; a `masked-store` path lies outside it with mode `0700`.
+4. **Unused channels** — a `sanctioned` channel with no journal line for the task retention window (~30 days, [tasks index](../templates/tasks_index.md)); propose that the developer narrows or revokes it.
+
 ### Step 8 — Report
 
 Always end with a structured report (and in `--dry-run`, this is the *only* output — nothing is written). Apply the safe/derived changes directly; list the judgement calls as proposals awaiting confirmation. **Never commit** — present the changes and follow the standard approval rule.
@@ -361,7 +370,7 @@ For the **`code` scope** (Step 9) the output is the refactoring plan itself, sum
 
 ## Dry-Run
 
-`--dry-run` performs Steps 1–7e as analysis only and emits the Step 8 report without touching disk. The report distinguishes what *would* be applied from what would be proposed.
+`--dry-run` performs Steps 1–7f as analysis only and emits the Step 8 report without touching disk. The report distinguishes what *would* be applied from what would be proposed.
 
 The **`code` scope** is read-only w.r.t. source through the plan regardless of any flag — its `--dry-run` equivalent is **preview-only intent** (e.g. "audit code … preview plan"), which runs ParseIntent + RunAnalysis + Consolidate + ProducePlan and then *stops* without offering the hand-off. (ProducePlan still writes the plan + report to `.dev_flow/audit/` and updates the framework map; those are derived artifacts, not source.)
 

@@ -106,7 +106,7 @@ A fork the developer has not answered yet (no live channel, or recorded without 
 
 Each decision then ends in exactly one of these terminal states:
 
-- **Resolved (consensus)** — the developer picked an option (yours or their own). This is the default and the goal for production work. Written `resolved (delegated)` when the agent settled it under `Autonomy: full`; that state never closes a hard-floor question. Record the chosen option **and its rationale**, and note the rejected alternatives so the choice isn't silently re-opened later.
+- **Resolved (consensus)** — the developer picked an option (yours or their own). This is the default and the goal for production work. Written `resolved (delegated)` when the agent settled it under `Autonomy: full`; that state never closes a hard-floor question — nor the record of an [access channel](access-channels.md#sanction) card or a `named-hard-floor` operation, which waits for the developer while only its line of work waits. Record the chosen option **and its rationale**, and note the rejected alternatives so the choice isn't silently re-opened later.
 
 - **Open (documented alternatives)** — the developer chooses to keep options open. Legitimate for **research / exploratory** work, or when a decision genuinely depends on information that doesn't exist yet. This is **not** a license to defer by default. An open decision is only acceptable if it records:
   - the candidate options with their trade-offs, **and**

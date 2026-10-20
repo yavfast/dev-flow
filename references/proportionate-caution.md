@@ -1,6 +1,6 @@
 # Proportionate Caution — The Hard Floor, Secrets, and the Proportionality Block
 
-Cross-cutting discipline of **every phase**. Not a pipeline stage, no command. Size caution to the consequence of an action, not to the action. The **hard floor** is the closed set of consequences that always need the developer's word now; no declaration, manifest, or autonomy mode relaxes it. A seen secret is an incident only in a place where secrets never live, and the agent never puts a secret value there. A secret that the agent needs comes from the developer by an input route outside the chat. A privileged or remote command runs only through the privileged runner of the project. A relaxation of a listed row kind leaves a row in the **proportionality block**, which the developer checkpoints show.
+Cross-cutting discipline of **every phase**. Not a pipeline stage, no command. Size caution to the consequence of an action, not to the action. The **hard floor** is the closed set of consequences that always need the developer's word now; no autonomy mode or unsanctioned declaration relaxes it — only a `named-hard-floor` operation of a sanctioned access channel carries that word in advance, for role `main`. A seen secret is an incident only in a place where secrets never live, and the agent never puts a secret value there. A secret that the agent needs comes from the developer by an input route outside the chat. A privileged or remote command runs only through the privileged runner of the project. A relaxation of a listed row kind leaves a row in the **proportionality block**, which the developer checkpoints show.
 
 ## Contents
 
@@ -9,14 +9,14 @@ Cross-cutting discipline of **every phase**. Not a pipeline stage, no command. S
 - [Secrets](#secrets) — what a secret is; the closed list of places where secrets never live
 - [Seen and emitted secrets](#seen-and-emitted-secrets) — the reaction per event and place: continue, incident, refused, pasted
 - [Secret input](#secret-input) — a needed secret never asked for in the chat; the input routes in order of preference; subagent relay
-- [Privileged commands](#privileged-commands) — the privileged class; the runner, its boundary and steps; adequacy; projects with constant privileged work
+- [Privileged commands](#privileged-commands) — the privileged class; the runner, its boundary and steps; adequacy; sanctioned channels; projects with constant privileged work
 - [Proportionality block](#proportionality-block) — the task-file section: record forms, row kinds, append, created records, showing, archive
-- [Autonomy](#autonomy) — what `Autonomy: full` skips and what still stops the work, secret input and the runner `confirm` included
+- [Autonomy](#autonomy) — what `Autonomy: full` skips and what still stops the work, secret input, the runner `confirm`, and channel sanctions included
 - [Boundaries](#boundaries) — what this discipline does not change
 
 ## Hard floor
 
-An action with any of these consequences needs the **developer's word now** — not a row in the block, not a delegated decision. Classify from facts: which system, which data, whether a recovery exists.
+An action with any of these consequences needs the **developer's word now** — not a row in the block, not a delegated decision; a `named-hard-floor` operation of a sanctioned [access channel](access-channels.md#operations), role `main`, carries it in advance. Classify from facts: which system, which data, whether a recovery exists.
 
 | Consequence | The action has it when |
 |-------------|------------------------|
@@ -25,7 +25,7 @@ An action with any of these consequences needs the **developer's word now** — 
 | `money` | It triggers a payment, a subscription, or billing — also for an entity the task created |
 | `outward-message` | It sends an email, an SMS, a push notification, or a chat message to a real person |
 | `irreversible-destruction` | It discards content that cannot be recovered: a reset of uncommitted changes (`reset --hard`, `checkout --`, `restore`, `stash drop`), or a file removal or a replacement of the whole content, when the current task did not write that content and vcs history does not hold it. Or it deletes data outside a confirmed test target, and that data cannot be recovered |
-| `access-relaxation` | Without the developer's confirmation, it removes or bypasses a command gate, widens the permissions of the agent runtime, or creates or changes a proxy, an access-manifest entry, or the privileged runner ([Privileged commands](#privileged-commands)) |
+| `access-relaxation` | Without the developer's confirmation, it removes or bypasses a command gate, widens the permissions of the agent runtime, sanctions or widens an [access channel](access-channels.md#sanction), or creates or changes the privileged runner ([Privileged commands](#privileged-commands)). A `proposed` channel entry and a narrowing are not a relaxation |
 
 **Not a consequence:**
 
@@ -60,6 +60,8 @@ Decide per action, from its consequences and the caller:
 | none | any | `proceed` |
 | one or more | subagent | `relay` — do not perform the action; hand it to the initiator |
 | one or more | main agent | `ask-now` — under any `Autonomy` |
+
+A `named-hard-floor` operation of a sanctioned [access channel](access-channels.md#operations), called by role `main`, carries the developer's word given in advance for that one operation: `proceed`.
 
 `ask-now` is an [Interview Mode](interview-mode.md) question now, whatever its entry criteria say. It names the action, its consequences, and the unestablished facts. The answer covers the named action only.
 
@@ -136,11 +138,7 @@ Never run a command of the privileged class directly — also not as a retry aft
 
 Not in the class: git transport (`fetch`, `pull`, `push`, `clone`); a package manager that fetches project dependencies; a read of a public HTTP resource; local containers; commands to `localhost` / loopback — this exclusion wins over the `remote-access` list, decided from what `ssh -G <host>` resolves (hostname, user, `ProxyJump`, `ProxyCommand`), not from the command text; it does not apply to a login as another user (a user other than the current one by `user@`, `-l`, `-o User`, or `ssh` config; any `root`) or through a proxy and a loopback port that forwards to a remote host (an `ssh -L` tunnel, `kubectl port-forward`), which counts as that host; a subcommand with no remote endpoint (`helm template` / `lint`, `kubectl kustomize`, `kubectl config view`, `--dry-run=client`).
 
-**The runner** — a project tool that you write on demand, never a skill file. It holds no secret. Its `boundary` block holds:
-
-- allowed hosts and contexts; path prefixes for privileged writes; the allowed `ssh` `-o` options;
-- `read_only` — remote read commands as full `argv` patterns with their allowed flags (for example `kubectl get pods -n <ns>`, `ssh <host> journalctl -u <unit> -n <N>`), each with the developer's declaration `personal_data: none | present`;
-- `routine` — entries `{argv_pattern, targets}`, targets as stable device paths (`/dev/disk/by-id/…`, `/dev/serial/by-id/…`) or device-host addresses; for a helper with its target fixed inside, the entry supplies the target. An `elevation` entry names only a root-owned helper. No entry names a shell, an interpreter, a wrapper, an editor, a pager, or a program that runs code or a config from a path that you can write (a build tool, a project script, a tool with a script config such as `openocd -f`).
+**The runner** — a project tool that you write on demand, never a skill file. It holds no secret. Its `boundary` block holds the allowed hosts and contexts, the path prefixes for privileged writes, and the allowed `ssh` `-o` options. The operations that run without `confirm` are not in the runner: they live in the manifest of the [access channels](access-channels.md#operations).
 
 A pattern is anchored and has a fixed length: one element per position; a placeholder (`<…>`) covers one element, and the value it matches never starts with `-`.
 
@@ -150,8 +148,8 @@ The runner takes `argv` (an argument array, not a shell string), `target`, `reas
 
 | Step | Does | On failure |
 |------|------|------------|
-| `check` | Derives every target from `argv` (host, context, device, write path) and refuses a mismatch with `target`. Refuses: a shell or a session under elevation (`sudo -s` / `-i`, `su` without `-c`, `ssh` without a command — `-N` with port forwarding excepted); as the privileged program, a shell, an interpreter, a wrapper (`env`, `xargs`, `find -exec`, `nice`, `timeout`, `nohup`, `chroot`, `systemd-run`, `script`), an editor, or a pager — an edit goes through `sudoedit`; in every argument that a remote shell parses (the `ssh` / `mosh` remote command, a remote path of `scp` / `rsync`, `rsync -e` / `--rsh` / `--rsync-path`), a shell metacharacter (`` ; & \| $ ` < > ( ) * ? ~ { } ' " \ # ``, whitespace inside an element, or a newline); an `ssh` `-o` / `-F` option outside `boundary`; a secret in `argv`; a target outside `boundary`; access widening (a write path to `sudoers`, PAM, `/etc/group`, `/etc/passwd`, `/etc/shadow`; a user added to a group; recursive `chmod` / `chown` outside `boundary`); destruction outside `boundary` (`rm -r` of the root or a system path, `dd` to a device, `mkfs`, `flashrom`) — not refused for a target of a matching `routine` entry; a change of the runner | `refused: <reason>` |
-| `confirm` | Shows `argv`, `target`, `reason`, `impact`, and the `check` result in a dialog of the current graphical session — on `/dev/tty` only when the developer runs the runner; never from stdin; the developer confirms or declines there, in the same place as the password. Every time, also under `NOPASSWD`. Skipped only for: `remote-access` without `elevation` that matches `read_only` on an allowed target; `argv` that matches a `routine` entry | `declined` |
+| `check` | Derives every target from `argv` (host, context, device, write path) and refuses a mismatch with `target`. Refuses: a shell or a session under elevation (`sudo -s` / `-i`, `su` without `-c`, `ssh` without a command — `-N` with port forwarding excepted); as the privileged program, a shell, an interpreter, a wrapper (`env`, `xargs`, `find -exec`, `nice`, `timeout`, `nohup`, `chroot`, `systemd-run`, `script`), an editor, or a pager — an edit goes through `sudoedit`; in every argument that a remote shell parses (the `ssh` / `mosh` remote command, a remote path of `scp` / `rsync`, `rsync -e` / `--rsh` / `--rsync-path`), a shell metacharacter (`` ; & \| $ ` < > ( ) * ? ~ { } ' " \ # ``, whitespace inside an element, or a newline); an `ssh` `-o` / `-F` option outside `boundary`; a secret in `argv`; a target outside `boundary`; access widening (a write path to `sudoers`, PAM, `/etc/group`, `/etc/passwd`, `/etc/shadow`; a user added to a group; recursive `chmod` / `chown` outside `boundary`); destruction outside `boundary` (`rm -r` of the root or a system path, `dd` to a device, `mkfs`, `flashrom`) — not refused for a target of the matching `routine` operation of a sanctioned channel; a change of the runner | `refused: <reason>` |
+| `confirm` | Shows `argv`, `target`, `reason`, `impact`, and the `check` result in a dialog of the current graphical session — on `/dev/tty` only when the developer runs the runner; never from stdin; the developer confirms or declines there, in the same place as the password. Out of channel, every time, also under `NOPASSWD`. Skipped only for a call that matches an operation of a sanctioned channel in an allowed role, not one with `content: per-run` ([Access Channels](access-channels.md#the-runner-in-channel-mode)) | `declined` |
 | `execute` | `elevation`: `sudo -A -k` with `SUDO_ASKPASS`, or `pkexec`; no verbose or trace flags. `remote-access`: `native-auth` or askpass ([Secret input](#secret-input)); each element of the `ssh` remote command is quoted for the remote shell separately (`printf %q`) | exit code |
 
 The runner calls `sudo`, `ssh`, and the dialog tool by absolute path; a Python runner runs with `-I`.
@@ -159,19 +157,19 @@ The runner calls `sudo`, `ssh`, and the dialog tool by absolute path; a Python r
 Read only the result: `refused`, `declined`, or the exit code and the output.
 
 - **Adequacy** — before you call the runner, make sure that the command is necessary for the task Intent, that it is the narrowest one (restart one unit, not reboot the machine), and that `impact` is true and complete. Else narrow the command or complete `impact`.
-- **Hard floor** — a consequence on the hard floor (for example, `production-write`) is still asked now in the chat; the runner then confirms the exact command. A `read_only` read is `real-data` unless its entry declares `personal_data: none`.
+- **Hard floor** — a consequence on the hard floor (for example, `production-write`) is still asked now in the chat, and the runner then confirms the exact command — except a `named-hard-floor` operation of a sanctioned channel, which is not asked; the runner confirms it only when it carries content (`content: per-run`). A `read` operation with `personal_data: present` exists only as `named-hard-floor`.
 - **Never feed `confirm`** — no pipe, no pty, no input automation.
 - **No graphical session** — give the developer the runner command for their own terminal.
 - **No runner** — propose to write it (the developer's word now), or give the developer the command for their own terminal.
-- **Subagent** — never call the runner. Hand `argv`, `target`, `reason`, and `impact` to the initiator.
-- **`Autonomy: full`** — `confirm` still waits for the developer; `read_only` and `routine` do not, except a hard-floor ask.
+- **Subagent** — call the runner only for an operation of a channel that lists your role, and pass the role (never `main`). Else hand `argv`, `target`, `reason`, and `impact` to the initiator.
+- **`Autonomy: full`** — `confirm` still waits for the developer; an operation of a sanctioned channel does not, except one with `content: per-run`.
 - **Never** change `sudoers`, groups, or udev rules yourself — give the exact lines to the developer.
 
 **Projects with constant privileged work** (firmware, debugging on real devices, system images):
 
 - First remove the elevation. When the privilege is needed only for device access (a programmer, a serial port, a USB drive), propose a one-time udev rule or group (`dialout`, `plugdev`); the developer runs the lines. After that the command (`openocd`, `esptool`, `dfu-util`) is outside the class and runs directly.
-- What stays privileged goes into `routine` as a helper. Propose a root-owned helper per routine operation in a directory that you cannot write (`/usr/local/sbin/`), with its target and input path fixed inside, and one `sudoers` `NOPASSWD` line for it: the absolute path of the helper, exact arguments or none, never a wildcard. Never a `NOPASSWD` line for `dd`, `cp`, `tee`, `mount`, an editor, a pager, a shell, an interpreter, `env`, or `find`. The developer installs the helper and the line; the `routine` entry names the same helper.
-- Propose this setup when the project concept or `_framework.md` describes work with devices or system images, or when a privileged command of the same shape recurs in the task.
+- What stays privileged becomes a `routine` operation of a channel to the local machine with a `root-helper` source. Propose a root-owned helper per routine operation in a directory that you cannot write (`/usr/local/sbin/`), with its target and input path fixed inside, and one `sudoers` `NOPASSWD` line for it: the absolute path of the helper, exact arguments or none, never a wildcard. Never a `NOPASSWD` line for `dd`, `cp`, `tee`, `mount`, an editor, a pager, a shell, an interpreter, `env`, or `find`. The developer installs the helper and the line; the operation names the same helper.
+- Propose this setup, as a channel card, when the project concept or `_framework.md` describes work with devices or system images, or when a privileged command of the same shape recurs in the task.
 
 ## Proportionality block
 
@@ -213,7 +211,7 @@ A row is **open** until an answer with the same `kind`, `ref`, and occurrence ex
 
 **Show the block** at the design sign-off, at the commit sign-off, in the final report under `Autonomy: full`, and in the [audit](../phases/audit.md) report for the open rows of a closed task:
 
-- No open rows → show nothing.
+- No open rows → show nothing of the block. The [channel report](access-channels.md#journal-and-report) goes with it whenever the report is not empty.
 - Show one fragment in the `chat` register ([Output Styles](output-styles.md)); each line is self-contained. Per kind: the newest open rows first, up to `render_max` = 10, then one line `N more — the Proportionality section of the task file`.
 - Final report: the fragment only. No questions, nothing goes to an owner.
 - Audit report: one fragment per closed task; answers apply as at a sign-off.
@@ -228,11 +226,12 @@ A row is **open** until an answer with the same `kind`, `ref`, and occurrence ex
 ## Autonomy
 
 - Under `Autonomy: full` the developer checkpoints are skipped, as [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints) states. The block goes into the final report, without questions.
-- An action with a hard-floor consequence stops the work even then: `ask-now` does not depend on `Autonomy`.
+- An action with a hard-floor consequence stops the work even then: `ask-now` does not depend on `Autonomy`. A `named-hard-floor` operation of a sanctioned channel is the exception: its answer was given in advance; one that carries content still waits for its `confirm`.
 - A needed secret waits for the developer's input even then ([Secret input](#secret-input)).
-- The `confirm` step of the privileged runner waits for the developer even then ([Privileged commands](#privileged-commands)).
+- The `confirm` step of the privileged runner waits for the developer even then ([Privileged commands](#privileged-commands)); an operation of a sanctioned channel does not need it, except one with `content: per-run`.
+- A channel sanction and a `reauth-required` wait for the developer even then; only that line of work waits ([Access Channels](access-channels.md#sanction)).
 - `resolved (delegated)` never closes a hard-floor question.
-- A confirmation that another discipline requires (a field of a test recipe, an access target) is not asked under `full`. Until it exists, the strict default applies.
+- A confirmation that another discipline requires (a field of a test recipe) is not asked under `full`. Until it exists, the strict default applies. A channel sanction is not such a confirmation.
 
 ## Boundaries
 

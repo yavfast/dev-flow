@@ -51,6 +51,7 @@ For the periodic whole-directory revision see the [audit phase](audit.md): `stat
 ├── profile/                   # user.md (consent required) + environment.md (announced) — developer/machine adaptation facts (Adaptation Profile); gitignored, created lazily
 ├── cache/                     # Durable resources (Figma exports, downloads, baselines) + _index.yaml (Resource Cache)
 ├── tools/                     # run-privileged — the privileged runner (Proportionate Caution); written on demand with the developer's word; never a secret
+├── access/                    # channels.yaml — sanctioned access channels (committed, no secrets); journal.log — hash-chained call journal (gitignored) (Access Channels)
 ├── evidence/                  # ledger.yaml — intervention ledger (Evidence Discipline); absent → reconcile is a no-op
 ├── tasks/
 │   ├── _index.md              # Catalog of task files
