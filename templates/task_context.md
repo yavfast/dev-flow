@@ -65,9 +65,9 @@ A subtask is a thread of work claimed by one contributor. To join this task, add
      prescribed fix). Round 1 is always `full`, and a `must` or security finding never
      gets a `confirm` round. See `references/verification-economy.md`. -->
 
-| Round | Scope | Mode | Baseline | Verdict | Carry-over (identity → recurrence) |
-|-------|-------|------|----------|---------|-------------------------------------|
-| 1 | full (no-baseline) | full | `<tree-ref>` | FAIL | `src/x.ts:41#logic:null` → 1 |
+| Round | Scope | Mode | Baseline | Verdict | Carry-over (identity → recurrence[, bypassed list]) |
+|-------|-------|------|----------|---------|------------------------------------------------------|
+| 1 | full (no-baseline) | full | `<tree-ref>` | FAIL | `src/x.ts:41#logic:null` → 1 · `src/gate.ts:12#security:null` → 1, `SKIP_CONFIRM — src/gate.ts:5` |
 | 2 | delta | confirm | `<tree-ref>` | PASS | — |
 
 **Always in scope:** {areas declared `Criticality: critical` — read every round regardless of the delta, or "—"}

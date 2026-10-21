@@ -76,7 +76,7 @@ The ledger of what was read — target, state reference, time, extent — lives 
 
 `confirm` is a mechanical check in the main context: the diff matches the prescribed fix and the tests that were green are still green. No clean-context reviewer is spawned. Any discriminator false or undeterminable → `full`, the current procedure.
 
-**A confirm round that does not confirm escalates.** If the diff does not do what the finding prescribed, or a previously green test is not green, the round **replays as `full`** with the clean-context reviewer. A `confirm` round has two outcomes only — the finding closes, or the full round runs. It never closes a finding it did not confirm.
+**A confirm round that does not confirm escalates.** If the diff does not do what the finding prescribed, or a previously green test is not green, the round **replays as `full`** with the clean-context reviewer. A `confirm` round has two outcomes only — the finding closes, or the full round runs. It never closes a finding it did not confirm. A finding with a `bypassed_list` confirms only when the diff changes the path; a list member alone replays the round as `full` ([List bypass](review-convergence.md#list-bypass--fix-the-path-not-the-list)).
 
 The first pre-commit review round is always `full`. The same discriminator set scopes the [verify](../phases/verify.md) fix cycle.
 

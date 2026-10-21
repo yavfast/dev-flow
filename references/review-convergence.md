@@ -2,7 +2,7 @@
 
 Cross-cutting sub-procedure of [review](../phases/review.md) (reads), [concept](../phases/concept.md) and [specification](../phases/specification.md) (declare), [todo](../phases/todo.md) (receives), and [audit](../phases/audit.md) (grooms). Not a pipeline stage and no command.
 
-It bounds the `Review → fix → re-Review` loop with a **declared criticality** the reviewer reads instead of judging, a **recurrence limit** on a single finding, and an **incremental round scope**.
+It bounds the `Review → fix → re-Review` loop with a **declared criticality** the reviewer reads instead of judging, a **recurrence limit** on a single finding, a **path rule** for a finding that got past a closed list, and an **incremental round scope**.
 
 Advisory throughout — the Review→Verify gate criteria are unchanged. What changes is which findings can reach `blocking`.
 
@@ -62,6 +62,17 @@ Symmetric twin of the `verifier-rubber-stamp` tripwire in [Application Enforceme
 
 Round count is bounded by (distinct `must` + security findings, each of which someone must fix) + 2.
 
+## List bypass — fix the path, not the list
+
+A finding where a case got past a closed list — allow-list, no-confirm operation list, pattern, class signs — names that list in `bypassed_list` (name + `file:line` of its definition).
+
+The fix the reviewer prescribes, and the only fix that closes the finding, **changes the path**:
+
+- the case takes a route where the list is not the defence — a secret through an [input route](proportionate-caution.md#secret-input), a privileged command through the [project runner](proportionate-caution.md#privileged-commands); or
+- the decision derives from the operation itself (`argv`, target, actual content), not from a declared field, and a case the list does not recognise falls into the stricter branch.
+
+A fix whose only change to the decision is a member added to or removed from the list does not close the finding: it stays open under the same identity. A member beside a path change is fine — the list stays a signal. No path outside the list → [Upstream Escalation](escalation.md): the developer changes the design or declares the list the defence in a decision record of the owning document (the task file when there is none); only then does a fix that adds the member covering the case close the finding.
+
 ## The `contested` route
 
 A tripped or `deferrable` finding leaves the loop as a todo record of flavor `contested`, beside `candidate` and `queued`. It carries **both** readings, the reviewer's and the author's, so the next session does not re-derive the argument.
@@ -76,7 +87,7 @@ Name every routed record in the review report. Silent deferral is a report-ceili
 
 ## Incremental round scope
 
-Round state is written into the task file at the **close** of a round: `baseline` (tree state), `carry_over` (open blocking findings + their recurrence), `always_in_scope`.
+Round state is written into the task file at the **close** of a round: `baseline` (tree state), `carry_over` (open blocking findings + their recurrence and bypassed list), `always_in_scope`.
 
 Round 1, and any round with a full reason, reads everything. Full reasons: no reachable baseline · upstream spec/plan/rules changed · change class `architectural`.
 

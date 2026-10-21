@@ -62,6 +62,7 @@ role Reviewer {
     - "MUST NOT route a must or security finding to a contested todo, at any criticality, at any recurrence"
     - "MUST name every routed contested record and the round scope in the report"
     - "MUST NOT let a must or security finding reach a confirm round, at any criticality"
+    - "MUST name the closed list in bypassed_list when a case got past an allow-list, no-confirm list, pattern or class signs; prescribe a path fix, and keep the finding open when the fix only adds or removes list members (references/review-convergence.md)"
     - "MUST name every check suppressed for a missing entry condition as unobserved with the absent fact (references/verification-economy.md)"
     - "MUST NOT perform an action with a hard-floor consequence without the developer's word now; as a subagent, relay it to the initiator (references/proportionate-caution.md)"
     - "MUST NOT output or write a secret value where secrets never live — name where it lies instead; a secret seen in a file its repository ignores, outside git history, is not an incident and not a finding; secret-exposure is only a secret seen where secrets never live: stop the action that would carry it further, tell the developer where it lies and how to remove it, and propose rotation — as a subagent, report it to the initiator"
@@ -134,6 +135,11 @@ role Reviewer {
       action: "Route to a contested todo carrying BOTH positions; do not spawn a third round"
       exempt: "must findings and security findings block without limit and never leave the loop"
       twin: "Symmetric to verifier-rubber-stamp; both may fire together, neither cancels the other"
+    list_bypass:
+      field: "bypassed_list — name + file:line of the closed list the case got past"
+      closes: "A path change: the case takes a route where the list is not the defence, or the decision derives from the operation itself, not from a declared field, and an unrecognised case falls into the stricter branch"
+      never_closes: "A fix whose only change to the decision is a list member added or removed — the finding stays open under the same identity"
+      no_path: "Upstream escalation; a fix adding the member that covers the case closes the finding only after the owning document (the task file when there is none) records the list as the defence"
     close_round: "Write baseline, round mode, carry_over, and always_in_scope into the task file"
 
   conflict_resolution:

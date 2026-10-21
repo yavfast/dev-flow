@@ -65,7 +65,7 @@ Findings carry a computed **materiality**, a recurring non-`must` finding trips 
 
 4. **Review result:**
    - **Pass** — proceed to commit approval.
-   - **Fail (blocking)** — fix issues, re-run tests if needed, then re-review. Select the repeat round's mode first: a contained fix of a prescribed finding that is neither `must` nor a security class is a `confirm` round in the main context, everything else spawns the clean-context reviewer. A `confirm` round that does not confirm replays as `full` — it never closes a finding it did not confirm. See [Verification Economy](../references/verification-economy.md). A non-`must` blocking finding that recurs unresolved into a second round trips `review-non-convergence` and routes to a `contested` todo instead of a third round.
+   - **Fail (blocking)** — fix issues, re-run tests if needed, then re-review. Select the repeat round's mode first: a contained fix of a prescribed finding that is neither `must` nor a security class is a `confirm` round in the main context, everything else spawns the clean-context reviewer. A `confirm` round that does not confirm replays as `full` — it never closes a finding it did not confirm. See [Verification Economy](../references/verification-economy.md). A non-`must` blocking finding that recurs unresolved into a second round trips `review-non-convergence` and routes to a `contested` todo instead of a third round. A finding with a `bypassed_list` is fixed by changing the path, not by a list member alone unless the owning document records the list as the defence; no path → upstream escalation ([List bypass](../references/review-convergence.md#list-bypass--fix-the-path-not-the-list)).
    - **Warnings only** — present warnings to the user, proceed if user approves.
 
 5. **Report format:**
@@ -76,7 +76,7 @@ Findings carry a computed **materiality**, a recurring non-`must` finding trips 
    **Result:** PASS / FAIL / WARNINGS
 
    ### Blocking Issues
-   - [ ] {issue description} — {file:line} — severity {must|should}, criticality {value|unstated}, recurrence {n}
+   - [ ] {issue description} — {file:line} — severity {must|should}, criticality {value|unstated}, recurrence {n}{, bypassed list {name — file:line}}
 
    ### Warnings
    - {warning description} — {file:line} — advisory under criticality {value|unstated}
@@ -94,7 +94,7 @@ Findings carry a computed **materiality**, a recurring non-`must` finding trips 
 
    A check the reviewer could not evaluate, or did not open for a missing entry condition ([Verification Economy](../references/verification-economy.md)), is listed as `unobserved` with the absent fact — it is neither a pass nor a warning, and never omitted. Every routed record is named; a silently deferred finding is a report-ceiling violation. The summary claims no more than the evidence supports. See [Evidence Discipline](../references/evidence-discipline.md).
 
-6. **Close the round.** Write `baseline` (tree state), the round mode, `carry_over` (open blocking findings + recurrence), and `always_in_scope` into the task file, so the next round scopes from them.
+6. **Close the round.** Write `baseline` (tree state), the round mode, `carry_over` (open blocking findings + recurrence + bypassed list), and `always_in_scope` into the task file, so the next round scopes from them.
 
 ## After Review: Verify Phase
 
