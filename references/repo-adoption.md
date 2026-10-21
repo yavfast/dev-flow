@@ -9,10 +9,10 @@ Adoption documents are **advisory**: no traceable ID, no validation gate, not a 
 ## Contents
 
 - [Command](#command) — `/dev-flow adopt <repo>` with `--subpath` and `--readopt`, recognized aliases, freeform routing via do
-- [What a run may write](#what-a-run-may-write) — Closed write list (adoption concept + document, `ext_repos/`, `.gitignore`, `.dev_flow/**`) and what is never written
-- [Procedure](#procedure) — Steps 1–9: resolve, acquire workspace, run mode, source analysis, target context with records and the reconciliation of the previous document, verdicts, synthesis, write, report
+- [What a run may write](#what-a-run-may-write) — Closed write list (adoption concept + document, `ext_repos/`, `.gitignore`, `.dev_flow/**`), what is never written, and the working-directory rule
+- [Procedure](#procedure) — Steps 1–9: resolve, acquire workspace with the source stamp, run mode, source analysis, target context with records and the reconciliation of the previous document, verdicts, synthesis, write, report with the source check
 - [Edge cases](#edge-cases) — Situation → behaviour table: self-analysis, unreachable URL, non-git source, dirty clone, collisions, monorepo, large source, previous document, rejected item, problem with no record
-- [Delegation](#delegation) — Steps 4 and 6 may go to a read-only clean-context subagent returning concepts or verdicts, never files
+- [Delegation](#delegation) — Steps 4 and 6 may go to a read-only clean-context subagent, launched from the target root, returning concepts or verdicts, never files
 - [Boundary with the resource cache](#boundary-with-the-resource-cache) — Clones live in `ext_repos/`, not `.dev_flow/cache/`; `audit cache` does not curate them
 
 ## Command
@@ -27,7 +27,7 @@ Adoption documents are **advisory**: no traceable ID, no validation gate, not a 
 
 ## What a run may write
 
-A closed list. Anything outside it is a defect, not a judgement call.
+A closed list of writes in the target project. Anything outside it is a defect, not a judgement call.
 
 | Path | Operation | Condition |
 |------|-----------|-----------|
@@ -39,7 +39,7 @@ A closed list. Anything outside it is a defect, not a judgement call.
 
 No code, no specs, no plans, no `docs/_index.md`, no `.dev_flow/todos/` entry. Filing the high-relevance items as todos is the developer's call — the run names them in its report and stops.
 
-The source repository is never modified. `git pull` on a clone is the only write toward it, under the conditions in Step 2.
+The source repository is never modified. `git pull` on a clone is the only write toward it, under the conditions in Step 2. Never change the working directory into the source worktree: address it by absolute path or with `git -C <worktree>`. Step 9 checks the source by command.
 
 ## Procedure
 
@@ -62,10 +62,12 @@ Ensure `ext_repos/` is ignored *before* cloning: if `git check-ignore ext_repos/
 Then:
 
 - **Cloned** — clone into `ext_repos/<name>`. A clone failure (unreachable, private, network) stops the run with git's own message; never infer a repository's contents from its name.
-- **Tracked** — `git pull` only when the worktree is clean. A dirty tree skips the pull, analyzes the current state, and reports the fact. Never stash, reset, or checkout in someone else's repository.
+- **Tracked** — `git -C <worktree> pull` only when the worktree is clean. A dirty tree skips the pull, analyzes the current state, and reports the fact. Never stash, reset, or checkout in someone else's repository.
 - **Local path** — no refresh at all. The user's own worktree is not the command's to move.
 
 Record `<name>`, the HEAD commit, and the origin URL. A non-git directory records no commit — analysis still works, incrementality does not.
+
+Then, whatever the refresh did — also when it did nothing — create the source stamp once per run, outside the worktree, and keep its path in working memory: `mkdir -p /tmp/{project-slug}/scratch && touch /tmp/{project-slug}/scratch/adopt-<name>_<YYYYMMDD_HHMMSS>.stamp`. Step 9 checks the source against it.
 
 ### Step 3 — Pick the run mode
 
@@ -171,7 +173,15 @@ Writing rules:
 
 ### Step 9 — Report
 
-Both artifact paths · run mode and whether the adoption document was created, updated, or left unchanged · `<name> @ commit` with origin and how the worktree was acquired · how the verdicts distributed · the cheapest high-relevance win (or a plain statement that there is none) · and the boundary: what was written, and that nothing outside it was — including that no todo was filed.
+Both artifact paths · run mode and whether the adoption document was created, updated, or left unchanged · `<name> @ commit` with origin and how the worktree was acquired · how the verdicts distributed · the cheapest high-relevance win (or a plain statement that there is none) · and the boundary: what was written, and that nothing outside it was — including that no todo was filed · and the source check, with its command and output:
+
+```
+find <worktree> -name .git -prune -o -newer <stamp> -print
+```
+
+- Empty output — nothing in the worktree, outside `.git`, changed after the stamp.
+- Listed paths — each is a change to the source during the run. Name each in the report and remove nothing: the developer decides.
+- No stamp, or the check did not run — the source claim is `unobserved`; give the reason.
 
 Offer, without doing it, the next steps that make sense: adding the document to `docs/_index.md`, and the pipeline phase each high-relevance item would start from.
 
@@ -199,7 +209,7 @@ Offer, without doing it, the next steps that make sense: adding the document to 
 
 ## Delegation
 
-Steps 4 and 6 are the expensive ones. When the source is large enough to flood the main context, hand each to a **read-only clean-context subagent** briefed from this procedure — its return is the extracted concepts, or the verdicts, never the files it read. No base role ships for it: brief it with the relevant step above plus the target context from Step 5. See [Delegation for Focus](delegation.md).
+Steps 4 and 6 are the expensive ones. When the source is large enough to flood the main context, hand each to a **read-only clean-context subagent** briefed from this procedure — its return is the extracted concepts, or the verdicts, never the files it read. Launch it only while the working directory is the target root, and brief it to address the source by absolute path, never by `cd`. No base role ships for it: brief it with the relevant step above plus the target context from Step 5. See [Delegation for Focus](delegation.md).
 
 ## Boundary with the resource cache
 
