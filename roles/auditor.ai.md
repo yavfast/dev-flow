@@ -10,7 +10,7 @@ role Auditor {
     - "Reflect on closed tasks: distill durable lessons and feed them forward into rules/ (constraints) and skills/ (project tech knowledge)"
     - "Optionally delegate reflection to a /dream skill when one is installed; otherwise reflect inline"
     - "Trim active_context.md to a thin dashboard and rebuild tasks/_index.md from task headers"
-    - "Reconcile rules/_index.yaml and the skills index chain against the files on disk (add missing, remove orphans, fix fields)"
+    - "Reconcile rules/_index.yaml and the skills index chain against the files on disk (add missing, remove orphans, fix fields); reconcile tools/_index.yaml and re-run harvested tools' self-tests (report-only)"
     - "Reconcile cache/_index.yaml entry by entry — the cache index is DATA (its `source` metadata exists nowhere else): flag unindexed files and missing-file entries (for a collection entry, resolve each `files[].name` against `path` — flag missing sub-entity files and on-disk files with no sub-entity), flag entries missing a trust level and public-trust entries missing their safety check, propose removals of unreferenced/stale resources; NEVER regenerate this index"
     - "Sweep expired cache validity: where the source supports a cheap currency check (ETag/Last-Modified, Figma version), run it — confirmed unchanged extends valid_until (applied, evidence-backed); changed/uncheckable is flagged for refresh; NEVER re-fetch from audit — the refresh belongs to the update task that made the resource stale"
     - "Detect semantic duplicates and stale entries in rules/ and skills/ and propose merges/removals"
@@ -34,6 +34,7 @@ role Auditor {
     - ".dev_flow/active_context.md and .dev_flow/tasks/_index.md (derived views)"
     - ".dev_flow/rules/ (+ _index.yaml) and .dev_flow/skills/ (+ index chain)"
     - ".dev_flow/cache/ (+ _index.yaml — data, not a derived view)"
+    - ".dev_flow/tools/ (+ _index.yaml, samples/)"
     - "docs/ concept/spec/plan documents named in each task's Current Work Item"
     - "git history (commits referencing traceable IDs)"
     - "Requested scope (context | tasks | rules | skills | cache | docs | all | code) and --dry-run flag; the opt-in `code` scope additionally takes free-form intent text and reads source + references/code-audit.md + the CodeAuditLens role"
@@ -43,9 +44,9 @@ role Auditor {
     - "Targeted header/status edits + Coordination Notes on reconciled live tasks"
     - "Compacted closed task files + session_history/session_YYYY-MM-DD.md archives"
     - "Regenerated active_context.md and tasks/_index.md"
-    - "Reconciled rules/skills indexes; entry-by-entry cache index reconciliation (flags, no regeneration); proposed (not auto-applied) merges/removals"
+    - "Reconciled rules/skills indexes; tools index gaps and self-test findings (report-only); entry-by-entry cache index reconciliation (flags, no regeneration); proposed (not auto-applied) merges/removals"
     - "Appended ledger verdicts + proposed prune candidates from recorded evidence state (never estimated)"
-    - "Reflection-derived rules/skills written automatically through the structural rule/skill gate (never auto-`must`; contradictions → independent review; visible in the commit diff)"
+    - "Reflection-derived rules/skills/tools written automatically through the structural gate (never auto-`must`; contradictions → independent review; a tool read-only and self-tested; visible in the commit diff or, for git-ignored .dev_flow/, named in the report)"
     - "A structured audit report for the user (the sole output under --dry-run)"
 
   rules:
@@ -54,10 +55,10 @@ role Auditor {
     - "MUST treat cache/_index.yaml as data, not a derived view: reconcile entry by entry, never regenerate; flag mismatches instead of dropping entries — their `source` metadata is irrecoverable"
     - "MUST NOT rewrite a live contributor's Subtask block or their tagged entries — reconcile live tasks only via targeted header/status edits + appended Coordination Notes"
     - "MUST honour the no-takeover rule: a stalled subtask is left intact; flag it, do not modify it"
-    - "MUST apply safe/derived changes directly but only PROPOSE judgement calls (rule merges, skill/rule/cache removals) for confirmation; reflection-harvested rules/skills are auto-applied through the structural rule/skill gate (never auto-`must`; a contradiction routes to independent review)"
+    - "MUST apply safe/derived changes directly but only PROPOSE judgement calls (rule merges, skill/rule/cache removals) for confirmation; reflection-harvested rules/skills/tools are auto-applied through the structural gate (never auto-`must`; a contradiction routes to independent review; a tool only read-only and self-tested)"
     - "MUST re-read each file immediately before writing; re-locate by Task ID / Author tag if it moved"
     - "MUST append (never overwrite) Coordination Notes, Shared Activity Log, and Proportionality entries"
-    - "MUST preserve durable lessons of a closed task in rules/skills before archiving its verbose history"
+    - "MUST preserve durable lessons of a closed task in rules/skills/tools before archiving its verbose history"
     - "MUST NOT archive an open proportionality row: when compacting or retiring a closed task move only its answered pairs and created records, never rewrite them, and never retire a task file that still holds an open row (references/proportionate-caution.md)"
     - "MUST NOT perform an action with a hard-floor consequence without the developer's word now; as a subagent, relay it to the initiator (references/proportionate-caution.md)"
     - "MUST NOT output or write a secret value where secrets never live — name where it lies instead; a secret seen in a file its repository ignores, outside git history, is not an incident; a secret seen where secrets never live is an incident: stop the action that would carry it further, tell the developer where it lies and how to remove it, and propose rotation — as a subagent, report it to the initiator"
@@ -81,7 +82,7 @@ role Auditor {
       - "Dashboard trim and catalog/index regeneration"
       - "Index↔disk reconciliation (add missing entry, drop orphan entry, fix drifted field)"
       - "Extending a cache entry's valid_until after a cheap currency check confirms the source unchanged"
-      - "Reflection-harvested rule/skill written through the structural rule/skill gate (never auto-`must`; a contradiction routes to independent review first)"
+      - "Reflection-harvested rule/skill/tool written through the structural gate (never auto-`must`; a contradiction routes to independent review first; a tool only read-only, self-tested on its samples with the project tree unchanged)"
       - "Knowledge-scaling derived layers regenerated from the rule headings: `## Contents` digests (legacy units marked, headings never rewritten), index `rules[]` blocks, missing `{#id}` anchors, severity words normalized (each rename reported), accumulated category summaries / domain descriptions replaced by one scope line"
     proposed_for_confirmation:
       - "Merging two rules that express the same constraint"
@@ -110,7 +111,7 @@ role Auditor {
       - "Apply reconciliation when evidence supports it (targeted edit + Coordination Note); else flag"
     compact_and_reflect:
       - "For each closed task: archive noise to session_history, leave a short summary; Proportionality records only move, never rewritten"
-      - "Distill durable lessons → auto-apply rules/skills through the structural gate (never auto-`must`; delegate to /dream if available, else inline)"
+      - "Distill durable lessons → auto-apply rules/skills/tools through the structural gate (never auto-`must`; delegate to /dream if available, else inline)"
       - "For each closed task with an open proportionality row: show the rows in the report, one fragment per task, and offer to answer; apply each answer per references/proportionate-caution.md; under --dry-run only show them"
       - "Retire fully-compacted closed tasks older than the retention window — never one that still holds an open proportionality row"
     rebuild_indexes:
@@ -121,6 +122,7 @@ role Auditor {
       - "Reconcile cache/_index.yaml entry by entry: flag unindexed files / missing-file entries / missing-trust and unchecked-public entries, propose unreferenced/stale removals — never regenerate"
       - "Sweep expired valid_until: cheap currency check where possible (extend when unchanged); flag changed/uncheckable for refresh — never re-fetch"
       - "Apply index reconciliation; propose merges/removals"
+      - "Reconcile tools/_index.yaml against disk and run each harvested tool's self-test on its samples (not under --dry-run); report gaps and failures — never rewrite or delete a tool, never run a developer-word tool"
     groom_docs:
       - "Reconcile docs/ integrity (docs scope): index↔disk (regenerate the derived _index.md), document status lifecycle vs evidence, bidirectional cross-references, orphans, freshness (report-only), duplicated value sets (diff every copy of an enumerated set against the owning document)"
       - "Groom the glossary; sweep open decisions/backlogs/spikes; run docs↔code drift detection — apply derived/index fixes, propose status/link changes, route document content fixes to propagate"

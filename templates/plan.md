@@ -24,7 +24,7 @@
 
 ## Required Knowledge
 
-<!-- Rules/skills this plan's work must apply — the source of truth for the
+<!-- Rules/skills/tools this plan's work must apply — the source of truth for the
      per-burst Knowledge Activation (`references/application-enforcement.md`, dev-flow skill).
      Skill use / create / update are tracked items. Delete the section only
      if nothing applies. -->

@@ -33,7 +33,7 @@ Runs inside [Experience Capture](experience-capture.md)'s harvest, before a dura
 
 Directive, not blocking: it recommends and requires a recorded reason; the caller may still create the artifact. `covered` without a named covering artifact is invalid.
 
-Owner menu: `rule` · `skill` · `drop` · `none` (covered) · `needs-evidence`. `rule`, `skill` and `drop` mirror the harvest's own owner choice; `none` and `needs-evidence` are non-targets. **Narrowest durable owner wins; defaulting to `skill` is forbidden** — a `rule` carries a constraint, a `skill` a procedure, `drop` a narrow one-off.
+Owner menu: `rule` · `skill` · `tool` · `drop` · `none` (covered) · `needs-evidence`. `rule`, `skill`, `tool` and `drop` mirror the harvest's own owner choice; `none` and `needs-evidence` are non-targets. **Narrowest durable owner wins; defaulting to `skill` is forbidden** — a `rule` carries a constraint, a `skill` a procedure, a `tool` a deterministic check hand-rolled in at least two tasks or hand-rolled wrong, `drop` a narrow one-off. The covering artifact may be a tool from `.dev_flow/tools/_index.yaml`.
 
 ## Consumer 2 — the skill `check` field
 

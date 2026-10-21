@@ -362,6 +362,9 @@ your-project/
     │   ├── _index.yaml
     │   └── {domain}/
     │       └── {skill}.md
+    ├── tools/                      # Self-tested read-only checks harvested from hand-rolled runs + run-privileged
+    │   ├── _index.yaml
+    │   └── samples/{tool}/         # Known-good and known-bad samples of each tool's self-test
     ├── roles/                      # Project role overlays & specialists (optional)
     │   └── _index.yaml
     ├── evidence/                   # Intervention ledger (absent → reconcile no-op)

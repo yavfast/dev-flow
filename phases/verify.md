@@ -11,7 +11,7 @@
 - [Context Loading](#context-loading) — skill/rule/profile gates for the verified area plus per-burst re-activation with Pre-Action Marker
 - [Safe Testing Principle](#safe-testing-principle) — never damage user data: test accounts/entities, ask before real data, what counts as destructive
 - [Verification Workflow](#verification-workflow) — level-by-level procedure, fix cycle with `confirm`-scoped re-runs, upstream escalation, manual checklist
-- [Reflection — harvest verification lessons](#reflection--harvest-verification-lessons) — Transition Checkpoint: auto-apply rules/skills from failure modes and gotchas, never a `must`
+- [Reflection — harvest verification lessons](#reflection--harvest-verification-lessons) — Transition Checkpoint: auto-apply rules/skills/tools from failure modes, gotchas and hand-rolled checks, never a `must`
 - [Verification Result Reporting](#verification-result-reporting) — report table (levels, counts, unobserved, intent verdict, fix cycles); evidence discipline
 - [Gate Check (Verify -> Commit)](#gate-check-verify---commit) — checklist before commit, incl. reflection run and explicit commit sign-off
 - [Anti-Patterns](#anti-patterns) — skipping verification, partial fix cycles, coding around a disproved spec, unasked new scenarios
@@ -130,7 +130,7 @@ When in doubt, treat the operation as destructive. An operation with a [hard-flo
    - Re-run functional tests ([Test phase](testing.md)) on the fix.
    - Re-run code review ([Review phase](review.md)) on the fix.
    - Re-run the failed verification level and all subsequent levels.
-5. All verification passes → reflect (harvest rules/skills, auto-applied through the structural gate — see [Reflection](#reflection--harvest-verification-lessons) below) → proceed to commit approval.
+5. All verification passes → reflect (harvest rules/skills/tools, auto-applied through the structural gate — see [Reflection](#reflection--harvest-verification-lessons) below) → proceed to commit approval.
 
 ### Fix Cycle
 
@@ -195,8 +195,9 @@ Once verification passes, run the [Transition Checkpoint](../references/experien
 
 - **Rule from a recurring failure mode.** A regression that a convention would have prevented, a flaky-test pattern, an integration contract that needed a guard — write a rule automatically (default `should`; testing-area rules live under `.dev_flow/rules/testing.md`). See [Project Rules → Auto-discovery](../SKILL.md#project-rules).
 - **Skill from a verification gotcha.** A non-obvious environment setup, a sandbox/seed-data trick, a known-pitfall in a live integration — write/update a skill through the [skill phase](skill.md) non-triviality filter — never a fact about the developer or the machine, which belongs to `.dev_flow/profile/` under its consent regime ([Adaptation Profile](../references/adaptation-profile.md)) — a machine's own tooling and devices are profile facts, not skills.
+- **Tool from a hand-rolled check.** A deterministic check or operation hand-rolled in this and at least one earlier task, or hand-rolled wrong — write a read-only, self-tested tool in `.dev_flow/tools/` ([Experience Capture](../references/experience-capture.md#applying-experience--auto-apply-through-structural-gates)).
 
-**Auto-apply, no permission prompt** — written through the structural rule/skill gate; **never auto-write a `must`**, and route a would-be `must` or a contradiction to an [independent clean-context review](../references/delegation.md) first. Every write is visible in the commit diff. Then distill the segment (the noisy run output stays in the workspace, referenced by path), demote raw turns, and promote durable parts to the task file. See **[Experience Capture](../references/experience-capture.md)**.
+**Auto-apply, no permission prompt** — written through the structural rule/skill/tool gate; **never auto-write a `must`**, and route a would-be `must` or a contradiction to an [independent clean-context review](../references/delegation.md) first. Every write is visible in the commit diff. Then distill the segment (the noisy run output stays in the workspace, referenced by path), demote raw turns, and promote durable parts to the task file. See **[Experience Capture](../references/experience-capture.md)**.
 
 ## Verification Result Reporting
 
@@ -223,7 +224,7 @@ Before proceeding to commit:
 - [ ] Live tests pass or manual verification completed by user
 - [ ] If Verify found issues → fix → re-run Test (if exists) → Review → Verify — no fix cycle left incomplete
 - [ ] A failure that traces to the spec/plan itself is escalated upstream, not coded around (see [Upstream Escalation](../references/escalation.md))
-- [ ] Reflection checkpoint run — recurring failure modes harvested and auto-applied as rules/skills (see [Reflection](#reflection--harvest-verification-lessons))
+- [ ] Reflection checkpoint run — recurring failure modes harvested and auto-applied as rules/skills/tools (see [Reflection](#reflection--harvest-verification-lessons))
 - [ ] Ask the user for explicit commit approval — the commit sign-off of [Developer Checkpoints](../SKILL.md#developer-checkpoints)
 
 ## Anti-Patterns

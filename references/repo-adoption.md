@@ -104,7 +104,7 @@ Resolve each existing concept to `NEW` / `MODIFIED` / `REMOVED` / `NONE`, apply 
 
 ### Step 5 — Collect the target context (read-only)
 
-Whatever exists of: `docs/_index.md`, `docs/*.concept.md` / `*.sp.md` / `*.plan.md`, `docs/_glossary.md`, `docs/_framework.md`, `.dev_flow/rules/_index.yaml`, `.dev_flow/skills/_index.yaml`, root `README`/`CLAUDE.md`/`AGENTS.md`, the dependency manifest, the top-level layout, and the entry points.
+Whatever exists of: `docs/_index.md`, `docs/*.concept.md` / `*.sp.md` / `*.plan.md`, `docs/_glossary.md`, `docs/_framework.md`, `.dev_flow/rules/_index.yaml`, `.dev_flow/skills/_index.yaml`, `.dev_flow/tools/_index.yaml`, root `README`/`CLAUDE.md`/`AGENTS.md`, the dependency manifest, the top-level layout, and the entry points.
 
 Extract the traceable ID of everything the adoption document will cite. A missing source is not an error — collect what is there.
 

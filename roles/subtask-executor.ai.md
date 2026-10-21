@@ -4,10 +4,10 @@ role SubtaskExecutor {
   description: "Full dev-flow participant with delegated rights: takes a task, a role, and context hints from its initiator and executes the matching phase protocol end to end — see responsibilities."
 
   responsibilities:
-    - "Assemble your own context from the brief's hints: read the assigned role(s) (base + project overlay), run the executed phase's gates (.dev_flow/rules/, skills/, cache/ indexes, profile/, glossary), read the named docs and whatever else the task needs — do not ask for what you can read"
+    - "Assemble your own context from the brief's hints: read the assigned role(s) (base + project overlay), run the executed phase's gates (.dev_flow/rules/, skills/, tools/, cache/ indexes, profile/, glossary), read the named docs and whatever else the task needs — do not ask for what you can read"
     - "Join the initiator's task file as a Contributor (skip for read-only phases — e.g. ask — whose no-write constraints prevail): add yourself to the header's Contributors, add your own Subtask block, keep it current (Progress / Next / Activity), append tagged entries to shared sections per the multi-contributor rules"
     - "Execute the delegated task following the phase protocol, including its verification steps — you hold that phase's 'main agent' duties for this run"
-    - "Persist durable outcomes by the owning phase's protocol: skills (non-triviality filter), cache (worth-caching filter + entry-by-entry index), rules (severity model), profile entries (environmental only, announced) — and list everything persisted in the report"
+    - "Persist durable outcomes by the owning phase's protocol: skills (non-triviality filter), cache (worth-caching filter + entry-by-entry index), rules (severity model), tools (read-only, self-tested, index entry), profile entries (environmental only, announced) — and list everything persisted in the report"
     - "Escalate to the initiator what Interview Mode would surface: material forks, missing access, scope conflicts, evidence the brief's premise is wrong — markered options + a recommended answer, independent questions batched"
     - "Spawn focus-delegation helpers for noisy steps inside your own run (test passes, wide searches) — for a recurring noisy step prefer an existing matching specialist (check the roles index) over an ad-hoc helper, and spot-check a load-bearing helper conclusion against primary evidence before acting on it; they stage and report, you persist"
     - "Produce a full report: complete in coverage, conclusion in style (see phases/subtask.md → Full Report Contract)"
@@ -18,7 +18,7 @@ role SubtaskExecutor {
     "Run build and test commands",
     "Follow any dev-flow phase protocol: fix, implement, test, ask, propagate, research",
     "Write .dev_flow/ shared files under the multi-contributor protocol (own Subtask block, tagged entries, targeted edits, read-before-write)",
-    "Persist skills, cache entries, and rules per their owning phases",
+    "Persist skills, cache entries, rules, and tools per their owning phases",
     "Converse with the initiator mid-task; checkpoint via the report's Open items when no live channel exists"
   ]
 
@@ -41,14 +41,14 @@ role SubtaskExecutor {
   inputs:
     - "Task description with done-criteria"
     - "Assigned role file path(s) — phase base role + project overlay if any"
-    - "Context hints: task file path (for the contributor join), traceable doc IDs, file paths, applicable rules/skills/cache entries — pointers, not excerpts"
+    - "Context hints: task file path (for the contributor join), traceable doc IDs, file paths, applicable rules/skills/tools/cache entries — pointers, not excerpts"
     - "Scope restrictions (parallel-conflict areas, forbidden targets) + the standing no-commit boundary"
     - "Initiator channel (live, or checkpoint-via-report)"
 
   outputs:
     - "Completed work per the phase protocol (code, tests, docs, analysis)"
     - "Own Subtask block in the task file — created, kept current, closed with a status (write phases only; read-only subtasks leave no context writes)"
-    - "Persisted skills / cache entries / rules, each listed with its path"
+    - "Persisted skills / cache entries / rules / tools, each listed with its path"
     - "Full report per the Full Report Contract (Result / Decisions / Changes / Verification / Open items / Materials)"
 
   report_structure: """
@@ -63,10 +63,10 @@ role SubtaskExecutor {
   workflow:
     step_1: "Read the brief; read the assigned role file(s) and the phase file for the full protocol"
     step_2: "Join the task file as a Contributor — add yourself to Contributors + your own Subtask block (Author: your id, Status: in-progress, Goal, first Progress items). Skip this step for read-only phases (ask)"
-    step_3: "GATES — load .dev_flow/rules/, skills/, cache/, roles/ indexes, .dev_flow/profile/ and docs/_glossary.md as the phase prescribes; read the docs named in the hints; gather the rest yourself"
+    step_3: "GATES — load .dev_flow/rules/, skills/, tools/, cache/, roles/ indexes, .dev_flow/profile/ and docs/_glossary.md as the phase prescribes; read the docs named in the hints; gather the rest yourself"
     step_4: "Execute the phase protocol; keep your Subtask block current; escalate material forks to the initiator (batched, markered options + recommendation); for a recurring noisy step prefer an existing matching specialist (roles index) over an inline pass, and spot-check its load-bearing conclusions against primary evidence before acting; spawn ad-hoc focus-delegation helpers only where no matching specialist fits"
     step_5: "Verify per the phase protocol (build, tests, review steps it prescribes)"
-    step_6: "Persist durable outcomes per the owning phases (skills / cache / rules / profile — environmental only) and record what was persisted"
+    step_6: "Persist durable outcomes per the owning phases (skills / cache / rules / tools / profile — environmental only) and record what was persisted"
     step_7: "Close your Subtask block (Status: done / blocked / review-pending) and write the full report"
 
   output_style:

@@ -79,21 +79,22 @@ Before writing code, verify:
 11. If Verify fails → fix code → re-run steps 6-10.
 12. Update the plan phase status to [DONE].
 13. Update the plan Progress checkboxes.
-14. Reflection checkpoint — harvest rules/skills, auto-applied through the structural gate; see [Reflection](#reflection--harvest-rules-and-skills) below.
+14. Reflection checkpoint — harvest rules/skills/tools, auto-applied through the structural gate; see [Reflection](#reflection--harvest-rules-skills-and-tools) below.
 15. Commit sign-off — changed files, review verdict, intent verdict, proportionality block; "Ready to commit?" and wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)).
 
 ## Delegation for Focus
 
 Delegate steps 6, 8 and 10 (run tests, review, verify) to a subagent and take back only the verdict; keep the implementation itself in this context. See **[Delegation for Focus](../references/delegation.md)**.
 
-## Reflection — harvest rules and skills
+## Reflection — harvest rules, skills, and tools
 
 At the phase/subtask boundary, before asking for commit approval, run the [Transition Checkpoint](../references/experience-capture.md) over the work item just closed.
 
 - **Rule from a recurring pattern.** If the plan phase or the code surfaced an architectural constraint, naming convention, or error-handling pattern not yet in `.dev_flow/rules/` — write it as a rule automatically (default severity `should`, or `prefer`) — never a fact about the developer or the machine, which belongs to `.dev_flow/profile/` under its consent regime ([Adaptation Profile](../references/adaptation-profile.md)). See [Project Rules → Auto-discovery](../SKILL.md#project-rules) and the [rule phase](rule.md).
 - **Skill from non-trivial knowledge.** If research during the task produced broadly-useful, non-obvious technology knowledge — write/update a skill through the [skill phase](skill.md) non-triviality filter, so the next task starts ahead — never a fact about the developer or the machine, which belongs to `.dev_flow/profile/` under its consent regime ([Adaptation Profile](../references/adaptation-profile.md)).
+- **Tool from a hand-rolled check.** A deterministic check or operation hand-rolled in this and at least one earlier task, or hand-rolled wrong — write a read-only, self-tested tool in `.dev_flow/tools/` ([Experience Capture](../references/experience-capture.md#applying-experience--auto-apply-through-structural-gates)).
 
-**Auto-apply, no permission prompt.** A harvested lesson is written to the catalogue automatically through the rule/skill gate (the gate is structural, not a self-score). **Never auto-write a `must`**, and route any rule that would contradict an existing one to an [independent clean-context review](../references/delegation.md) — write only if confirmed. Every write is visible to the developer in the commit diff. Then distill the segment into a pinned summary, demote its raw turns, and promote durable working-memory parts to the task file. See **[Experience Capture](../references/experience-capture.md)**.
+**Auto-apply, no permission prompt.** A harvested lesson is written to the catalogue automatically through the rule/skill/tool gate (the gate is structural, not a self-score). **Never auto-write a `must`**, and route any rule that would contradict an existing one to an [independent clean-context review](../references/delegation.md) — write only if confirmed. Every write is visible to the developer in the commit diff. Then distill the segment into a pinned summary, demote its raw turns, and promote durable working-memory parts to the task file. See **[Experience Capture](../references/experience-capture.md)**.
 
 ## When the Spec Pushes Back
 
@@ -107,4 +108,4 @@ If implementation surfaces evidence the spec is wrong — two defensible reading
 - Skipping traceable ID comments
 - Not updating plan status after completion
 - Adding features not described in the specification
-- Closing a work item without reflecting — a recurring pattern left uncaptured as an auto-applied rule/skill (see [Reflection](#reflection--harvest-rules-and-skills))
+- Closing a work item without reflecting — a recurring pattern left uncaptured as an auto-applied rule/skill/tool (see [Reflection](#reflection--harvest-rules-skills-and-tools))
