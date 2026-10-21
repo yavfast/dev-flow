@@ -66,11 +66,11 @@ Each transition includes a validation gate to prevent drift.
 | — | `/dev-flow status` | Show current state — report only, changes nothing | Status summary |
 | — | `/dev-flow checkpoint [note]` | Fix the current task into durable state at a session boundary — distil, close doc drift, make the task handoff-ready, record how to resume | Handoff record + checkpoint report |
 | — | `/dev-flow resume [task_id]` | Re-enter in a fresh session — establish state, continue the task when the picture is unambiguous, else offer the next work | Resume brief + continued work (or a work offer) |
-| — | `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — reconcile task state with reality, trim context, compact closed tasks, groom rules/skills/cache, check docs integrity (index/statuses/refs/orphans/freshness/duplicated sets/scaling); opt-in `code` scope audits the whole codebase → refactoring plan | Audit report + cleaned context (or, for `code`, a refactoring plan) |
-| — | `/dev-flow adopt <repo>` | Analyze an external repository at concept altitude and produce the adoption document for this project (what to borrow, what to skip, in what order) | `docs/ext_adoption/*.concept.md` + `docs/ext_adoption/*.md` |
+| — | `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — task state, context, closed tasks, rules/skills/cache, docs integrity; opt-in `code` scope → codebase refactoring plan | Audit report + cleaned context (or, for `code`, a refactoring plan) |
+| — | `/dev-flow adopt <repo>` | Analyze an external repository at concept altitude → adoption document: what to borrow, what to skip, in what order | `docs/ext_adoption/*.concept.md` + `docs/ext_adoption/*.md` |
 | — | `/dev-flow ask <question>` | Read-only Q&A about code or feasibility — no changes | Answer + optional next-step suggestion |
 | — | `/dev-flow todo <description>` | Capture future work — find relevant docs, assess feasibility, file a planning record with a return trigger (does not build) | Plan backlog item or `.dev_flow/todos/` entry |
-| — | `/dev-flow subtask <task>` | Delegate a secondary task to a subagent — a full dev-flow participant that assembles its own context, runs any phase (fix, test, research, etc.), and can converse with its initiator | Full subtask report |
+| — | `/dev-flow subtask <task>` | Delegate a secondary task to a subagent — a full dev-flow participant: own context, any phase, converses with its initiator | Full subtask report |
 | — | `/dev-flow do <request>` | Freeform routing — interpret intent and run the right phases | Phase output + updated context |
 
 **Default command:** `/dev-flow <text>` with no recognized phase keyword routes to `do`.
@@ -180,7 +180,7 @@ Stops in every route where the main agent presents its work to the developer and
 
 ## Active Context & Session Continuity
 
-dev-flow keeps a **collaborative per-task context** in `.dev_flow/` so several agents can work one project in parallel. A task file is a shared document: each contributor owns the parts it adds and never rewrites another's. The full read/write protocol, regeneration procedure, and archive flow live in the [status phase](phases/status.md).
+dev-flow keeps a **collaborative per-task context** in `.dev_flow/` so several agents can work one project in parallel; a task file is a shared document. Read/write protocol, regeneration, archive: [status phase](phases/status.md).
 
 **Memory tiers.** L0 = the live transcript (lost on compact); L1 = session scratch — the [session working memory](references/cache.md#session-working-memory-l1) (notes / params / reminders / reads) plus the `/tmp/{project-slug}/` data cache (survives compact, not restart); L2 = `.dev_flow/` (durable). [Experience Capture](references/experience-capture.md) promotes L1 → L2; [salience markers](phases/status.md#salience-markers) decide what survives a compaction. Write to working memory as you work (parameter set, non-obvious fact, deferred action, every file read) and re-read the whole area whenever the thread is lost; a file already read this session, unchanged and uninvalidated, is not read again ([Verification Economy](references/verification-economy.md)).
 
