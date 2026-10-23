@@ -9,7 +9,7 @@ Adoption documents are **advisory**: no traceable ID, no validation gate, not a 
 ## Contents
 
 - [Command](#command) — `/dev-flow adopt <repo>` with `--subpath` and `--readopt`, recognized aliases, freeform routing via do
-- [What a run may write](#what-a-run-may-write) — Closed write list (adoption concept + document, `ext_repos/`, `.gitignore`, `.dev_flow/**`), what is never written, and the working-directory rule
+- [What a run may write](#what-a-run-may-write) — Closed write list (adoption concept + document, `ext_repos/`, `.gitignore`, the pair's `docs/_index.md` row, `.dev_flow/**`), what is never written, and the working-directory rule
 - [Procedure](#procedure) — Steps 1–9: resolve, acquire workspace with the source stamp, run mode, source analysis, target context with records and the reconciliation of the previous document, verdicts, synthesis, write, report with the source check
 - [Edge cases](#edge-cases) — Situation → behaviour table: self-analysis, unreachable URL, non-git source, dirty clone, collisions, monorepo, large source, previous document, rejected item, problem with no record
 - [Delegation](#delegation) — Steps 4 and 6 may go to a read-only clean-context subagent, launched from the target root, returning concepts or verdicts, never files
@@ -35,9 +35,10 @@ A closed list of writes in the target project. Anything outside it is a defect, 
 | `docs/ext_adoption/<name>.md` | create \| update | always |
 | `ext_repos/<name>/` | create | only when the run cloned it |
 | `.gitignore` | append one line | only when `ext_repos/` is not already ignored and the target is a git repo |
+| `docs/_index.md` | create \| update the pair's row in the «Adoption notes» table; append the table when absent | only when `docs/_index.md` exists |
 | `.dev_flow/**` | update | the ordinary task-context bookkeeping every phase does |
 
-No code, no specs, no plans, no `docs/_index.md`, no `.dev_flow/todos/` entry. Filing the high-relevance items as todos is the developer's call — the run names them in its report and stops.
+No code, no specs, no plans, no other `docs/_index.md` row, no `.dev_flow/todos/` entry. Filing the high-relevance items as todos is the developer's call — the run names them in its report and stops.
 
 The source repository is never modified. `git pull` on a clone is the only write toward it, under the conditions in Step 2. Never change the working directory into the source worktree: address it by absolute path or with `git -C <worktree>`. Step 9 checks the source by command.
 
@@ -170,6 +171,7 @@ Writing rules:
 - **Updating an existing document** preserves its changelog and appends a dated row. Concepts unchanged since the last run keep their text.
 - **The "what the target already has" section carries the reconciliation** from Step 5, with its evidence.
 - **An empty `high` section is a valid result** — write it, and say so plainly. Never promote a `medium` to make the document look useful.
+- **Register the pair in the index** without asking, when `docs/_index.md` exists: one row in «Adoption notes» — links to both files, the ideas the source brings, the run's outcome. `UPDATE` rewrites the same row.
 
 ### Step 9 — Report
 
@@ -183,7 +185,7 @@ find <worktree> -name .git -prune -o -newer <stamp> -print
 - Listed paths — each is a change to the source during the run. Name each in the report and remove nothing: the developer decides.
 - No stamp, or the check did not run — the source claim is `unobserved`; give the reason.
 
-Offer, without doing it, the next steps that make sense: adding the document to `docs/_index.md`, and the pipeline phase each high-relevance item would start from.
+Offer, without doing it, the pipeline phase each high-relevance item would start from.
 
 ## Edge cases
 

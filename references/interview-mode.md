@@ -5,7 +5,7 @@ Shared sub-procedure for the **Concept**, **Specification**, **Plan**, and **Fix
 ## Contents
 
 - [Why this exists](#why-this-exists) — Rationale: make material forks visible with a framed recommendation instead of silently picking
-- [When to trigger](#when-to-trigger) — The decision-point test, the do-NOT-interview list, and interview vs spike
+- [When to trigger](#when-to-trigger) — The decision-point test, the do-NOT-interview list, the decision owner (developer's fork vs agent's fork), and interview vs spike
 - [The procedure](#the-procedure) — Steps 0–5: gather context, collect, order, frame with A/B/C markers, ask (tool or chat form), resolve; who conducts it
 - [Recording — the Design Decisions section](#recording--the-design-decisions-section) — `DEC_NN` anchor scheme per document type, fix-phase exception, the ADR-style record template
 - [Worked example](#worked-example) — A sample DEC_01 interview (delivery guarantee) with markered options, recommendation and sequential follow-up
@@ -25,7 +25,7 @@ A decision point exists when **all** of these hold:
 2. The choice is **material** — it changes architecture, a contract/data shape, the scope boundary, a dependency, a state model, or a technology choice (in plans).
 3. The choice is **not cheaply reversible** — undoing it later means touching code, migrating data, or breaking a consumer.
 
-If all hold, the decision goes through the interview. If any fails, decide it yourself and move on.
+If all hold, the [decision owner](#decision-owner) test picks who answers it. If any fails, decide it yourself and move on.
 
 ### Do NOT interview on
 
@@ -36,7 +36,15 @@ Skip the interview and just decide (mention the choice in passing) when:
 - A **project rule, existing concept, or convention already settles it** — follow it; don't re-litigate. (Cite the rule.)
 - The options are **functionally equivalent** with no downstream consequence.
 
-When in doubt about whether something is material, lean toward surfacing it — but bundle it efficiently (see batching below) so the cost stays low.
+When in doubt about whether something is material, treat it as a decision point; the owner test then picks who answers it.
+
+### Decision owner
+
+- **The developer's** — the choice changes what the developer or the product's users see, decide, pay for (cost, vendor lock-in), or answer for (a business rule, the scope boundary), or undoing it needs a rebuild. It goes through the interview.
+- **The agent's** — every other decision point: internal structure, an internal contract or data shape, an internal technology choice, naming, defaults, error wording. Choose the recommended option and record the DEC with its rationale and rejected options as `resolved (agent)`. At the design sign-off it is one line: `DEC_NN — {decision} — {reason}`. The developer's objection there makes it the developer's decision point.
+- Doubt about the owner → the developer's.
+- A hard-floor question, an [access channel](access-channels.md#sanction) card, and a `named-hard-floor` operation are never the agent's.
+- A preference in `.dev_flow/profile/user.md` can make more decision points the developer's, never fewer ([Adaptation Profile](adaptation-profile.md)).
 
 ### Interview vs Spike
 
@@ -108,6 +116,8 @@ Each decision then ends in exactly one of these terminal states:
 
 - **Resolved (consensus)** — the developer picked an option (yours or their own). This is the default and the goal for production work. Written `resolved (delegated)` when the agent settled it under `Autonomy: full`; that state never closes a hard-floor question — nor the record of an [access channel](access-channels.md#sanction) card or a `named-hard-floor` operation, which waits for the developer while only its line of work waits. Record the chosen option **and its rationale**, and note the rejected alternatives so the choice isn't silently re-opened later.
 
+- **Resolved (agent)** — the agent's decision point ([Decision owner](#decision-owner)), with its rationale and rejected alternatives; listed one line at the design sign-off. It satisfies the gates' "resolved" criterion.
+
 - **Open (documented alternatives)** — the developer chooses to keep options open. Legitimate for **research / exploratory** work, or when a decision genuinely depends on information that doesn't exist yet. This is **not** a license to defer by default. An open decision is only acceptable if it records:
   - the candidate options with their trade-offs, **and**
   - a **resolution trigger** — the concrete event or date by which it must be closed (e.g. "decide before Plan phase", "resolve once load-test numbers exist", "open until C_SYNC ships").
@@ -120,7 +130,7 @@ Each decision then ends in exactly one of these terminal states:
 
 The interview needs a live developer, so it is conducted by **whoever is talking to the developer** — normally the orchestrator (the main session that received `/dev-flow concept|spec|plan`).
 
-A **delegated subagent** (a phase author, or a task-delegated [subtask](../phases/subtask.md) executor) must **not** resolve a material fork by guessing — and it must first exhaust the Step 0 context-gathering, since code and prior `DEC_NN` records often close a fork outright. For whatever genuinely remains, its channel is the **initiator**, not the developer:
+A **delegated subagent** (a phase author, or a task-delegated [subtask](../phases/subtask.md) executor) records an agent's decision point `resolved (agent)` and lists it in its report; it must **not** resolve a developer's fork by guessing — and it must first exhaust the Step 0 context-gathering, since code and prior `DEC_NN` records often close a fork outright. For whatever genuinely remains, its channel is the **initiator**, not the developer:
 
 1. **Escalate up the chain.** Present the fork to the initiator in the standard form — markered options + a recommended answer, independent questions batched. The initiator answers from the main-task picture it holds, or relays to the developer what only the developer can decide, and the answer comes back down.
 2. **No live channel** (a one-shot run, batch work)? Checkpoint instead: record each decision point in Design Decisions as **`proposed`** (options, consequences, recommended answer) and surface the list in the report; `open` is reserved for a fork that waits on information nobody has yet. The initiator then answers and **continues the same subagent** (its assembled context is the asset), or runs the interview with the developer itself and flips each record to `resolved`.
@@ -140,7 +150,7 @@ Every concept, spec, and plan template carries a **Design Decisions** section. E
 ```markdown
 ### DEC_01 — {short question}  {#C_XXX_DEC_01}
 
-> **Status:** proposed | resolved | resolved (delegated) | open
+> **Status:** proposed | resolved | resolved (delegated) | resolved (agent) | open
 > **Date:** YYYY-MM-DD
 
 **Question:** {the fork, in one sentence}

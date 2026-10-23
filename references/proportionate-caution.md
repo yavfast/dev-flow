@@ -230,7 +230,7 @@ A row is **open** until an answer with the same `kind`, `ref`, and occurrence ex
 - A needed secret waits for the developer's input even then ([Secret input](#secret-input)).
 - The `confirm` step of the privileged runner waits for the developer even then ([Privileged commands](#privileged-commands)); an operation of a sanctioned channel does not need it, except one with `content: per-run`.
 - A channel sanction and a `reauth-required` wait for the developer even then; only that line of work waits ([Access Channels](access-channels.md#sanction)).
-- `resolved (delegated)` never closes a hard-floor question.
+- `resolved (delegated)` and `resolved (agent)` never close a hard-floor question.
 - A confirmation that another discipline requires (a field of a test recipe) is not asked under `full`. Until it exists, the strict default applies. A channel sanction is not such a confirmation.
 
 ## Boundaries

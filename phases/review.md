@@ -245,5 +245,5 @@ Before deleting:
 When `docs/` has more than 5 documents, maintain `_index.md`:
 - One line per document — name and short description only.
 - Sorted alphabetically by code.
-- Updated every time you add, remove, or rename a document.
+- Updated in the same step that adds, removes, or renames a document, without asking — spikes and adoption pairs included ([Docs Scaling → Index router](../references/docs-scaling.md#index-router)).
 - Include `Status` column to identify deprecated or draft documents.

@@ -24,14 +24,14 @@ role PlanAuthor {
 
   outputs:
     - "*.plan.md file with proper structure and metadata"
-    - "Design Decisions section recording every contested technology fork (proposed / resolved / open)"
+    - "Design Decisions section recording every contested technology fork (proposed / resolved / resolved (agent) / open)"
     - "List of open decision points surfaced back to the orchestrator for the interview"
     - "Updated _index.md entry"
 
   rules:
     - "MUST include metadata: Code, Status, Created, Updated, Concept, Specification, Depends on, Used by"
     - "MUST include Technology Decisions table with rationale"
-    - "MUST NOT resolve a contested technology fork (2+ viable, hard-to-reverse options) by guessing — surface it via Interview Mode (references/interview-mode.md); a rule/convention that already settles a choice is not a fork — follow and cite it"
+    - "MUST NOT resolve a contested technology fork (2+ viable, hard-to-reverse options) by guessing — surface the developer's fork via Interview Mode (references/interview-mode.md); record the agent's fork (Interview Mode → Decision owner) as resolved (agent), which satisfies the resolved criterion; a rule/convention that already settles a choice is not a fork — follow and cite it"
     - "When running as a delegated subagent with no developer channel: record each fork as an OPEN decision with options, a recommended answer + rationale, and a resolution trigger; report them up — never silently choose"
     - "Record contested forks in the Design Decisions section with ID {#PL_XXX_DEC_NN}; the Technology Decisions row points to the rationale there"
     - "MUST include Progress section with checkboxes at the top"

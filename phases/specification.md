@@ -34,7 +34,7 @@ Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../S
 
 ## Interview Mode for Design Decisions
 
-A fork here — a field's type, an error model, a state transition, a sync strategy — binds consumers once shipped. When authoring surfaces **two or more materially different ways to model or contract something**, do not pick one silently. Stop and run an interview: present the fork with 2–4 options and your **recommended answer**, reach a consensus, and record the outcome.
+A fork here — a field's type, an error model, a state transition, a sync strategy — binds consumers once shipped. When authoring surfaces **two or more materially different ways to model or contract something**, do not pick one silently. Stop and apply the [decision owner](../references/interview-mode.md#decision-owner) test: the developer's fork goes to an interview — 2–4 options and your **recommended answer**, a consensus, the recorded outcome; the agent's fork is recorded `resolved (agent)`.
 
 See **[Interview Mode](../references/interview-mode.md)** for the full procedure. Record every proposed, resolved, or open decision in the spec's **Design Decisions** section.
 

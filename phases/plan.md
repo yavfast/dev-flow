@@ -31,7 +31,7 @@ Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../S
 
 ## Interview Mode for Technology Decisions
 
-Technology forks — language, framework, library, persistence, concurrency model — are hard to reverse. The Technology Decisions table records *what* was chosen; when a choice is genuinely contested (e.g. two libraries that both fit, a build-vs-buy call, a sync strategy), do not pick silently. Run an interview: present 2–4 options with your **recommended answer**, reach consensus with the developer, and capture the *why* in **Design Decisions**.
+Technology forks — language, framework, library, persistence, concurrency model — are hard to reverse. The Technology Decisions table records *what* was chosen; when a choice is genuinely contested (e.g. two libraries that both fit, a build-vs-buy call, a sync strategy), do not pick silently. The [decision owner](../references/interview-mode.md#decision-owner) test picks who answers: the developer's fork goes through an interview with 2–4 options and your **recommended answer**; the agent's fork is recorded `resolved (agent)`. Capture the *why* in **Design Decisions** either way.
 
 A rule, an existing concept, or a documented convention that already settles a choice is **not** a decision point — follow it and cite it. Interview only the genuinely open technology forks. See **[Interview Mode](../references/interview-mode.md)**.
 
@@ -39,7 +39,7 @@ A rule, an existing concept, or a documented convention that already settles a c
 
 ## Design Sign-off
 
-When the plan passes its gate, stop before implementation: present the Design Decisions of the change (question → options → recommendation), the documents created or changed, the files implementation will touch, the [proportionality block](../references/proportionate-caution.md#proportionality-block); wait. Skipped only under `Autonomy: full` — a [hard-floor](../references/proportionate-caution.md#hard-floor) action stops the work even then. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
+When the plan passes its gate, stop before implementation: present the developer's Design Decisions (question → options → recommendation) and the agent's, one line each, the documents created or changed, the files implementation will touch, the [proportionality block](../references/proportionate-caution.md#proportionality-block); wait. Skipped only under `Autonomy: full` — a [hard-floor](../references/proportionate-caution.md#hard-floor) action stops the work even then. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
 
 ## Structure
 
@@ -139,7 +139,7 @@ Omit if no technology choice was contested. One record per decision:
 
 ### DEC_01 — {short question}  {#PL_XXX_DEC_01}
 
-> **Status:** proposed | resolved | resolved (delegated) | open
+> **Status:** proposed | resolved | resolved (delegated) | resolved (agent) | open
 > **Date:** YYYY-MM-DD
 
 **Question:** {the fork, in one sentence}

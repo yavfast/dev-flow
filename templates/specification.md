@@ -142,7 +142,7 @@ If full rollback is not possible — document the minimum safe state and the man
 
 ### DEC_01 — {short question}  {#SP_XXX_DEC_01}
 
-> **Status:** {proposed | resolved | resolved (delegated) | open}
+> **Status:** {proposed | resolved | resolved (delegated) | resolved (agent) | open}
 > **Date:** YYYY-MM-DD
 
 **Question:** {the fork, in one sentence}

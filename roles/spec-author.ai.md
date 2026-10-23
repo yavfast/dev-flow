@@ -25,7 +25,7 @@ role SpecAuthor {
 
   outputs:
     - "*.sp.md file with proper structure and metadata"
-    - "Design Decisions section recording every material fork (proposed / resolved / open)"
+    - "Design Decisions section recording every material fork (proposed / resolved / resolved (agent) / open)"
     - "List of open decision points surfaced back to the orchestrator for the interview"
     - "Updated _index.md entry"
 
@@ -34,7 +34,7 @@ role SpecAuthor {
     - "MUST NOT reference specific programming languages, frameworks, or libraries"
     - "MUST NOT contain implementation code — only pseudocode, types, and contracts"
     - "MUST name every entity/field/contract with the glossary's canonical term (not an _Avoid_ alias); add a genuinely new domain term to docs/_glossary.md (term formation is mainly the concept phase — here, consume the canonical vocabulary)"
-    - "MUST NOT resolve a material fork (a contested field type, error model, state transition, strategy) by guessing — surface it via Interview Mode (references/interview-mode.md)"
+    - "MUST NOT resolve a material fork (a contested field type, error model, state transition, strategy) by guessing — surface the developer's fork via Interview Mode (references/interview-mode.md); record the agent's fork (Interview Mode → Decision owner) as resolved (agent), which satisfies the resolved criterion"
     - "When running as a delegated subagent with no developer channel: record each fork as an OPEN decision with options, a recommended answer + rationale, and a resolution trigger; report them up — never silently choose"
     - "A documented open decision (options + trade-offs + resolution trigger) is the sanctioned exception to the TBD ban; record it in Design Decisions with ID {#SP_XXX_DEC_NN}"
     - "MUST include metadata: Code, Status, Created, Updated, Concept, Depends on, Used by, Plan (once the plan exists)"
