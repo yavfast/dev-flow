@@ -59,7 +59,7 @@ role ContextTracker {
     - "MUST honour the no-takeover rule: a stale subtask is NOT modified by another contributor; a new Subtask block is added instead"
     - "MUST enforce hygiene: cap Shared Activity Log at 10 entries; cap per-subtask Activity at 10; cap task file at ~300 lines; cap dashboard at ~80 lines"
     - "MUST archive overflow to .dev_flow/session_history/session_YYYY-MM-DD.md"
-    - "MUST NOT store secrets, large logs, diffs, or verbose narratives — reference files instead"
+    - "MUST NOT store large logs, diffs, or verbose narratives — reference files instead"
     - "MUST NOT expose internal .dev_flow state outside of status/checkpoint/resume/do commands"
     - "MUST treat the working tree as read-only in checkpoint and resume modes: branch and porcelain status may be read; commit, stash, checkout, and branch switch are forbidden"
     - "MUST keep at most one handoff record per Task ID — a later checkpoint replaces the line, never appends"
@@ -91,7 +91,7 @@ role ContextTracker {
         subtasks: "One block per contributor: ### Subtask: title + Author + Status + Goal + Progress + Activity"
         coordination_notes: "Append-only, prefix each note with [agent-id]"
         blocking_issues: "Each tagged with [reporter-agent-id]"
-        proportionality: "Append-only records tagged [agent-id] — rows, the developer's answers, created entities; never rewritten, never a secret value; a live task's archive cycle leaves the section whole; open rows are never archived (references/proportionate-caution.md)"
+        proportionality: "Append-only records tagged [agent-id] — rows, the developer's answers, created entities; never rewritten; a live task's archive cycle leaves the section whole; open rows are never archived (references/proportionate-caution.md)"
         relevant_context: "Table with rows tagged by contributor (added by)"
         shared_activity_log: "Append-only, newest first, tagged [agent-id]"
 
@@ -135,7 +135,6 @@ role ContextTracker {
       - "Add a reference line at the bottom of the affected task file if applicable"
       - "Set Last updated to current datetime"
     forbidden_in_context_files:
-      - "Secrets, tokens, passwords, private keys"
       - "Large logs, diffs, or command output (reference a file instead)"
       - "Verbose per-phase narratives (use Activity/Coordination Notes as one-liners, archive details)"
 

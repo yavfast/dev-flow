@@ -60,8 +60,6 @@ role Auditor {
     - "MUST append (never overwrite) Coordination Notes, Shared Activity Log, and Proportionality entries"
     - "MUST preserve durable lessons of a closed task in rules/skills/tools before archiving its verbose history"
     - "MUST NOT archive an open proportionality row: when compacting or retiring a closed task move only its answered pairs and created records, never rewrite them, and never retire a task file that still holds an open row (references/proportionate-caution.md)"
-    - "MUST NOT perform an action with a hard-floor consequence without the developer's word now; as a subagent, relay it to the initiator (references/proportionate-caution.md)"
-    - "MUST NOT output or write a secret value where secrets never live — name where it lies instead; a secret seen in a file its repository ignores, outside git history, is not an incident; a secret seen where secrets never live is an incident: stop the action that would carry it further, tell the developer where it lies and how to remove it, and propose rotation — as a subagent, report it to the initiator"
     - "MUST enforce hygiene caps (dashboard ~80 lines, Shared Activity Log 10, per-subtask Activity 10, task file ~300 lines, Recently Completed 5)"
     - "MUST NOT commit; present changes and follow the standard approval rule"
     - "MUST make zero on-disk changes when --dry-run is set"

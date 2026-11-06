@@ -50,8 +50,8 @@ For the periodic whole-directory revision see the [audit phase](audit.md): `stat
 ├── output_styles.md           # Project style profiles — documentation + chat registers (Output Styles); absent → shipped defaults
 ├── profile/                   # user.md (consent required) + environment.md (announced) — developer/machine adaptation facts (Adaptation Profile); gitignored, created lazily
 ├── cache/                     # Durable resources (Figma exports, downloads, baselines) + _index.yaml (Resource Cache)
-├── tools/                     # _index.yaml + samples/ — deterministic checks harvested by Experience Capture (self-tested, read-only); run-privileged — the privileged runner (Proportionate Caution), written only with the developer's word; never a secret
-├── access/                    # channels.yaml — sanctioned access channels (committed, no secrets); journal.log — hash-chained call journal (gitignored) (Access Channels)
+├── tools/                     # _index.yaml + samples/ — deterministic checks harvested by Experience Capture (self-tested, read-only); run-privileged — the privileged runner (Proportionate Caution), written only with the developer's word
+├── access/                    # channels.yaml — sanctioned access channels (committed); journal.log — hash-chained call journal (gitignored) (Access Channels)
 ├── evidence/                  # ledger.yaml — intervention ledger (Evidence Discipline); absent → reconcile is a no-op
 ├── tasks/
 │   ├── _index.md              # Catalog of task files
@@ -303,7 +303,7 @@ Rules:
 - **One record per Task ID** — a second checkpoint of the same task **replaces** its line; records never accumulate.
 - **A resume does not consume it** — the record stays until a later checkpoint replaces it or [regeneration](#regeneration-procedure) drops it with its closed task. Re-entering a task twice reads the same record twice.
 - The record is **derived data**: it repeats nothing that the task file plus the working tree do not already say, and it is rebuilt by the [regeneration procedure](#regeneration-procedure), never treated as a source of truth.
-- It carries no secrets, no diffs, no command output, and no path under the `/tmp` workspace.
+- It carries no diffs, no command output, and no path under the `/tmp` workspace.
 
 ### What a checkpoint must not do
 

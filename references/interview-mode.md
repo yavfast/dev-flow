@@ -18,8 +18,6 @@ The developer owns the consequences and holds context you don't (roadmap, busine
 
 Enter interview mode the moment you notice a **decision point** while authoring:
 
-A hard-floor question ([Proportionate Caution](proportionate-caution.md#asking-now)) is always asked now: the criteria and the skip list below do not apply to it.
-
 A decision point exists when **all** of these hold:
 1. There are **two or more viable options** — each one could reasonably be the answer.
 2. The choice is **material** — it changes architecture, a contract/data shape, the scope boundary, a dependency, a state model, or a technology choice (in plans).
@@ -102,11 +100,11 @@ Then **stop and wait** for the developer's answer. Do not proceed past an unreso
 
 ### 5. Resolve — the valid outcomes
 
-A fork the developer has not answered yet (no live channel, or recorded without asking) is **`proposed`**: question, options, recommended option with rationale. It satisfies the gates' "settled" criterion up to the design sign-off, where the developer's answer moves it to a terminal state; implementation never starts on a `proposed` record, and the agent never resolves one by its own hand ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)). Under `Autonomy: full` the agent settles it as `resolved (delegated)` — never a hard-floor question, which stops the work even then ([Proportionate Caution](proportionate-caution.md#autonomy)).
+A fork the developer has not answered yet (no live channel, or recorded without asking) is **`proposed`**: question, options, recommended option with rationale. It satisfies the gates' "settled" criterion up to the design sign-off, where the developer's answer moves it to a terminal state; implementation never starts on a `proposed` record, and the agent never resolves one by its own hand ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)). Under `Autonomy: full` the agent settles it as `resolved (delegated)`.
 
 Each decision then ends in exactly one of these terminal states:
 
-- **Resolved (consensus)** — the developer picked an option (yours or their own). This is the default and the goal for production work. Written `resolved (delegated)` when the agent settled it under `Autonomy: full`; that state never closes a hard-floor question — nor the record of an [access channel](access-channels.md#sanction) card or a `named-hard-floor` operation, which waits for the developer while only its line of work waits. Record the chosen option **and its rationale**, and note the rejected alternatives so the choice isn't silently re-opened later.
+- **Resolved (consensus)** — the developer picked an option (yours or their own). This is the default and the goal for production work. Written `resolved (delegated)` when the agent settled it under `Autonomy: full`; that state never closes the record of an [access channel](access-channels.md#sanction) card or a `named-hard-floor` operation, which waits for the developer while only its line of work waits. Record the chosen option **and its rationale**, and note the rejected alternatives so the choice isn't silently re-opened later.
 
 - **Open (documented alternatives)** — the developer chooses to keep options open. Legitimate for **research / exploratory** work, or when a decision genuinely depends on information that doesn't exist yet. This is **not** a license to defer by default. An open decision is only acceptable if it records:
   - the candidate options with their trade-offs, **and**

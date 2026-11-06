@@ -27,7 +27,7 @@ class PermissionInterceptor:
 
 ## Gate Check Before Starting
 
-**Design sign-off (stop).** Before the first code edit, the task file must show the developer's go at the design sign-off; missing → present it (DEC batch, changed docs, files to touch, proportionality block) and wait. No stop for a Trivial change (no design documents); otherwise skipped only under `Autonomy: full` — a [hard-floor](../references/proportionate-caution.md#hard-floor) action stops the work even then. A `proposed` Design Decision counts as settled for the checklist below, but no code edit runs on one. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
+**Design sign-off (stop).** Before the first code edit, the task file must show the developer's go at the design sign-off; missing → present it (DEC batch, changed docs, files to touch, proportionality block) and wait. No stop for a Trivial change (no design documents); otherwise skipped only under `Autonomy: full`. A `proposed` Design Decision counts as settled for the checklist below, but no code edit runs on one. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
 
 Before writing code, verify:
 - [ ] The plan covers ALL specification sections

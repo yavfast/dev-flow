@@ -27,7 +27,7 @@ A **rule** is one h2 block in its category file. The heading is the single sourc
 - `directive` — one imperative logical line, executable without the body, within `directive_max`. Over the limit → never truncate: split into two units.
 - `severity` — `must` | `should` | `prefer`, in the heading. Any other word is normalized (see Severity normalization) and the rename reported.
 
-Body, in order: `**Applies to:**` (one human-readable line) · `### Why` (within `rationale_max`) · `### Examples` (Correct / Incorrect, real file path; never a secret value — cite `file:line` instead) · `**Provenance:**` (task file, ticket, commit, or a narrative-log entry). Whole body within `unit_body_max`. Investigation narrative, log quotes, and "relationship to neighbours" prose do not live in the body — the task file already holds them; overflow goes to `<category>.log.md` (Narrative log).
+Body, in order: `**Applies to:**` (one human-readable line) · `### Why` (within `rationale_max`) · `### Examples` (Correct / Incorrect, real file path) · `**Provenance:**` (task file, ticket, commit, or a narrative-log entry). Whole body within `unit_body_max`. Investigation narrative, log quotes, and "relationship to neighbours" prose do not live in the body — the task file already holds them; overflow goes to `<category>.log.md` (Narrative log).
 
 **Legacy form** (`## Rule: {Name}` + `**Severity:**` line) stays valid until the unit's first substantive edit, which rewrites the heading into the form above; `id` = `{Name}`. Audit never rewrites a legacy heading — it reports `heading-legacy`.
 

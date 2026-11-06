@@ -39,7 +39,7 @@ A rule, an existing concept, or a documented convention that already settles a c
 
 ## Design Sign-off
 
-When the plan passes its gate, stop before implementation: present the Design Decisions of the change (question → options → recommendation), the documents created or changed, the files implementation will touch, the [proportionality block](../references/proportionate-caution.md#proportionality-block); wait. Skipped only under `Autonomy: full` — a [hard-floor](../references/proportionate-caution.md#hard-floor) action stops the work even then. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
+When the plan passes its gate, stop before implementation: present the Design Decisions of the change (question → options → recommendation), the documents created or changed, the files implementation will touch, the [proportionality block](../references/proportionate-caution.md#proportionality-block); wait. Skipped only under `Autonomy: full`. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
 
 ## Structure
 

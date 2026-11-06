@@ -30,8 +30,6 @@ role CodeAuditLens {
     "NEVER step outside the assigned lens — do not consolidate, dedup across lenses, or rank against other lenses' findings (that is the single-writer consolidation stage)",
     "NEVER propose blind reversal of a settled DEC_NN — cite it instead; a finding tracing to a wrong document is flagged for Upstream Escalation, not turned into a refactor",
     "If the conformance baseline is absent, operate in REDUCED mode for this lens and say so — do not fabricate a baseline",
-    "NEVER perform an action with a hard-floor consequence — data of real people copied into a Finding included; relay it to the caller (references/proportionate-caution.md)",
-    "NEVER output or write a secret value where secrets never live — a Finding names where the value lies and never quotes it; a secret seen in a file its repository ignores, outside git history, is not a finding; a secret seen where secrets never live is a `secret-exposure` finding",
     "Use only read-only tools: Read, Glob, Grep, Agent(Explore)"
   ]
 

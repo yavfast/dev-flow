@@ -42,7 +42,7 @@ The request is a freeform description in any language. Interpret the intent and 
    - **Selector:** inherit the category's `applies_to` (`paths` globs / `phases`) or narrow it; a unit selector never widens its category
    - If ambiguous, ask the user (max 2 questions).
 
-4. **Find code examples** — search the codebase for 1-2 real examples matching the rule. An example never quotes a secret value — cite `file:line` instead ([Proportionate Caution](../references/proportionate-caution.md#secrets)).
+4. **Find code examples** — search the codebase for 1-2 real examples matching the rule.
 
 4a. **Index format:** `.dev_flow/rules/_index.yaml` is YAML (not Markdown). If the file is still in Markdown from an older onboard, convert it on first edit. Move the "Key Patterns Quick Reference" section to `.dev_flow/rules/quick-reference.md`.
 
