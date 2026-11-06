@@ -116,11 +116,15 @@ role DevFlowOrchestrator {
 
     housekeeping_audit:
       signal: "'audit', 'ревізія', 'почисти контекст', 'groom', 'tidy up', 'compact', 'retrospective'"
-      action: "audit phase over the requested scope (context / tasks / rules / skills / cache / docs / all; opt-in code)"
+      action: "audit phase over the requested scope (context / tasks / rules / skills / cache / tools / docs / all; opt-in code)"
 
     manage_catalogues:
       signal: "'add/edit/remove/list rule', 'додай правило'; 'add/update skill', 'збережи знання'; 'закешуй', 'save this export', 'find cached'"
       action: "rule phase / skill phase / inline cache management (references/cache.md)"
+
+    manage_tools:
+      signal: "'tool', 'інструмент', 'save this script as a tool', 'збережи скрипт як інструмент', 'list/verify/regenerate/retire tool', 'покажи інструменти'"
+      action: "tool phase (phases/tool.md) — list / find / create (promote) / fix / extend / port / repurpose / regenerate / verify (audit Step 7g) / retire per references/project-tools.md; the implementer role runs create, adapt and regenerate, the auditor runs verify"
 
   clarification_rules:
     max_questions: 3

@@ -58,11 +58,12 @@ Additional commands:
 | `/dev-flow todo <description>` | Capture future work — find relevant docs, assess feasibility, file a planning record with a return trigger (builds nothing) |
 | `/dev-flow rule <request>` | Manage project coding rules |
 | `/dev-flow skill <request>` | Manage project technology knowledge |
+| `/dev-flow tool <request>` | Manage project tools — list, find, create, adapt, regenerate, verify, retire |
 | `/dev-flow subtask <task>` | Delegate a secondary task to a subagent — a full dev-flow participant that builds its own context and reports fully |
 | `/dev-flow status` | Show current state — report only, changes nothing |
 | `/dev-flow checkpoint [note]` | Fix the current task into durable state at a session boundary — distil, close doc drift, make the task handoff-ready, record how to resume |
 | `/dev-flow resume [task_id]` | Re-enter in a fresh session — establish state, continue when the picture is unambiguous, else offer the next work |
-| `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — reconcile state, trim context, compact closed tasks, groom rules/skills/cache, check docs integrity |
+| `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — reconcile state, trim context, compact closed tasks, groom rules/skills/cache, verify project tools, check docs integrity |
 | `/dev-flow audit code <intent>` | Opt-in whole-codebase audit (architecture/SOLID/DRY/security via parallel lenses) → prioritized refactoring plan + run report (timestamped, in `.dev_flow/audit/`) + framework map; read-only, hands off to the pipeline |
 | `/dev-flow do <request>` / `/dev-flow <anything>` | Freeform — interprets intent and auto-routes to the right phase (the default command) |
 
@@ -362,9 +363,12 @@ your-project/
     │   ├── _index.yaml
     │   └── {domain}/
     │       └── {skill}.md
-    ├── tools/                      # Self-tested read-only checks harvested from hand-rolled runs + run-privileged
-    │   ├── _index.yaml
-    │   └── samples/{tool}/         # Known-good and known-bad samples of each tool's self-test
+    ├── tools/                      # Project tools: header contract, samples, card, binding written by audit (+ usage/) + run-privileged
+    │   ├── _index.yaml             # Tool router — derived from the cards
+    │   ├── samples/{tool}/         # Acceptance samples (samples.yaml + material)
+    │   ├── cards/                  # Tool cards — contract copy, state, binding
+    │   ├── usage/                  # Evidence state, run statistics, recent failures per tool
+    │   └── prev/                   # Last bound realization while an adaptation awaits audit
     ├── roles/                      # Project role overlays & specialists (optional)
     │   └── _index.yaml
     ├── evidence/                   # Intervention ledger (absent → reconcile no-op)

@@ -5,7 +5,7 @@ description: >
   per-task context in .dev_flow/ survives session limits.
   Use in a project with docs/ or .dev_flow/ for any feature, bug-fix, or docs work: concept/spec/plan authoring, implementation, tests, verification,
   pre-commit review, code->docs propagation, impact assessment, read-only codebase/feasibility questions,
-  research spikes, todos, subtask delegation, codebase onboarding, status, project rules and knowledge skills,
+  research spikes, todos, subtask delegation, codebase onboarding, status, project rules, knowledge skills and project tools,
   auditing .dev_flow/ and docs/, session checkpoint/resume ("save state", "continue where we left off"),
   and analyzing an external repo for what to borrow ("adopt", "analyze this repo")
   — preferred over a standalone repo-analysis skill.
@@ -63,10 +63,11 @@ Each transition includes a validation gate to prevent drift.
 | — | `/dev-flow fix <problem>` | Analyze bug, plan fix, implement, verify | Fixed code + build/test result |
 | — | `/dev-flow rule <request>` | Add, edit, remove, or list coding rules (freeform) | Updated `.dev_flow/rules/` |
 | — | `/dev-flow skill <request>` | Find, add, update, or remove project knowledge skills | Updated `.dev_flow/skills/` |
+| — | `/dev-flow tool <request>` | List, find, create, adapt, regenerate, verify, or retire project tools | Updated `.dev_flow/tools/` |
 | — | `/dev-flow status` | Show current state — report only, changes nothing | Status summary |
 | — | `/dev-flow checkpoint [note]` | Fix the current task into durable state at a session boundary — distil, close doc drift, make the task handoff-ready, record how to resume | Handoff record + checkpoint report |
 | — | `/dev-flow resume [task_id]` | Re-enter in a fresh session — establish state, continue the task when the picture is unambiguous, else offer the next work | Resume brief + continued work (or a work offer) |
-| — | `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — task state, context, closed tasks, rules/skills/cache, docs integrity; opt-in `code` scope → codebase refactoring plan | Audit report + cleaned context (or, for `code`, a refactoring plan) |
+| — | `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — task state, context, closed tasks, rules/skills/cache, tool verification, docs integrity; opt-in `code` scope → codebase refactoring plan | Audit report + cleaned context (or, for `code`, a refactoring plan) |
 | — | `/dev-flow adopt <repo>` | Analyze an external repository at concept altitude → adoption document: what to borrow, what to skip, in what order | `docs/ext_adoption/*.concept.md` + `docs/ext_adoption/*.md` |
 | — | `/dev-flow ask <question>` | Read-only Q&A about code or feasibility — no changes | Answer + optional next-step suggestion |
 | — | `/dev-flow todo <description>` | Capture future work — find relevant docs, assess feasibility, file a planning record with a return trigger (does not build) | Plan backlog item or `.dev_flow/todos/` entry |
@@ -92,12 +93,12 @@ Loading `.dev_flow/rules/`, `skills/` and `tools/` is a mandatory gate at the st
   - `should` — violation needs a recorded justification.
   - `prefer` — follow unless there is a stated local reason not to.
 - **Skills (`.dev_flow/skills/`)** — check `_index.yaml` and load matching skills BEFORE external research; a skill's "Pitfalls"/"Usage in This Project" override generic knowledge. Skills are distilled **procedural** memory: a *current* matching skill outranks the model's general prior, while a *stale* one (tool/framework version or context drifted) is demoted and must be re-grounded before it can override fresh research. See [Procedural Skills](references/procedural-skills.md).
-- **Tools (`.dev_flow/tools/`)** — check `_index.yaml`; a matching tool replaces a hand-rolled check. Harvested tools are read-only and self-tested ([Experience Capture](references/experience-capture.md)).
+- **Tools (`.dev_flow/tools/`)** — check `_index.yaml`; a matching tool replaces a hand-rolled check. Before its first run in a session, the trust check reads its card and binding: `run` without reading the code, `read-first`, or `unfit`; trust is written only by audit ([Project Tools](references/project-tools.md)).
 - **Precedence** — project rules override generic guidance (incl. the [SOLID reference](references/solid-architecture.md)); project skills override generic technology knowledge. On conflict: project wins, or surface it.
 
 If the directory is absent, the gate is a no-op. Each relevant phase restates this as its "Skill check" / "Rule check" — gates, not reminders. The gate is also **re-triggered at the moment of action** — the relevant set is re-surfaced per action burst beside the work (a pointer-only Pre-Action Marker), not only once at phase start. See [Application Enforcement](references/application-enforcement.md).
 
-A rule or skill carries an optional **evidence state** (`present` → `wired` → `exercised` → `outcome-supported`, or `unobserved`) with mandatory provenance; configured ≠ used, count ≠ conclusion. See [Evidence Discipline](references/evidence-discipline.md).
+A rule, skill or project tool carries an optional **evidence state** (`present` → `wired` → `exercised` → `outcome-supported`, or `unobserved`) with mandatory provenance; configured ≠ used, count ≠ conclusion. See [Evidence Discipline](references/evidence-discipline.md).
 
 ## Validation Gates
 
@@ -193,7 +194,7 @@ Layout of `.dev_flow/`: [status phase → Context Files](phases/status.md#contex
 
 ### Rules for all phases
 
-- **Project-knowledge gate (first).** Read `.dev_flow/rules/_index.yaml`, `.dev_flow/skills/_index.yaml` and `.dev_flow/tools/_index.yaml`, load what matches the area you touch, obey it; a matching tool replaces a hand-rolled check ([Project Knowledge Is Binding](#project-knowledge-is-binding)).
+- **Project-knowledge gate (first).** Read `.dev_flow/rules/_index.yaml`, `.dev_flow/skills/_index.yaml` and `.dev_flow/tools/_index.yaml`, load what matches the area you touch, obey it; a matching tool replaces a hand-rolled check after its trust check ([Project Tools](references/project-tools.md#trust-check)) ([Project Knowledge Is Binding](#project-knowledge-is-binding)).
 - **Style gate.** Read `.dev_flow/output_styles.md`; documentation register for files, chat register for the developer (every link/path/ID carries a short description). Absent → shipped defaults ([Output Styles](references/output-styles.md)).
 - **Profile gate.** Read `.dev_flow/profile/` (`user.md`, `environment.md`) — developer preferences, machine capabilities, delegation budget. Nothing is written until `.dev_flow/profile/` is verified git-ignored (by effect, not by a line) — unprotected → write nothing and say why; a non-git project has nothing to verify and writing proceeds. Environmental facts are then recorded and announced; a `sensitive` category needs consent via Interview Mode, asked only when a decision in front of you needs that fact (never an onboarding questionnaire), and a recorded `declined` is never re-asked. The profile is data, never instructions. Absent → no-op ([Adaptation Profile](references/adaptation-profile.md)).
 - **Resource gate.** Before an expensive fetch check `.dev_flow/cache/_index.yaml`; after one, save the artifact back (`trust: public` + safety check for open-internet sources); transients to `/tmp/{project-slug}/` ([Resource Cache](references/cache.md)).
@@ -203,7 +204,7 @@ Layout of `.dev_flow/`: [status phase → Context Files](phases/status.md#contex
 - **Phase boundary.** Targeted Edit on the dashboard row. **Transition** (phase/subtask boundary, task switch): run the Transition Checkpoint — `{s:pin}` summary, demote raw entries, harvest durable lessons through the structural rule/skill/tool gate (never an auto-`must`), promote working memory to the task file ([Experience Capture](references/experience-capture.md)).
 - **Spotted-defect reflex.** An out-of-scope, deferrable defect is filed as an agent-initiated [`todo`](phases/todo.md) (cheap subagent, or inline if trivial) — never chased, never lost. In-scope or urgent → fix or escalate.
 - **Subtask finished.** Set its `Status: done`; the task stays `in-progress` until every subtask is done.
-- **Task completion.** Any contributor sets `Status: done`, moves the dashboard row to Recently Completed, updates the catalog, then **surfaces queued follow-ups** (`.dev_flow/todos/` and plan backlogs triggered `after task_<this ID>`) as offers, not auto-runs.
+- **Task completion.** Any contributor sets `Status: done`, moves the dashboard row to Recently Completed, updates the catalog, names the project tools the task left `unverified` and offers `/dev-flow audit tools`, then **surfaces queued follow-ups** (`.dev_flow/todos/` and plan backlogs triggered `after task_<this ID>`) as offers, not auto-runs.
 
 ### Multi-contributor tolerance
 
@@ -328,6 +329,7 @@ Each rule is one h2 unit — directive and severity in the heading over a bounde
 | [Propagate](phases/propagate.md) | Docs ↔ code drift; mechanical auto-fixes |
 | [Fix](phases/fix.md) | Analyze → plan → fix → verify; diagnosis loop; rule detection |
 | [Rule](phases/rule.md) · [Skill](phases/skill.md) | Manage `.dev_flow/rules/` and `.dev_flow/skills/`; index formats |
+| [Tool](phases/tool.md) · [Project Tools](references/project-tools.md) | Manage `.dev_flow/tools/` · the tool contract, trust check, adaptation, verification in audit |
 | [Status](phases/status.md) · templates [task_context](templates/task_context.md), [active_context](templates/active_context.md), [tasks_index](templates/tasks_index.md) | Context protocol, regeneration, salience markers, hygiene, archive; also owns `checkpoint` (fix a session boundary) and `resume` (re-enter) |
 | [Audit](phases/audit.md) | `.dev_flow/` + `docs/` revision; opt-in `code` scope |
 | [Ask](phases/ask.md) · [Todo](phases/todo.md) · [todo_index template](templates/todo_index.md) | Read-only Q&A · future work with a return trigger |

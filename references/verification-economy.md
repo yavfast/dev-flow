@@ -60,6 +60,8 @@ Boundaries:
 - **`read-before-write` is not weakened.** A shared file (task file, index, external ticket) is re-read before **every** write, unconditionally — the ledger never answers for it.
 - **Knowledge gates are untouched.** `.dev_flow/rules/_index.yaml`, `.dev_flow/skills/_index.yaml` and `.dev_flow/tools/_index.yaml` stay mandatory at phase start. Re-triggering knowledge at the moment of action stays pointer-only per [Application Enforcement](application-enforcement.md), so it never re-reads a body either.
 
+- **A project tool's binding has its own invalidators** — the realization hash, the samples hash, the environment. A trust-check verdict holds in working memory until one of them changes, and the audit tools step verifies only a tool whose binding one of them invalidated ([Project Tools](project-tools.md#verification-in-audit)).
+
 The ledger of what was read — target, state reference, time, extent — lives in the [session working memory](cache.md#session-working-memory-l1). No entry means "not read", never "read long ago".
 
 ## Discriminator — re-verifying a known fix

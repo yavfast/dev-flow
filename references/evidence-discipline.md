@@ -6,17 +6,17 @@ Advisory throughout — no consumer adds a blocking gate.
 
 ## Evidence state
 
-Discrete values on a project-knowledge artifact (rule, skill), ordered by strength — never a numeric score. Recorded as an **optional** `evidence:` key on the artifact's `_index.yaml` entry; a missing key reads as `unobserved`.
+Discrete values on a project-knowledge artifact (rule, skill, project tool), ordered by strength — never a numeric score. Recorded as an **optional** `evidence:` key on the artifact's `_index.yaml` entry — for a project tool, in its usage file `.dev_flow/tools/usage/<name>.yaml` ([Project Tools](project-tools.md#use-accounting)); a missing key reads as `unobserved`.
 
 | State | Means | Admissible source |
 |-------|-------|-------------------|
 | `unobserved` | Observation boundary cannot decide | no source; runtime cannot observe the action; conditional phase never activated |
 | `present` | Artifact exists in the catalogue | the write itself |
 | `wired` | A relevant action can reach it | its name entered a Pre-Action Marker ([Application Enforcement](application-enforcement.md)) |
-| `exercised` | It fired and a result was retained | `tripwire` by-product · `gate-result` · a skill's `check` applied |
+| `exercised` | It fired and a result was retained | `tripwire` by-product · `gate-result` · a skill's `check` applied · a tool run's exit code |
 | `outcome-supported` | A later comparable window confirmed the benefit | `improved` verdict from ledger reconciliation |
 
-Record fields: `state` · `source` · `observed_at` · `ref` — `source` is one token of `catalogue-write` \| `pre-action-marker` \| `tripwire` \| `gate-result` \| `skill-check` \| `ledger-verdict`. A state other than `unobserved` **requires** non-empty `source` + `ref`.
+Record fields: `state` · `source` · `observed_at` · `ref` — `source` is one token of `catalogue-write` \| `pre-action-marker` \| `tripwire` \| `gate-result` \| `skill-check` \| `tool-run` \| `ledger-verdict`. A state other than `unobserved` **requires** non-empty `source` + `ref`.
 
 Never lower a state; `RecordEvidence` returns unwritten instead. Ageing belongs to `freshness` in [Procedural Skills](procedural-skills.md). `outcome-supported` is reachable only from reconciliation.
 
@@ -43,11 +43,11 @@ Additive **optional** field on a procedural skill, beside the [Procedural Skills
 
 ## Consumer 3 — the intervention ledger
 
-`.dev_flow/evidence/ledger.yaml`. One entry per harvest that created a durable artifact: `id` · `lesson` · `artifact` · `owner_kind` · `problem_class` · `trigger` · `state` · `verdicts` (append-only).
+`.dev_flow/evidence/ledger.yaml`. One entry per harvest that created a durable artifact: `id` · `lesson` · `artifact` · `owner_kind` · `problem_class` · `trigger` · `state` · `verdicts` (append-only). An entry with `owner_kind: tool` also carries `bypasses` (append-only) — each hand-rolled check the tool covered, with `date` · `task` · `reason` (`unknown` \| `unfit` \| `untrusted` \| `broken` \| `unavailable`) · `note` ([Project Tools](project-tools.md#use-accounting)); a promoted tool opens its entry at promotion, a legacy tool on its first bypass.
 
 An entry with empty `verdicts` is **dormant** — it supports no claim of benefit. A ledger restored in a new session preserves continuity, never synthesizes a verdict. Opening an entry requires a named `trigger`; a second open entry for the same `artifact` + `problem_class` is rejected.
 
-**Reconcile** in [audit](../phases/audit.md) `rules`/`skills` scope: every entry whose trigger is due gets one appended verdict — `improved` · `unchanged` · `regressed` · `still-unobserved`. `state` rises to `outcome-supported` only on `improved`, with no `regressed` in history, and only when the artifact is already `exercised`; a `regressed` in history keeps its blocker permanently. An artifact still `present` with no `exercised` observation ever recorded is reported as a **prune candidate** for [Procedural Skills](procedural-skills.md) curation.
+**Reconcile** in [audit](../phases/audit.md) `rules`/`skills` scope (entries with `owner_kind: tool` in the `tools` scope, Step 7g): every entry whose trigger is due gets one appended verdict — `improved` · `unchanged` · `regressed` · `still-unobserved`. `state` rises to `outcome-supported` only on `improved`, with no `regressed` in history, and only when the artifact is already `exercised`; a `regressed` in history keeps its blocker permanently. An artifact still `present` with no `exercised` observation ever recorded is reported as a **prune candidate** for [Procedural Skills](procedural-skills.md) curation.
 
 Absent `.dev_flow/evidence/` the reconcile step is a no-op.
 
@@ -74,6 +74,7 @@ Opening a ledger entry can fail (`EVD_NO_TRIGGER`, `EVD_DUPLICATE_ENTRY`) inside
 | [Procedural Skills](procedural-skills.md) · [skill phase](../phases/skill.md) | The `check` field and its no-invented-evidence rule |
 | [Application Enforcement](application-enforcement.md) | Its tripwire by-product is the primary `exercised` source |
 | [rule phase](../phases/rule.md) · [skill phase](../phases/skill.md) index format | The optional `evidence:` key |
+| [Project Tools](project-tools.md) | A tool's evidence in its usage file; `tool-run` as an `exercised` source; `bypasses` on its ledger entry; audit Step 7g reports never-`exercised` tools as retire candidates |
 | [audit](../phases/audit.md) `rules`/`skills` scope | Ledger reconciliation and prune candidates |
 | [test](../phases/testing.md) · [verify](../phases/verify.md) · [review](../phases/review.md) · [audit](../phases/audit.md) reports | The report ceiling and the written `unobserved` |
 

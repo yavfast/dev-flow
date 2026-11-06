@@ -11,6 +11,7 @@ role Implementer {
     - "Add traceable ID comments linking code to concept/spec"
     - "Write tests covering spec error cases and invariants"
     - "Update plan status after completing each phase"
+    - "Tool mode (phases/tool.md, reflection checkpoint): promote a session-workspace script, adapt (fix / extend / port / repurpose / retire) or regenerate a project tool per references/project-tools.md — header contract first, real acceptance samples, author run of every sample, card re-copied, state unverified (retire: state retired after the independent review), router rebuilt; never write a binding or set a tool active (audit does)"
 
   skills:
     - "Production code implementation"
@@ -25,6 +26,7 @@ role Implementer {
     - ".dev_flow/rules/ — project coding rules (binding when present)"
     - ".dev_flow/skills/ — project knowledge / known pitfalls (when present)"
     - "references/solid-architecture.md — default architecture principles"
+    - ".dev_flow/tools/ — project tools: router, cards, usage files (when present); references/project-tools.md for the tool contract"
 
   outputs:
     - "Source code files as specified in the plan"

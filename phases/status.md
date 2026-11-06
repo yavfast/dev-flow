@@ -50,7 +50,7 @@ For the periodic whole-directory revision see the [audit phase](audit.md): `stat
 ├── output_styles.md           # Project style profiles — documentation + chat registers (Output Styles); absent → shipped defaults
 ├── profile/                   # user.md (consent required) + environment.md (announced) — developer/machine adaptation facts (Adaptation Profile); gitignored, created lazily
 ├── cache/                     # Durable resources (Figma exports, downloads, baselines) + _index.yaml (Resource Cache)
-├── tools/                     # _index.yaml + samples/ — deterministic checks harvested by Experience Capture (self-tested, read-only); run-privileged — the privileged runner (Proportionate Caution), written only with the developer's word
+├── tools/                     # _index.yaml (router) + realizations + samples/ + cards/ + usage/ + prev/ — project tools (Project Tools): header contract, acceptance samples, card, binding written by audit; run-privileged — the privileged runner (Proportionate Caution), written only with the developer's word
 ├── access/                    # channels.yaml — sanctioned access channels (committed); journal.log — hash-chained call journal (gitignored) (Access Channels)
 ├── evidence/                  # ledger.yaml — intervention ledger (Evidence Discipline); absent → reconcile is a no-op
 ├── tasks/
@@ -231,7 +231,8 @@ Every dev-flow command MUST update context using this protocol. The goal is **to
 1. **In the task file:** set the task-level `Status: done`. Append a final Shared Activity Log entry.
 2. **In the dashboard:** targeted `Edit` — move your task's row from "Active Tasks" to "Recently Completed". If that list now exceeds 5 entries, move the oldest into `session_history/session_YYYY-MM-DD.md` and remove the row from the dashboard.
 3. **In the catalog:** same — move from Active to Recently Completed.
-4. **Surface queued follow-ups:** scan `.dev_flow/todos/` and plan backlogs for `queued` records triggered `after task_<this ID>` and offer to run each next (`/dev-flow do …`) — a suggestion, not an auto-run; the executed work still passes its own gates and commit approval. See [todo phase](todo.md).
+4. **Tools awaiting audit:** name the project tools this task promoted, adapted or regenerated that are still `unverified`, and offer `/dev-flow audit tools` — a suggestion, not an auto-run ([Project Tools](../references/project-tools.md#verification-in-audit)).
+5. **Surface queued follow-ups:** scan `.dev_flow/todos/` and plan backlogs for `queued` records triggered `after task_<this ID>` and offer to run each next (`/dev-flow do …`) — a suggestion, not an auto-run; the executed work still passes its own gates and commit approval. See [todo phase](todo.md).
 
 ### Targeted-edit safety
 

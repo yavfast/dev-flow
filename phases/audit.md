@@ -7,7 +7,7 @@
 - [Role Responsible](#role-responsible) — The Auditor role and the per-lens fan-out of the `code` scope
 - [When to Run](#when-to-run) — Sweep triggers: cadence, status-reported drift, hygiene caps, lagging headers/doc statuses; `code` cadence, reduced mode
 - [Guiding Principles](#guiding-principles) — Reconcile not fabricate, non-destructive, source-of-truth order, safe under contention, apply-safe/propose
-- [Procedure](#procedure) — Steps 1–9: inventory, reconcile, compact & reflect, dashboard, catalog, rules, skills, docs/cache/access/tools (7a–7g), report, code
+- [Procedure](#procedure) — Steps 1–9: inventory, reconcile, compact & reflect, dashboard, catalog, rules, skills, docs/cache/access (7a–7f), tool verification (7g), report, code
 - [Report Structure](#report-structure) — Report templates: workspace/docs sweep (applied / harvested / proposed / flagged / clean) and the `code` scope summary
 - [Safety & Contention](#safety--contention) — What audit may rewrite (derived files, closed tasks) vs targeted-only edits on live task files; re-read before write
 - [Dry-Run](#dry-run) — What `--dry-run` covers (Steps 1–7g analysis + Step 8 report, no writes) and the `code` scope's preview-only equivalent
@@ -27,7 +27,7 @@ Audit is also the **declared home of a corpus-wide comparison**. A sweep with no
 /dev-flow audit [scope] [--dry-run]
 ```
 
-- `scope` (optional) — limit the sweep to one area. One of: `context` (dashboard + task reconciliation + compaction), `tasks` (reconcile + compact task files only), `rules`, `skills`, `cache`, `docs` (documentation integrity — index · statuses · cross-refs · orphans · freshness · glossary · duplicated sets · drift), `code` (whole-codebase architecture/SOLID/DRY/security audit → refactoring plan), or `all` (default). `all` runs every workspace + `docs` scope below; **`code` is opt-in and excluded from `all`** — it is the heavy, periodic scope and is invoked explicitly.
+- `scope` (optional) — limit the sweep to one area. One of: `context` (dashboard + task reconciliation + compaction), `tasks` (reconcile + compact task files only), `rules`, `skills`, `cache`, `tools` (verify project tools — samples, independent review, bindings), `docs` (documentation integrity — index · statuses · cross-refs · orphans · freshness · glossary · duplicated sets · drift), `code` (whole-codebase architecture/SOLID/DRY/security audit → refactoring plan), or `all` (default). `all` runs every workspace + `docs` scope below; **`code` is opt-in and excluded from `all`** — it is the heavy, periodic scope and is invoked explicitly.
 - The `code` scope takes **free-form intent**, not flags: `/dev-flow audit code <description of intent>`. The `--dry-run` flag below applies to the workspace/`docs` scopes; `code` expresses "report only, no hand-off" in its intent text (e.g. "preview plan") — see [Step 9](#step-9--code-scope-the-whole-codebase-audit).
 - `--dry-run` — produce the audit report only; make no changes on disk.
 
@@ -42,6 +42,7 @@ Each scope runs a defined subset of the [procedure](#procedure); `all` runs the 
 | `rules` | 6 | `.dev_flow/rules/` catalogue |
 | `skills` | 7 | `.dev_flow/skills/` catalogue |
 | `cache` | 7d | `.dev_flow/cache/` index ↔ disk |
+| `tools` | 7g | `.dev_flow/tools/` — verification, independent review and bindings of project tools ([Project Tools](../references/project-tools.md#verification-in-audit)) |
 | `docs` | 7a · 7b · 7c · 7e | `docs/` — glossary, open decisions/backlogs/todos/spikes, docs↔code drift, **index · statuses · cross-refs · orphans · freshness · duplicated sets · scaling** |
 | `all` (default) | 1–8 | everything in the workspace **and** docs (**not** `code`) |
 | `code` (opt-in, separate) | 9 | the **whole project codebase** — architecture/SOLID/DRY/security/… via lens fan-out → prioritized refactoring plan + run report (timestamped, in `.dev_flow/audit/`) + `docs/_framework.md` update (read-only; hands off to the pipeline, never commits) |
@@ -56,6 +57,7 @@ Each scope runs a defined subset of the [procedure](#procedure); `all` runs the 
 /dev-flow audit rules            # only groom .dev_flow/rules/
 /dev-flow audit skills           # only groom .dev_flow/skills/
 /dev-flow audit cache            # only groom .dev_flow/cache/
+/dev-flow audit tools            # only verify .dev_flow/tools/ (samples, independent review, bindings)
 /dev-flow audit docs             # only check docs/ integrity (index, statuses, refs, orphans, freshness, glossary, duplicated sets, drift)
 /dev-flow audit code             # whole-codebase audit → refactoring plan (all base lenses)
 /dev-flow audit code модуль auth, фокус на architecture та DRY   # scoped + lens-focused (free-form)
@@ -145,7 +147,7 @@ Regenerate `tasks/_index.md` from the task headers: Active and Recently Complete
 1. **Index ↔ disk (derived layers, applied)** — regenerate the derived layers from the rule headings per [Knowledge Scaling](../references/knowledge-scaling.md): `rules/_index.yaml` category blocks (`rules[]` = the file's units by id plus `moved_to` aliases; stale `file` / `summary` / `severity`; a unit selector wider than its category or a `phases` value outside the closed set → `index-drift`), each category file's `## Contents` digest above `digest_min` units (`digest-drift`; legacy `## Rule:` units get `(legacy)` lines — `heading-legacy`, the heading itself is never rewritten by audit), a missing `{#id}` anchor added from the heading id (`anchor-coverage`), severity words outside `must` / `should` / `prefer` or outside the heading normalized per the [rule phase](rule.md#severity-normalization) with every rename reported (`severity-vocab`), and a category `summary` over `directive_max` or reading as a list of directives replaced by one scope line (`summary-accumulation`). Defects reported, never auto-fixed: a duplicate anchor, a `moved_to` whose target is missing. Every line carries its measurement or is `unobserved`.
 2. **Semantic duplicates** — scan for rules expressing the same constraint under different names or in different category files. Propose a merge: keep the canonical rule (usually the one with the stable ID and more references), deprecate or redirect the other, and report it. **Do not auto-delete.**
 3. **Consistency** — check that each rule has a sane category and severity, that cross-references (rule IDs, file paths, traceable IDs) still resolve, and that `must`-severity rules are genuinely mandatory. Flag stale or dangling references.
-4. **Ledger reconcile (every entry except `owner_kind: skill`)** — for each `.dev_flow/evidence/ledger.yaml` entry whose `trigger` is due, append one verdict (`improved` / `unchanged` / `regressed` / `still-unobserved`); a `regressed` in history keeps its blocker. `owner_kind: skill` belongs to Step 7.6. Report artifacts still `present` with no `exercised` observation ever recorded as **prune candidates** — *proposed*, never auto-deleted (Step 6.2 policy). Absent the file → no-op. See [Evidence Discipline](../references/evidence-discipline.md).
+4. **Ledger reconcile (every entry except `owner_kind: skill` and `owner_kind: tool`)** — for each `.dev_flow/evidence/ledger.yaml` entry whose `trigger` is due, append one verdict (`improved` / `unchanged` / `regressed` / `still-unobserved`); a `regressed` in history keeps its blocker. `owner_kind: skill` belongs to Step 7.6, `owner_kind: tool` to Step 7g.5. Report artifacts still `present` with no `exercised` observation ever recorded as **prune candidates** — *proposed*, never auto-deleted (Step 6.2 policy). Absent the file → no-op. See [Evidence Discipline](../references/evidence-discipline.md).
 5. **Knowledge scaling — proposed** ([Knowledge Scaling → Audit verdicts](../references/knowledge-scaling.md#audit-verdicts); content changes, executed by the [rule phase](rule.md) only after confirmation; never a rule-id change): `unit-verbosity` — body over `unit_body_max`, `Why` over `rationale_max`, or a directive over `directive_max` → compaction into `<category>.log.md` (a directive is split, never truncated); `split-planned` / `split-required` — file words over `full_read_limit` / `soft_split` → split into a new category file with its own selector, no umbrella; `knowledge-overload` — the probe: for each phase of the closed set, count the rules (aliases excluded) whose `applies_to.phases` is empty or contains it; over `activation_budget` → the remedy menu (narrow selectors · split the category by selector · consolidate the cluster into a skill · merge duplicates · lower to `prefer` — never a `must`).
 6. **Selector coverage and consolidation signals (advisory)** — a category without `applies_to` is `always-on`: report `selector-missing` with a selector hint derived from the category name; the hint is never written automatically. Group each category's rules by effective selector; a group strictly above `consolidation_min` not yet listed in full by a skill → `skill-candidate` with the cluster's ids — consolidation is the agent's decision ([skill phase](skill.md)), never executed by audit.
 
@@ -226,12 +228,17 @@ Report-only; never sanction, narrow, suspend, or revoke a channel ([Access Chann
 3. **Stored secrets** — no secret in the project tree; a `masked-store` path lies outside it with mode `0700`.
 4. **Unused channels** — a `sanctioned` channel with no journal line for the task retention window (~30 days, [tasks index](../templates/tasks_index.md)); propose that the developer narrows or revokes it.
 
-### Step 7g — Revise `tools/` (under `all`, when `.dev_flow/tools/` exists)
+### Step 7g — Verify `tools/` (scope `tools` / under `all`, when `.dev_flow/tools/` exists)
 
-Report-only; never rewrite or delete a tool ([Experience Capture](../references/experience-capture.md#applying-experience--auto-apply-through-structural-gates)).
+The one place where trust in a project tool is established; `/dev-flow tool verify <names>` runs this same step for named tools. The procedure — the due set, running the samples in a clean environment, the independent review, the binding — lives in [Project Tools → Verification in audit](../references/project-tools.md#verification-in-audit); this step runs it.
 
-1. **Index ↔ disk** — every `_index.yaml` entry has its file, and every file in `tools/` other than `_index.yaml` and `samples/` has an entry; a gap is a finding.
-2. **Self-tests** — run each `regime: harvested` tool on its `good` and `bad` samples; a missing sample, a non-clean `good`, a missed `expect` on `bad`, or a project tree changed by the run is a finding (fix via the `extend` rung). `developer-word` tools are not run. Under `--dry-run` no tool runs: list the self-tests as `unobserved`.
+1. **Router ↔ disk** — every `_index.yaml` entry has its realization (except a `retired` one) and, for `regime: contract`, its card; every realization, card and samples directory has an entry. A gap is a report row, never a deletion.
+2. **Contract tools** — for each `regime: contract` tool not `retired`, compute what is due; verify only that (Verification Economy). Full verification: validate the contract and manifest, run every sample, spawn the independent tool review (clean-context subagent, reviewer role tool-review mode — never in the auditor's own context), then write the card copy, the binding and `state: active`, or `state: failing` with the reason. New environment: run the samples here and append the environment, or report a `port` candidate.
+3. **Legacy tools** (`regime: harvested`) — run the self-test on the `good` and `bad` samples as before: a missing sample, a non-clean `good`, a missed `expect` on `bad`, or a project tree changed by the run is a finding; propose a header contract through Adapt.
+4. **Runner** (`regime: developer-word`) — not run, not reviewed; reported as skipped.
+5. **Use** — reconcile the ledger entries with `owner_kind: tool` whose trigger is due (one verdict each, as in Step 6); from the usage files and the ledger report retire candidates (no `exercised` in the retention window, ~30 days), recent failures per tool, bypass reasons per tool. Proposals only; a retirement goes through Adapt `retire` and its independent review.
+
+In `tools/` audit writes only cards (with their bindings) and the router, and deletes a `prev/` copy once its tool is bound; it never edits, moves or deletes a realization or a sample. After the per-tool rows, rebuild the router from the cards ([Project Tools → Card, binding, router, usage file](../references/project-tools.md#card-binding-router-usage-file)) — every card write is followed by a rebuild. Under `--dry-run` no tool runs and nothing is written: each due action is listed as `unobserved`.
 
 ### Step 8 — Report
 
@@ -333,7 +340,10 @@ Use this template:
    • Spike <name.spike.md> in-progress beyond its time-box
    • Cache: <a> files without index entry / <b> entries with missing files (cannot invent `source`)
    • Cache: <file> expired (<valid_until>), source changed or uncheckable — refresh belongs to its update task
-   • Tools: <name> without file / file <name> without entry / self-test fails (<good not clean | bad missed expect | sample missing>) — fix via extend
+   • Tools: <name> <state before> → <state after> — <action: none | full | new-environment | failing> — <reason>
+   • Tools: <name> without file / file <name> without entry / card without entry (never deleted)
+   • Tools (legacy `harvested`): self-test fails (<good not clean | bad missed expect | sample missing>) — propose a contract via Adapt
+   • Tools: retire candidates (no `exercised` in the retention window) · recent failures · bypass reasons per tool
    • Docs: orphan <doc> (no spec/plan) / deprecated <doc> still in active Depends on / banned phrase in active <doc>
    • Rules: duplicate anchor {#<id>} in <file-A>, <file-B> / alias <id> → <moved_to> target missing / category <name> has no applies_to (always-on; hint: <selector>) / skill-candidate: <category> <selector> — <n> rules <id…> (agent's call)
 
@@ -378,7 +388,7 @@ For the **`code` scope** (Step 9) the output is the refactoring plan itself, sum
 
 ## Dry-Run
 
-`--dry-run` performs Steps 1–7g as analysis only and emits the Step 8 report without touching disk. The report distinguishes what *would* be applied from what would be proposed.
+`--dry-run` performs Steps 1–7g as analysis only and emits the Step 8 report without touching disk — no tool sample runs and no review is spawned in Step 7g. The report distinguishes what *would* be applied from what would be proposed.
 
 The **`code` scope** is read-only w.r.t. source through the plan regardless of any flag — its `--dry-run` equivalent is **preview-only intent** (e.g. "audit code … preview plan"), which runs ParseIntent + RunAnalysis + Consolidate + ProducePlan and then *stops* without offering the hand-off. (ProducePlan still writes the plan + report to `.dev_flow/audit/` and updates the framework map; those are derived artifacts, not source.)
 
@@ -389,6 +399,7 @@ The **`code` scope** is read-only w.r.t. source through the plan regardless of a
 | [status](status.md) | Reuses the read protocol, regeneration procedure, and archive flow. `status` reports drift; `audit` resolves it. |
 | [rule](rule.md) | Catalogue edits and reflection-derived rules follow the rule phase's category/severity model and index format. |
 | [skill](skill.md) | Skill index reconciliation, dedupe, and reflection-derived skills follow the skill phase's non-triviality filter and index chain. |
+| [Project Tools](../references/project-tools.md) | Step 7g (scope `tools`) is where tools are verified and bound; the procedure lives in the reference, the step runs it. |
 | [cache](../references/cache.md) | Step 7d reconciles the resource cache index ↔ disk and flags unreferenced/stale entries; the cache index is data (carries `source`), never regenerated. |
 | [propagate](propagate.md) | When reconciliation reveals docs and code disagree, route the doc fix through propagate. Step 7c runs its drift detection algorithm as part of the sweep. |
 | [research](research.md) | The proposed closing route for expired open-decision triggers whose missing information is researchable, and for stale spikes. The `code` scope borrows its cost gate for large/deep runs and its perspective-panel shape for the parallel lens fan-out + single-writer consolidation. |

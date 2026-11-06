@@ -69,7 +69,7 @@ Do **NOT** cache:
 - **Personal data** — never, in any form.
 - Bulky data with **no stated future consumer** — the same minimality bar the validation gates apply to documents: "just in case" is not a consumer.
 
-**Not the cache:** clones of external repositories analyzed by [`adopt`](repo-adoption.md) live in `ext_repos/` at the project root and are never promoted here. A clone is a live worktree that refreshes itself via `git pull`, not an immutable fetched artifact — cache curation must not touch it.
+**Not the cache:** project tools and their acceptance samples live in `.dev_flow/tools/` and reach it only through [Promote](project-tools.md#promote) — a tool draft in the workspace is never saved here. Clones of external repositories analyzed by [`adopt`](repo-adoption.md) live in `ext_repos/` at the project root and are never promoted here. A clone is a live worktree that refreshes itself via `git pull`, not an immutable fetched artifact — cache curation must not touch it.
 
 ## Directory Layout
 
@@ -262,10 +262,11 @@ This is the **L1 data cache** — the *data* half of session scratch (see [Memor
 
 ```
 /tmp/{project-slug}/                  # project workspace — survives a session restart, wiped on reboot
-├── logs/         # test / build / run output           ┐ data cache (data half):
-├── screenshots/  # transient captures                  │ project-scoped, shared by
-├── downloads/    # staging for fetched resources        │ every session on this repo
-├── scratch/      # spike prototypes, throwaway harnesses ┘
+├── logs/         # test / build / run output             ┐ data cache (data half):
+├── screenshots/  # transient captures                    │ project-scoped, shared by
+├── downloads/    # staging for fetched resources          │ every session on this repo
+├── scratch/      # spike prototypes, throwaway harnesses  │
+├── tools/        # tool drafts, sample work copies, output ┘
 └── sessions/
     └── {session-uuid}/
         └── working_memory/   # L1 working memory (notes.md · params · reminders.md · reads) — session-scoped
