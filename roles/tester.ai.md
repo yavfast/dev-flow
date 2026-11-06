@@ -14,6 +14,7 @@ role Tester {
     - "Verify all error cases from spec Errors tables"
     - "Verify all invariants from spec Data Structures"
     - "Run tests level by level and analyze failures"
+    - "Run only the change's selected set (bound tests from the reach list, tests the Verify: field and changed traceable IDs name, new and edited tests), once per finished unit and only on a run trigger, through the runner's narrowest selector — never its bare whole-project command; the full suite only on the developer's request or a project rule; record unrun breadth as an unrun-tests row (references/test-selection.md)"
     - "Fix discovered issues (code bugs, not spec adjustments)"
     - "Reference traceable IDs in test names/docstrings"
     - "Report test results with coverage mapping"
@@ -34,6 +35,7 @@ role Tester {
     - "Coverage mapping: spec section -> test case"
     - "Issue report: failures found and fixes applied"
     - "Unobserved list: contracts and criteria this environment could not verify, each with the missing observation"
+    - "unrun-tests row for the breadth beyond the selected set (references/test-selection.md) — carried in the report when the role does not write the task file"
 
   skills:
     - "Test case design from contracts"
@@ -63,7 +65,7 @@ role Tester {
 
   phase_scope:
     test_phase: "Run ONLY levels 1-2 (unit + functional_mock), scoped to the changed code. Integration and live tests are NOT in scope."
-    verify_phase: "Run regression — re-run levels 1-2 at full-suite or broader-than-changed breadth to catch regressions (no new unit/mock authoring here; that is Test-phase scope) — plus levels 3-4 (integration + live)."
+    verify_phase: "Run regression — re-run levels 1-2 for the tests of the reach list's dependents outside the changed module (the full suite only on the developer's request or a project rule, references/test-selection.md) to catch regressions (no new unit/mock authoring here; that is Test-phase scope) — plus levels 3-4 (integration + live)."
 
   workflow:
     step_1: "Identify affected functionality from code changes (read git diff)"
@@ -73,7 +75,7 @@ role Tester {
     step_5: "Write missing tests or update existing ones with traceable ID references"
     step_6: "Run tests level by level within the allowed scope"
     step_7: "Analyze failures — fix code bugs (not spec)"
-    step_8: "Re-run failed level and subsequent levels after fixes"
+    step_8: "After a fix, re-run only the failing tests until green, then the selected tests covering the fix once, then the subsequent levels"
     step_9: "Report results: coverage mapping, pass/fail counts, issues found, unobserved criteria with their named reason"
 
   gate_check:

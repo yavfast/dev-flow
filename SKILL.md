@@ -78,7 +78,7 @@ Each transition includes a validation gate to prevent drift.
 
 **Service commands — facts the table omits.** `research` (alias `spike`) is time-boxed, cost-gated, passes no gate, and persists durable findings to `.dev_flow/skills/`. `todo` infers flavor (`deferred` / `queued` / `contested`) and trigger from plan/task state, files into the owning plan's backlog else `.dev_flow/todos/`, and builds nothing. `adopt` (aliases `analyze-repo`, `adoption`) is advisory — no ID, no gate — and writes only its two documents, the clone in `ext_repos/`, one `.gitignore` line, and task context. `audit`'s `code <intent>` scope is opt-in, excluded from `all`, writes its plan under `.dev_flow/audit/`, and stops at the Plan→Code gate. `onboard` runs once.
 
-**Conditional and mandatory phases.** Test (5) runs only when the project has a test suite AND rules for running it — otherwise skip to Review and record the skip as `unobserved` with its reason ([Evidence Discipline](references/evidence-discipline.md)); it runs functional tests (unit + mock) on the changed code only. Review (6) is mandatory before any commit and is done by a clean-context subagent; the fix → re-review loop is bounded by [Review Convergence](references/review-convergence.md), and a contained non-`must`, non-security fix is confirmed mechanically instead of re-reviewed ([Verification Economy](references/verification-economy.md)). Verify (7) — regression, integration, live — runs after Review passes; issues → fix → Test → Review → Verify at the scope the fix earns, never narrowed for a `must` or security finding; ask before creating new integration/live scenarios; with no automation, give manual steps and record `unobserved`.
+**Conditional and mandatory phases.** Test (5) runs only when the project has a test suite AND rules for running it — otherwise skip to Review and record the skip as `unobserved` with its reason ([Evidence Discipline](references/evidence-discipline.md)); it runs only the change's [selected](references/test-selection.md) unit + mock tests, once per finished unit of work. Review (6) is mandatory before any commit and is done by a clean-context subagent; the fix → re-review loop is bounded by [Review Convergence](references/review-convergence.md), and a contained non-`must`, non-security fix is confirmed mechanically instead of re-reviewed ([Verification Economy](references/verification-economy.md)). Verify (7) — regression, integration, live — runs after Review passes; issues → fix → Test → Review → Verify at the scope the fix earns, never narrowed for a `must` or security finding; ask before creating new integration/live scenarios; with no automation, give manual steps and record `unobserved`.
 
 ### Quick Start
 
@@ -250,7 +250,7 @@ Scale the ceremony to the change class first (see [do phase → Change Classes](
 4. Update the **code** — implement according to the updated spec.
 5. Run **functional tests** — unit + mock tests covering the changed code (if test suite exists).
 6. Run **pre-commit review** — subagent with clean context reviews the changes.
-7. Run **verification** — regression, integration, and/or live tests; or provide manual verification steps. If issues found → fix → re-run steps 5 (if tests exist), 6, 7 at the scope the fix earns, never narrowing for a `must` or security finding (see [Verification Economy](references/verification-economy.md)).
+7. Run **verification** — regression, integration, and/or live tests; or provide manual verification steps. If issues found → fix → re-run steps 5 (if tests exist), 6, 7 at the scope the fix earns, never narrowing for a `must` or security finding (see [Verification Economy](references/verification-economy.md); test breadth: [Test Selection](references/test-selection.md#boundaries)).
 8. **Commit sign-off** — present the changed files, the review verdict, the intent verdict, and the proportionality block; commit only after the developer's explicit yes ([Developer Checkpoints](#developer-checkpoints)).
 
 ## Traceable Identifiers
@@ -357,6 +357,7 @@ Each rule is one h2 unit — directive and severity in the heading over a bounde
 | [Adaptation Profile](references/adaptation-profile.md) | `.dev_flow/profile/`: developer + machine facts, consent, recorded refusal |
 | [Review Convergence](references/review-convergence.md) | Criticality → materiality; `contested` todo; delta rounds |
 | [Verification Economy](references/verification-economy.md) | Entry conditions: Signal, Invalidator, ConfirmDiscriminator |
+| [Test Selection](references/test-selection.md) | Which tests run and when: change-bound set, run trigger, `unrun-tests` |
 | [Proportionate Caution](references/proportionate-caution.md) | Hard floor; secret handling; proportionality block |
 | [Access Channels](references/access-channels.md) | Channels sanctioned once; reauth on resource demand; journal |
 | [Design Compliance](references/design-compliance.md) | UI vs design source of truth, in verify |

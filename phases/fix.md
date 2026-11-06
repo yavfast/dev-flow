@@ -82,7 +82,7 @@ Verify runs on **every** fix — including the fast path that skipped Diagnosis.
 
 1. **Build** — run the project's build command and confirm success. Use whatever build tool the project uses (e.g., `make`, `npm run build`, `./gradlew build`, `go build ./...`, `cargo build`, `python -m build`). If the fix is in a specific module, build that module.
 
-2. **Test** — if applicable tests exist, run them using the project's test runner (e.g., `pytest`, `npm test`, `./gradlew test`, `go test ./...`, `cargo test`).
+2. **Test** — if applicable tests exist, run the fix's selected set once, at the end of the fix: the tests bound to the changed functions and their callers, plus the test that locks the bug — through the runner's narrowest selector (a file, class, or test name), never its bare whole-project command. Intermediate edits during the fix trigger no run; a failure re-runs only the failing tests. The full suite runs only on the developer's request or a project rule; the unrun breadth goes to the commit sign-off as an `unrun-tests` row. See [Test Selection](../references/test-selection.md).
 
 3. **Review the diff** — re-read all changed files to check for regressions, missed edge cases, or rule violations. If a Diagnosis sub-step added `[DEBUG-xxxx]` instrumentation or a throwaway harness, remove it now — one `grep` on the tag — and confirm none survives.
 

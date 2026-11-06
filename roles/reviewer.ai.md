@@ -111,7 +111,7 @@ role Reviewer {
     severity_axis: "must | should | prefer — the same axis as project rules. The reviewer states severity; it never states materiality"
     results:
       pass: "Proceed to commit approval"
-      fail: "Fix issues, re-run tests if needed, then re-review"
+      fail: "Fix issues, re-run the selected tests covering the fixed locations when the fix changed code they cover (references/test-selection.md), then re-review"
       warnings: "Present warnings to the user, proceed if user approves"
 
   convergence:

@@ -45,10 +45,10 @@ This phase covers **functional tests only** — fast, isolated checks of the cha
 
 | Level | Type | Purpose | When to run |
 |-------|------|---------|-------------|
-| 1 | **Unit tests** | Verify individual functions/methods in isolation | Always — after any code change |
+| 1 | **Unit tests** | Verify individual functions/methods in isolation | Once per finished unit of work, on a run trigger ([Test Selection](../references/test-selection.md)) |
 | 2 | **Functional / Mock tests** | Verify behavior with mocked dependencies | When code interacts with external services or complex subsystems |
 
-**Rule:** Run only the tests that cover the changed code. Do not run the full test suite — that is the job of regression testing in the Verify phase.
+**Rule:** Run only the change's selected set, once per finished unit of work and only on a run trigger. Never the full test suite — breadth beyond the set runs on the developer's request or a project rule, and otherwise goes to the commit sign-off as an `unrun-tests` row. See [Test Selection](../references/test-selection.md).
 
 ## Rules
 
@@ -87,10 +87,13 @@ Before running tests, verify:
    plan phase's `Verify:` field first: it names the spec Verification Criteria
    (SP_XXX_05_*) and acceptance checks for exactly this phase (the ready checklist;
    no re-derivation from the whole spec)
-2. Find existing unit and mock tests covering the changed code
+2. Build the selected set — bound tests from the Symbol reach, tests the `Verify:`
+   field and changed traceable IDs name, new and edited tests (Test Selection,
+   ../references/test-selection.md)
 3. Check if new functional test cases (unit/mock) are needed — create them without
    asking (they are safe; see Anti-Patterns)
-4. Run only the relevant functional tests (unit + mock)
+4. Run the selected set once, through the runner's narrowest selector — only when a
+   run trigger holds (see Run trigger in Test Selection)
 5. If any test fails:
    a. Analyze the failure — a code bug, a test bug, or a spec problem?
    b. Code or test bug → fix the root cause (code must satisfy the spec,
@@ -98,8 +101,9 @@ Before running tests, verify:
    c. Spec problem — two defensible readings of a contract, or the contract
       contradicts observed reality → stop and escalate upstream instead of
       guessing; see Upstream Escalation (../references/escalation.md)
-   d. Re-run the failed tests
-6. All functional tests pass → proceed to Review phase
+   d. Re-run only the failed tests until they pass, then the selected set once
+6. All functional tests pass → record the unrun breadth (`unrun-tests` row) →
+   proceed to Review phase
 ```
 
 **Note:** Do NOT run integration or live tests at this stage. Those are handled in the [Verify phase](verify.md) after Review passes.
@@ -143,6 +147,7 @@ At the phase boundary, run the [Transition Checkpoint](../references/experience-
 - Modifying the spec to match failing code instead of fixing the code (a genuine spec defect goes through [Upstream Escalation](../references/escalation.md), not a silent edit)
 - Introducing a new test framework when the project already has one
 - Writing tests without traceable ID references
-- Running the full test suite when only a small area changed (wastes time)
+- Running the full test suite, or the runner's bare whole-project command, without the developer's request or a project rule
+- Re-running tests after each edit, or after a change no selected test covers — one run per finished unit, on a trigger
 - Running integration/live tests in this phase (those belong in Verify)
 - Asking permission for unit/mock tests (they are safe — just create them)

@@ -40,6 +40,7 @@ role Implementer {
     - "MUST add traceable ID comments: # [C_XXX_NN_NN] description"
     - "MUST use immutable structures where spec says immutable"
     - "MUST write tests covering spec error cases and invariants"
+    - "MUST run only the change's selected tests, once when the unit of work is complete and only when covered code changed since their last green run — never after each edit, never the full suite unless the developer or a project rule asks; record the unrun breadth as an unrun-tests row in the task file (references/test-selection.md)"
     - "MUST update plan phase status: TODO -> IN PROGRESS -> DONE"
     - "MUST update plan Progress checkboxes"
     - "MUST follow SOLID principles and pluggability guidelines (references/solid-architecture.md) unless .dev_flow/rules/ defines alternative architectural conventions"

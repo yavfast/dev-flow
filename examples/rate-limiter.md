@@ -382,13 +382,15 @@ After review passes, run broader verification. Ask user permission before creati
 
 ### Regression
 
-```
-$ pytest tests/ -v --timeout=60
+Regression covers the tests of the reach list's dependents outside the changed module — here the LLM router, the only caller of `AcquireToken` — not the whole suite ([Test Selection](../references/test-selection.md)):
 
-182 passed, 0 failed in 3.41s
+```
+$ pytest tests/test_llm_router.py -v --timeout=60
+
+14 passed, 0 failed in 0.62s
 ```
 
-No regressions introduced.
+No regressions introduced. The rest of the suite (162 tests) is not bound to the change; it is recorded as an `unrun-tests` row for the commit sign-off.
 
 ### Integration (if applicable)
 
@@ -427,14 +429,16 @@ Steps:
 
 ## Step 8 — Commit
 
-Commit sign-off: changed files, review verdict, intent verdict, proportionality block (empty here, so not shown); "Ready to commit?" — commit on the developer's yes ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)).
+Commit sign-off: changed files, review verdict, intent verdict, proportionality block (one open `unrun-tests` row); "Ready to commit?" — commit on the developer's yes ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)).
 
 ```
 All checks passed:
 - ✓ Functional tests (5/5)
 - ✓ Pre-commit review (PASS, 1 warning acknowledged)
-- ✓ Regression tests (182/182)
+- ✓ Regression tests — router dependents (14/14)
 - ✓ Integration tests (1/1)
+
+Unrun: 162 tests outside the change (`unrun-tests` engine #1) — run-full-local / run-full-ci / skip?
 
 Ready to commit?
 ```
