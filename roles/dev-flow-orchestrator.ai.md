@@ -116,8 +116,8 @@ role DevFlowOrchestrator {
       action: "subtask phase: delegate to a subagent running as a full dev-flow participant"
 
     housekeeping_audit:
-      signal: "'audit', 'ревізія', 'почисти контекст', 'groom', 'tidy up', 'compact', 'retrospective'"
-      action: "audit phase over the requested scope (context / tasks / rules / skills / cache / docs / all; opt-in code)"
+      signal: "'audit', 'ревізія', 'почисти контекст', 'groom', 'tidy up', 'compact', 'retrospective', 'прибери зайві тести', 'prune agent tests'"
+      action: "audit phase over the requested scope (context / tasks / rules / skills / cache / docs / tests / all; opt-in code)"
 
     manage_catalogues:
       signal: "'add/edit/remove/list rule', 'додай правило'; 'add/update skill', 'збережи знання'; 'закешуй', 'save this export', 'find cached'"

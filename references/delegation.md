@@ -51,7 +51,7 @@ Describe the *nature* of the task and let the orchestrator map it to whatever mo
 |--------------|-----------|------------------|------|
 | Write / edit code (implement) | No — core | — | main agent |
 | Decisions at gates, task state | No — core | — | main agent |
-| Run test suite + parse failures (test, fix) | Yes | failing tests + reasons, log path | fast / cheap |
+| Run the task's tests + parse failures (test, fix) | Yes | failing tests + reasons, log path | fast / cheap |
 | Build / verify run (verify) | Yes | pass/fail + failures that matter, log path | fast / cheap |
 | Regression / integration / live (verify) | Yes | verdict + failures, artifact paths | fast / cheap |
 | Diagnosis: reproduce + instrument (fix) | Yes | confirmed cause + evidence, log path | fast / cheap |

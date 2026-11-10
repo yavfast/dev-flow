@@ -70,8 +70,8 @@ Before writing code, verify:
 2. Read the referenced specification sections.
 3. Write code that satisfies ALL spec contracts and the phase's `Verify:` checklist.
 4. Add traceable ID comments linking back to concept/spec.
-5. Add or update tests covering the spec's error cases and invariants — see [Test phase](testing.md).
-6. Run functional tests (unit → mock) covering the changed code.
+5. Check the spec's error cases and invariants; choose the form of each check by [Test Economy](../references/test-economy.md#choosing-the-form) — a permanent test only with a keep reason, trivial behaviour as a temporary test; see [Test phase](testing.md).
+6. After each edit, run the task-set tests (unit → mock) that cover the edited code — never the full suite ([When to run](../references/test-economy.md#when-to-run)).
 7. Fix any test failures — code must satisfy the spec.
 8. Run pre-commit review (clean-context subagent) — see [Review phase](review.md).
 9. Fix any blocking issues from the review; re-run tests if needed.
@@ -80,7 +80,7 @@ Before writing code, verify:
 12. Update the plan phase status to [DONE].
 13. Update the plan Progress checkboxes.
 14. Reflection checkpoint — harvest rules/skills/tools, auto-applied through the structural gate; see [Reflection](#reflection--harvest-rules-skills-and-tools) below.
-15. Commit sign-off — changed files, review verdict, intent verdict, proportionality block; "Ready to commit?" and wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)).
+15. Commit sign-off — changed files, review verdict, intent verdict, proportionality block; "Ready to commit?" and wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)). The commit message carries one `Keep-Test` trailer per new permanent test ([Test Economy](../references/test-economy.md#keep-reasons)).
 
 ## Delegation for Focus
 

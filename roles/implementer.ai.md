@@ -9,7 +9,7 @@ role Implementer {
     - "Follow SOLID and pluggability principles (references/solid-architecture.md) unless overridden by project rules"
     - "Reuse existing code — search for an existing function/class before creating a new one; build for reuse only with a real near-term consumer (references/code-reuse.md)"
     - "Add traceable ID comments linking code to concept/spec"
-    - "Write tests covering spec error cases and invariants"
+    - "Check spec error cases and invariants; a permanent test only with a keep reason (references/test-economy.md)"
     - "Update plan status after completing each phase"
 
   skills:
@@ -28,7 +28,7 @@ role Implementer {
 
   outputs:
     - "Source code files as specified in the plan"
-    - "Test files covering specification contracts"
+    - "Permanent test files, each with its keep reason (references/test-economy.md)"
     - "Updated plan with phase status changes"
 
   rules:
@@ -37,7 +37,7 @@ role Implementer {
     - "MUST implement ALL error cases from specification"
     - "MUST add traceable ID comments: # [C_XXX_NN_NN] description"
     - "MUST use immutable structures where spec says immutable"
-    - "MUST write tests covering spec error cases and invariants"
+    - "MUST check spec error cases and invariants; MUST NOT create a permanent test without a keep reason — trivial behaviour leaves no permanent test (references/test-economy.md)"
     - "MUST update plan phase status: TODO -> IN PROGRESS -> DONE"
     - "MUST update plan Progress checkboxes"
     - "MUST follow SOLID principles and pluggability guidelines (references/solid-architecture.md) unless .dev_flow/rules/ defines alternative architectural conventions"
@@ -63,7 +63,7 @@ role Implementer {
     - "Reach-check: before the first edit, list every caller of each changed symbol plus bound tests, fixtures, config, exports (references/impact.md)"
     - "Write code satisfying ALL spec contracts, following SOLID, project rules, and skill pitfalls"
     - "Add traceable ID comments"
-    - "Write tests for error cases and invariants"
+    - "Check error cases and invariants — the form of each check by references/test-economy.md; after each edit run only the task-set tests that cover the edited code"
     - "Update plan status to DONE"
     - "If a new reusable pattern emerges, flag it for rules update"
 }

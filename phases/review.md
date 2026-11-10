@@ -56,6 +56,7 @@ Findings carry a computed **materiality**, a recurring non-`must` finding trips 
    | Code reuse | New code reuses existing functions/classes instead of re-implementing them; a new reuse seam has a real consumer ([reference](../references/code-reuse.md)); look-alikes that change for different reasons are not flagged | `should` |
    | No regressions | Changes don't break existing functionality — checked against the callers of every changed symbol, read outside the diff | `must` |
    | No leftover artifacts | No debug code, TODOs, commented-out blocks | `should` |
+   | Test economy | Each new permanent test has a keep reason in the test report; no temporary test in the diff; no test deleted outside `audit tests` while the code it checked stays ([Test Economy](../references/test-economy.md#review-check)) | `should` |
    | Code quality | Naming, structure, readability follow project conventions | `prefer` |
    | Security | No obvious vulnerabilities (injection, exposure, etc.); a secret counts only where secrets never live ([Proportionate Caution](../references/proportionate-caution.md#secrets)) | `must` |
 

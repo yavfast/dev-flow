@@ -65,6 +65,7 @@ Every specification must pass these checks before advancing to the plan:
 - [ ] Are all constraints and invariants explicitly stated?
 - [ ] Are state transitions documented with conditions and side effects?
 - [ ] Are verification criteria defined for all contracts (expected outcomes, edge cases)?
+- [ ] Is `keep` in the `Test` column set only for complex logic or on the developer's request ([Test Economy](../references/test-economy.md#the-keep-marker))?
 - [ ] Are integration scenarios described for cross-module interactions?
 - [ ] Is the rollback strategy documented (Section 06)?
 - [ ] Does the spec contain no banned phrases (see Banned Phrases above)?

@@ -15,6 +15,7 @@ role Auditor {
     - "Sweep expired cache validity: where the source supports a cheap currency check (ETag/Last-Modified, Figma version), run it — confirmed unchanged extends valid_until (applied, evidence-backed); changed/uncheckable is flagged for refresh; NEVER re-fetch from audit — the refresh belongs to the update task that made the resource stale"
     - "Detect semantic duplicates and stale entries in rules/ and skills/ and propose merges/removals"
     - "Reconcile docs/ integrity (the docs scope): index↔disk, each document's status lifecycle vs evidence (plan all-phases-done → completed; deprecated still referenced), bidirectional Depends-on/Used-by cross-references, orphans, freshness (report-only), and duplicated value sets (a set enumerated in more than one document — or restated within one — must list the same members; reconcile toward the owning document, never toward a copy); groom the glossary, sweep open decisions/backlogs/todos/spikes, and run docs↔code drift detection — applying derived/index fixes, proposing status/link changes, routing document content fixes to propagate"
+    - "(tests scope) Prune trivial agent-created tests from the project's test tree per references/test-economy.md#pruning: origin filter (agent, in git, no uncommitted changes), trivial judgement (skip `keep` criteria, cases a `Keep-Test` trailer protects with reason spec, regression or rule, and tests a rule requires), delete, run the remaining tests of the changed files and of the test files that use them, report each deleted case"
     - "(code scope) Parse the free-form `audit code <intent>` into scope/lenses/depth/mode/preview — never prompt for flags; default unparsed fields and report the assumption; error NO_SCOPE if a named scope resolves to nothing (no silent whole-codebase fallback)"
     - "(code scope) Fan out one read-only CodeAuditLens subagent per lens (parallel) over the Shared Bottom-Up Analysis walk; drop to REDUCED mode (no conformance lenses) without documented architecture/rules and recommend onboard"
     - "(code scope) Consolidate all lens Findings as a single writer: dedup, cross-module duplication clusters, abstraction candidates, docs↔code drift, cross-lens conflicts (preserved, never averaged), priority = f(max severity, blast_radius, effort)"
@@ -37,7 +38,7 @@ role Auditor {
     - ".dev_flow/tools/ (+ _index.yaml, samples/)"
     - "docs/ concept/spec/plan documents named in each task's Current Work Item"
     - "git history (commits referencing traceable IDs)"
-    - "Requested scope (context | tasks | rules | skills | cache | docs | all | code) and --dry-run flag; the opt-in `code` scope additionally takes free-form intent text and reads source + references/code-audit.md + the CodeAuditLens role"
+    - "Requested scope (context | tasks | rules | skills | cache | docs | tests | all | code) and --dry-run flag; the opt-in `code` scope additionally takes free-form intent text and reads source + references/code-audit.md + the CodeAuditLens role"
     - "Caller session identifier (used as the [agent-id] tag on any note/edit)"
 
   outputs:
@@ -55,7 +56,7 @@ role Auditor {
     - "MUST treat cache/_index.yaml as data, not a derived view: reconcile entry by entry, never regenerate; flag mismatches instead of dropping entries — their `source` metadata is irrecoverable"
     - "MUST NOT rewrite a live contributor's Subtask block or their tagged entries — reconcile live tasks only via targeted header/status edits + appended Coordination Notes"
     - "MUST honour the no-takeover rule: a stalled subtask is left intact; flag it, do not modify it"
-    - "MUST apply safe/derived changes directly but only PROPOSE judgement calls (rule merges, skill/rule/cache removals) for confirmation; reflection-harvested rules/skills/tools are auto-applied through the structural gate (never auto-`must`; a contradiction routes to independent review; a tool only read-only and self-tested)"
+    - "MUST apply safe/derived changes directly but only PROPOSE judgement calls (rule merges, skill/rule/cache removals) for confirmation — test pruning (tests scope) excepted: applied directly; never change a file of origin human or unknown, outside git or with uncommitted changes; never delete a `keep` test, a test a `Keep-Test` trailer protects, or a test a rule requires; reflection-harvested rules/skills/tools are auto-applied through the structural gate (never auto-`must`; a contradiction routes to independent review; a tool only read-only and self-tested)"
     - "MUST re-read each file immediately before writing; re-locate by Task ID / Author tag if it moved"
     - "MUST append (never overwrite) Coordination Notes, Shared Activity Log, and Proportionality entries"
     - "MUST preserve durable lessons of a closed task in rules/skills/tools before archiving its verbose history"
@@ -126,6 +127,8 @@ role Auditor {
     groom_docs:
       - "Reconcile docs/ integrity (docs scope): index↔disk (regenerate the derived _index.md), document status lifecycle vs evidence, bidirectional cross-references, orphans, freshness (report-only), duplicated value sets (diff every copy of an enumerated set against the owning document)"
       - "Groom the glossary; sweep open decisions/backlogs/spikes; run docs↔code drift detection — apply derived/index fixes, propose status/link changes, route document content fixes to propagate"
+    prune_tests:
+      - "Run references/test-economy.md#pruning over the project's test tree (tests scope / under all); under --dry-run list the cases only; a rule that disables pruning → report and skip"
     report:
       - "Emit the structured audit report (Applied / Reflection / Proposed / Flagged / Clean)"
       - "Under --dry-run: report only, zero writes"

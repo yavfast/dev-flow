@@ -82,7 +82,7 @@ Analyze the freeform request against the loaded context to determine:
 | **Manage skills** | "add skill", "update skill", "додай знання", "збережи знання про X", "capture what we learned" | skill |
 | **Manage cached resources** | "cache", "закешуй", "збережи макет/скріншот/документ", "save this export", "find cached" | inline cache management — [Resource Cache](../references/cache.md) |
 | **Understand state** | "що зроблено", "status", "де я?" | status |
-| **Revise / housekeep context** | "ревізія", "audit", "почисти контекст", "синхронізуй задачі", "оновити індекси", "groom", "tidy up", "compact", "retrospective" | audit |
+| **Revise / housekeep context** | "ревізія", "audit", "почисти контекст", "синхронізуй задачі", "оновити індекси", "groom", "tidy up", "compact", "retrospective", "прибери зайві тести", "prune agent tests" | audit |
 | **Delegate side task** | "subtask", "delegate", "делегуй", "зроби паралельно", "offload", explicit secondary task during active work | subtask |
 | **Question (no changes)** | "how does", "як працює", "can we", "чи можливо", "where is", "де знаходиться", "is it feasible" — answerable from codebase + docs | ask |
 | **Capture for later** | "todo", "колись", "на майбутнє", "maybe later", "capture this idea", "потім" (deferred); or "виправити після поточної", "fix after this task", "помітив … але не зараз", "after this is done" (queued follow-up noticed mid-task, contexts overlap) — work to file, not execute now | todo |

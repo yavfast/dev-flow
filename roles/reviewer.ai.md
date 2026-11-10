@@ -103,6 +103,9 @@ role Reviewer {
       no_leftover_artifacts:
         description: "No debug code, TODOs, commented-out blocks"
         severity: "should"
+      test_economy:
+        description: "Each new permanent test has a keep reason in the test report; no temporary test in the diff; no test deleted outside `audit tests` while the code it checked stays (references/test-economy.md)"
+        severity: "should"
       code_quality:
         description: "Naming, structure, readability follow project conventions"
         severity: "prefer"

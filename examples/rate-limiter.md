@@ -149,33 +149,33 @@ Transition rules:
 
 ### 05_01. Functional Expectations  {#SP_RLM_05_01}
 
-| Contract | Scenario | Input | Expected outcome |
-|----------|----------|-------|------------------|
-| AcquireToken | Tokens available | agent with full bucket | Returns 0.0, tokens decremented by 1 |
-| AcquireToken | Bucket empty | agent with 0 tokens | Returns wait_seconds > 0, call delayed |
-| AcquireToken | New agent | unknown agent_id | Creates bucket with default capacity, returns 0.0 |
+| Contract | Scenario | Input | Expected outcome | Test |
+|----------|----------|-------|------------------|------|
+| AcquireToken | Tokens available | agent with full bucket | Returns 0.0, tokens decremented by 1 | — |
+| AcquireToken | Bucket empty | agent with 0 tokens | Returns wait_seconds > 0, call delayed | keep |
+| AcquireToken | New agent | unknown agent_id | Creates bucket with default capacity, returns 0.0 | — |
 
 ### 05_02. Invariant Checks  {#SP_RLM_05_02}
 
-| Invariant | Verification method |
-|-----------|-------------------|
-| tokens <= capacity | Drain bucket, wait for refill, verify tokens never exceed capacity |
-| tokens >= 0 | Rapid concurrent calls, verify tokens don't go negative |
+| Invariant | Verification method | Test |
+|-----------|-------------------|------|
+| tokens <= capacity | Drain bucket, wait for refill, verify tokens never exceed capacity | keep |
+| tokens >= 0 | Rapid concurrent calls, verify tokens don't go negative | keep |
 
 ### 05_03. Integration Scenarios  {#SP_RLM_05_03}
 
-| Scenario | Preconditions | Steps | Expected result |
-|----------|--------------|-------|-----------------|
-| LLM calls throttled | LLMRouter configured with RateLimiter | Send capacity+1 rapid calls | First N calls immediate, N+1 delayed by ~1/refill_rate seconds |
+| Scenario | Preconditions | Steps | Expected result | Test |
+|----------|--------------|-------|-----------------|------|
+| LLM calls throttled | LLMRouter configured with RateLimiter | Send capacity+1 rapid calls | First N calls immediate, N+1 delayed by ~1/refill_rate seconds | — |
 
 ### 05_04. Edge Cases and Boundaries  {#SP_RLM_05_04}
 
-| Case | Input | Expected behavior |
-|------|-------|-------------------|
-| Min capacity | capacity = 1 | Only 1 call before throttling |
-| Max capacity | capacity = 1000 | 1000 calls before throttling |
-| Min refill rate | refill_rate = 0.1 | 10 seconds to refill 1 token |
-| Concurrent agents | 100 agents simultaneously | Each has independent bucket, no cross-interference |
+| Case | Input | Expected behavior | Test |
+|------|-------|-------------------|------|
+| Min capacity | capacity = 1 | Only 1 call before throttling | — |
+| Max capacity | capacity = 1000 | 1000 calls before throttling | — |
+| Min refill rate | refill_rate = 0.1 | 10 seconds to refill 1 token | — |
+| Concurrent agents | 100 agents simultaneously | Each has independent bucket, no cross-interference | — |
 
 ## 06. Reversibility  {#SP_RLM_06}
 
@@ -304,19 +304,27 @@ Update plan after each phase's Verify checklist passes (Steps 5-7): Phase 1 and 
 
 ## Step 5 — Test (Functional)
 
-Run only relevant unit and mock tests covering the changed code.
-No permission needed — functional tests are safe.
+Run only the task's unit and mock tests ([Test Economy](../references/test-economy.md)); no unit or mock test needs permission. The rows marked `keep` in section 05 get permanent tests (reason `spec`). The `Concurrent agents` row (concurrency) and the `Min refill rate` row (calculation and timing) are class `complex`: permanent tests, reason `complex`. The trivial rows (full bucket, unknown agent, capacity boundaries) are checked by a temporary test outside the project tree.
 
 ```
 $ pytest tests/test_rate_limiter.py -v
 
-tests/test_rate_limiter.py::test_acquire_token_immediate       PASSED
 tests/test_rate_limiter.py::test_acquire_token_rate_limited     PASSED
-tests/test_rate_limiter.py::test_refill_restores_tokens         PASSED
-tests/test_rate_limiter.py::test_bucket_defaults                PASSED
-tests/test_rate_limiter.py::test_acquire_token_unknown_agent    PASSED
+tests/test_rate_limiter.py::test_tokens_never_exceed_capacity   PASSED
+tests/test_rate_limiter.py::test_tokens_never_negative          PASSED
+tests/test_rate_limiter.py::test_concurrent_agents_independent  PASSED
+tests/test_rate_limiter.py::test_min_refill_rate                PASSED
 
-5 passed in 0.12s
+5 passed in 0.15s
+
+$ pytest /tmp/{project-slug}/scratch/tests/task_C_RLM/test_rate_limiter_trivial.py -v
+
+test_rate_limiter_trivial.py::test_acquire_token_immediate      PASSED
+test_rate_limiter_trivial.py::test_acquire_token_unknown_agent  PASSED
+test_rate_limiter_trivial.py::test_min_capacity                 PASSED
+test_rate_limiter_trivial.py::test_max_capacity                 PASSED
+
+4 passed in 0.04s
 ```
 
 Example test with traceable ID:
@@ -334,7 +342,7 @@ def test_acquire_token_rate_limited():
     assert wait > 0
 ```
 
-**Gate check:** All spec contracts tested. Error cases covered. Proceed to Review.
+**Gate check:** Every touched criterion checked. The `keep` rows have permanent tests with reason `spec`; the concurrency and refill-rate tests have reason `complex`. Trivial checks leave no permanent test. The commit carries five `Keep-Test` trailers. Only the task's tests ran. Proceed to Review.
 
 ---
 

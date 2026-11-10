@@ -6,16 +6,16 @@
 - [Command](#command) — `/dev-flow audit [scope] [--dry-run]` syntax, the scope list, the Scope → steps table, invocation examples
 - [Role Responsible](#role-responsible) — The Auditor role and the per-lens fan-out of the `code` scope
 - [When to Run](#when-to-run) — Sweep triggers: cadence, status-reported drift, hygiene caps, lagging headers/doc statuses; `code` cadence, reduced mode
-- [Guiding Principles](#guiding-principles) — Reconcile not fabricate, non-destructive, source-of-truth order, safe under contention, apply-safe/propose
-- [Procedure](#procedure) — Steps 1–9: inventory, reconcile, compact & reflect, dashboard, catalog, rules, skills, docs/cache/access/tools (7a–7g), report, code
+- [Guiding Principles](#guiding-principles) — Reconcile not fabricate, non-destructive (test pruning excepted), source-of-truth order, safe under contention, apply-safe/propose
+- [Procedure](#procedure) — Steps 1–9: inventory, reconcile, compact & reflect, dashboard, catalog, rules, skills, docs/cache/access/tools/tests (7a–7h), report, code
 - [Report Structure](#report-structure) — Report templates: workspace/docs sweep (applied / harvested / proposed / flagged / clean) and the `code` scope summary
 - [Safety & Contention](#safety--contention) — What audit may rewrite (derived files, closed tasks) vs targeted-only edits on live task files; re-read before write
-- [Dry-Run](#dry-run) — What `--dry-run` covers (Steps 1–7g analysis + Step 8 report, no writes) and the `code` scope's preview-only equivalent
+- [Dry-Run](#dry-run) — What `--dry-run` covers (Steps 1–7h analysis + Step 8 report, no writes) and the `code` scope's preview-only equivalent
 - [Relation to Other Phases](#relation-to-other-phases) — Table of how audit reuses status, rule, skill, cache, propagate, research, review, onboard, implement/verify
 
 ## Purpose
 
-`.dev_flow/` accumulates drift the normal phases never catch: stale dashboard rows, task headers lagging documents and git, verbose closed tasks, duplicate or stale rules/skills. Audit is the periodic **whole-directory sweep** that reconciles every task's recorded state against ground truth, trims the dashboard to what is actually active, compacts and reflects on closed work so its lessons survive while its noise is archived, grooms the `rules/`, `skills/`, and `cache/` catalogues — and reconciles the integrity of the `docs/` set itself (index, statuses, cross-references, orphans, freshness, glossary, duplicated value sets, docs↔code drift) through the `docs` scope. It is the write-heavy cousin of [status](status.md): `status` *reports* drift, `audit` *resolves* it.
+`.dev_flow/` accumulates drift the normal phases never catch: stale dashboard rows, task headers lagging documents and git, verbose closed tasks, duplicate or stale rules/skills. Audit is the periodic **whole-directory sweep** that reconciles every task's recorded state against ground truth, trims the dashboard to what is actually active, compacts and reflects on closed work so its lessons survive while its noise is archived, grooms the `rules/`, `skills/`, and `cache/` catalogues — and reconciles the integrity of the `docs/` set itself (index, statuses, cross-references, orphans, freshness, glossary, duplicated value sets, docs↔code drift) through the `docs` scope — and prunes trivial agent-created tests from the project's test tree through the `tests` scope ([Step 7h](#step-7h--prune-trivial-agent-tests-scope-tests--under-all)). It is the write-heavy cousin of [status](status.md): `status` *reports* drift, `audit` *resolves* it.
 
 A separate, opt-in **`code` scope** ([Step 9](#step-9--code-scope-the-whole-codebase-audit)) extends the same "reconcile the project to reality" idea to the *source code itself*: it audits the whole codebase through parallel lenses (architecture / SOLID / DRY / security / …), consolidates the findings, and emits a prioritized **refactoring plan** plus a run report — written under `.dev_flow/audit/` with a timestamped name (not into `docs/`) — plus a `docs/_framework.md` map update. Like every other scope it is **non-committing** — it stops at the Plan→Code gate and hands the plan off to the standard pipeline; it never edits source or commits.
 
@@ -27,13 +27,13 @@ Audit is also the **declared home of a corpus-wide comparison**. A sweep with no
 /dev-flow audit [scope] [--dry-run]
 ```
 
-- `scope` (optional) — limit the sweep to one area. One of: `context` (dashboard + task reconciliation + compaction), `tasks` (reconcile + compact task files only), `rules`, `skills`, `cache`, `docs` (documentation integrity — index · statuses · cross-refs · orphans · freshness · glossary · duplicated sets · drift), `code` (whole-codebase architecture/SOLID/DRY/security audit → refactoring plan), or `all` (default). `all` runs every workspace + `docs` scope below; **`code` is opt-in and excluded from `all`** — it is the heavy, periodic scope and is invoked explicitly.
+- `scope` (optional) — limit the sweep to one area. One of: `context` (dashboard + task reconciliation + compaction), `tasks` (reconcile + compact task files only), `rules`, `skills`, `cache`, `docs` (documentation integrity — index · statuses · cross-refs · orphans · freshness · glossary · duplicated sets · drift), `tests` (delete trivial agent-created tests from the project's test tree), `code` (whole-codebase architecture/SOLID/DRY/security audit → refactoring plan), or `all` (default). `all` runs every workspace + `docs` + `tests` scope below; **`code` is opt-in and excluded from `all`** — it is the heavy, periodic scope and is invoked explicitly.
 - The `code` scope takes **free-form intent**, not flags: `/dev-flow audit code <description of intent>`. The `--dry-run` flag below applies to the workspace/`docs` scopes; `code` expresses "report only, no hand-off" in its intent text (e.g. "preview plan") — see [Step 9](#step-9--code-scope-the-whole-codebase-audit).
 - `--dry-run` — produce the audit report only; make no changes on disk.
 
 ### Scope → steps
 
-Each scope runs a defined subset of the [procedure](#procedure); `all` runs the workspace + `docs` steps in order (it does **not** run `code`). Skip steps outside the requested scope.
+Each scope runs a defined subset of the [procedure](#procedure); `all` runs the workspace + `docs` + `tests` steps in order (it does **not** run `code`). Skip steps outside the requested scope.
 
 | Scope | Steps | Reconciles |
 |-------|-------|------------|
@@ -43,19 +43,21 @@ Each scope runs a defined subset of the [procedure](#procedure); `all` runs the 
 | `skills` | 7 | `.dev_flow/skills/` catalogue |
 | `cache` | 7d | `.dev_flow/cache/` index ↔ disk |
 | `docs` | 7a · 7b · 7c · 7e | `docs/` — glossary, open decisions/backlogs/todos/spikes, docs↔code drift, **index · statuses · cross-refs · orphans · freshness · duplicated sets · scaling** |
-| `all` (default) | 1–8 | everything in the workspace **and** docs (**not** `code`) |
+| `tests` | 7h | the project's test tree — trivial agent-created tests deleted ([Test Economy](../references/test-economy.md#pruning)) |
+| `all` (default) | 1–8 | everything in the workspace, docs **and** `tests` (**not** `code`) |
 | `code` (opt-in, separate) | 9 | the **whole project codebase** — architecture/SOLID/DRY/security/… via lens fan-out → prioritized refactoring plan + run report (timestamped, in `.dev_flow/audit/`) + `docs/_framework.md` update (read-only; hands off to the pipeline, never commits) |
 
 ### Examples
 
 ```
-/dev-flow audit                  # full sweep — workspace + docs (not code)
+/dev-flow audit                  # full sweep — workspace + docs + tests (not code)
 /dev-flow audit --dry-run        # show what would change, touch nothing
 /dev-flow audit context          # only reconcile/trim context, skip rules & skills
 /dev-flow audit tasks            # only reconcile + compact the task files
 /dev-flow audit rules            # only groom .dev_flow/rules/
 /dev-flow audit skills           # only groom .dev_flow/skills/
 /dev-flow audit cache            # only groom .dev_flow/cache/
+/dev-flow audit tests            # only prune trivial agent-created tests
 /dev-flow audit docs             # only check docs/ integrity (index, statuses, refs, orphans, freshness, glossary, duplicated sets, drift)
 /dev-flow audit code             # whole-codebase audit → refactoring plan (all base lenses)
 /dev-flow audit code модуль auth, фокус на architecture та DRY   # scoped + lens-focused (free-form)
@@ -80,10 +82,10 @@ This phase is handled by **Auditor**: [roles/auditor.ai.md](../roles/auditor.ai.
 ## Guiding Principles
 
 1. **Reconcile, don't fabricate.** A task's real state is determined by evidence: the status of its linked concept/spec/plan in `docs/`, and the git history for its traceable ID. Change a recorded state only when evidence supports it. When evidence is missing or contradictory, **flag it in the report and leave the file unchanged** — never invent a status to make the dashboard look tidy.
-2. **Non-destructive by default.** History is moved, never deleted. Overflow logs, completed subtask blocks, and closed task files go to `.dev_flow/session_history/`, not to `/dev/null` — never a task file that still holds an open proportionality row. Indexes are regenerable, so they may be rewritten freely — with one exception: **`cache/_index.yaml` is data, not a derived view** (its `source` metadata exists nowhere else), so it is only ever reconciled entry by entry, never regenerated (see [Resource Cache](../references/cache.md)). Task files and history are not regenerable either — they are only ever appended to or relocated intact.
+2. **Non-destructive by default.** History is moved, never deleted; the one deletion is Step 7h test pruning — git restores each deleted test and the commit diff shows it. Overflow logs, completed subtask blocks, and closed task files go to `.dev_flow/session_history/`, not to `/dev/null` — never a task file that still holds an open proportionality row. Indexes are regenerable, so they may be rewritten freely — with one exception: **`cache/_index.yaml` is data, not a derived view** (its `source` metadata exists nowhere else), so it is only ever reconciled entry by entry, never regenerated (see [Resource Cache](../references/cache.md)). Task files and history are not regenerable either — they are only ever appended to or relocated intact.
 3. **Source-of-truth order.** Task files win over the dashboard and catalog (those are derived). For task *reality*, `docs/` document status and git win over the task header. For rules/skills, the files on disk win over their `_index.yaml`. For the cache, disk decides *existence* (a missing file orphans its entry) but the index owns *metadata* (`source`/`summary` cannot be rebuilt from disk) — flag mismatches, never drop or regenerate entries wholesale (Step 7d).
 4. **Safe under contention.** Audit may run while other contributors hold open subtasks. It may fully rewrite *derived* indexes and *closed* task files — except `## Proportionality`, whose records it only moves, never rewrites — but it must never rewrite a live contributor's Subtask block or their tagged entries in shared sections — those are reconciled only with targeted edits, and only the header/status fields. Re-read immediately before each write.
-5. **Apply the safe, propose the judgement.** Derived/reversible changes (index regen, dashboard trim, archival of done work, header reconciliation backed by git) are applied directly and reported. Judgement calls (merging two rules, deleting a skill, removing a cached resource) are **proposed for confirmation**. Reflection-harvested lessons follow their own gate instead: written **automatically** through the structural [rule](rule.md)/[skill](skill.md) gate (never an auto-`must`; a contradiction routes to independent review), visible in the commit diff — see Step 3.
+5. **Apply the safe, propose the judgement.** Derived/reversible changes (index regen, dashboard trim, archival of done work, header reconciliation backed by git) are applied directly and reported. Judgement calls (merging two rules, deleting a skill, removing a cached resource) are **proposed for confirmation**. Step 7h test pruning is the exception: applied directly. Reflection-harvested lessons follow their own gate instead: written **automatically** through the structural [rule](rule.md)/[skill](skill.md) gate (never an auto-`must`; a contradiction routes to independent review), visible in the commit diff — see Step 3.
 
 ## Procedure
 
@@ -233,6 +235,10 @@ Report-only; never rewrite or delete a tool ([Experience Capture](../references/
 1. **Index ↔ disk** — every `_index.yaml` entry has its file, and every file in `tools/` other than `_index.yaml` and `samples/` has an entry; a gap is a finding.
 2. **Self-tests** — run each `regime: harvested` tool on its `good` and `bad` samples; a missing sample, a non-clean `good`, a missed `expect` on `bad`, or a project tree changed by the run is a finding (fix via the `extend` rung). `developer-word` tools are not run. Under `--dry-run` no tool runs: list the self-tests as `unobserved`.
 
+### Step 7h — Prune trivial agent tests (scope `tests` / under `all`)
+
+Run [Pruning](../references/test-economy.md#pruning) over the project's test tree: filter files by origin, judge each case, delete, run the remaining tests of the changed files and of the test files that use them, report each deleted case. Applied directly — not a proposal. Never change a test or helper file of origin `human` or `unknown`, outside git, or with uncommitted changes; never delete a `keep` test, a test a `Keep-Test` trailer protects, or a test a rule requires. A rule that disables pruning → report it and skip. No test tree → no-op; a project outside git → nothing is deleted. Under `--dry-run` nothing is deleted or run: list the cases that would go.
+
 ### Step 8 — Report
 
 Always end with a structured report (and in `--dry-run`, this is the *only* output — nothing is written). Apply the safe/derived changes directly; list the judgement calls as proposals awaiting confirmation. **Never commit** — present the changes and follow the standard approval rule.
@@ -306,6 +312,7 @@ Use this template:
    • docs/_glossary.md: resolved <b> stale ambiguities (flags dropped)
    • docs: auto-fixed <n> mechanical statuses (plan all-[DONE] → completed)
    • docs/_index.md: rebuilt (+<a>/−<b> entries, fixed <c> status columns)
+   • tests: deleted <n> trivial agent test cases in <m> files (<file> — <case> — trivial: <sign>)
 
 🔁 Reflection harvested (auto-applied; ⚑ = sent to independent review)
    • From <closed-task>: rule <Name> (<category>/<severity>)
@@ -333,6 +340,7 @@ Use this template:
    • Spike <name.spike.md> in-progress beyond its time-box
    • Cache: <a> files without index entry / <b> entries with missing files (cannot invent `source`)
    • Cache: <file> expired (<valid_until>), source changed or uncheckable — refresh belongs to its update task
+   • Tests: <files> restored — remaining tests failed after pruning
    • Tools: <name> without file / file <name> without entry / self-test fails (<good not clean | bad missed expect | sample missing>) — fix via extend
    • Docs: orphan <doc> (no spec/plan) / deprecated <doc> still in active Depends on / banned phrase in active <doc>
    • Rules: duplicate anchor {#<id>} in <file-A>, <file-B> / alias <id> → <moved_to> target missing / category <name> has no applies_to (always-on; hint: <selector>) / skill-candidate: <category> <selector> — <n> rules <id…> (agent's call)
@@ -378,7 +386,7 @@ For the **`code` scope** (Step 9) the output is the refactoring plan itself, sum
 
 ## Dry-Run
 
-`--dry-run` performs Steps 1–7g as analysis only and emits the Step 8 report without touching disk. The report distinguishes what *would* be applied from what would be proposed.
+`--dry-run` performs Steps 1–7h as analysis only and emits the Step 8 report without touching disk. The report distinguishes what *would* be applied from what would be proposed.
 
 The **`code` scope** is read-only w.r.t. source through the plan regardless of any flag — its `--dry-run` equivalent is **preview-only intent** (e.g. "audit code … preview plan"), which runs ParseIntent + RunAnalysis + Consolidate + ProducePlan and then *stops* without offering the hand-off. (ProducePlan still writes the plan + report to `.dev_flow/audit/` and updates the framework map; those are derived artifacts, not source.)
 
@@ -394,4 +402,5 @@ The **`code` scope** is read-only w.r.t. source through the plan regardless of a
 | [research](research.md) | The proposed closing route for expired open-decision triggers whose missing information is researchable, and for stale spikes. The `code` scope borrows its cost gate for large/deep runs and its perspective-panel shape for the parallel lens fan-out + single-writer consolidation. |
 | [review](review.md) | The `docs` scope (Step 7e) reconciles in bulk what review enforces per-change — Document Index Maintenance and Deprecation hygiene; review checks them on each change, audit periodically across the whole `docs/` set. The `code` scope (Step 9) reuses review's check catalogue as lenses (the Security check → the `security` lens) and review itself as a back-half execution stage. |
 | [onboard](onboard.md) | The `code` scope shares onboard's bottom-up layered module walk — both call the single [Shared Bottom-Up Analysis](../references/code-audit.md#shared-bottom-up-analysis); onboard consumes it to *generate* docs, a lens to *audit* against them. |
+| [test](testing.md) | Step 7h deletes what [Test Economy](../references/test-economy.md) does not keep: trivial agent-created tests. |
 | [implement](implement.md) / [verify](verify.md) | The back half of the `code` scope: the refactoring plan it produces is *executed* by the standard implement → review → verify → commit pipeline (audit hands off at the Plan→Code gate and changes no code itself). |

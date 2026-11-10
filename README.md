@@ -62,7 +62,7 @@ Additional commands:
 | `/dev-flow status` | Show current state — report only, changes nothing |
 | `/dev-flow checkpoint [note]` | Fix the current task into durable state at a session boundary — distil, close doc drift, make the task handoff-ready, record how to resume |
 | `/dev-flow resume [task_id]` | Re-enter in a fresh session — establish state, continue when the picture is unambiguous, else offer the next work |
-| `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — reconcile state, trim context, compact closed tasks, groom rules/skills/cache, check docs integrity |
+| `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — reconcile state, trim context, compact closed tasks, groom rules/skills/cache, check docs integrity, prune trivial agent tests |
 | `/dev-flow audit code <intent>` | Opt-in whole-codebase audit (architecture/SOLID/DRY/security via parallel lenses) → prioritized refactoring plan + run report (timestamped, in `.dev_flow/audit/`) + framework map; read-only, hands off to the pipeline |
 | `/dev-flow do <request>` / `/dev-flow <anything>` | Freeform — interprets intent and auto-routes to the right phase (the default command) |
 
@@ -218,7 +218,7 @@ class RateLimiter:
 | Concept → Spec | No contradictions, dependencies listed, scope bounded |
 | Spec → Plan | All fields typed, error cases specified, constraints explicit |
 | Plan → Code | All spec sections covered, technology decisions documented |
-| Code → Test | All contracts tested, error cases covered |
+| Code → Test | Every touched criterion checked; permanent tests only with a keep reason; only the task's tests run |
 | Test → Review | All tests pass, no regressions |
 | Review → Verify | Clean-context review passes, no blocking issues |
 | Verify → Commit | All verification levels pass, user approval |

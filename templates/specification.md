@@ -95,30 +95,33 @@ Transition rules:
 
 ## 05. Verification Criteria  {#SP_XXX_05}
 
+<!-- `Test` column: `keep` — a permanent test is required (complex logic or the developer's request);
+     `—` — the check is required, the agent chooses its form. See `references/test-economy.md` (dev-flow skill). -->
+
 ### 05_01. Functional Expectations  {#SP_XXX_05_01}
 
-| Contract | Scenario | Input | Expected outcome |
-|----------|----------|-------|------------------|
-| {OperationName} | Happy path | {valid input} | {expected result} |
-| {OperationName} | Error case | {invalid input} | {expected error} |
+| Contract | Scenario | Input | Expected outcome | Test |
+|----------|----------|-------|------------------|------|
+| {OperationName} | Happy path | {valid input} | {expected result} | {keep \| —} |
+| {OperationName} | Error case | {invalid input} | {expected error} | {keep \| —} |
 
 ### 05_02. Invariant Checks  {#SP_XXX_05_02}
 
-| Invariant | Verification method |
-|-----------|-------------------|
-| {invariant} | {how to verify it holds} |
+| Invariant | Verification method | Test |
+|-----------|-------------------|------|
+| {invariant} | {how to verify it holds} | {keep \| —} |
 
 ### 05_03. Integration Scenarios  {#SP_XXX_05_03}
 
-| Scenario | Preconditions | Steps | Expected result |
-|----------|--------------|-------|-----------------|
-| {scenario} | {setup} | {steps} | {expected} |
+| Scenario | Preconditions | Steps | Expected result | Test |
+|----------|--------------|-------|-----------------|------|
+| {scenario} | {setup} | {steps} | {expected} | {keep \| —} |
 
 ### 05_04. Edge Cases and Boundaries  {#SP_XXX_05_04}
 
-| Case | Input | Expected behavior |
-|------|-------|-------------------|
-| {edge case} | {input} | {behavior} |
+| Case | Input | Expected behavior | Test |
+|------|-------|-------------------|------|
+| {edge case} | {input} | {behavior} | {keep \| —} |
 
 ## 06. Reversibility  {#SP_XXX_06}
 

@@ -54,6 +54,7 @@ role SpecAuthor {
     - "All constraints and invariants explicitly stated"
     - "State transitions documented with conditions and side effects"
     - "Verification criteria defined for all contracts (expected outcomes, edge cases)"
+    - "`keep` in the `Test` column set only for complex logic or on the developer's request (references/test-economy.md)"
     - "Integration scenarios described for cross-module interactions"
     - "Rollback strategy documented (Section 06)"
     - "No banned phrases"
