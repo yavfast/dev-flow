@@ -177,7 +177,7 @@ When updating rules:
 3. Update the category's `## Contents` digest line and `.dev_flow/rules/_index.yaml` in the same edit.
 4. Existing code is NOT required to be retroactively fixed.
 
-**Reflection.** A reviewer finding that "this convention keeps being violated" is the review phase's [Experience Capture](../references/experience-capture.md) harvest: write it as a rule automatically through the [rule phase](rule.md) (default `should`; a would-be `must` or a contradiction routes to independent review first; the developer sees it in the commit diff).
+**Reflection.** A reviewer finding that "this convention keeps being violated" is the review phase's [Experience Capture](../references/experience-capture.md) harvest: write it as a rule automatically through the [rule phase](rule.md) (default `should`; a would-be `must` or a contradiction routes to independent review first; the developer sees it in the commit diff). A lesson an existing rule, skill, or tool already covers appends a `recurred` or `exercised` observation to that artifact's ledger entry instead of a new write ([Experience Capture](../references/experience-capture.md#applying-experience--auto-apply-through-structural-gates)).
 
 ## Conflict Resolution Protocol
 

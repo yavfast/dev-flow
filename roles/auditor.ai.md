@@ -118,7 +118,7 @@ role Auditor {
       - "Regenerate active_context.md (thin) and tasks/_index.md from task headers"
     groom_catalogues:
       - "Reconcile rules and skills indexes against disk; detect duplicates/staleness"
-      - "Reconcile evidence/ledger.yaml: for each entry whose trigger is due append ONE verdict (improved|unchanged|regressed|still-unobserved) — owner_kind:skill in the skills step, all others in the rules step; report never-`exercised` artifacts as prune candidates (proposed, never auto-deleted); a regressed in history keeps its blocker; absent file → no-op"
+      - "Reconcile evidence/ledger.yaml: for each entry whose trigger is due append ONE verdict (improved|unchanged|regressed|still-unobserved) from the window after its last verdict (after its opening while it has none) — the entry's observations + the artifact's evidence records; a recurred there → regressed or unchanged, never improved — owner_kind:skill in the skills step, all others in the rules step; report never-`exercised` artifacts (no evidence record, no ledger observation) as prune candidates (proposed, never auto-deleted); a regressed in history keeps its blocker; absent file → no-op"
       - "Reconcile cache/_index.yaml entry by entry: flag unindexed files / missing-file entries / missing-trust and unchecked-public entries, propose unreferenced/stale removals — never regenerate"
       - "Sweep expired valid_until: cheap currency check where possible (extend when unchanged); flag changed/uncheckable for refresh — never re-fetch"
       - "Apply index reconciliation; propose merges/removals"
