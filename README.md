@@ -193,7 +193,7 @@ Every document section gets an immutable identifier:
 | Plan | `PL_XXX` | `PL_RLM` |
 | Epic | `E_XXX` | `E_ACM` |
 
-Design decisions get their own IDs (`C_XXX_DEC_01`, `SP_XXX_DEC_02`, …). Full set: [SKILL.md → Traceable Identifiers](SKILL.md#traceable-identifiers).
+Design decisions get their own IDs (`C_XXX_DEC_01`, `SP_XXX_DEC_02`, …). Full set: [Conventions → Traceable Identifiers](references/conventions.md#traceable-identifiers).
 
 These IDs appear as comments in code, linking implementation back to design:
 
@@ -393,7 +393,7 @@ dev-flow/
 └── examples/       # End-to-end walkthrough
 ```
 
-Annotated router for phases, references, templates and the example: [SKILL.md → Phase Details & Templates](SKILL.md#phase-details--templates). Roles are catalogued in [`references/roles.md`](references/roles.md).
+Index of phases, references, templates and the example: [SKILL.md → Files](SKILL.md#files). Roles are catalogued in [`references/roles.md`](references/roles.md).
 
 ## Key Principles
 

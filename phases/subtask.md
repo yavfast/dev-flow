@@ -21,7 +21,7 @@ Offload a secondary task to a subagent so the main conversation keeps its contex
 
 The initiator does not pre-chew and the subagent does not dump: the brief is a few lines of pointers, the noisy assembly happens in the subagent's context, and what comes back is the condensed, complete result.
 
-**One contributor model for everyone.** A task-delegated subagent follows the same [multi-contributor rules](../SKILL.md#multi-contributor-tolerance) as any peer AI session: it owns its own Subtask block and its tagged entries, never rewrites others' content, uses targeted edits and read-before-write on shared files. The `/dev-flow subtask` command and the "Subtask block" in a task file are two ends of the same concept — the command spawns a contributor; the block is where that contributor's thread lives.
+**One contributor model for everyone.** A task-delegated subagent follows the same [multi-contributor rules](status.md#collaboration-model-read-first) as any peer AI session: it owns its own Subtask block and its tagged entries, never rewrites others' content, uses targeted edits and read-before-write on shared files. The `/dev-flow subtask` command and the "Subtask block" in a task file are two ends of the same concept — the command spawns a contributor; the block is where that contributor's thread lives.
 
 ## Command
 

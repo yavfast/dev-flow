@@ -475,7 +475,7 @@ So `pin` means "survive while this task is active" — not "survive forever". Wh
 
 ## Context Hygiene
 
-**Canonical hygiene caps.** This section is the single source of truth for the context-hygiene limits (activity-log entries, task-file/dashboard sizes). The [audit phase](audit.md) enforces them and SKILL.md summarizes them — both defer to the numbers here.
+**Canonical hygiene caps.** This section is the single source of truth for the context-hygiene limits (activity-log entries, task-file/dashboard sizes). The [audit phase](audit.md) enforces them; SKILL.md points here.
 
 **Principle:** task files are "shared state as of now", not journals. Per-section logs are the only history kept in-place, and they are capped. When a cap forces eviction, eviction order is by **effective salience** first (see [Salience Markers](#salience-markers)) — `noise`/`superseded` go before `normal`, a `pin` of an active task is retained — and only then by age within the `normal` remainder.
 

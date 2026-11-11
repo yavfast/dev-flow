@@ -24,7 +24,7 @@ Do **not** escalate for code bugs (code disagrees with a clear, correct spec —
    - If the correction is a **material fork** (two or more viable ways to fix the document) — run [Interview Mode](interview-mode.md) with options and a recommendation, citing the downstream evidence.
    - If it is a **plain factual correction** (the spec says 1000, reality needs 10 000 and nothing else changes) — propose the edit with the evidence and get confirmation.
    - If the missing piece is **researchable** (need numbers, prior art, library facts before the document can be fixed) — run [research](../phases/research.md) first, then return here.
-4. **Update the owning document** through its own phase discipline: Changelog entry, `Updated:` date, Design Decisions record for the fork, versioning if the change is breaking (see [SKILL.md → Versioning](../SKILL.md#versioning)).
+4. **Update the owning document** through its own phase discipline: Changelog entry, `Updated:` date, Design Decisions record for the fork, versioning if the change is breaking (see [Conventions → Versioning](conventions.md#versioning)).
 5. **Re-pass the affected gate** (Concept→Spec, Spec→Plan, or Plan→Code) for the changed document, and apply the [propagation matrix](../phases/propagate.md#change-type-propagation-matrix) to cascade the change downstream.
 6. **Resume the downstream phase** where it stopped, re-running whatever the document change invalidated (the standard fix cycle: Test → Review → Verify on the affected area).
 
