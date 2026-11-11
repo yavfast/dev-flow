@@ -78,6 +78,8 @@ File structure: [templates/specification.md](../templates/specification.md).
 
 ## Changelog Requirement
 
+A breaking change creates a new version of the specification, not an edit in place — [Conventions → Versioning](../references/conventions.md#versioning).
+
 A specification's Changelog follows the history policy of [Docs Scaling](../references/docs-scaling.md): entries pass the content filter (`incident` / `ambiguous-decision` / `structural-event` — an added or removed field, a changed contract, a changed validation rule, a changed state transition), and the table is optional when vcs is the primary history medium.
 
 ## Explicit Cross-References

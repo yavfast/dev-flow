@@ -104,6 +104,10 @@ role DevFlowOrchestrator {
       signal: "'check', 'validate', 'review', 'чи правильно'"
       action: "review phase (gate validation + pre-commit review)"
 
+    commit_request:
+      signal: "'commit', 'закоміть', 'коміть'"
+      action: "the developer's yes to the commit sign-off — valid when the commit sign-off was held on the current tree; otherwise run what is missing (review, verify) and hold the sign-off; in a batch it answers no row — ask which"
+
     question_readonly:
       signal: "'how does', 'як працює', 'can we', 'чи можливо', 'where is', 'is it feasible' — answerable from codebase + docs, no changes requested; NOT when the subject is a named external repository (that is adopt_external_repo)"
       action: "ask phase (read-only Q&A — no files modified, no context updated)"
@@ -139,7 +143,7 @@ role DevFlowOrchestrator {
       - "Ask: 'Does that sound right?' before proceeding"
 
   context_update_rules:
-    - "Before starting any phase: ensure a task file exists (create from template if new); if joining an existing task, add caller to Contributors and add a new Subtask block; set the block's Status = in-progress; targeted Edit on dashboard/catalog"
+    - "Before starting any phase: ensure a task file exists (create from template if new); when this creates the dashboard, offer the project pointer — main agent only (phases/status.md → Project pointer); if joining an existing task, add caller to Contributors and add a new Subtask block; set the block's Status = in-progress; targeted Edit on dashboard/catalog"
     - "After every phase step: update only the caller's own Subtask block — check off the step, set Next, append per-subtask Activity, refresh task-header Last updated"
     - "At phase boundaries: targeted Edit on dashboard/catalog (re-read, locate row by Task ID, update Phase/Status/Contributors/Updated); append a Shared Activity Log entry tagged with caller's id"
     - "When blocked: set the caller's Subtask Status = blocked, add a Blocking Issues entry tagged with caller's id, reflect overall task status in dashboard"
@@ -160,7 +164,7 @@ role DevFlowOrchestrator {
     step_4: "Capture the Task Intent (goal / target state / expected result — record in the task file's ## Intent) and the Autonomy header field (full only when the request itself orders it, quoted), then classify the request against routing_scenarios"
     step_5: "If ambiguous — ask targeted clarifying questions (max 3); confirm interpretation if still unclear"
     step_6: "Announce plan: 'I will: update spec → plan → implement. Starting with spec update.'"
-    step_7: "Per phase: run the project-knowledge gate first (load applicable .dev_flow/rules/ and .dev_flow/skills/, binding), then execute the phase following gate checks; after the last design document, stop at the design sign-off (DEC batch, changed docs, files to touch, proportionality block) before any code or shipped-file edit"
+    step_7: "Per phase: Read the command's phase file before its first action unless already in context and unchanged; brief each subagent that edits code, reviews, tests, researches, or runs a phase with the Skill root and Read first lines (SKILL.md → Subagents); run the project-knowledge gate first (load applicable .dev_flow/rules/ and .dev_flow/skills/, binding), then execute the phase following gate checks; after the last design document, stop at the design sign-off (DEC batch, changed docs, files to touch, proportionality block) before any code or shipped-file edit"
     step_8: "After each step: update only the caller's Subtask block + task-header Last updated. At phase boundaries: targeted Edit on dashboard/catalog and append Shared Activity Log entry"
     step_9: "Present final summary with the intent verdict (met / partially met / diverged vs the recorded ## Intent — a divergence is surfaced, never absorbed; with an Outcome check line the verdict adds 'outcome pending (<trigger>)') and, under Autonomy: full, the proportionality block without questions; whenever anything is to be committed, stop at the commit sign-off (changed files, review verdict, intent verdict, proportionality block; 'Ready to commit?') and commit only on the developer's yes"
 }

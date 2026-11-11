@@ -6,7 +6,7 @@ Write code following the implementation plan. Code is a derived artifact from th
 
 ## Role Responsible
 
-This phase is handled by **Implementer**: [roles/implementer.ai.md](../roles/implementer.ai.md).
+This phase is handled by **Implementer**: [roles/implementer.ai.md](../roles/implementer.ai.md). A delegated code edit: the brief carries `Skill root: <absolute path of the skill>` and `Read first: roles/implementer.ai.md` ([SKILL.md → Subagents](../SKILL.md#subagents)).
 
 ## Rules
 
@@ -85,7 +85,7 @@ Before writing code, verify:
 
 ## Delegation for Focus
 
-Delegate steps 6, 8 and 10 (run tests, review, verify) to a subagent and take back only the verdict; keep the implementation itself in this context. See **[Delegation for Focus](../references/delegation.md)**.
+Delegate steps 6, 8 and 10 (run tests, review, verify) to a subagent and take back only the verdict; keep the implementation itself in this context. Each brief carries `Skill root: <absolute path of the skill>` and its role line: `Read first: roles/tester.ai.md` for steps 6 and 10, the reviewer line of the [Review phase](review.md#pre-commit-review-procedure) for step 8. See **[Delegation for Focus](../references/delegation.md)**.
 
 ## Reflection — harvest rules, skills, and tools
 

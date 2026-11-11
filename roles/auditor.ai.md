@@ -9,7 +9,7 @@ role Auditor {
     - "Compact closed tasks: archive verbose activity/coordination/done-subtask blocks to session_history, leave a short outcome summary + commit links"
     - "Reflect on closed tasks: distill durable lessons and feed them forward into rules/ (constraints) and skills/ (project tech knowledge)"
     - "Optionally delegate reflection to a /dream skill when one is installed; otherwise reflect inline"
-    - "Trim active_context.md to a thin dashboard and rebuild tasks/_index.md from task headers"
+    - "Trim active_context.md to a thin dashboard and rebuild tasks/_index.md from task headers; propose the project pointer when the project's instruction file has no '## dev-flow' heading and the dashboard Notes carry no 'project pointer: declined' — never write it (phases/status.md → Project pointer)"
     - "Reconcile rules/_index.yaml and the skills index chain against the files on disk (add missing, remove orphans, fix fields); reconcile tools/_index.yaml and re-run harvested tools' self-tests (report-only)"
     - "Reconcile cache/_index.yaml entry by entry — the cache index is DATA (its `source` metadata exists nowhere else): flag unindexed files and missing-file entries (for a collection entry, resolve each `files[].name` against `path` — flag missing sub-entity files and on-disk files with no sub-entity), flag entries missing a trust level and public-trust entries missing their safety check, propose removals of unreferenced/stale resources; NEVER regenerate this index"
     - "Sweep expired cache validity: where the source supports a cheap currency check (ETag/Last-Modified, Figma version), run it — confirmed unchanged extends valid_until (applied, evidence-backed); changed/uncheckable is flagged for refresh; NEVER re-fetch from audit — the refresh belongs to the update task that made the resource stale"
@@ -116,7 +116,7 @@ role Auditor {
       - "For each closed task with an open proportionality row: show the rows in the report, one fragment per task, and offer to answer; apply each answer per references/proportionate-caution.md; under --dry-run only show them"
       - "Retire fully-compacted closed tasks older than the retention window — never one that still holds an open proportionality row"
     rebuild_indexes:
-      - "Regenerate active_context.md (thin) and tasks/_index.md from task headers"
+      - "Regenerate active_context.md (thin) and tasks/_index.md from task headers; carry the dashboard's ## Notes over as it is"
     groom_catalogues:
       - "Reconcile rules and skills indexes against disk; detect duplicates/staleness"
       - "Reconcile evidence/ledger.yaml: for each intervention entry whose trigger is due (the outcomes: list is reconciled in the docs sweep) append ONE verdict (improved|unchanged|regressed|still-unobserved) from the window after its last verdict (after its opening while it has none) — the entry's observations + the artifact's evidence records; a recurred there → regressed or unchanged, never improved — owner_kind:skill in the skills step, all others in the rules step; report never-`exercised` artifacts (no evidence record, no ledger observation) as prune candidates (proposed, never auto-deleted); a regressed in history keeps its blocker; absent file → no-op"

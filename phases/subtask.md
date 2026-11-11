@@ -122,7 +122,7 @@ The subagent executing a phase holds that phase's "main agent" duties — gates,
 The brief hands over pointers; the subagent assembles its own context:
 
 1. **Task** — the goal and its done-criteria, in 1–3 sentences. Include the *why*: the initiating task's recorded intent (or the slice of it this subtask serves), so the subagent optimizes for the same goal as the initiator — see [Task Intent](../references/task-intent.md).
-2. **Role(s)** — the phase's base role plus a project overlay if one exists (check `.dev_flow/roles/_index.yaml` first — see [Roles](../references/roles.md)).
+2. **Role(s)** — `roles/subtask-executor.ai.md` and the phase's base role; a project overlay listed in `.dev_flow/roles/_index.yaml` is added after the base role (see [Roles](../references/roles.md)). They go into the brief's `Read first:` line, separated by `; `.
 3. **Context hints** — the task file path (for the contributor join), relevant doc/spec traceable IDs, file paths, known constraints, applicable `.dev_flow/rules/` / `skills/` / `cache/` entries worth starting from. *Hints, not excerpts* — do not paste what the subagent can read itself.
 4. **Scope** — only the genuine restrictions: parallel-conflict areas, forbidden targets, plus the standing boundary (no commits; a hard-floor action is relayed, never performed; no secret value in any output; a needed secret is never asked for — native auth only, else relayed; a privileged or remote command is relayed, never run, except an operation of an [access channel](../references/access-channels.md#roles) that lists the role named here — [Proportionate Caution](../references/proportionate-caution.md)). Name the subagent's role when it needs a channel; never `main`.
 5. **Report expectations** — anything needed beyond the standard full report.
@@ -138,9 +138,10 @@ Use the Agent tool with a prompt structured as:
 ## Role
 Skill root: <absolute path to the dev-flow skill> — skill paths below are
 relative to it; expand them yourself (your cwd is the project, not the skill).
-Follow the `<phase>` phase protocol (phases/<phase>.md); act as
-<role file path(s)>. You are a full dev-flow participant with delegated
-rights — see phases/subtask.md → Delegated Rights & Boundaries. A base role's
+Read first: roles/subtask-executor.ai.md; <phase role file path(s)>
+Follow the `<phase>` phase protocol (phases/<phase>.md). You are a full
+dev-flow participant with delegated rights — see phases/subtask.md →
+Delegated Rights & Boundaries. A base role's
 helper-position constraints do not bind you as the phase executor; a read-only
 phase's no-write constraints DO prevail.
 

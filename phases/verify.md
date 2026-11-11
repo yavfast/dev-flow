@@ -22,7 +22,7 @@ After functional tests pass and code review is approved, verify the changes at a
 
 ## Delegation
 
-Run verification through a subagent (the clean-context shape Review uses): it returns a verdict plus the failures that matter, with full logs in a file referenced by path. See **[Delegation for Focus](../references/delegation.md)**.
+Run verification through a subagent (the clean-context shape Review uses): it returns a verdict plus the failures that matter, with full logs in a file referenced by path. Its brief carries `Skill root: <absolute path of the skill>` and `Read first: roles/tester.ai.md` ([SKILL.md → Subagents](../SKILL.md#subagents)). See **[Delegation for Focus](../references/delegation.md)**.
 
 **Artifacts.** Run output and screenshots go to the project workspace — `/tmp/{project-slug}/logs/` and `/tmp/{project-slug}/screenshots/`, timestamped (`{name}_YYYYMMDD_HHMMSS.{ext}`), never numeric suffixes. A capture worth keeping across sessions (e.g. a reference screenshot future runs compare against) is promoted to `.dev_flow/cache/app/` by the agent running this phase (focus helpers stage and report). See [Resource Cache](../references/cache.md).
 

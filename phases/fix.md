@@ -35,7 +35,7 @@ The description is freeform, in any language. It can be a bug report, error mess
 
 ## Role Responsible
 
-This phase is handled by **Implementer**: [roles/implementer.ai.md](../roles/implementer.ai.md) for the implementation step; analysis and planning stay with the orchestrating agent.
+This phase is handled by **Implementer**: [roles/implementer.ai.md](../roles/implementer.ai.md) for the implementation step; analysis and planning stay with the orchestrating agent. A delegated implementation step: the brief carries `Skill root: <absolute path of the skill>` and `Read first: roles/implementer.ai.md` ([SKILL.md → Subagents](../SKILL.md#subagents)).
 
 ## Procedure
 
@@ -139,7 +139,7 @@ An optional sub-step of **Step 1**, entered only when the confidence gate fails 
 
 **No correct test seam is itself a finding.** If the bug cannot be locked down because the code has no seam exercising the real bug pattern (tangled callers, hidden coupling), do not fake it with a shallow test that gives false confidence — **record the missing seam** as a finding and route it upward (Step 5 → a `*.concept.md` note or a rule), the same way an architectural decision would be surfaced.
 
-**Delegation.** The diagnosis loop (reproduce, instrument, parse output) and the build/test in Step 4 are the noisy work that erodes focus — delegate either to a subagent and keep the *fix decision* in the main context. See **[Delegation for Focus](../references/delegation.md)**.
+**Delegation.** The diagnosis loop (reproduce, instrument, parse output) and the build/test in Step 4 are the noisy work that erodes focus — delegate either to a subagent and keep the *fix decision* in the main context. The brief carries `Skill root: <absolute path of the skill>` and `Read first: roles/tester.ai.md`. See **[Delegation for Focus](../references/delegation.md)**.
 
 **Diagnosis artifacts** (instrumented logs, repro dumps, screen captures) live in the project workspace — `/tmp/{project-slug}/logs/`, timestamped names — and die there. Promote to `.dev_flow/cache/` only what stays valuable past the fix (e.g. a HAR or recording a document references). See [Resource Cache](../references/cache.md).
 

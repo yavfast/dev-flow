@@ -69,7 +69,7 @@ Before delegating a step or running a phase, check what already fits — don't r
 1. The phase's **base role** in the skill's `roles/` — the portable default.
 2. Any **overlay or specialization** under `.dev_flow/roles/` (start from its `_index.yaml`) — these refine or replace the base for this project, so they win where they apply.
 
-Point the subagent at the role(s) that fit and let it read them.
+Point the subagent at the role(s) that fit — the `Read first:` line of its brief ([Delegation → How](delegation.md#how)) — and let it read them.
 
 ## Creating or extending a role
 

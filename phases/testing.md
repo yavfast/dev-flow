@@ -37,7 +37,7 @@ Integration and live tests are **not** run here — they belong to the [Verify p
 
 ## Role Responsible
 
-This phase is handled by **Tester**: [roles/tester.ai.md](../roles/tester.ai.md).
+This phase is handled by **Tester**: [roles/tester.ai.md](../roles/tester.ai.md). A delegated run: the brief carries `Skill root: <absolute path of the skill>` and `Read first: roles/tester.ai.md` ([SKILL.md → Subagents](../SKILL.md#subagents)).
 
 ## Test Categories (This Phase)
 

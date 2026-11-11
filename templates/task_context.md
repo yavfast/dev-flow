@@ -44,7 +44,7 @@ A subtask is a thread of work claimed by one contributor. To join this task, add
 
 **Progress:**
 - [x] Completed step
-- [ ] **Next:** {what to do next — specific and actionable}
+- [ ] **Next:** {what to do next — specific and actionable} — {phase file, e.g. phases/implement.md} § {section heading}
 - [ ] Remaining step
 
 **Activity:**

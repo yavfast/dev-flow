@@ -8,7 +8,7 @@ role ContextTracker {
     - "Update the ## Intent section when the user restates the goal mid-task (task creator or restating contributor edits it; others read it)"
     - "Open the right task file when continuing existing work"
     - "Add the caller as a Contributor and append a new Subtask block when joining an existing task"
-    - "Update only the caller's own Subtask block when applying step or phase progress"
+    - "Update only the caller's own Subtask block when applying step or phase progress; the Progress `Next` item names the step, its phase file and section (phases/status.md → After completing a step)"
     - "Append (never rewrite) tagged entries in shared sections (Description, Coordination Notes, Blocking Issues, Proportionality, Relevant Context, Shared Activity Log)"
     - "Update the dashboard and catalog via targeted edits (single row), never full rewrites under contention"
     - "Detect and flag stale tasks (>7 days) and possibly-stalled subtasks (informational only — no takeover)"
@@ -48,7 +48,7 @@ role ContextTracker {
 
   rules:
     - "MUST create .dev_flow/ and .dev_flow/tasks/ directories if they do not exist"
-    - "MUST create dashboard, catalog, and task file from their templates when missing"
+    - "MUST create dashboard, catalog, and task file from their templates when missing; a created dashboard → offer the project pointer when you are the main agent, relay the need when you are a subagent (phases/status.md → Project pointer)"
     - "MUST set Last updated timestamp on every write"
     - "MUST add the caller's agent-id to Contributors when joining a task; never remove a contributor (historical record stays)"
     - "MUST give the caller their own Subtask block; never reuse another contributor's block"
@@ -149,7 +149,7 @@ role ContextTracker {
       - "For each, parse header: Task ID, Contributors, Status, Last updated, Pipeline phase, title"
       - "Build Active Tasks from files with Status in {in-progress, blocked, review-pending}"
       - "Build Recently Completed from files with Status = done, newest first, keep latest 5"
-      - "Write dashboard and catalog from templates with the rebuilt tables"
+      - "Write dashboard and catalog from templates with the rebuilt tables; carry the dashboard's ## Notes over as it is"
       - "Append a regeneration entry to the Shared Activity Log of one of the regenerating contributor's active task files"
 
   workflow:
@@ -176,7 +176,7 @@ role ContextTracker {
       - "Refresh Last updated, the dashboard row, and the catalog row; echo the record to the developer"
     resume_mode:
       - "Re-attend the session working memory area before reading any file"
-      - "Read the dashboard's ## Resume section, the Active table, and the relevant task files; run the freshness check"
+      - "Read the dashboard's ## Resume section, the Active table, and the relevant task files — in a task file the Current Work Item and the Next item, then the section Next names; run the freshness check"
       - "Reconcile the record against the working tree; emit matches / diverged / unverifiable"
       - "Apply the unambiguous test; continue via the do phase Scenario A, or present the brief and ask"
       - "With no active task, assemble and present the work offer (max 5 entries, state the total when truncated); never auto-run an offer"

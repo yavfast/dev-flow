@@ -349,6 +349,7 @@ def test_acquire_token_rate_limited():
 ## Step 6 — Review (Pre-Commit)
 
 Launch a reviewer subagent with a clean context. The subagent receives:
+- The role by path: `Skill root: <absolute path of the skill>` and `Read first: roles/reviewer.ai.md — blocks: rules, pre_commit_review, convergence`
 - Git diff of all changes
 - `rate_limiter.sp.md` (spec)
 - `rate_limiter.plan.md` (plan)

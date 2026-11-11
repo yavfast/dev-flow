@@ -32,7 +32,7 @@ Findings carry a computed **materiality**, a recurring non-`must` finding trips 
 
 0b. **Select the round mode** (repeat rounds only — [Verification Economy](../references/verification-economy.md)). A contained fix of a prescribed finding that is neither `must` nor a security class runs as `confirm`: check the diff against the prescribed fix and that every test that was green is still green, then skip to step 5. Everything else, and round 1 always, runs `full` — continue to step 1. A `confirm` round that does not confirm replays as `full` from step 1.
 
-1. **Launch a reviewer subagent** (role: [reviewer.ai.md](../roles/reviewer.ai.md)) with a clean context containing only:
+1. **Launch a reviewer subagent** (role: [reviewer.ai.md](../roles/reviewer.ai.md)). Its brief opens with `Skill root: <absolute path of the skill>` and `Read first: roles/reviewer.ai.md — blocks: rules, pre_commit_review, convergence`; a project overlay listed in `.dev_flow/roles/_index.yaml` is added after the base role ([SKILL.md → Subagents](../SKILL.md#subagents)). Besides these lines, the clean context contains only:
    - The git diff of all staged/unstaged changes
    - The relevant specification (`*.sp.md`) for contract verification
    - The relevant plan (`*.plan.md`) for completeness verification

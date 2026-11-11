@@ -82,6 +82,7 @@ Analyze the freeform request against the loaded context to determine:
 | **Fix documentation** | "update docs", "propagate", "оновити специфікацію" | propagate |
 | **Fix a bug** | "fix", "виправи", "bug", "баг", "падає", "crash", "NPE", "не працює", error description | fix |
 | **Review/validate** | "check", "validate", "чи правильно", "review" | review |
+| **Commit** | "commit", "закоміть", "коміть" | The developer's yes to the commit sign-off — valid when the commit sign-off was held on the current tree; otherwise run what is missing (review, verify) and hold the sign-off; in a [batch](#batch-of-tasks) it answers no row — ask which |
 | **Manage rules** | "add rule", "додай правило", "edit rule", "remove rule", "list rules", "show rule" | rule |
 | **Manage skills** | "add skill", "update skill", "додай знання", "збережи знання про X", "capture what we learned" | skill |
 | **Manage cached resources** | "cache", "закешуй", "збережи макет/скріншот/документ", "save this export", "find cached" | inline cache management — [Resource Cache](../references/cache.md) |
@@ -233,6 +234,10 @@ User request received
 │
 ├─ Reports a defect ("fix", "виправи", "падає", crash, error description)
 │   └─ fix
+│
+├─ "commit" / "закоміть"
+│   └─ commit sign-off held on the current tree → commit; else run what is
+│      missing (review, verify), then hold the sign-off; batch → ask which row
 │
 ├─ Describes documentation update
 │   └─ propagate / review

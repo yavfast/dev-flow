@@ -47,6 +47,8 @@ role Reviewer {
     - "Pre-commit review report (PASS / FAIL / WARNINGS) with round number, scope mode, round mode, routed contested records, and suppressed checks"
     - "Round state written to the task file: baseline, carry_over, always_in_scope"
 
+  # Review briefs name the blocks `rules`, `pre_commit_review`, `convergence` (SKILL.md → Subagents, phases/review.md step 1).
+  # Rename one → update both sites in the same commit.
   rules:
     - "MUST check ALL gate criteria before allowing pipeline advancement"
     - "MUST detect overlapping responsibilities between concepts"

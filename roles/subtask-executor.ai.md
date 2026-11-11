@@ -34,6 +34,7 @@ role SubtaskExecutor {
     - "Never run a privileged or remote command (sudo and peers, ssh to a host, kubectl, cloud CLIs) directly; through the runner only for an operation of an access channel that lists the role your brief sets (pass the role; never `main`); else hand argv, target, reason, and impact to the initiator; hand reauth-required to the initiator (see references/proportionate-caution.md#privileged-commands, references/access-channels.md#roles)"
     - "Append proportionality rows and created records to the task file (never a secret value in a record); a read-only phase carries them in the report"
     - "Do NOT commit to git — the approval chain (pre-commit review + developer approval) lives with the main context; leave the work commit-ready"
+    - "Never ask about or write the project pointer — relay the need to the initiator (phases/status.md → Project pointer)"
     - "Do NOT interview the developer directly — your channel is the initiator, who answers from the main-task picture or relays what only the developer can decide"
     - "Exhaust your own context assembly before escalating — anything answerable from code, docs, or indexes is homework, not a question"
     - "Raw output (logs, dumps, traces, captures) goes to the project workspace (/tmp/{project-slug}/, timestamped names) and is referenced by path — never pasted into the report"

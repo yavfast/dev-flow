@@ -136,7 +136,8 @@ Rebuild `active_context.md` as a thin dashboard (the [status regeneration proced
 
 - **Active Tasks** table = tasks whose status ∈ {in-progress, blocked, review-pending}, one short row each (link + short title, phase, status, contributors, updated). No per-task narrative.
 - **Recently Completed** = the latest 5 `done` tasks, one line each; older ones are already archived by Step 3.
-- Any prose, progress checklists, or per-commit logs still living in the dashboard are moved to the owning task file (if active) or to `session_history/` (if historical). The dashboard stays under its ~80-line cap.
+- Any prose, progress checklists, or per-commit logs still living in the dashboard are moved to the owning task file (if active) or to `session_history/` (if historical); `## Notes` is carried over as it is. The dashboard stays under its ~80-line cap.
+- The project's instruction file has no `## dev-flow` heading and the dashboard's Notes carry no `project pointer: declined` → one line under Proposed in the report ([Project pointer](status.md#project-pointer)); never write the paragraph.
 
 ### Step 5 — Rebuild the catalog
 

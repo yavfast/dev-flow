@@ -83,6 +83,7 @@ Boundary: the glossary says *what a word means*; this concept's Domain Model (§
 - **Declare criticality:** Set the header `Criticality:` — the weight of this module inside the whole application (`peripheral` / `supporting` / `core` / `critical`) — and, where a single mechanism (`§3.x`) carries a different weight than the rest, a `Criticality:` line on that section. Optional and never guessed: omit it when the weight is genuinely unknown, since an absent declaration lowers nothing. The [review](review.md) phase reads it to decide whether a finding here may block a commit. See [Review Convergence](../references/review-convergence.md).
 - **Formatting:** Follow [Documentation Formatting](../references/formatting.md) — no hard line wraps inside sentences or paragraphs; one paragraph = one logical line.
 - **Contents + lead summary:** the template's Contents section (substantive h2s + one-line annotations) and the lead summary in the header follow [Docs Scaling](../references/docs-scaling.md) — update the Contents item in the same edit that changes an h2.
+- **Breaking change:** a new version of the document, not an edit in place — [Conventions → Versioning](../references/conventions.md#versioning).
 - **Changelog:** the `## Changelog` table records history through the content filter and medium policy of [Docs Scaling](../references/docs-scaling.md) — optional when vcs is the primary history medium.
 
 ## Interview Mode for Design Decisions

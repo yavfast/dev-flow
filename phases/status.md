@@ -8,7 +8,7 @@
 - [Context Files](#context-files) — `.dev_flow/` layout, source-of-truth rule (task files win over derived indexes), templates, legacy single-file migration
 - [Collaboration Model (read first)](#collaboration-model-read-first) — Table of who may edit each region of a shared task file; no exclusive locking, no time-based takeover
 - [Read Protocol](#read-protocol) — Re-attention first, then Steps 1–5: read dashboard, read task file, validate freshness, output templates, continuation
-- [Write Protocol](#write-protocol) — Working-memory promotion; updates at phase start / step end / phase end / completion; targeted-edit safety, append-only
+- [Write Protocol](#write-protocol) — Working-memory promotion; updates at phase start / step end / phase end / completion; project pointer; targeted-edit safety, append-only
 - [Checkpoint — Fix the Task for a Session Boundary](#checkpoint--fix-the-task-for-a-session-boundary) — On-demand fixation at a session boundary: four movements, readiness set R1–R7, the handoff record, what it must not do
 - [Resume — Re-enter a Task in a Fresh Session](#resume--re-enter-a-task-in-a-fresh-session) — Re-entry in a fresh session: reconcile against the tree, the unambiguous test, the brief, the work offer
 - [Regeneration Procedure](#regeneration-procedure) — How any contributor rebuilds `active_context.md` and `tasks/_index.md` from task headers, incl. Deferred (todos)
@@ -75,7 +75,7 @@ Projects created under the previous single-file model have a monolithic `.dev_fl
 
 1. Rename the old file: `mv .dev_flow/active_context.md .dev_flow/legacy_context.md` (keep it as reference; do not delete).
 2. Create `.dev_flow/tasks/` and seed it with `_index.md` from [templates/tasks_index.md](../templates/tasks_index.md).
-3. Create a fresh `.dev_flow/active_context.md` from [templates/active_context.md](../templates/active_context.md).
+3. Create a fresh `.dev_flow/active_context.md` from [templates/active_context.md](../templates/active_context.md), then offer the [project pointer](#project-pointer).
 4. For each in-progress work item described in the legacy file, create one `tasks/task_<ID>.md` from [templates/task_context.md](../templates/task_context.md), copying the relevant Current Work Item, Progress State, and Blocking Issues into your own Subtask block. Add yourself as the first contributor.
 5. Add a row in the new `active_context.md` and `tasks/_index.md` for each task.
 6. When all in-progress work items are migrated, archive `.dev_flow/legacy_context.md` to `.dev_flow/session_history/legacy_pre_multi_contributor.md` (or delete if it has no historical value).
@@ -205,18 +205,19 @@ Every dev-flow command MUST update context using this protocol. The goal is **to
      - Otherwise → `task_YYYYMMDD_HHMMSS_<slug>`.
    - **Continuation** — read `active_context.md` to find the existing Task ID.
 2. **Open or create the task file.**
-   - New → write `tasks/task_<ID>.md` from the [task template](../templates/task_context.md). Add yourself to `Contributors`. Fill `## Intent` (goal / target state / expected result — [Task Intent](../references/task-intent.md)) and the header's `Autonomy` field — `full — "<quote>"` only when the request itself orders it, otherwise `checkpoints` ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)). Add one `### Subtask:` block with you as `Author` and `Status: in-progress`. Set `Last updated` to now.
+   - New → write `tasks/task_<ID>.md` from the [task template](../templates/task_context.md). Add yourself to `Contributors`. Fill `## Intent` (goal / target state / expected result — [Task Intent](../references/task-intent.md)) and the header's `Autonomy` field — `full — "<quote>"` only when the request itself orders it, otherwise `checkpoints` ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)). Add one `### Subtask:` block with you as `Author` and `Status: in-progress`; write its `Next` item in the form of [After completing a step](#after-completing-a-step). Set `Last updated` to now.
    - Existing → read the file. Then:
      - If your `<agent-id>` is already in `Contributors` and you have a Subtask block → resume it.
      - If you are not yet a contributor → add yourself to `Contributors` (targeted Edit on the header), append a new `### Subtask:` block at the end of the Subtasks section, and add a Coordination Notes entry like `HH:MM [your-id] — joined, starting on <goal>`.
 3. **Update the dashboard.** Use `Edit` (not `Write`) on `active_context.md`:
+   - `active_context.md` does not exist → create it from the [template](../templates/active_context.md), then offer the [project pointer](#project-pointer) — the main agent only; a subagent relays the need.
    - If your task's row exists → update Phase / Status / Contributors / Updated.
    - If the row is missing (new task) → insert a new row in the Active Tasks table.
 4. **Update the catalog** (`tasks/_index.md`) the same way: targeted `Edit`, single row.
 
 ### After completing a step
 
-1. **In your own Subtask block:** check off the completed item in Progress, set the next item, append a one-line entry to your block's Activity list.
+1. **In your own Subtask block:** check off the completed item in Progress, set the `Next` item, append a one-line entry to your block's Activity list. `Next` form: `- [ ] **Next:** <step> — <phase file, relative to the skill root> § <section heading>`; a step that belongs to no phase (waiting for the developer) → `- [ ] **Next:** <what is awaited>`. An `in-progress` Subtask block has exactly one `Next` item; a `done` task has none.
 2. **In the task header:** targeted Edit on `Last updated`.
 3. **Do not touch** the dashboard or catalog yet — step-level updates only live in the task file.
 
@@ -234,6 +235,25 @@ Every dev-flow command MUST update context using this protocol. The goal is **to
 3. **In the catalog:** same — move from Active to Recently Completed.
 4. **Surface queued follow-ups:** scan `.dev_flow/todos/` and plan backlogs for `queued` records triggered `after task_<this ID>` and offer to run each next (`/dev-flow do …`) — a suggestion, not an auto-run; the executed work still passes its own gates and commit approval. See [todo phase](todo.md).
 5. **Open the outcome entry** when the task's `## Intent` carries an Outcome check line, and refresh the dashboard's outcome-checks line — [Outcome check](../references/task-intent.md#outcome-check).
+
+### Project pointer
+
+Offered once, when the dashboard `active_context.md` is created — on the project's first task. The project's instruction file is `CLAUDE.md` or `AGENTS.md`: the one that exists; both exist → the one the current host reads; neither → a new file of the host's.
+
+- The file has a `## dev-flow` heading → nothing.
+- Otherwise show the paragraph below and ask the developer, under any `Autonomy`:
+  - yes → append it to the end of the file (a new file holds only this paragraph). When git tracks the file, the write is part of the task's diff and passes the commit sign-off.
+  - no → write nothing; record `project pointer: declined <date>` in the dashboard's `## Notes`.
+  - no answer → write nothing, record nothing.
+- A subagent neither asks nor writes — it relays the need to the main agent.
+- [audit](audit.md) never writes the paragraph: it proposes it. The developer's yes to the proposal → the main agent appends the paragraph as above.
+- A rebuild of the dashboard carries `## Notes` over ([Regeneration Procedure](#regeneration-procedure)).
+
+```markdown
+## dev-flow
+
+This project is run through the dev-flow skill. Before work on code or documents, load the skill and read `.dev_flow/active_context.md`. After a context compaction, load the skill again if its text is absent, and read the `Next` item of the task file.
+```
 
 ### Targeted-edit safety
 
@@ -347,7 +367,7 @@ It composes what this file already defines — the [read protocol](#read-protoco
 
 ### The three movements
 
-1. **Re-attend, then read.** Re-read the [session working memory](../references/cache.md#session-working-memory-l1) area first — it survives a compaction — then the dashboard's `## Resume` section, the dashboard tables, and the relevant task files through the [read protocol](#read-protocol), **Steps 1–3 only** — Step 4's summary block and Step 5's continuation question belong to `status`, and resume runs its own decision below instead.
+1. **Re-attend, then read.** Re-read the [session working memory](../references/cache.md#session-working-memory-l1) area first — it survives a compaction — then the dashboard's `## Resume` section, the dashboard tables, and the relevant task files through the [read protocol](#read-protocol), **Steps 1–3 only** — Step 4's summary block and Step 5's continuation question belong to `status`, and resume runs its own decision below instead. In a task file read the Current Work Item and the `Next` item, then the section `Next` names.
 2. **Reconcile against reality.** Compare the recorded state with the working tree: branch, uncommitted changes, and whether the artifacts the task claims to have produced exist. The record is a **claim**; the tree is the **evidence**. Emit one verdict — `matches` · `diverged (<what>)` · `unverifiable (<why>)` — and never silently trust a claim the tree contradicts.
 3. **Decide and act.** Take exactly one branch:
 
@@ -422,6 +442,7 @@ When the indexes look wrong (missing rows, stale entries, conflict markers, file
    - Active table from files with `Status` ∈ {in-progress, blocked, review-pending}.
    - Recently Completed from files with `Status: done`, sorted by Last updated desc, keeping the latest 5.
    - **`## Resume`** section from the existing handoff records: keep a record only while its task is in the rebuilt Active table, keep the latest record per Task ID, drop the rest. A record is never *invented* here — regeneration reproduces what a [checkpoint](#checkpoint--fix-the-task-for-a-session-boundary) wrote or omits the section entirely.
+   - **`## Notes`** carried over as it is.
    - **Deferred (todos)** section from `.dev_flow/todos/_index.md` + plan backlogs: counts of `candidate`/`queued`, plus a flag line for any record bound to an already-closed plan/task; the outcome-checks line from the `open` entries of `outcomes:` in `evidence/ledger.yaml`. Omit the section if there are no todos and no open outcome checks.
 4. Rewrite `tasks/_index.md` the same way.
 5. Append a regeneration entry to the Shared Activity Log of one of your active task files (`HH:MM [your-id] — regenerated indexes`), or to a coordination task if you have none.

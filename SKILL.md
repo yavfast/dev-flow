@@ -27,11 +27,11 @@ Each transition has a validation gate.
 
 `**` — Pre-commit review is performed by a clean-context subagent.
 
-**Tail of this file** — Read it again when the text is cut: [change classes](#when-modifying-existing-functionality) · [service command facts](#service-command-facts) · [file index](#files).
+**Tail of this file** — Read it again when the text is cut: change classes · service command facts · [file index](#files).
 
 ## Pipeline Phases
 
-`/dev-flow <command>`; text with no recognized command routes to `do`. Takeover of existing code: `onboard` (optional, once).
+`/dev-flow <command>`; text with no recognized command — a bare `commit` included — routes to `do`. Before a command's first action, Read `phases/<command>.md` (other file names: [Files](#files)) unless already in context and unchanged. Takeover of existing code: `onboard` (optional, once).
 
 | Command | Purpose |
 |---------|---------|
@@ -154,7 +154,9 @@ Stops in every route where the main agent presents its work to the developer and
 
 ## Subagents
 
-Hand noisy secondary work to a subagent and keep the *conclusion, not the dump*; pick the model by the task's nature, never a hardcoded name ([Delegation for Focus](references/delegation.md)). A whole secondary task goes to the [subtask phase](phases/subtask.md): a full dev-flow participant with its own context that escalates real decisions to its initiator; commits stay with the main context. Each phase has a base role; a project adds overlays under `.dev_flow/roles/` via `inherits:` and may grow read-only specialist helpers for a recurring noisy step ([Roles](references/roles.md)).
+Hand noisy secondary work to a subagent and keep the *conclusion, not the dump*; pick the model by the task's nature, never a hardcoded name ([Delegation for Focus](references/delegation.md)). A whole secondary task goes to the [subtask phase](phases/subtask.md): a full dev-flow participant that escalates real decisions to its initiator; commits stay with the main context.
+
+**Brief.** A subagent that edits code, reviews, tests, researches, or runs a phase gets in its brief: `Skill root: <absolute path of this skill>` and `Read first: <role file> — blocks: <names>` (no blocks named → the whole file). Role files, `roles/<role>.ai.md`: review → `reviewer`, blocks `rules`, `pre_commit_review`, `convergence` · code edit → `implementer` · tests, verify → `tester` · research → `researcher` · whole task → `subtask-executor` + the phase's role · other → [Roles](references/roles.md). A project overlay listed in `.dev_flow/roles/_index.yaml` is added after the base role. A subagent that only searches, reads, or counts gets neither line.
 
 ## Active Context & Session Continuity
 
@@ -171,7 +173,9 @@ dev-flow keeps a **collaborative per-task context** in `.dev_flow/` for several 
 - **Hard floor and secrets.** A hard-floor action needs the developer's word now, under any `Autonomy` (a subagent relays it), or a `named-hard-floor` operation of a sanctioned access channel. A secret value never goes where secrets never live; a secret seen in such a place is an incident, one seen in an ignored file outside history is not; a needed secret is never asked for in the chat — the developer enters it by an input route outside it; a privileged or remote command runs only through the project's privileged runner, without a per-call confirm inside a sanctioned [access channel](references/access-channels.md), a production release excepted ([Proportionate Caution](references/proportionate-caution.md)).
 - **Docs gate.** Where a phase reads `docs/_index.md`, it also reads `docs/_glossary.md` whenever present (index or not) and, on code-touch phases, `docs/_framework.md` ([Conventions](references/conventions.md#file-organization)).
 - **Phase start.** Continuation: locate the task via `active_context.md`, resume your Subtask block or add a new one (you become a Contributor). New task: create `tasks/task_<ID>.md` from the template with your Subtask block, the **Intent**, and the **Autonomy** field (`full` only when the request says so, quoted); add a row to `active_context.md` and `tasks/_index.md` by targeted Edit.
-- **After a step.** Check off Progress, set the next item, append Activity (incidents, ambiguous decisions, structural events only); refresh `Last updated`.
+- **Lost thread** (after a compaction, in a new session). Load the skill again when this text is absent; Read the task file — Current Work Item and `Next`; Read the section `Next` names; no `Next` or no known task → `resume` (`phases/status.md`).
+- **Own compaction.** Editing or compressing your own context: keep the newest copy of this text, drop older ones, keep the task file path and the `Next` item.
+- **After a step.** Check off Progress, set `**Next:** <step> — <phase file> § <section>`, append Activity (incidents, ambiguous decisions, structural events only); refresh `Last updated`.
 - **Phase boundary.** Targeted Edit on the dashboard row. **Transition** (phase/subtask boundary, task switch): run the Transition Checkpoint — `{s:pin}` summary, demote raw entries, harvest durable lessons through the structural rule/skill/tool gate (never an auto-`must`), promote working memory to the task file ([Experience Capture](references/experience-capture.md)); a lesson with no matching rule is written without asking, never a fact about the developer or the machine ([Project Rules](references/conventions.md#project-rules)).
 - **Spotted-defect reflex.** An out-of-scope, deferrable defect is filed as an agent-initiated [`todo`](phases/todo.md) (cheap subagent, or inline if trivial) — never chased, never lost. In-scope or urgent → fix or escalate.
 - **Subtask finished.** Set its `Status: done`; the task stays `in-progress` until every subtask is done.
