@@ -9,6 +9,7 @@ role DevFlowOrchestrator {
     - "Identify whether the request continues an active task or starts a new one; if new, create a fresh task file with the caller as the initial Contributor; if joining, add a new Subtask block"
     - "Capture the Task Intent at intake — goal (why) / target state / expected result, requested action distinguished from the underlying goal, inferred parts marked — and record it in the task file's ## Intent section (references/task-intent.md); skip the record only for trivial routes with self-evident intent"
     - "Map request intent to one of the pipeline routing scenarios"
+    - "Form a batch when the request names two or more tasks with disjoint file sets: one design sign-off and one commit sign-off table for the batch, an answer per task, one commit per approved row, never one commit for several tasks (phases/do.md → Batch of Tasks)"
     - "Classify change requests by change class (trivial / standard / architectural / internal refactor — see phases/do.md → Change Classes) and start the route at the matching layer"
     - "Ask targeted clarifying questions when intent is ambiguous (max 3)"
     - "Propose an interpretation when still ambiguous and ask for confirmation"
@@ -78,7 +79,7 @@ role DevFlowOrchestrator {
         - "Only if the reference is ambiguous: confirm the repository path or URL"
 
     research_first:
-      signal: "Request explicitly asks to investigate/compare ('research', 'дослідити', 'spike', 'порівняй підходи'), OR the answer needs external sources/experiments, OR a concept cannot be authored because critical knowledge is missing/unverified — but NOT when a specific external repository is named (that is adopt_external_repo)"
+      signal: "Request explicitly asks to investigate/compare ('research', 'дослідити', 'spike', 'порівняй підходи'), OR asks for a prototype before the design ('prototype first', 'спершу прототип', 'спробуй прототипом' — scope prototype, built in a separate worktree, promoted only on the developer's word), OR the answer needs external sources/experiments, OR a concept cannot be authored because critical knowledge is missing/unverified — but NOT when a specific external repository is named (that is adopt_external_repo)"
       action: "research (time-boxed spike per phases/research.md) → persist durable findings to .dev_flow/skills/ → route onward (usually concept) with the findings"
       questions_to_ask:
         - "Confirm the 1–3 questions the spike must answer and its time-box (cost gate)"
@@ -142,7 +143,7 @@ role DevFlowOrchestrator {
     - "After every phase step: update only the caller's own Subtask block — check off the step, set Next, append per-subtask Activity, refresh task-header Last updated"
     - "At phase boundaries: targeted Edit on dashboard/catalog (re-read, locate row by Task ID, update Phase/Status/Contributors/Updated); append a Shared Activity Log entry tagged with caller's id"
     - "When blocked: set the caller's Subtask Status = blocked, add a Blocking Issues entry tagged with caller's id, reflect overall task status in dashboard"
-    - "After completing the full sequence: set caller's Subtask Status = done; if all subtasks are done, set the task's overall Status = done; targeted Edit moves the row from Active to Recently Completed"
+    - "After completing the full sequence: set caller's Subtask Status = done; if all subtasks are done, set the task's overall Status = done; targeted Edit moves the row from Active to Recently Completed; open the outcome entry when the task's ## Intent carries an Outcome check line (references/task-intent.md)"
     - "Never rewrite another contributor's Subtask block or their tagged entries in shared sections"
     - "No time-based takeover: if another contributor's subtask is stalled and blocks progress, add a NEW Subtask block (referencing the original) instead of editing the original"
     - "Run hygiene check after each update: cap Shared Activity Log and per-subtask Activity at 10 each, archive overflow to .dev_flow/session_history/"
@@ -161,6 +162,6 @@ role DevFlowOrchestrator {
     step_6: "Announce plan: 'I will: update spec → plan → implement. Starting with spec update.'"
     step_7: "Per phase: run the project-knowledge gate first (load applicable .dev_flow/rules/ and .dev_flow/skills/, binding), then execute the phase following gate checks; after the last design document, stop at the design sign-off (DEC batch, changed docs, files to touch, proportionality block) before any code or shipped-file edit"
     step_8: "After each step: update only the caller's Subtask block + task-header Last updated. At phase boundaries: targeted Edit on dashboard/catalog and append Shared Activity Log entry"
-    step_9: "Present final summary with the intent verdict (met / partially met / diverged vs the recorded ## Intent — a divergence is surfaced, never absorbed) and, under Autonomy: full, the proportionality block without questions; whenever anything is to be committed, stop at the commit sign-off (changed files, review verdict, intent verdict, proportionality block; 'Ready to commit?') and commit only on the developer's yes"
+    step_9: "Present final summary with the intent verdict (met / partially met / diverged vs the recorded ## Intent — a divergence is surfaced, never absorbed; with an Outcome check line the verdict adds 'outcome pending (<trigger>)') and, under Autonomy: full, the proportionality block without questions; whenever anything is to be committed, stop at the commit sign-off (changed files, review verdict, intent verdict, proportionality block; 'Ready to commit?') and commit only on the developer's yes"
 }
 ```

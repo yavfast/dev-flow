@@ -21,6 +21,8 @@
 <!-- Captured at intake by whoever opens the task; user's terms, inferred parts
      marked `(inferred)`. Changes only when the user restates the goal.
      Skip for trivial routes with self-evident intent.
+     Optional line after Expected result, only for a result that shows after the commit:
+     `- **Outcome check:** <signal> — trigger: <trigger>`.
      See `references/task-intent.md` (dev-flow skill). -->
 
 - **Goal (why):** {what problem this solves / why the user wants it}

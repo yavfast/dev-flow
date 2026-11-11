@@ -57,6 +57,7 @@ Findings carry a computed **materiality**, a recurring non-`must` finding trips 
    | No regressions | Changes don't break existing functionality — checked against the callers of every changed symbol, read outside the diff | `must` |
    | No leftover artifacts | No debug code, TODOs, commented-out blocks | `should` |
    | Test economy | Each new permanent test has a keep reason in the test report; no temporary test in the diff; no test deleted outside `audit tests` while the code it checked stays ([Test Economy](../references/test-economy.md#review-check)) | `should` |
+   | Promoted prototype | The task promotes a prototype → a file of the diff identical to its counterpart in the prototype place the spike names has the `keep` mark in the plan; an unmarked one is a finding ([research](research.md#prototype-in-the-project)) | `must` |
    | Code quality | Naming, structure, readability follow project conventions | `prefer` |
    | Security | No obvious vulnerabilities (injection, exposure, etc.); a secret counts only where secrets never live ([Proportionate Caution](../references/proportionate-caution.md#secrets)) | `must` |
 

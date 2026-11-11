@@ -106,6 +106,9 @@ role Reviewer {
       test_economy:
         description: "Each new permanent test has a keep reason in the test report; no temporary test in the diff; no test deleted outside `audit tests` while the code it checked stays (references/test-economy.md)"
         severity: "should"
+      promoted_prototype:
+        description: "The task promotes a prototype → a file of the diff identical to its counterpart in the prototype place the spike names has the `keep` mark in the plan; an unmarked one is a finding (phases/research.md → Prototype in the Project)"
+        severity: "must"
       code_quality:
         description: "Naming, structure, readability follow project conventions"
         severity: "prefer"

@@ -52,7 +52,8 @@ For the periodic whole-directory revision see the [audit phase](audit.md): `stat
 ├── cache/                     # Durable resources (Figma exports, downloads, baselines) + _index.yaml (Resource Cache)
 ├── tools/                     # _index.yaml + samples/ — deterministic checks harvested by Experience Capture (self-tested, read-only); run-privileged — the privileged runner (Proportionate Caution), written only with the developer's word; never a secret
 ├── access/                    # channels.yaml — sanctioned access channels (committed, no secrets); journal.log — hash-chained call journal (gitignored) (Access Channels)
-├── evidence/                  # ledger.yaml — intervention ledger (Evidence Discipline); absent → reconcile is a no-op
+├── proto/                     # <slug>/ — working project prototypes kept for the developer's verdict or promotion (research); git-ignored, never committed
+├── evidence/                  # ledger.yaml — intervention ledger + outcome entries (Evidence Discipline); absent → reconcile is a no-op
 ├── tasks/
 │   ├── _index.md              # Catalog of task files
 │   ├── task_<ID>.md           # Per-task shared context (multiple contributors)
@@ -151,7 +152,7 @@ For `/dev-flow status` (no argument):
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-If `.dev_flow/todos/_index.md` exists, include the **Deferred (todos)** line with the count of `candidate` entries (omit the line when the register is absent or empty). `queued` follow-ups are not counted here — they surface at their originating task's completion, not in this view. It is a pointer, not a listing — `todo` files them, `audit` grooms them.
+If `.dev_flow/todos/_index.md` exists, include the **Deferred (todos)** line with the count of `candidate` entries (omit the line when the register is absent or empty). `queued` follow-ups are not counted here — they surface at their originating task's completion, not in this view. It is a pointer, not a listing — `todo` files them, `audit` grooms them. If `.dev_flow/evidence/ledger.yaml` has `open` entries under `outcomes:`, add the outcome-checks line: their count and the nearest trigger ([Outcome check](../references/task-intent.md#outcome-check)).
 
 For `/dev-flow status <task_id>`:
 
@@ -232,6 +233,7 @@ Every dev-flow command MUST update context using this protocol. The goal is **to
 2. **In the dashboard:** targeted `Edit` — move your task's row from "Active Tasks" to "Recently Completed". If that list now exceeds 5 entries, move the oldest into `session_history/session_YYYY-MM-DD.md` and remove the row from the dashboard.
 3. **In the catalog:** same — move from Active to Recently Completed.
 4. **Surface queued follow-ups:** scan `.dev_flow/todos/` and plan backlogs for `queued` records triggered `after task_<this ID>` and offer to run each next (`/dev-flow do …`) — a suggestion, not an auto-run; the executed work still passes its own gates and commit approval. See [todo phase](todo.md).
+5. **Open the outcome entry** when the task's `## Intent` carries an Outcome check line, and refresh the dashboard's outcome-checks line — [Outcome check](../references/task-intent.md#outcome-check).
 
 ### Targeted-edit safety
 
@@ -420,7 +422,7 @@ When the indexes look wrong (missing rows, stale entries, conflict markers, file
    - Active table from files with `Status` ∈ {in-progress, blocked, review-pending}.
    - Recently Completed from files with `Status: done`, sorted by Last updated desc, keeping the latest 5.
    - **`## Resume`** section from the existing handoff records: keep a record only while its task is in the rebuilt Active table, keep the latest record per Task ID, drop the rest. A record is never *invented* here — regeneration reproduces what a [checkpoint](#checkpoint--fix-the-task-for-a-session-boundary) wrote or omits the section entirely.
-   - **Deferred (todos)** section from `.dev_flow/todos/_index.md` + plan backlogs: counts of `candidate`/`queued`, plus a flag line for any record bound to an already-closed plan/task. Omit the section if there are no todos.
+   - **Deferred (todos)** section from `.dev_flow/todos/_index.md` + plan backlogs: counts of `candidate`/`queued`, plus a flag line for any record bound to an already-closed plan/task; the outcome-checks line from the `open` entries of `outcomes:` in `evidence/ledger.yaml`. Omit the section if there are no todos and no open outcome checks.
 4. Rewrite `tasks/_index.md` the same way.
 5. Append a regeneration entry to the Shared Activity Log of one of your active task files (`HH:MM [your-id] — regenerated indexes`), or to a coordination task if you have none.
 

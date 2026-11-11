@@ -58,6 +58,10 @@ An observation is not a verdict and changes no `state`. It writes no `evidence:`
 
 Absent `.dev_flow/evidence/` the reconcile step is a no-op.
 
+### Outcome entries
+
+The same file holds a second list, `outcomes:` — one entry per task whose intent carries an [Outcome check](task-intent.md#outcome-check): `id` (`OUT_<YYYYMMDD>_<NN>` — the opening date and the ordinal within it; immutable) · `task` (the Task ID) · `commit` (the task's last commit; `—` when it made none) · `expected` (the Expected result, verbatim) · `signal` · `trigger` (changes only on the developer's word) · `state` (`open` · `closed` · `dropped`) · `verdicts` (append-only: `date` · `verdict` · `ref` · `note`). A new entry is `open` with empty `verdicts`. `closed` and `dropped` are final: a developer's verdict after that is appended, and the state stays. `ref` is a recorded command output or gate result, a file that holds a measurement, or `developer` with the quote in `note`. The list is a separate contract: the fields of an intervention entry do not apply to it, and the ledger reconcile does not read it — opening, verdicts and reconciliation: [Task Intent](task-intent.md#outcome-check). Absent `ledger.yaml`, opening an entry creates the file with `outcomes:` alone.
+
 ## Consumer 4 — the report ceiling
 
 Applies to a phase report — [test](../phases/testing.md), [verify](../phases/verify.md), [review](../phases/review.md), [audit](../phases/audit.md).
@@ -82,6 +86,7 @@ Opening a ledger entry can fail (`EVD_NO_TRIGGER`, `EVD_DUPLICATE_ENTRY`) inside
 | [Application Enforcement](application-enforcement.md) | Its tripwire by-product is the primary `exercised` source |
 | [rule phase](../phases/rule.md) · [skill phase](../phases/skill.md) index format | The optional `evidence:` key |
 | [audit](../phases/audit.md) `rules`/`skills` scope | Ledger reconciliation and prune candidates |
+| [Task Intent](task-intent.md#outcome-check) | The `outcomes:` list — delayed outcome verdicts of tasks |
 | [test](../phases/testing.md) · [verify](../phases/verify.md) · [review](../phases/review.md) · [audit](../phases/audit.md) reports | The report ceiling and the written `unobserved` |
 
 ## Boundaries

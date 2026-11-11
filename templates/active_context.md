@@ -37,9 +37,13 @@ A thin index over the task files in [`tasks/`](tasks/) — active and recently c
      + any plan-backlog items). Counts only — per-item detail lives in the register.
      Always flag here a todo bound to an already-CLOSED plan/task: that target is off the
      active view, so without this line the fact would be invisible. Regenerable from
-     todos/_index.md + plan backlogs. Omit the whole section when there are no todos. -->
+     todos/_index.md + plan backlogs. Omit the whole section when there are no todos
+     and no open outcome checks. The outcome-checks line: open entries of `outcomes:` in
+     evidence/ledger.yaml; omit it when there are none. -->
 
 _N candidate · M queued · K contested — see [todos/](todos/_index.md)_
+
+_N outcome checks open — next trigger: {date or event} — see [evidence/ledger.yaml](evidence/ledger.yaml)_
 <!-- Conditional — include a line like the next ONLY for a todo bound to a closed plan/task: -->
 - ⚠ `TD_<ts>_<slug>` bound to **completed** `PL_XXX` backlog — won't appear in Active
 

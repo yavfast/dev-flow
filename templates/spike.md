@@ -70,8 +70,10 @@
 **Cross-perspective tensions** *(panel mode — omit for single)*:
 - {where lenses disagreed, e.g. conservative vs progressive — carried to the interview/concept as a decision input, not resolved here}
 
+**Prototype verdict** *(project prototype — omit otherwise)*: {the developer's word — the verdicts: phases/research.md → Prototype in the Project; place: {path}}
+
 **Artifacts to keep:**
 - {staged files promoted to `.dev_flow/cache/` — cache path + what it is, or "—"}
 
 **Artifacts to discard:**
-- {prototype files, scratch code, temp branches — list what should be cleaned up}
+- {prototype files, scratch code, the prototype place, temp branches — list what should be cleaned up}

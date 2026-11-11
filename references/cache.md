@@ -24,7 +24,7 @@
 Working on a project produces two kinds of non-code artifacts, and they need opposite treatment:
 
 - **Durable / expensive resources** — Figma layouts and design exports, documents downloaded from the internet, baseline application screenshots, data samples. Re-acquiring them costs real money, rate-limited API access (e.g. the Figma MCP), or manual effort — and anything *linked from docs or task files* must outlive the session. These live in **`.dev_flow/cache/`**: a per-project store with a hierarchy and an `_index.yaml`, surviving reboots.
-- **Transient artifacts** — test/build logs, reproduction dumps, throwaway screenshots, spike prototypes. Cheap to regenerate, worthless next week. These live in a **project workspace under `/tmp`** with disciplined naming, and are deleted without regret.
+- **Transient artifacts** — test/build logs, reproduction dumps, throwaway screenshots, spike prototypes while they are built (a project prototype that works moves into the project — [research](../phases/research.md#prototype-in-the-project)). Cheap to regenerate, worthless next week. These live in a **project workspace under `/tmp`** with disciplined naming, and are deleted without regret.
 
 The boundary in one line: **`/tmp` is staging, the cache is keeping** — anything in the workspace that turns out durable is *promoted* into the cache, and nothing in docs or task context ever links into `/tmp`. Both sit inside the wider memory/data model introduced next.
 
@@ -275,7 +275,7 @@ This is the **L1 data cache** — the *data* half of session scratch (see [Memor
 
 - **Timestamp suffixes, not numeric indexes.** When the same artifact recurs, name it `{name}_YYYYMMDD_HHMMSS.{ext}` (`test-run_20260610_143205.log`) — the same compact format task files use.
 - The workspace is **disposable** and **project-scoped, not session-scoped** — it is shared by concurrent sessions on the same repo (timestamped names avoid collisions), it *survives* a session restart, and a reboot may wipe it at any time. Anything that must survive is promoted to the cache the moment that becomes clear.
-- **Helper subagents write only here.** A subagent doing one noisy step inside its initiator's phase run (researcher, tester — including its Verify duty; see [Delegation for Focus](delegation.md)) stages its downloads, logs, and captures in the workspace and reports the paths; the **calling agent** promotes what is durable to `.dev_flow/cache/`. A **task-delegated** subagent ([subtask phase](../phases/subtask.md)) executes the owning phase's protocol itself — including cache writes with their index discipline — and lists what it persisted in its report.
+- **Helper subagents write only here** — and a researcher in a project prototype place its brief names. A subagent doing one noisy step inside its initiator's phase run (researcher, tester — including its Verify duty; see [Delegation for Focus](delegation.md)) stages its downloads, logs, and captures in the workspace and reports the paths; the **calling agent** promotes what is durable to `.dev_flow/cache/`. A **task-delegated** subagent ([subtask phase](../phases/subtask.md)) executes the owning phase's protocol itself — including cache writes with their index discipline — and lists what it persisted in its report.
 
 ## Git
 

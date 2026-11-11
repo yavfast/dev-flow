@@ -10,8 +10,9 @@
 - [Context Loading](#context-loading) — skill check and cache check gates, glossary load before investigating
 - [Cost Gate](#cost-gate) — framing fields (questions, scope, time-box, single/panel mode) and the A/B/C fork
 - [Procedure](#procedure) — Steps 1–6: frame, investigate (single or panel + synthesis), conclude, persist, close, hand off
-- [Spike Rules](#spike-rules) — throwaway status, binding time-box, no design decisions, scratch-only prototypes
-- [Relation to Other Phases](#relation-to-other-phases) — table mapping research to concept, interview, ask, skill, cache, subtask, audit
+- [Prototype in the Project](#prototype-in-the-project) — the scratch place, build exemptions, the move of a working prototype into the project, show, the developer's verdict, promotion steps
+- [Spike Rules](#spike-rules) — throwaway status, binding time-box, no design decisions, prototypes kept out of the working tree
+- [Relation to Other Phases](#relation-to-other-phases) — table mapping research to concept, interview, ask, skill, cache, subtask, audit, do/plan
 - [Anti-Patterns](#anti-patterns) — unframed spikes, prototype creep, deciding in the spike, panel misuse, lens theater
 - [Output Style](#output-style) — documentation register for the spike file, chat register for findings; formatting rule
 
@@ -78,7 +79,7 @@ The main agent frames the spike, receives the conclusion, persists durable knowl
 Before starting, frame it explicitly (same discipline as the [fix phase's diagnosis gate](fix.md)):
 
 1. **Questions** — 1–3 specific questions the spike must answer. Not "learn about X" but "can X do Y under constraint Z?".
-2. **Scope** — which sources are in bounds: `codebase` (read existing code/docs), `external` (web, package registries, official docs), `prototype` (throwaway code in a scratch area). Combine as needed.
+2. **Scope** — which sources are in bounds: `codebase` (read existing code/docs), `external` (web, package registries, official docs), `prototype` (throwaway code in a scratch area; one that needs the project's code — [Prototype in the Project](#prototype-in-the-project)). Combine as needed.
 3. **Time-box** — the budget ("2 hours", "1 session", "10 sources max"). When the box is spent, the spike concludes with whatever it has — `concluded` or `inconclusive`, honestly.
 4. **Mode** — `single` (one investigation) or `panel` (a fan-out of parallel perspective researchers — see [Step 2b](#step-2b-perspective-panel-optional)). A narrow, factual question is `single`; a broad or contested topic where the *right answer depends on which lens you look through* (theoretical vs practical, conservative vs progressive, user vs operational) is where a `panel` earns its multiplied cost. Default to `single` and escalate to `panel` only when the topic is genuinely many-sided.
 
@@ -105,7 +106,7 @@ Apply the cost gate above. Create `docs/{name}.spike.md` from the [spike templat
 For a `single`-mode spike, spawn one [Researcher](../roles/researcher.ai.md) subagent with the spike file as its brief. The researcher:
 - exhausts cheap sources first (codebase evidence → existing docs → external sources → prototype only if scoped),
 - logs each exploration entry in the spike file (what was tried, findings, open questions),
-- stages fetched artifacts (downloads, design exports) under the project workspace `/tmp/{project-slug}/downloads/` and lists their paths in the report (see [Resource Cache](../references/cache.md) — helper subagents never write `.dev_flow/`; the agent running this phase persists),
+- stages fetched artifacts (downloads, design exports) under the project workspace `/tmp/{project-slug}/downloads/` and lists their paths in the report (see [Resource Cache](../references/cache.md) — helper subagents never write `.dev_flow/` outside a [prototype place](#prototype-in-the-project); the agent running this phase persists),
 - fills the Alternatives Considered table,
 - concludes with a verdict and returns **the conclusion, not the dump**.
 
@@ -140,7 +141,7 @@ Set the spike status: `concluded` (questions answered), `inconclusive` (time-box
 
 This step is the **end-of-investigation reflection** touchpoint of [Experience Capture](../references/experience-capture.md).
 
-Findings that pass the [skill phase's non-triviality filter](skill.md) are saved to `.dev_flow/skills/` **by the agent running this phase** — main agent or task-delegated executor; its helper subagents do not write `.dev_flow/`. This is the owner of the rule "web research → consolidated skill": research is the **sanctioned consolidation point** (the producing side of skills), so it *writes* the skill directly rather than only proposing it — the non-triviality filter is the gate. If the spike also surfaced a hard project **constraint** (a library limit, a version floor), harvest that as a [rule](rule.md) too — written automatically through the structural gate (default `should`, never auto-`must`; a would-be `must`/contradiction goes to independent review) — rather than burying it in the skill body.
+Findings that pass the [skill phase's non-triviality filter](skill.md) are saved to `.dev_flow/skills/` **by the agent running this phase** — main agent or task-delegated executor; its helper subagents do not write `.dev_flow/` (a prototype place excepted). This is the owner of the rule "web research → consolidated skill": research is the **sanctioned consolidation point** (the producing side of skills), so it *writes* the skill directly rather than only proposing it — the non-triviality filter is the gate. If the spike also surfaced a hard project **constraint** (a library limit, a version floor), harvest that as a [rule](rule.md) too — written automatically through the structural gate (default `should`, never auto-`must`; a would-be `must`/contradiction goes to independent review) — rather than burying it in the skill body.
 
 The same split applies to **artifacts**: staged files the spike's conclusions rest on — or that were expensive to fetch (rate-limited Figma access, large downloads) — are promoted from the workspace to `.dev_flow/cache/` with index entries (see [Resource Cache](../references/cache.md)); the rest of the staging area is left to die with `/tmp`. Record promoted files under the spike's "Artifacts to keep".
 
@@ -151,14 +152,42 @@ The same split applies to **artifacts**: staged files the spike's conclusions re
 
 ### Step 6: Hand off
 
-Report: verdict per question, recommended next phase (`concept` ready / more research needed / not viable — drop), and what was persisted where. Update the task file per the standard [rules for all phases](../SKILL.md#rules-for-all-phases).
+Report: verdict per question, recommended next phase (`concept` ready / more research needed / not viable — drop), and what was persisted where. A project prototype is shown here for its verdict ([Prototype in the Project](#prototype-in-the-project)). Update the task file per the standard [rules for all phases](../SKILL.md#rules-for-all-phases).
+
+## Prototype in the Project
+
+A prototype that needs the project's code is built in a separate place, never in the task's working tree, and enters that tree only on the developer's word.
+
+**Place.** The agent that runs the phase creates it and names it in the spike, which is the researcher's brief: a git worktree of the project (`git worktree add --detach`) in `/tmp/{project-slug}/scratch/proto-<slug>/`; a copy of the needed files there when the project has no git. Nothing in the place is committed, pushed, or merged, and the task's working tree does not change. An edit in the task's working tree during the build → stop, move that edit to the place, then undo only that edit.
+
+**Build.** After the [Cost Gate](#cost-gate), inside the place only. Not required: design documents, a plan, review, permanent tests, traceable IDs. In force: the hard floor, secret handling and access channels ([Proportionate Caution](../references/proportionate-caution.md)), and the time-box — a spent time-box ends the spike `inconclusive`, and the prototype is shown as it is.
+
+**Keep.** A prototype that works moves into the project before the verdict is asked: the agent that runs the phase moves the place to `.dev_flow/proto/<slug>/` and updates the path in the spike. Command: `git worktree move`; when it fails (another filesystem, submodules) — move the directory, then `git worktree repair <new path>`; a plain move for a copy. First test that git ignores the new place by effect (`git check-ignore`); not ignored → add its path to `.git/info/exclude`, never to a tracked file. A moved place never returns to `/tmp`; a later build runs in it. A prototype that does not work stays in the scratch area.
+
+**Show.** The place, the run command, what to look at, what the prototype showed, what it did not show. Then ask the developer for the verdict:
+
+- `discard` — remove the place (`git worktree remove --force`; plain removal for a copy); list it under "Artifacts to discard".
+- `extend` — a new Cost Gate; the same place.
+- `promote` — the steps below, after the spike is concluded; never without the developer's word. A place still in the scratch area moves into the project first.
+
+No answer → the place stays, listed under "Artifacts to discard"; a place in the scratch area may not survive a reboot.
+
+**Promote.**
+
+1. Open a task through [do](do.md). The change sets the class; it is never Trivial.
+2. Author the design documents with the regular phases. The spike is evidence, linked through `Spike:`, and names the place; each decision the prototype made implicitly becomes a Design Decisions record.
+3. The plan marks each prototype file `keep`, `rewrite`, or `drop`.
+4. Design sign-off — it presents the marks.
+5. Implement: copy a `keep` file from the place into the task's working tree; write a `rewrite` file anew from the signed-off design; leave a `drop` file behind. A copied or rewritten file is new code at every gate.
+6. The prototype contradicts the signed-off design → the design wins, and the file is `rewrite`.
+7. After the task's last commit, ask the developer; remove the place only on their word.
 
 ## Spike Rules
 
 - A spike is **throwaway research**, not a deliverable. It does not pass through validation gates, and no gate may require its *content* — only its *conclusion*.
 - Spike conclusions **feed** the concept/spec/plan — they never replace them, and a spike never makes the design decision itself.
 - The time-box is binding. A spike that overruns its box concludes `inconclusive` with reasons — it does not silently extend.
-- Prototype code lives in a scratch area, is listed under "Artifacts to discard", and must NOT become production code.
+- Prototype code lives in a scratch area or a [prototype place](#prototype-in-the-project), is listed under "Artifacts to discard", and becomes production code only through **Promote**, on the developer's word.
 - A spike answers its framed questions. New questions discovered mid-flight are recorded as open questions — re-frame (a new cost gate) before chasing them.
 
 ## Relation to Other Phases
@@ -172,6 +201,7 @@ Report: verdict per question, recommended next phase (`concept` ready / more res
 | [cache](../references/cache.md) | Checked before external fetches; Step 4 promotes durable artifacts (downloads, design exports) there from the workspace |
 | [subtask](subtask.md) | A research run is a natural subtask — delegated, scoped, reported back |
 | [audit](audit.md) | Audit flags expired open-decision triggers and stale `in-progress` spikes, and proposes research to close them |
+| [do](do.md) · [plan](plan.md) | A promoted prototype enters as a new task; its plan marks each prototype file |
 
 ## Anti-Patterns
 

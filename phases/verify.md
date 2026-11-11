@@ -212,7 +212,7 @@ After running verification, report:
 | Live tests | Scenario descriptions + pass/fail |
 | Manual verification | Steps provided to user (if applicable) |
 | Unobserved | Levels/criteria this environment could not verify + the missing observation boundary (no CI, no service access, no credentials, no device) |
-| Intent verdict | Outcome vs the task's recorded expected result: `met / partially met / diverged (+why)` ([Task Intent](../references/task-intent.md)) |
+| Intent verdict | Outcome vs the task's recorded expected result: `met / partially met / diverged (+why)` ([Task Intent](../references/task-intent.md)); a result that shows only after the commit is the intent's [Outcome check](../references/task-intent.md#outcome-check), reported `outcome pending` — not an `unobserved` criterion |
 | Fix cycles | Number of fix → test → review → verify iterations |
 
 No claim outruns its evidence — "verified" / "clean" only for what actually ran; everything else is `unobserved` with a named reason. See [Evidence Discipline](../references/evidence-discipline.md).

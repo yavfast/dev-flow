@@ -21,11 +21,11 @@ All changes to the system start from concepts and specifications, not from code.
 Concept -> [Gate] -> Specification -> [Gate] -> Plan -> [Gate] -> Code -> [Gate] -> Test* -> [Gate] -> Review** -> [Gate] -> Verify* -> Commit -> Propagate
 ```
 
-Each transition includes a validation gate to prevent drift.
+Each transition has a validation gate.
 
-`*` — Test and Verify phases are conditional: they activate only when the project has tests and/or defined rules for running/validating them.
+`*` — Test and Verify are conditional: active only when the project has tests and/or rules for running them.
 
-`**` — Pre-commit review is performed by a subagent with a clean context to ensure an unbiased perspective on the changes.
+`**` — Pre-commit review is performed by a clean-context subagent.
 
 ## Contents
 
@@ -59,9 +59,9 @@ Each transition includes a validation gate to prevent drift.
 | 6. Review | `/dev-flow review` | Pre-commit review + validate gates, resolve conflicts | Review report |
 | 7. Verify | `/dev-flow verify [target]` | Regression, integration, and live testing | Verification results |
 | 8. Propagate | `/dev-flow propagate` | Update docs when code changes | Updated docs |
-| — | `/dev-flow research <topic>` | Time-boxed investigation (spike) when knowledge is insufficient for a concept/spec/plan or to close an open decision | `*.spike.md` + updated skills |
+| — | `/dev-flow research <topic>` | Time-boxed investigation (spike) when knowledge is insufficient or to close an open decision | `*.spike.md` + updated skills |
 | — | `/dev-flow fix <problem>` | Analyze bug, plan fix, implement, verify | Fixed code + build/test result |
-| — | `/dev-flow rule <request>` | Add, edit, remove, or list coding rules (freeform) | Updated `.dev_flow/rules/` |
+| — | `/dev-flow rule <request>` | Add, edit, remove, or list coding rules | Updated `.dev_flow/rules/` |
 | — | `/dev-flow skill <request>` | Find, add, update, or remove project knowledge skills | Updated `.dev_flow/skills/` |
 | — | `/dev-flow status` | Show current state — report only, changes nothing | Status summary |
 | — | `/dev-flow checkpoint [note]` | Fix the current task into durable state at a session boundary | Handoff record + checkpoint report |
@@ -75,7 +75,7 @@ Each transition includes a validation gate to prevent drift.
 
 **Default command:** `/dev-flow <text>` with no recognized phase keyword routes to `do`.
 
-**Service commands — facts the table omits.** `research` (alias `spike`) is time-boxed, cost-gated, passes no gate, and persists durable findings to `.dev_flow/skills/`. `todo` infers flavor (`deferred` / `queued` / `contested`) and trigger from plan/task state, files into the owning plan's backlog else `.dev_flow/todos/`, and builds nothing. `adopt` (aliases `analyze-repo`, `adoption`) is advisory — no ID, no gate — and writes only its two documents, the clone in `ext_repos/`, one `.gitignore` line, its `_index.md` row, and task context. `audit`'s `code <intent>` scope is opt-in, excluded from `all`, writes its plan under `.dev_flow/audit/`, and stops at the Plan→Code gate. `onboard` runs once.
+**Service commands — facts the table omits.** `research` (alias `spike`) is time-boxed, cost-gated, passes no gate, and persists durable findings to `.dev_flow/skills/`; a project prototype stays in its own worktree until the developer promotes it. `todo` infers flavor (`deferred` / `queued` / `contested`) and trigger from plan/task state, files into the owning plan's backlog else `.dev_flow/todos/`, and builds nothing. `adopt` (aliases `analyze-repo`, `adoption`) is advisory — no ID, no gate — and writes only its two documents, the clone in `ext_repos/`, one `.gitignore` line, its `_index.md` row, and task context. `audit`'s `code <intent>` scope is opt-in, excluded from `all`, writes its plan under `.dev_flow/audit/`, and stops at the Plan→Code gate. `onboard` runs once.
 
 **Conditional and mandatory phases.** Test (5) runs only when the project has a test suite AND rules for running it — otherwise skip to Review and record the skip as `unobserved` with its reason ([Evidence Discipline](references/evidence-discipline.md)); it runs the task's functional tests (unit + mock) only; a permanent test needs a keep reason ([Test Economy](references/test-economy.md)). Review (6) is mandatory before any commit and is done by a clean-context subagent; the fix → re-review loop is bounded by [Review Convergence](references/review-convergence.md), and a contained non-`must`, non-security fix is confirmed mechanically instead of re-reviewed ([Verification Economy](references/verification-economy.md)). Verify (7) — regression, integration, live — runs after Review passes; issues → fix → Test → Review → Verify at the scope the fix earns, never narrowed for a `must` or security finding; with no automation, give manual steps and record `unobserved`.
 
@@ -95,7 +95,7 @@ Loading `.dev_flow/rules/`, `skills/` and `tools/` is a mandatory gate at the st
 - **Tools (`.dev_flow/tools/`)** — check `_index.yaml`; a matching tool replaces a hand-rolled check. Harvested tools are read-only and self-tested ([Experience Capture](references/experience-capture.md)).
 - **Precedence** — project rules override generic guidance (incl. the [SOLID reference](references/solid-architecture.md)); project skills override generic technology knowledge. On conflict: project wins, or surface it.
 
-If the directory is absent, the gate is a no-op. Each relevant phase restates this as its "Skill check" / "Rule check" — gates, not reminders. The gate is also **re-triggered at the moment of action** — the relevant set is re-surfaced per action burst beside the work (a pointer-only Pre-Action Marker), not only once at phase start. See [Application Enforcement](references/application-enforcement.md).
+If the directory is absent, the gate is a no-op. Each relevant phase restates this as its "Skill check" / "Rule check" — gates, not reminders. The gate is also **re-triggered at the moment of action** — the relevant set is re-surfaced per action burst beside the work (a pointer-only Pre-Action Marker). See [Application Enforcement](references/application-enforcement.md).
 
 A rule or skill carries an optional **evidence state** (`present` → `wired` → `exercised` → `outcome-supported`, or `unobserved`) with mandatory provenance; configured ≠ used, count ≠ conclusion. See [Evidence Discipline](references/evidence-discipline.md).
 
@@ -159,7 +159,8 @@ A rule or skill carries an optional **evidence state** (`present` → `wired` �
 Stops in every route where the main agent presents its work to the developer and waits. Stops, not gate criteria.
 
 - **Design sign-off** — after the last design document, before the first edit to code or shipped files. Present: the developer's Design Decisions (question → options → recommendation) and the agent's, one line each ([decision owner](references/interview-mode.md#decision-owner)), the documents created or changed, the files implementation will touch, the [proportionality block](references/proportionate-caution.md#proportionality-block). A record the developer has not answered is `proposed` ([Interview Mode](references/interview-mode.md)); implementation never starts on one. A Trivial change has no design documents — no stop.
-- **Commit sign-off** — after review passes, before `git commit`. Present: changed files, review verdict with open advisories, intent verdict, the proportionality block. Ask "Ready to commit?" and wait — never on an inferred yes.
+- **Commit sign-off** — after review passes, before `git commit`. Present: changed files, review verdict with open advisories, intent verdict (+ pending [outcome check](references/task-intent.md#outcome-check)), the proportionality block. Ask "Ready to commit?" and wait — never on an inferred yes.
+- **Batch** — several tasks named in one request hold each stop once; one commit per approved task ([do](phases/do.md#batch-of-tasks)).
 
 **Autonomy.** Skipped only when the request itself orders it ("автономно", "без зупинок", "commit without asking"); a harness or system autonomy setting does not count. Record `Autonomy: full — "<quote>"` in the task header at intake; absent → `checkpoints`. Task-scoped; a decision settled under `full` is `resolved (delegated)`. A [hard-floor](references/proportionate-caution.md#hard-floor) action stops the work even under `full`. Subagents never hold a checkpoint — only the main agent talks to the developer.
 
@@ -167,9 +168,9 @@ Stops in every route where the main agent presents its work to the developer and
 
 | Scope | Branch / PR |
 |-------|-------------|
-| Concept + Specification | One PR — reviewed together as a design unit |
-| Implementation Plan | Separate PR — technology decisions reviewed independently |
-| Implementation (per plan phase) | One PR per plan phase — incremental, reviewable |
+| Concept + Specification | One PR |
+| Implementation Plan | Separate PR |
+| Implementation (per plan phase) | One PR per plan phase |
 | Review + Propagation | Same PR as the triggering change |
 
 **Commit rules:**
@@ -181,7 +182,7 @@ Stops in every route where the main agent presents its work to the developer and
 
 ## Active Context & Session Continuity
 
-dev-flow keeps a **collaborative per-task context** in `.dev_flow/` so several agents can work one project in parallel; a task file is a shared document. Read/write protocol, regeneration, archive: [status phase](phases/status.md).
+dev-flow keeps a **collaborative per-task context** in `.dev_flow/` for several agents in parallel; a task file is a shared document. Read/write protocol, regeneration, archive: [status phase](phases/status.md).
 
 **Memory tiers.** L0 = the live transcript (lost on compact); L1 = session scratch — the [session working memory](references/cache.md#session-working-memory-l1) (notes / params / reminders / reads) plus the `/tmp/{project-slug}/` data cache (survives compact, not restart); L2 = `.dev_flow/` (durable). [Experience Capture](references/experience-capture.md) promotes L1 → L2; [salience markers](phases/status.md#salience-markers) decide what survives a compaction. Write to working memory as you work (parameter set, non-obvious fact, deferred action, every file read) and re-read the whole area whenever the thread is lost; a file already read this session, unchanged and uninvalidated, is not read again ([Verification Economy](references/verification-economy.md)).
 
@@ -203,7 +204,7 @@ Layout of `.dev_flow/`: [status phase → Context Files](phases/status.md#contex
 - **Phase boundary.** Targeted Edit on the dashboard row. **Transition** (phase/subtask boundary, task switch): run the Transition Checkpoint — `{s:pin}` summary, demote raw entries, harvest durable lessons through the structural rule/skill/tool gate (never an auto-`must`), promote working memory to the task file ([Experience Capture](references/experience-capture.md)).
 - **Spotted-defect reflex.** An out-of-scope, deferrable defect is filed as an agent-initiated [`todo`](phases/todo.md) (cheap subagent, or inline if trivial) — never chased, never lost. In-scope or urgent → fix or escalate.
 - **Subtask finished.** Set its `Status: done`; the task stays `in-progress` until every subtask is done.
-- **Task completion.** Any contributor sets `Status: done`, moves the dashboard row to Recently Completed, updates the catalog, then **surfaces queued follow-ups** (`.dev_flow/todos/` and plan backlogs triggered `after task_<this ID>`) as offers, not auto-runs.
+- **Task completion.** Any contributor sets `Status: done`, moves the dashboard row to Recently Completed, updates the catalog, then **surfaces queued follow-ups** (`.dev_flow/todos/` and plan backlogs triggered `after task_<this ID>`) as offers, not auto-runs, and opens the [outcome entry](references/task-intent.md#outcome-check) when the intent carries an Outcome check.
 
 ### Multi-contributor tolerance
 
@@ -223,9 +224,9 @@ draft -> in-progress -> completed    (plans — finite work items)
 | Status | Meaning | Applies to |
 |--------|---------|------------|
 | `draft` | Initial version, not yet validated through gate | All |
-| `active` | Validated and current — the authoritative version | Concepts, Specifications |
+| `active` | Validated and current | Concepts, Specifications |
 | `in-progress` | Being actively worked on | Plans |
-| `completed` | All work done, no further changes expected | Plans |
+| `completed` | All work done | Plans |
 | `deprecated` | Superseded or no longer relevant — excluded from conflict checks | All |
 
 ## Versioning
@@ -317,7 +318,7 @@ Each rule is one h2 unit — directive and severity in the heading over a bounde
 | File | Holds |
 |------|-------|
 | [Onboard](phases/onboard.md) | Takeover: reverse-engineer docs + rules bottom-up |
-| [Research](phases/research.md) · [spike template](templates/spike.md) | Time-boxed investigation (alias `spike`) |
+| [Research](phases/research.md) · [spike template](templates/spike.md) | Time-boxed investigation (alias `spike`); project prototype |
 | [Concept](phases/concept.md) · [template](templates/concept.md) | Idea, architecture, mechanisms; checklist, Reuse Check, banned phrases |
 | [Specification](phases/specification.md) · [template](templates/specification.md) | Structures, contracts, rules, verification criteria, rollback |
 | [Plan](phases/plan.md) · [template](templates/plan.md) | Phases with `Verify:`; technology decisions; Refactoring Protocol |
@@ -332,13 +333,13 @@ Each rule is one h2 unit — directive and severity in the heading over a bounde
 | [Audit](phases/audit.md) | `.dev_flow/` + `docs/` revision; opt-in `code` scope |
 | [Ask](phases/ask.md) · [Todo](phases/todo.md) · [todo_index template](templates/todo_index.md) | Read-only Q&A · future work with a return trigger |
 | [Subtask](phases/subtask.md) | Delegate a secondary task to a full dev-flow participant |
-| [Do](phases/do.md) | Freeform routing; change classes |
+| [Do](phases/do.md) | Freeform routing; change classes; batch of tasks |
 | [Interview Mode](references/interview-mode.md) | Design forks as marked options; open decisions with triggers |
 | [Upstream Escalation](references/escalation.md) | Wrong doc → fix the doc, not the code |
 | [Delegation for Focus](references/delegation.md) | Noisy work to a subagent; specialist routing |
 | [Experience Capture](references/experience-capture.md) | Transition Checkpoint; harvest; trailer; context pressure |
 | [Impact Walk](references/impact.md) | Blast radius: docs, code bindings, active tasks; symbol reach of a code change |
-| [Task Intent](references/task-intent.md) | Goal / target / expected result at intake |
+| [Task Intent](references/task-intent.md) | Goal / target / expected result at intake; outcome check after the commit |
 | [Ticket Tracker Integration](references/ticket-tracker.md) | Ticket-tied tasks; tracker skill owns conventions |
 | [Consequence Forecasting](references/consequence-forecasting.md) | Forecast at altitude; YAGNI gate: build / seam / drop+record |
 | [Code Reuse](references/code-reuse.md) | Search before creating; YAGNI-gated reuse |
@@ -366,8 +367,8 @@ Each rule is one h2 unit — directive and severity in the heading over a bounde
 
 ## Delegation for Focus (Context Isolation)
 
-During implement / fix / verify hand noisy secondary work — test output, build logs, screenshots, wide searches, reproduction traces — to a subagent and keep the *conclusion, not the dump*; pick the model by the task's nature, never a hardcoded name. The core-vs-delegate line, scenarios, and model guidance: [Delegation for Focus](references/delegation.md). For a whole secondary *task*, use the [subtask phase](phases/subtask.md): the subagent is a full dev-flow participant — own context, a contributor in the task file, escalates real decisions to its initiator, returns a full report; commits stay with the main context.
+During implement / fix / verify hand noisy secondary work to a subagent and keep the *conclusion, not the dump*; pick the model by the task's nature, never a hardcoded name. The core-vs-delegate line, scenarios, and model guidance: [Delegation for Focus](references/delegation.md). For a whole secondary *task*, use the [subtask phase](phases/subtask.md): the subagent is a full dev-flow participant — own context, a contributor in the task file, escalates real decisions to its initiator, returns a full report; commits stay with the main context.
 
 ## Subagent Roles (AI-DSL)
 
-Each phase has a **base role** for subagent execution (implementer, tester, reviewer, …); a project adds **overlays** under `.dev_flow/roles/` via `inherits:`. Catalogue and how to find, reuse, or create roles: [Roles](references/roles.md). A project may also grow **specialist focus helpers** — read-only roles owning a recurring noisy step (wide code search, log triage, screenshot analysis) — created when the pattern recurs; routing, role-local memory and promotion: [Delegation routing reflex](references/delegation.md#named-specialists-and-the-routing-reflex).
+Each phase has a **base role** for subagent execution (implementer, tester, reviewer, …); a project adds **overlays** under `.dev_flow/roles/` via `inherits:`. Catalogue and how to find, reuse, or create roles: [Roles](references/roles.md). A project may also grow **specialist focus helpers** — read-only roles owning a recurring noisy step — created when the pattern recurs; routing, role-local memory and promotion: [Delegation routing reflex](references/delegation.md#named-specialists-and-the-routing-reflex).

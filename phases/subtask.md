@@ -210,6 +210,8 @@ Multiple subtasks can be spawned simultaneously when they are **independent**. L
 
 Shared `.dev_flow/` files tolerate this by design. Source files do not — use the brief's **Scope** to give parallel subtasks disjoint file areas, and keep work that touches the initiator's active files out of delegation entirely.
 
+Subtasks of a [batch](do.md#batch-of-tasks) hold no checkpoint and make no commit — the main agent holds the batch stops.
+
 ## Output Style
 
 The subagent works in the **same language** as the task description; the relayed report follows the `chat` register of the main conversation. See [Output Styles](../references/output-styles.md) — the brief carries the register, as it carries the intent.

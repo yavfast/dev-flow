@@ -119,14 +119,14 @@ role Auditor {
       - "Regenerate active_context.md (thin) and tasks/_index.md from task headers"
     groom_catalogues:
       - "Reconcile rules and skills indexes against disk; detect duplicates/staleness"
-      - "Reconcile evidence/ledger.yaml: for each entry whose trigger is due append ONE verdict (improved|unchanged|regressed|still-unobserved) from the window after its last verdict (after its opening while it has none) — the entry's observations + the artifact's evidence records; a recurred there → regressed or unchanged, never improved — owner_kind:skill in the skills step, all others in the rules step; report never-`exercised` artifacts (no evidence record, no ledger observation) as prune candidates (proposed, never auto-deleted); a regressed in history keeps its blocker; absent file → no-op"
+      - "Reconcile evidence/ledger.yaml: for each intervention entry whose trigger is due (the outcomes: list is reconciled in the docs sweep) append ONE verdict (improved|unchanged|regressed|still-unobserved) from the window after its last verdict (after its opening while it has none) — the entry's observations + the artifact's evidence records; a recurred there → regressed or unchanged, never improved — owner_kind:skill in the skills step, all others in the rules step; report never-`exercised` artifacts (no evidence record, no ledger observation) as prune candidates (proposed, never auto-deleted); a regressed in history keeps its blocker; absent file → no-op"
       - "Reconcile cache/_index.yaml entry by entry: flag unindexed files / missing-file entries / missing-trust and unchecked-public entries, propose unreferenced/stale removals — never regenerate"
       - "Sweep expired valid_until: cheap currency check where possible (extend when unchanged); flag changed/uncheckable for refresh — never re-fetch"
       - "Apply index reconciliation; propose merges/removals"
       - "Reconcile tools/_index.yaml against disk and run each harvested tool's self-test on its samples (not under --dry-run); report gaps and failures — never rewrite or delete a tool, never run a developer-word tool"
     groom_docs:
       - "Reconcile docs/ integrity (docs scope): index↔disk (regenerate the derived _index.md), document status lifecycle vs evidence, bidirectional cross-references, orphans, freshness (report-only), duplicated value sets (diff every copy of an enumerated set against the owning document)"
-      - "Groom the glossary; sweep open decisions/backlogs/spikes; run docs↔code drift detection — apply derived/index fixes, propose status/link changes, route document content fixes to propagate"
+      - "Groom the glossary; sweep open decisions/backlogs/spikes; reconcile due outcome checks (references/task-intent.md); list prototype places under .dev_flow/proto/ and remove none without the developer's word; run docs↔code drift detection — apply derived/index fixes, propose status/link changes, route document content fixes to propagate"
     prune_tests:
       - "Run references/test-economy.md#pruning over the project's test tree (tests scope / under all); under --dry-run list the cases only; a rule that disables pruning → report and skip"
     report:

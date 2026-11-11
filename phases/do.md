@@ -6,6 +6,7 @@
 - [Command](#command) — `/dev-flow do <request>` and the equivalent bare `/dev-flow <request>` syntax, with example invocations
 - [Role Responsible](#role-responsible) — DevFlowOrchestrator role file that handles this command
 - [Procedure](#procedure) — Steps 1–7: load context + gates, interpret intent (intent table, Change Classes), clarify, route Scenarios A–D, wrap-up
+- [Batch of Tasks](#batch-of-tasks) — two or more tasks in one request: disjoint file sets, one design sign-off, one commit sign-off table, one commit per approved row
 - [Routing Decision Tree](#routing-decision-tree) — ASCII tree from request shape to target phase: resume, checkpoint, change, fix, docs, status, catalogues, audit, ask, adopt, todo
 - [Output Style](#output-style) — Chat vs documentation registers and the Style gate the orchestrator passes to the executing phase
 
@@ -46,6 +47,7 @@ This command is handled by **DevFlowOrchestrator**: [roles/dev-flow-orchestrator
    - User said "continue" → resume the most recently updated active task that already lists your session in `Contributors`. If only one active task exists, resume it.
    - User described a specific item → match against active task titles/IDs.
    - No match → this is a new task; a new `tasks/task_<ID>.md` will be created in Step 6.
+   - The dashboard shows an open outcome check whose trigger is due → offer to reconcile it ([Outcome check](../references/task-intent.md#outcome-check)); run it on the developer's yes, then continue with the request.
 
 2. For the chosen task (continuation), read its file `.dev_flow/tasks/task_<ID>.md`:
    - Current Work Item (document, phase, traceable ID)
@@ -67,6 +69,8 @@ This command is handled by **DevFlowOrchestrator**: [roles/dev-flow-orchestrator
 
 **Capture the intent first.** If the request itself orders an unattended run ("автономно", "без зупинок"), set the task header `Autonomy: full — "<quote>"`; a harness or system autonomy setting does not ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)). Before classifying, extract the [Task Intent](../references/task-intent.md) — the goal (why), target state, and expected result — from the request wording, active context, and any linked ticket. Distinguish the *requested action* from the *underlying goal*; mark inferred parts `(inferred)`. Record it in the task file's `## Intent` section (in Step 6 for a new task). Skip the record for trivial routes with self-evident intent.
 
+**Two or more tasks in one request** → [Batch of Tasks](#batch-of-tasks).
+
 Analyze the freeform request against the loaded context to determine:
 
 | Intent type | Indicators | Routed to |
@@ -86,7 +90,7 @@ Analyze the freeform request against the loaded context to determine:
 | **Delegate side task** | "subtask", "delegate", "делегуй", "зроби паралельно", "offload", explicit secondary task during active work | subtask |
 | **Question (no changes)** | "how does", "як працює", "can we", "чи можливо", "where is", "де знаходиться", "is it feasible" — answerable from codebase + docs | ask |
 | **Capture for later** | "todo", "колись", "на майбутнє", "maybe later", "capture this idea", "потім" (deferred); or "виправити після поточної", "fix after this task", "помітив … але не зараз", "after this is done" (queued follow-up noticed mid-task, contexts overlap) — work to file, not execute now | todo |
-| **Research / investigate** | "research", "дослідити", "spike", "compare approaches", "порівняй підходи", "не знаю, який підхід", "what's the best way to" — answer needs external sources, measurements, or an unexplored solution space | research |
+| **Research / investigate** | "research", "дослідити", "spike", "compare approaches", "порівняй підходи", "не знаю, який підхід", "what's the best way to" — answer needs external sources, measurements, or an unexplored solution space; "prototype first", "спершу прототип", "спробуй прототипом" → scope `prototype` ([Prototype in the Project](research.md#prototype-in-the-project)) | research |
 | **Learn from an external repo** | "adopt", "analyze repo", "розбери репозиторій", "проаналізуй репо", "що взяти з X", "what can we borrow from", "which ideas from X are useful here" — a *named external repository* (path or URL) is the subject | adopt — [External Repo Adoption](../references/repo-adoption.md) |
 | **Plan only** | "plan", "сплануй", no code changes mentioned | plan |
 
@@ -180,9 +184,33 @@ Never rewrite another contributor's Subtask block or their tagged entries in sha
 ### Step 7: Session wrap-up
 
 If the user ends the session (or after completing a full phase chain):
-1. **Intent verdict (on completion).** When reporting the task done or stopping at the commit sign-off, compare the outcome to the task's `## Intent` (Expected result) and state `intent: met / partially met / diverged (+why)` in the report — a divergence is surfaced, never silently absorbed. Skip for a mid-task hand-off. See [Task Intent](../references/task-intent.md).
-2. Run the [status write protocol → on task completion](status.md#write-protocol) — Subtask `Status` and wrap-up Activity entry, header `Last updated` (task-level `Status: done` only when every contributor's subtask is done), the dashboard and catalog row move, and the [hygiene caps](status.md#context-hygiene) with overflow archived to `.dev_flow/session_history/`. Optionally add a hand-off Coordination Note (`[your-id] — stepping away, anyone may pick up from <here>`).
+1. **Intent verdict (on completion).** When reporting the task done or stopping at the commit sign-off, compare the outcome to the task's `## Intent` (Expected result) and state `intent: met / partially met / diverged (+why)` in the report — a divergence is surfaced, never silently absorbed. At the sign-off of the task's last commit, an intent with an [Outcome check](../references/task-intent.md#outcome-check) adds `— outcome pending (<trigger>)`. Skip for a mid-task hand-off. See [Task Intent](../references/task-intent.md).
+2. Run the [status write protocol → on task completion](status.md#write-protocol) — Subtask `Status` and wrap-up Activity entry, header `Last updated` (task-level `Status: done` only when every contributor's subtask is done), the dashboard and catalog row move, the outcome entry of a task whose intent carries an Outcome check, and the [hygiene caps](status.md#context-hygiene) with overflow archived to `.dev_flow/session_history/`. Optionally add a hand-off Coordination Note (`[your-id] — stepping away, anyone may pick up from <here>`).
 3. **Surface queued follow-ups.** If the task became `done`, scan `.dev_flow/todos/` and plan backlogs for `queued` records triggered `after task_<this ID>` (fixes deferred *because their context overlapped this task*). List each and offer to run it next via `/dev-flow do …` — a suggestion, not an auto-run; the executed work passes its own gates and commit approval. See [todo phase](todo.md).
+
+## Batch of Tasks
+
+A request that names two or more tasks forms a batch: each checkpoint is held once for all members, and every commit stays separate.
+
+**Form.**
+
+1. Open each named task as its own task — file, Intent, change class, route.
+2. Establish each member's file set: from its design documents and the [Impact Walk](../references/impact.md); for a Trivial change, the files to edit.
+3. Two members' file sets intersect → the task named later in the request leaves the batch and runs after it. An intersection found during the work → the task that reached the shared file second leaves.
+4. Fewer than two members remain → no batch.
+5. Record the members in each member's Coordination Notes.
+6. Run the members in sequence, or as [parallel subtasks](subtask.md#parallel-subtasks) where they are independent.
+
+**Design sign-off** — once, before the first code edit of any member. Present each member's decisions, documents, files, and proportionality rows; a member with no design documents presents nothing and starts without an answer, and a batch with no design documents holds no design stop. The developer answers per member; any other member with no answer does not start.
+
+**Commit sign-off** — once, when each member has passed review or is blocked. A blocked member is not in the table and gets its own sign-off later. One row per member: task · files · review verdict with open advisories · intent verdict · open proportionality rows. The developer answers per row; "all" is valid only when the developer says it.
+
+- approved row → one commit, with its own message and IDs, staged from its own file list;
+- declined row → stays uncommitted and returns to its own loop;
+- row with no answer → no commit;
+- two approved rows share a file → neither is committed; run the two tasks in sequence.
+
+Never one commit for several tasks; never an inferred yes. A [hard-floor](../references/proportionate-caution.md#hard-floor) action stops its own task at any point — a separate stop, not a batch stop. Under `Autonomy: full` the batch holds no stops. A subagent holds no checkpoint and makes no commit.
 
 ## Routing Decision Tree
 

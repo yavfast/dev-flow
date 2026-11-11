@@ -15,6 +15,7 @@ This phase is handled by **Implementer**: [roles/implementer.ai.md](../roles/imp
 - **Implement ALL fields from specification tables.** Do not skip optional fields — implement them with their default values.
 - **Use immutable structures** where the spec says "immutable after creation".
 - **Implement all error cases** from the spec's Errors tables.
+- **Promoted prototype:** copy from the prototype place only the files the plan marks `keep`; nothing else enters the task's working tree from it ([research](research.md#prototype-in-the-project)).
 - **Reference traceable IDs in code comments.**
 
 ```python

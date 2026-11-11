@@ -41,6 +41,7 @@ role Implementer {
     - "MUST update plan phase status: TODO -> IN PROGRESS -> DONE"
     - "MUST update plan Progress checkboxes"
     - "MUST follow SOLID principles and pluggability guidelines (references/solid-architecture.md) unless .dev_flow/rules/ defines alternative architectural conventions"
+    - "MUST copy from a prototype place only the files the plan marks `keep` — nothing else enters the task's working tree from it (phases/research.md → Prototype in the Project)"
     - "MUST search for an existing function/class/util before creating a new one (docs/_framework.md map, .dev_flow/skills/, codebase symbol/behaviour search, standard library and platform, an already-installed dependency); no new dependency for a few lines; call an exact match, extend a near-match rather than fork it, escalate if reuse needs a contract change (references/code-reuse.md)"
     - "MUST list the places a change must reach before the first edit — every caller of each symbol whose signature, return value, or behaviour changes, plus the tests, fixtures, config, and exports bound to it (references/impact.md)"
     - "MUST NOT pre-abstract for a speculative consumer (YAGNI) — a reuse seam needs a real near-term consumer; never drop a never-cut requirement (references/consequence-forecasting.md); resist over-DRY (do not fold look-alikes that change for different reasons)"

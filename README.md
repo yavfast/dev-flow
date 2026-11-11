@@ -19,7 +19,7 @@ A [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skill that enfor
 
 Most projects suffer from a common pattern: documentation is written once and forgotten, specs diverge from code, and architectural decisions get lost in commit history. dev-flow solves this by making documentation a **first-class artifact** in the development pipeline, not an afterthought.
 
-- **Ideas before code** — concepts and specs are written before implementation, catching design flaws early
+- **Ideas before code** — concepts and specs are written before implementation, catching design flaws early; a prototype may come first, but only in a separate worktree, and it enters the project through the same pipeline
 - **End-to-end traceability** — every code section links back to its concept/spec via immutable IDs
 - **Living documentation** — change propagation keeps docs in sync with code
 - **Validation gates** — prevent incomplete specs from becoming buggy code
@@ -51,7 +51,7 @@ Additional commands:
 
 | Command | Purpose |
 |---------|---------|
-| `/dev-flow research <topic>` | Time-boxed investigation (spike) when knowledge is missing |
+| `/dev-flow research <topic>` | Time-boxed investigation (spike) when knowledge is missing; can build a prototype in a separate worktree |
 | `/dev-flow fix <problem>` | Investigate and fix a bug |
 | `/dev-flow adopt <repo>` | Analyze an external repository (path or URL) at concept altitude and produce the adoption document — what to borrow, what to skip, in what order |
 | `/dev-flow ask <question>` | Read-only Q&A — no file changes |
@@ -262,7 +262,7 @@ Every fork lands in a traceable **Design Decisions** (ADR-style) section, and th
 
 ### Research Spikes
 
-Interview Mode chooses among *known* options — but sometimes the options themselves are unknown: an unfamiliar domain, an unverified library capability, an unexplored solution space. That is the **research phase** (`/dev-flow research <topic>`, alias `spike`): a time-boxed, cost-gated investigation that produces a `docs/*.spike.md` artifact (questions → exploration log → alternatives → verdict) and persists durable findings to `.dev_flow/skills/`. Spikes are throwaway research — they feed the concept, never replace it, and they are the sanctioned way to close an open Design Decision that waits on facts. See [`phases/research.md`](phases/research.md).
+Interview Mode chooses among *known* options — but sometimes the options themselves are unknown: an unfamiliar domain, an unverified library capability, an unexplored solution space. That is the **research phase** (`/dev-flow research <topic>`, alias `spike`): a time-boxed, cost-gated investigation that produces a `docs/*.spike.md` artifact (questions → exploration log → alternatives → verdict) and persists durable findings to `.dev_flow/skills/`. Spikes are throwaway research — they feed the concept, never replace it, and they are the sanctioned way to close an open Design Decision that waits on facts. When the question is "will this work at all", the spike can build a **prototype** in a separate worktree, with no documents or review. It is built under `/tmp`; once it works, it moves into the project (git-ignored), so it does not disappear while it waits for you. You see it run and decide what happens to it — and a promoted prototype enters the project as a normal task, with design documents, a sign-off, and review. See [`phases/research.md`](phases/research.md).
 
 ### Capturing Future Work
 
@@ -278,7 +278,7 @@ These documents are **advisory** — no traceable ID, no gate, not a backlog. A 
 
 ### Task Intent
 
-A request states an *action*; the *reason* for it usually stays in the user's head — and an agent optimizing for the literal wording can complete the action perfectly while missing the point. dev-flow captures the **Task Intent** at intake — the goal, the target state and the expected result, in the user's own terms — and checks against that record instead of a remembered impression. Completion reports a verdict where the bar is "the expected result is observable", not merely "the steps were performed". When the letter of the request and its recorded goal diverge, dev-flow stops and surfaces the conflict rather than silently following either. See [`references/task-intent.md`](references/task-intent.md).
+A request states an *action*; the *reason* for it usually stays in the user's head — and an agent optimizing for the literal wording can complete the action perfectly while missing the point. dev-flow captures the **Task Intent** at intake — the goal, the target state and the expected result, in the user's own terms — and checks against that record instead of a remembered impression. Completion reports a verdict where the bar is "the expected result is observable", not merely "the steps were performed". When the letter of the request and its recorded goal diverge, dev-flow stops and surfaces the conflict rather than silently following either. Some results show only after the commit — in real use, or in the next tasks. For those the record carries an **outcome check**: a signal and a return trigger. The verdict then says `outcome pending`, and when the trigger comes, an audit or the next request returns to it and records what happened, with evidence or your word. See [`references/task-intent.md`](references/task-intent.md).
 
 ### Upstream Escalation
 
@@ -351,6 +351,7 @@ your-project/
     │   └── ...
     ├── todos/                      # Deferred future work filed by `todo`
     │   └── _index.md
+    ├── proto/                      # Working prototypes kept for your verdict (gitignored worktrees)
     ├── session_history/            # Archived completed tasks
     ├── rules/                      # Project coding rules — directive-first units, `## Contents` digest, `applies_to` selectors
     │   ├── _index.yaml             # Derived router (category summary + selector + rules[])
@@ -402,7 +403,7 @@ Annotated router for phases, references, templates and the example: [SKILL.md �
 4. **Fresh eyes before commit** — clean-context review catches what you missed
 5. **Living docs, not dead docs** — propagation keeps documentation current
 6. **Rules and skills accumulate** — project knowledge is captured and reused across sessions
-7. **The developer signs off before code and before commit** — a design sign-off after the design documents, a commit sign-off before `git commit`; skipped only when the request itself says so, and an action on the hard floor stops the work even then, unless it is an operation you named in advance in an access channel
+7. **The developer signs off before code and before commit** — a design sign-off after the design documents, a commit sign-off before `git commit`; skipped only when the request itself says so, and an action on the hard floor stops the work even then, unless it is an operation you named in advance in an access channel; several tasks named in one request share each sign-off, and every task still gets its own commit on your yes
 
 ## Requirements
 

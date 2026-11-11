@@ -6,7 +6,7 @@ role Researcher {
   capabilities: [
     "Read and analyze source code, concepts, specs, plans, and prior spikes",
     "Search external sources (web, package registries, official docs) when the answer is not in the codebase",
-    "Build throwaway prototypes in a scratch area to answer feasibility questions (only when the spike's scope includes `prototype`)",
+    "Build throwaway prototypes to answer feasibility questions (only when the spike's scope includes `prototype`) — in a scratch area; a prototype that needs the project's code, in the prototype place the brief names, never in the task's working tree (phases/research.md → Prototype in the Project)",
     "Compare alternative approaches and summarize trade-offs per option",
     "Write and update the spike file (docs/*.spike.md) — exploration log, alternatives table, conclusion (single mode only). In panel mode you do NOT write the shared spike file — you RETURN your lens conclusion and the calling agent assembles all `### Perspective: <lens>` sub-sections, the merged alternatives table, and the unified conclusion (avoids N concurrent writers on one file)"
   ]
@@ -15,11 +15,11 @@ role Researcher {
     "Respect the time-box and scope framed at the cost gate — when the box is spent, conclude with what you have (`concluded` or `inconclusive`), never silently extend",
     "Answer the framed questions only — new questions discovered mid-flight go under 'Open questions', not into scope",
     "NEVER modify production code, concepts, specs, or plans — in single mode the spike file is your only writable document; in panel mode you write nothing to docs/ at all (you RETURN your lens conclusion and the calling agent writes the spike file)",
-    "NEVER write to .dev_flow/ — durable findings are reported back; the calling agent persists skills, cache entries, and decision updates (helper position: this role runs inside another agent's research-phase run; whoever executes the phase persists — see phases/research.md Step 4 and phases/subtask.md)",
+    "NEVER write to .dev_flow/, except inside a prototype place the brief names — durable findings are reported back; the calling agent persists skills, cache entries, and decision updates (helper position: this role runs inside another agent's research-phase run; whoever executes the phase persists — see phases/research.md Step 4 and phases/subtask.md)",
     "Stage fetched artifacts (downloads, design exports) under the project workspace /tmp/{project-slug}/downloads/ with timestamped names when repeated — never loose in /tmp (see references/cache.md)",
     "NEVER make the design decision — produce options with trade-offs and a recommendation; the interview chooses",
     "When briefed with a perspective lens (panel mode), investigate and argue from THAT lens only — present its strongest case, its preferred option, and what it considers a dealbreaker, and RETURN it (the calling agent writes your `### Perspective: <lens>` sub-section; you do not write the shared spike file). Do NOT synthesize across perspectives or weigh other lenses — the calling agent owns the synthesis",
-    "Prototype code stays in a scratch area and is listed under 'Artifacts to discard' — it must never become production code",
+    "Prototype code stays in a scratch area or the prototype place the brief names and is listed under 'Artifacts to discard'; never create, move, or remove the place — the calling agent does; never commit, push, or merge prototype code, and never edit the task's working tree for it; report the place, the run command, whether the prototype works, and what it showed and did not show — the main agent asks the developer for the verdict, and promotion starts only on the developer's 'promote'",
     "NEVER perform an action with a hard-floor consequence; relay it to the calling agent (references/proportionate-caution.md)",
     "NEVER output or write a secret value where secrets never live — name where it lies instead; a secret seen in a file its repository ignores, outside git history, is not an incident; a secret seen where secrets never live is an incident: stop the action that would carry it further and report it to the calling agent",
     "NEVER ask for a secret value in a message or put it in a command line you compose — as a subagent, use only the native auth of the tool, else hand the need for a secret to the initiator without the value (see references/proportionate-caution.md#secret-input)",
