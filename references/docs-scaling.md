@@ -9,7 +9,7 @@ Cross-cutting conventions that keep the cost of finding and reading a fragment c
 - [Contents and lead summary](#contents-and-lead-summary) — Lead-summary content, Contents item format, the service-section exclusion list, maintenance rule
 - [History policy](#history-policy) — The unconditional entry-class filter, medium selection by vcs and churn, the immutable core, medium switching
 - [Split policy](#split-policy) — When a document splits, into what shape, and what a split may never do to an ID
-- [Index router](#index-router) — What `docs/_index.md` carries and what belongs nowhere near it
+- [Index router](#index-router) — What `docs/_index.md` carries, what belongs nowhere near it, and who registers a new file
 - [Self-sufficient headings](#self-sufficient-headings) — Wording a heading so it survives being read without its parents
 
 ## Reading protocol (grep-first)
@@ -118,6 +118,7 @@ Rollback: an umbrella set merges back into one file without loss — the anchors
 - Section listings (a file's anchor list) are forbidden in the index.
 - Prose in the index header falls under the history content filter above.
 - A `docs/` subdirectory may carry its own `_index.md`; the more specific index wins for its files.
+- **Registration.** The phase that creates a `docs/` file adds its row to the index in the same step, without asking the developer: a pipeline file (concept, spec, plan, epic, spike) in the document tables, an adoption pair (`ext_adoption/<name>.md` + `<name>.concept.md`) as one row in the «Adoption notes» table, which has no ID-prefix entry. A rename or a removal updates the row in the same step. No index yet and `docs/` crossed the threshold → the phase creates the index from the files on disk. `adopt` never creates the index; it writes only its own row ([External Repo Adoption](repo-adoption.md#what-a-run-may-write)).
 - Index format split: a machine-read catalogue (`.dev_flow/rules/`, `skills/`, `tools/`, `roles/`, `cache/`) uses `_index.yaml` — structured entries agents match against; a human-browsed catalogue (`docs/`, `.dev_flow/tasks/`, `.dev_flow/todos/`) uses `_index.md`. Apply the same split to any new collection.
 
 ## Self-sufficient headings

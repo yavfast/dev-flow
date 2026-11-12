@@ -98,7 +98,7 @@ C) You provide the missing information directly (doc, measurement, prior art)
 
 ### Step 1: Frame the spike
 
-Apply the cost gate above. Create `docs/{name}.spike.md` from the [spike template](../templates/spike.md): questions, context, scope, time-box, mode (`single`/`panel`), target concept (or "to be created"), or the open `DEC_NN` it serves.
+Apply the cost gate above. Create `docs/{name}.spike.md` from the [spike template](../templates/spike.md): questions, context, scope, time-box, mode (`single`/`panel`), target concept (or "to be created"), or the open `DEC_NN` it serves. Add its row to `docs/_index.md` in the same step ([Docs Scaling → Index router](../references/docs-scaling.md#index-router)).
 
 ### Step 2: Investigate (delegated)
 

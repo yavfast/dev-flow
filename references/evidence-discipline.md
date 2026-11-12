@@ -43,11 +43,19 @@ Additive **optional** field on a procedural skill, beside the [Procedural Skills
 
 ## Consumer 3 — the intervention ledger
 
-`.dev_flow/evidence/ledger.yaml`. One entry per harvest that created a durable artifact: `id` · `lesson` · `artifact` · `owner_kind` · `problem_class` · `trigger` · `state` · `verdicts` (append-only). An entry with `owner_kind: tool` also carries `bypasses` (append-only) — each hand-rolled check the tool covered, with `date` · `task` · `reason` (`unknown` \| `unfit` \| `untrusted` \| `broken` \| `unavailable`) · `note` ([Project Tools](project-tools.md#use-accounting)); a promoted tool opens its entry at promotion, a legacy tool on its first bypass.
+`.dev_flow/evidence/ledger.yaml`. One entry per harvest that created a durable artifact: `id` · `lesson` · `artifact` · `owner_kind` · `problem_class` · `trigger` · `state` · `verdicts` (append-only) · `observations` (append-only). An entry with `owner_kind: tool` also carries `bypasses` (append-only) — each hand-rolled check the tool covered, with `date` · `task` · `reason` (`unknown` \| `unfit` \| `untrusted` \| `broken` \| `unavailable`) · `note` ([Project Tools](project-tools.md#use-accounting)); a promoted tool opens its entry at promotion, a legacy tool on its first bypass.
+
 
 An entry with empty `verdicts` is **dormant** — it supports no claim of benefit. A ledger restored in a new session preserves continuity, never synthesizes a verdict. Opening an entry requires a named `trigger`; a second open entry for the same `artifact` + `problem_class` is rejected.
 
-**Reconcile** in [audit](../phases/audit.md) `rules`/`skills` scope (entries with `owner_kind: tool` in the `tools` scope, Step 7g): every entry whose trigger is due gets one appended verdict — `improved` · `unchanged` · `regressed` · `still-unobserved`. `state` rises to `outcome-supported` only on `improved`, with no `regressed` in history, and only when the artifact is already `exercised`; a `regressed` in history keeps its blocker permanently. An artifact still `present` with no `exercised` observation ever recorded is reported as a **prune candidate** for [Procedural Skills](procedural-skills.md) curation.
+**Observations between reconciliations.** The harvest appends one to an existing entry at once — `kind` · `date` · `ref` · `note`:
+
+- `recurred` — the coverage rung gave *covered* and the lesson repeats the entry's `problem_class` or a breach of its artifact; `ref` is the task file. The agent's admission is enough: it can only lower a verdict.
+- `exercised` — the artifact fired on its sanctioned path and left a non-model by-product; `ref` is where the command and its result are recorded (tool output, gate result, tripwire). A claim of compliance without a by-product appends nothing.
+
+An observation is not a verdict and changes no `state`. It writes no `evidence:` key and does not count toward the promotion threshold. Several entries for one artifact → the one whose `problem_class` matches, else the newest. No entry → nothing is appended.
+
+**Reconcile** in [audit](../phases/audit.md) `rules`/`skills` scope (entries with `owner_kind: tool` in the `tools` scope, Step 7g): every entry whose trigger is due gets one appended verdict — `improved` · `unchanged` · `regressed` · `still-unobserved` — from the window after its last verdict (after its opening while it has none): its `observations` plus the artifact's evidence records. A `recurred` in the window gives `regressed` or `unchanged`; `improved` only without one. `state` rises to `outcome-supported` only on `improved`, with no `regressed` in history, and only when the artifact is already `exercised` (a tool: the evidence state in its usage file, or an `exercised` observation of its entry); a `regressed` in history keeps its blocker permanently. An artifact still `present` with no `exercised` ever recorded — evidence record or ledger observation — is reported as a **prune candidate** for [Procedural Skills](procedural-skills.md) curation.
 
 Absent `.dev_flow/evidence/` the reconcile step is a no-op.
 
@@ -64,13 +72,13 @@ Applies to a phase report — [test](../phases/testing.md), [verify](../phases/v
 
 Where the runtime cannot observe an action, no source for `exercised` exists and the state stays `unobserved`; never simulate the observation ([Application Enforcement](application-enforcement.md) degrades the same way). A conditional phase that never activated is not an observation either: the artifacts it would have exercised stay `unobserved`, and its report says so per Consumer 4 — never read as clean.
 
-Opening a ledger entry can fail (`EVD_NO_TRIGGER`, `EVD_DUPLICATE_ENTRY`) inside a harvest that is otherwise ungated: on either, skip the ledger entry and let the harvest write proceed — the write is never blocked by ledger bookkeeping.
+Opening a ledger entry can fail (`EVD_NO_TRIGGER`, `EVD_DUPLICATE_ENTRY`) inside a harvest that is otherwise ungated: on either, skip the ledger entry and let the harvest write proceed — the write is never blocked by ledger bookkeeping. Appending an observation can fail the same way (`EVD_NO_ENTRY`, `EVD_NO_BYPRODUCT`): append nothing, the harvest proceeds.
 
 ## Where it is wired
 
 | Touchpoint | What it carries |
 |------------|-----------------|
-| [Experience Capture](experience-capture.md) harvest | The coverage rung, owner menu, and ledger entry opening |
+| [Experience Capture](experience-capture.md) harvest | The coverage rung, owner menu, ledger entry opening, and observations appended to an existing entry |
 | [Procedural Skills](procedural-skills.md) · [skill phase](../phases/skill.md) | The `check` field and its no-invented-evidence rule |
 | [Application Enforcement](application-enforcement.md) | Its tripwire by-product is the primary `exercised` source |
 | [rule phase](../phases/rule.md) · [skill phase](../phases/skill.md) index format | The optional `evidence:` key |

@@ -32,7 +32,7 @@ A lens is one audit projection: a `key`, a `focus`, a `source_of_truth`, and the
 | `security` | vulnerabilities, unsafe patterns, secret/credential exposure, missing defensive checks | the [security checklist](#security) below + `.dev_flow/rules/` security rules; mirrors [review](../phases/review.md)'s Security check at codebase scale |
 | `correctness` | logic defects — off-by-one, null/None, unhandled edges, race/ordering, swallowed errors | intended semantics (specs/contracts) + the [correctness heuristics](#correctness) below |
 | `performance` | algorithmic hotspots, N+1, missing caching, resource/memory leaks, unbounded growth | the [performance heuristics](#performance) below |
-| `tests` | untested paths, missing edge/error tests, flaky patterns (where a suite exists) | the project's test suite + spec Verification Criteria |
+| `tests` | untested `complex` paths and `keep` criteria, flaky patterns (where a suite exists) | the project's test suite + spec Verification Criteria + [Test Economy](test-economy.md) |
 
 ### Menu lenses (open — selected per intent / project type)
 
@@ -150,10 +150,10 @@ Complexity- and resource-usage heuristics (measure where a profiler exists; othe
 
 ### `tests` (where a suite exists)
 
-- **Untested paths** — public contracts / error branches with no covering test.
-- **Missing edge/error tests** — spec Verification Criteria not exercised; happy-path-only coverage.
+- **Untested paths** — `complex` logic ([Test Economy](test-economy.md#logic-class)) with no covering test. A trivial path without a test is not a finding.
+- **Missing `keep` tests** — a spec Verification Criterion marked `keep` with no permanent test.
 - **Flaky patterns** — time/order/network dependence, shared mutable fixtures, non-determinism.
-- Finding types: `untested-path`, `missing-error-test`, `flaky-pattern`.
+- Finding types: `untested-path`, `missing-keep-test`, `flaky-pattern`.
 
 ### Menu / domain lens checklists (stubs — extend per project)
 

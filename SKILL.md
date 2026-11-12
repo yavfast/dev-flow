@@ -6,7 +6,7 @@ description: >
   Use in a project with docs/ or .dev_flow/ for any feature, bug-fix, or docs work: concept/spec/plan authoring, implementation, tests, verification,
   pre-commit review, code->docs propagation, impact assessment, read-only codebase/feasibility questions,
   research spikes, todos, subtask delegation, codebase onboarding, status, project rules, knowledge skills and project tools,
-  auditing .dev_flow/ and docs/, session checkpoint/resume ("save state", "continue where we left off"),
+  auditing .dev_flow/, docs/ and agent-made tests, session checkpoint/resume ("save state", "continue where we left off"),
   and analyzing an external repo for what to borrow ("adopt", "analyze this repo")
   — preferred over a standalone repo-analysis skill.
 user-invocable: true
@@ -34,11 +34,11 @@ Each transition includes a validation gate to prevent drift.
 - [Validation Gates](#validation-gates) — the pass/fail checklist at every transition from Concept to Commit
 - [Developer Checkpoints](#developer-checkpoints) — design sign-off and commit sign-off; the `Autonomy` field
 - [Git Workflow Integration](#git-workflow-integration) — branch/PR mapping; the commit rules
-- [Active Context & Session Continuity](#active-context--session-continuity) — `.dev_flow/` task-context model, memory tiers, rules for all phases (start / step / transition / completion), multi-contributor tolerance, hygiene
+- [Active Context & Session Continuity](#active-context--session-continuity) — `.dev_flow/` task-context model, memory tiers, rules for all phases, multi-contributor tolerance, hygiene
 - [Document Status Vocabulary](#document-status-vocabulary) — lifecycle statuses of concepts, specs, plans
 - [Versioning](#versioning) — breaking change → new version; non-breaking → edit in place
-- [When Modifying Existing Functionality](#when-modifying-existing-functionality) — change classes; concept → spec → plan → sign-off → code → test → review → verify → sign-off
-- [Traceable Identifiers](#traceable-identifiers) — ID formats for concept, spec, plan, epic, design decision
+- [When Modifying Existing Functionality](#when-modifying-existing-functionality) — change classes; the update order
+- [Traceable Identifiers](#traceable-identifiers) — ID formats
 - [File Organization](#file-organization) — `docs/` file set per concept; index, glossary, framework map, adoption files; umbrella sets
 - [Project Rules](#project-rules) — `.dev_flow/rules/` layout, severities, unit form, auto-discovery of rules
 - [Greenfield vs Takeover](#greenfield-vs-takeover) — entry routes into the pipeline
@@ -55,7 +55,7 @@ Each transition includes a validation gate to prevent drift.
 | 2. Specification | `/dev-flow spec` | Define data structures, contracts, rules | `*.sp.md` |
 | 3. Plan | `/dev-flow plan` | Break spec into actionable phases | `*.plan.md` |
 | 4. Implement | `/dev-flow implement` | Write code following the plan | Source code |
-| 5. Test | `/dev-flow test [target]` | Run functional tests (unit + mock) for changed code | Test results |
+| 5. Test | `/dev-flow test [target]` | Run the task's functional tests (unit + mock) | Test results |
 | 6. Review | `/dev-flow review` | Pre-commit review + validate gates, resolve conflicts | Review report |
 | 7. Verify | `/dev-flow verify [target]` | Regression, integration, and live testing | Verification results |
 | 8. Propagate | `/dev-flow propagate` | Update docs when code changes | Updated docs |
@@ -65,20 +65,20 @@ Each transition includes a validation gate to prevent drift.
 | — | `/dev-flow skill <request>` | Find, add, update, or remove project knowledge skills | Updated `.dev_flow/skills/` |
 | — | `/dev-flow tool <request>` | List, find, create, adapt, regenerate, verify, or retire project tools | Updated `.dev_flow/tools/` |
 | — | `/dev-flow status` | Show current state — report only, changes nothing | Status summary |
-| — | `/dev-flow checkpoint [note]` | Fix the current task into durable state at a session boundary — distil, close doc drift, make the task handoff-ready, record how to resume | Handoff record + checkpoint report |
-| — | `/dev-flow resume [task_id]` | Re-enter in a fresh session — establish state, continue the task when the picture is unambiguous, else offer the next work | Resume brief + continued work (or a work offer) |
-| — | `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — task state, context, closed tasks, rules/skills/cache, tool verification, docs integrity; opt-in `code` scope → codebase refactoring plan | Audit report + cleaned context (or, for `code`, a refactoring plan) |
-| — | `/dev-flow adopt <repo>` | Analyze an external repository at concept altitude → adoption document: what to borrow, what to skip, in what order | `docs/ext_adoption/*.concept.md` + `docs/ext_adoption/*.md` |
-| — | `/dev-flow ask <question>` | Read-only Q&A about code or feasibility — no changes | Answer + optional next-step suggestion |
-| — | `/dev-flow todo <description>` | Capture future work — find relevant docs, assess feasibility, file a planning record with a return trigger (does not build) | Plan backlog item or `.dev_flow/todos/` entry |
-| — | `/dev-flow subtask <task>` | Delegate a secondary task to a subagent — a full dev-flow participant: own context, any phase, converses with its initiator | Full subtask report |
+| — | `/dev-flow checkpoint [note]` | Fix the current task into durable state at a session boundary | Handoff record + checkpoint report |
+| — | `/dev-flow resume [task_id]` | Re-enter in a fresh session — continue an unambiguous task, else offer the next work | Resume brief + continued work (or a work offer) |
+| — | `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/`, verify project tools, prune trivial agent tests; opt-in `code` scope → codebase refactoring plan | Audit report + cleaned context (or, for `code`, a refactoring plan) |
+| — | `/dev-flow adopt <repo>` | Analyze an external repo → advisory adoption document: what to borrow, what to skip | `docs/ext_adoption/*.concept.md` + `docs/ext_adoption/*.md` |
+| — | `/dev-flow ask <question>` | Read-only Q&A about code or feasibility | Answer + optional next-step suggestion |
+| — | `/dev-flow todo <description>` | Capture future work as a planning record with a return trigger (builds nothing) | Plan backlog item or `.dev_flow/todos/` entry |
+| — | `/dev-flow subtask <task>` | Delegate a secondary task to a subagent running as a full dev-flow participant | Full subtask report |
 | — | `/dev-flow do <request>` | Freeform routing — interpret intent and run the right phases | Phase output + updated context |
 
 **Default command:** `/dev-flow <text>` with no recognized phase keyword routes to `do`.
 
-**Service commands — facts the table omits.** `research` (alias `spike`) is time-boxed, cost-gated, passes no gate, and persists durable findings to `.dev_flow/skills/`. `todo` infers flavor (`deferred` / `queued` / `contested`) and trigger from plan/task state, files into the owning plan's backlog else `.dev_flow/todos/`, and builds nothing. `adopt` (aliases `analyze-repo`, `adoption`) is advisory — no ID, no gate — and writes only its two documents, the clone in `ext_repos/`, one `.gitignore` line, and task context. `audit`'s `code <intent>` scope is opt-in, excluded from `all`, writes its plan under `.dev_flow/audit/`, and stops at the Plan→Code gate. `onboard` runs once.
+**Service commands — facts the table omits.** `research` (alias `spike`) is time-boxed, cost-gated, passes no gate, and persists durable findings to `.dev_flow/skills/`. `todo` infers flavor (`deferred` / `queued` / `contested`) and trigger from plan/task state, files into the owning plan's backlog else `.dev_flow/todos/`, and builds nothing. `adopt` (aliases `analyze-repo`, `adoption`) is advisory — no ID, no gate — and writes only its two documents, the clone in `ext_repos/`, one `.gitignore` line, its `_index.md` row, and task context. `audit`'s `code <intent>` scope is opt-in, excluded from `all`, writes its plan under `.dev_flow/audit/`, and stops at the Plan→Code gate. `onboard` runs once.
 
-**Conditional and mandatory phases.** Test (5) runs only when the project has a test suite AND rules for running it — otherwise skip to Review and record the skip as `unobserved` with its reason ([Evidence Discipline](references/evidence-discipline.md)); it runs functional tests (unit + mock) on the changed code only. Review (6) is mandatory before any commit and is done by a clean-context subagent; the fix → re-review loop is bounded by [Review Convergence](references/review-convergence.md), and a contained non-`must`, non-security fix is confirmed mechanically instead of re-reviewed ([Verification Economy](references/verification-economy.md)). Verify (7) — regression, integration, live — runs after Review passes; issues → fix → Test → Review → Verify at the scope the fix earns, never narrowed for a `must` or security finding; ask before creating new integration/live scenarios; with no automation, give manual steps and record `unobserved`.
+**Conditional and mandatory phases.** Test (5) runs only when the project has a test suite AND rules for running it — otherwise skip to Review and record the skip as `unobserved` with its reason ([Evidence Discipline](references/evidence-discipline.md)); it runs the task's functional tests (unit + mock) only; a permanent test needs a keep reason ([Test Economy](references/test-economy.md)). Review (6) is mandatory before any commit and is done by a clean-context subagent; the fix → re-review loop is bounded by [Review Convergence](references/review-convergence.md), and a contained non-`must`, non-security fix is confirmed mechanically instead of re-reviewed ([Verification Economy](references/verification-economy.md)). Verify (7) — regression, integration, live — runs after Review passes; issues → fix → Test → Review → Verify at the scope the fix earns, never narrowed for a `must` or security finding; with no automation, give manual steps and record `unobserved`.
 
 ### Quick Start
 
@@ -131,10 +131,10 @@ A rule, skill or project tool carries an optional **evidence state** (`present` 
 - Every phase declares what to verify on completion — a `Verify:` field naming the spec Verification Criteria (`SP_XXX_05_*`) for its contracts plus any phase-local acceptance check (the reusable checklist for [Test](phases/testing.md)/[Verify](phases/verify.md))
 
 **Code -> Test** (conditional — functional tests):
-- All spec contracts have corresponding test cases
-- All error cases from spec's Errors tables are tested
-- All invariants from spec are verified in tests
-- Only tests covering the changed code are run (unit + mock)
+- Every verification criterion the change touches is checked; an unchecked one is `unobserved` with its reason
+- A criterion marked `keep` has a permanent test; every other new permanent test names its keep reason
+- Trivial checks leave no permanent test
+- Only the task's tests are run (unit + mock) — never the full suite
 
 **Test -> Review:**
 - All relevant functional tests pass
@@ -159,7 +159,7 @@ A rule, skill or project tool carries an optional **evidence state** (`present` 
 
 Stops in every route where the main agent presents its work to the developer and waits. Stops, not gate criteria.
 
-- **Design sign-off** — after the last design document, before the first edit to code or shipped files. Present: the Design Decisions of the change (question → options → recommendation), the documents created or changed, the files implementation will touch, the [proportionality block](references/proportionate-caution.md#proportionality-block). A record the developer has not answered is `proposed` ([Interview Mode](references/interview-mode.md)); implementation never starts on one. A Trivial change has no design documents — no stop.
+- **Design sign-off** — after the last design document, before the first edit to code or shipped files. Present: the developer's Design Decisions (question → options → recommendation) and the agent's, one line each ([decision owner](references/interview-mode.md#decision-owner)), the documents created or changed, the files implementation will touch, the [proportionality block](references/proportionate-caution.md#proportionality-block). A record the developer has not answered is `proposed` ([Interview Mode](references/interview-mode.md)); implementation never starts on one. A Trivial change has no design documents — no stop.
 - **Commit sign-off** — after review passes, before `git commit`. Present: changed files, review verdict with open advisories, intent verdict, the proportionality block. Ask "Ready to commit?" and wait — never on an inferred yes.
 
 **Autonomy.** Skipped only when the request itself orders it ("автономно", "без зупинок", "commit without asking"); a harness or system autonomy setting does not count. Record `Autonomy: full — "<quote>"` in the task header at intake; absent → `checkpoints`. Task-scoped; a decision settled under `full` is `resolved (delegated)`. Subagents never hold a checkpoint — only the main agent talks to the developer.
@@ -248,7 +248,7 @@ Scale the ceremony to the change class first (see [do phase → Change Classes](
 2. Update the **specification** — what data structures or contracts changed?
 3. Update the **implementation plan** — mark completed, add new tasks. Then stop at the **design sign-off** ([Developer Checkpoints](#developer-checkpoints)) before touching code.
 4. Update the **code** — implement according to the updated spec.
-5. Run **functional tests** — unit + mock tests covering the changed code (if test suite exists).
+5. Run **functional tests** — the task's unit + mock tests (if test suite exists).
 6. Run **pre-commit review** — subagent with clean context reviews the changes.
 7. Run **verification** — regression, integration, and/or live tests; or provide manual verification steps. If issues found → fix → re-run steps 5 (if tests exist), 6, 7 at the scope the fix earns, never narrowing for a `must` or security finding (see [Verification Economy](references/verification-economy.md)).
 8. **Commit sign-off** — present the changed files, the review verdict, the intent verdict, and the proportionality block; commit only after the developer's explicit yes ([Developer Checkpoints](#developer-checkpoints)).
@@ -288,7 +288,7 @@ All documents live in `docs/`, follow [Documentation Formatting](references/form
 
 - **Umbrella sets.** A document split under [Docs Scaling](references/docs-scaling.md) becomes an umbrella (the original file name, the canonical entry point) plus child files; `_index.md` lists only umbrellas; no split renames or renumbers a traceable ID.
 - **Spike** — optional pre-concept investigation from [research](phases/research.md); passes no gate. **Epic** — optional grouping for a feature spanning 3+ closely related concepts; template [templates/epic.md](templates/epic.md).
-- **`_index.md`** — maintained once `docs/` exceeds 5 documents; a router (one-line annotation per file + ID-prefix → file map), never a section catalogue ([Docs Scaling](references/docs-scaling.md)).
+- **`_index.md`** — maintained once `docs/` exceeds 5 documents; the phase that creates a file adds its row, unasked; a router (one-line annotation per file + ID-prefix → file map), never a section catalogue ([Docs Scaling](references/docs-scaling.md)).
 - **`_glossary.md`** — canonical domain vocabulary, created lazily, and **loaded alongside `_index.md` whenever present**, independent of the 5-doc threshold ([Glossary](references/glossary.md)).
 - **`_framework.md`** — the living architectural map, maintained only by onboard and `audit code`, **loaded alongside `_index.md` on code-touch phases**; it links down to rules/skills and inlines none of their detail ([Code Audit](references/code-audit.md)).
 - **`ext_adoption/`** — advisory analyses from [`adopt`](references/repo-adoption.md): no traceable ID, no gate, not a backlog; consulted by the concept phase's Reuse Check; excluded from the `audit docs` integrity checks.
@@ -357,6 +357,7 @@ Each rule is one h2 unit — directive and severity in the heading over a bounde
 | [Adaptation Profile](references/adaptation-profile.md) | `.dev_flow/profile/`: developer + machine facts, consent, recorded refusal |
 | [Review Convergence](references/review-convergence.md) | Criticality → materiality; `contested` todo; delta rounds |
 | [Verification Economy](references/verification-economy.md) | Entry conditions: Signal, Invalidator, ConfirmDiscriminator |
+| [Test Economy](references/test-economy.md) | Keep reasons; temporary tests; task test set; pruning |
 | [Proportionate Caution](references/proportionate-caution.md) | Hard floor; secret handling; proportionality block |
 | [Access Channels](references/access-channels.md) | Channels sanctioned once; reauth on resource demand; journal |
 | [Design Compliance](references/design-compliance.md) | UI vs design source of truth, in verify |

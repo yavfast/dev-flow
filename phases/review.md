@@ -56,6 +56,7 @@ Findings carry a computed **materiality**, a recurring non-`must` finding trips 
    | Code reuse | New code reuses existing functions/classes instead of re-implementing them; a new reuse seam has a real consumer ([reference](../references/code-reuse.md)); look-alikes that change for different reasons are not flagged | `should` |
    | No regressions | Changes don't break existing functionality — checked against the callers of every changed symbol, read outside the diff | `must` |
    | No leftover artifacts | No debug code, TODOs, commented-out blocks | `should` |
+   | Test economy | Each new permanent test has a keep reason in the test report; no temporary test in the diff; no test deleted outside `audit tests` while the code it checked stays ([Test Economy](../references/test-economy.md#review-check)) | `should` |
    | Code quality | Naming, structure, readability follow project conventions | `prefer` |
    | Security | No obvious vulnerabilities (injection, exposure, etc.); a secret counts only where secrets never live ([Proportionate Caution](../references/proportionate-caution.md#secrets)) | `must` |
 
@@ -177,7 +178,7 @@ When updating rules:
 3. Update the category's `## Contents` digest line and `.dev_flow/rules/_index.yaml` in the same edit.
 4. Existing code is NOT required to be retroactively fixed.
 
-**Reflection.** A reviewer finding that "this convention keeps being violated" is the review phase's [Experience Capture](../references/experience-capture.md) harvest: write it as a rule automatically through the [rule phase](rule.md) (default `should`; a would-be `must` or a contradiction routes to independent review first; the developer sees it in the commit diff).
+**Reflection.** A reviewer finding that "this convention keeps being violated" is the review phase's [Experience Capture](../references/experience-capture.md) harvest: write it as a rule automatically through the [rule phase](rule.md) (default `should`; a would-be `must` or a contradiction routes to independent review first; the developer sees it in the commit diff). A lesson an existing rule, skill, or tool already covers appends a `recurred` or `exercised` observation to that artifact's ledger entry instead of a new write ([Experience Capture](../references/experience-capture.md#applying-experience--auto-apply-through-structural-gates)).
 
 ## Conflict Resolution Protocol
 
@@ -245,5 +246,5 @@ Before deleting:
 When `docs/` has more than 5 documents, maintain `_index.md`:
 - One line per document — name and short description only.
 - Sorted alphabetically by code.
-- Updated every time you add, remove, or rename a document.
+- Updated in the same step that adds, removes, or renames a document, without asking — spikes and adoption pairs included ([Docs Scaling → Index router](../references/docs-scaling.md#index-router)).
 - Include `Status` column to identify deprecated or draft documents.

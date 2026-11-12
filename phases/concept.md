@@ -87,7 +87,7 @@ Boundary: the glossary says *what a word means*; this concept's Domain Model (§
 
 ## Interview Mode for Design Decisions
 
-When authoring surfaces **two or more materially different ways forward** (a different domain model, a different boundary, a different mechanism), do **not** pick one silently and bury it in the prose. Stop and run an interview: present the fork to the developer with 2–4 options and your **recommended answer**, reach a consensus, and record the outcome.
+When authoring surfaces **two or more materially different ways forward** (a different domain model, a different boundary, a different mechanism), do **not** pick one silently and bury it in the prose. Stop and apply the [decision owner](../references/interview-mode.md#decision-owner) test: the developer's fork goes to an interview — 2–4 options and your **recommended answer**, a consensus, the recorded outcome; the agent's fork is recorded `resolved (agent)`.
 
 See **[Interview Mode](../references/interview-mode.md)** for the full procedure — when a fork counts as a decision point (and when it does not), how to frame options with a recommendation, sequential vs batched questions, and the valid outcomes (consensus vs documented open alternatives with a resolution trigger). Record every proposed, resolved, or open decision in the concept's **Design Decisions** section.
 

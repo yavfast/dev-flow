@@ -63,7 +63,7 @@ Additional commands:
 | `/dev-flow status` | Show current state — report only, changes nothing |
 | `/dev-flow checkpoint [note]` | Fix the current task into durable state at a session boundary — distil, close doc drift, make the task handoff-ready, record how to resume |
 | `/dev-flow resume [task_id]` | Re-enter in a fresh session — establish state, continue when the picture is unambiguous, else offer the next work |
-| `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — reconcile state, trim context, compact closed tasks, groom rules/skills/cache, verify project tools, check docs integrity |
+| `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — reconcile state, trim context, compact closed tasks, groom rules/skills/cache, verify project tools, check docs integrity, prune trivial agent tests |
 | `/dev-flow audit code <intent>` | Opt-in whole-codebase audit (architecture/SOLID/DRY/security via parallel lenses) → prioritized refactoring plan + run report (timestamped, in `.dev_flow/audit/`) + framework map; read-only, hands off to the pipeline |
 | `/dev-flow do <request>` / `/dev-flow <anything>` | Freeform — interprets intent and auto-routes to the right phase (the default command) |
 
@@ -219,7 +219,7 @@ class RateLimiter:
 | Concept → Spec | No contradictions, dependencies listed, scope bounded |
 | Spec → Plan | All fields typed, error cases specified, constraints explicit |
 | Plan → Code | All spec sections covered, technology decisions documented |
-| Code → Test | All contracts tested, error cases covered |
+| Code → Test | Every touched criterion checked; permanent tests only with a keep reason; only the task's tests run |
 | Test → Review | All tests pass, no regressions |
 | Review → Verify | Clean-context review passes, no blocking issues |
 | Verify → Commit | All verification levels pass, user approval |
@@ -255,9 +255,9 @@ Secret input, the runner, and the block: [`references/proportionate-caution.md`]
 
 ### Interview Mode
 
-The biggest architectural mistakes are made silently. When authoring a **concept**, **specification**, **plan**, or a **fix** hits a real fork — two or more viable, hard-to-reverse options (including the classic "band-aid vs proper fix") — dev-flow does **not** quietly pick one and bury it where no reviewer will catch it. Instead it stops and runs a short **interview**: it presents the fork with 2–4 marked options (A/B/C) and a **recommended answer**, and asks the developer to decide.
+The biggest architectural mistakes are made silently. When authoring a **concept**, **specification**, **plan**, or a **fix** hits a real fork — two or more viable, hard-to-reverse options (including the classic "band-aid vs proper fix") — dev-flow does **not** quietly pick one and bury it where no reviewer will catch it. Instead it records the fork. A fork that changes what you or your users see, decide, pay for or answer for — or that only a rebuild undoes — goes to a short **interview**: 2–4 marked options (A/B/C) and a **recommended answer**, and you decide. Any other fork is technical: dev-flow decides it, records why, and lists it in one line at the design sign-off, where you can overrule it.
 
-Why the developer and not the AI? Because the developer holds the full context (roadmap, business constraints, team) and owns the consequences. A fork ends **resolved** — a consensus choice recorded with its rationale and the rejected alternatives — or **open**, with a **resolution trigger** naming the event or date by which it must close. An open decision without a trigger is a hidden "TBD" and is rejected.
+Why the developer and not the AI? Because the developer holds the full context (roadmap, business constraints, team) and owns the consequences. A fork ends **resolved** — your choice, or the agent's for a technical fork, recorded with its rationale and the rejected alternatives — or **open**, with a **resolution trigger** naming the event or date by which it must close. An open decision without a trigger is a hidden "TBD" and is rejected.
 
 Every fork lands in a traceable **Design Decisions** (ADR-style) section, and the validation gates will not pass while a material decision is open without a trigger. See [`references/interview-mode.md`](references/interview-mode.md).
 
@@ -275,7 +275,7 @@ Agents file todos too, so an out-of-scope defect spotted mid-work is captured in
 
 The concept phase's Reuse Check asks "what already exists?" — and looks only inside your project. But genuinely new ideas usually come from someone else's engineering. **`/dev-flow adopt <repo>`** is the sanctioned way in. Give it a local path or a URL (a remote repo is cloned into `ext_repos/` at your project root, which the run adds to `.gitignore`), and it analyzes the repository at **concept altitude** — ideas, mental models, architectural trade-offs, not APIs — into `docs/ext_adoption/<name>.concept.md`, then automatically produces `docs/ext_adoption/<name>.md`: what to borrow, what to skip, and in what order.
 
-These documents are **advisory** — no traceable ID, no gate, not a backlog. A run writes the two documents, the clone, one `.gitignore` line and the task context — never your code, specs, plans or todo register. A later re-run goes incremental against the commit it recorded. See [`references/repo-adoption.md`](references/repo-adoption.md).
+These documents are **advisory** — no traceable ID, no gate, not a backlog. A run writes the two documents, the clone, one `.gitignore` line, its row in `docs/_index.md` and the task context — never your code, specs, plans or todo register. A later re-run goes incremental against the commit it recorded. See [`references/repo-adoption.md`](references/repo-adoption.md).
 
 ### Task Intent
 

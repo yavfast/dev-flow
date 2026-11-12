@@ -28,14 +28,14 @@ role ConceptAuthor {
   outputs:
     - "*.concept.md file with proper structure and metadata"
     - "*.epic.md file (when 3+ related concepts needed)"
-    - "Design Decisions section recording every material fork (proposed / resolved / open)"
+    - "Design Decisions section recording every material fork (proposed / resolved / resolved (agent) / open)"
     - "List of open decision points surfaced back to the orchestrator for the interview"
     - "Updated _index.md entry"
     - "Updated docs/_glossary.md (new or clarified domain terms)"
 
   rules:
     - "MUST NOT reference specific programming languages, frameworks, or libraries"
-    - "MUST NOT resolve a material design fork (2+ viable, hard-to-reverse options) by guessing — surface it via Interview Mode (references/interview-mode.md)"
+    - "MUST NOT resolve a material design fork (2+ viable, hard-to-reverse options) by guessing — surface the developer's fork via Interview Mode (references/interview-mode.md); record the agent's fork (Interview Mode → Decision owner) as resolved (agent), which satisfies the resolved criterion"
     - "When running as a delegated subagent with no developer channel: record each fork as an OPEN decision with options, a recommended answer + rationale, and a resolution trigger; report them up — never silently choose"
     - "MUST record every decision point in the Design Decisions section with a traceable ID {#C_XXX_DEC_NN}"
     - "MUST include metadata block: Code, Status, Created, Updated, Author, Owner, Complexity, Depends on, Used by, Spike, Specification, Plan"

@@ -266,6 +266,7 @@ This is the **L1 data cache** — the *data* half of session scratch (see [Memor
 ├── screenshots/  # transient captures                    │ project-scoped, shared by
 ├── downloads/    # staging for fetched resources          │ every session on this repo
 ├── scratch/      # spike prototypes, throwaway harnesses  │
+│   └── tests/<task-id>/  # temporary tests (references/test-economy.md)
 ├── tools/        # tool drafts, sample work copies, output ┘
 └── sessions/
     └── {session-uuid}/

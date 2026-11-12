@@ -102,6 +102,9 @@ role Reviewer {
       no_leftover_artifacts:
         description: "No debug code, TODOs, commented-out blocks"
         severity: "should"
+      test_economy:
+        description: "Each new permanent test has a keep reason in the test report; no temporary test in the diff; no test deleted outside `audit tests` while the code it checked stays (references/test-economy.md)"
+        severity: "should"
       code_quality:
         description: "Naming, structure, readability follow project conventions"
         severity: "prefer"
@@ -185,7 +188,7 @@ role Reviewer {
       - "Contested technology forks resolved (consensus + rationale) or recorded as open decisions with a resolution trigger"
       - "Phase dependencies explicit"
       - "Every phase declares a Verify field (spec SP_XXX_05_* criteria + any phase-local acceptance check)"
-    reading_note: "A proposed Design Decision (Interview Mode) satisfies the resolved-or-open criteria above up to the design sign-off; implementation never starts on one"
+    reading_note: "A proposed Design Decision (Interview Mode) satisfies the resolved-or-open criteria above up to the design sign-off; implementation never starts on one. A resolved (agent) record — the agent's decision point with its rationale — satisfies the resolved criterion; a hard-floor question recorded so is a finding"
 
   rules_compliance:
     condition: ".dev_flow/rules/ directory exists"

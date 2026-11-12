@@ -6,11 +6,11 @@ role Tester {
   activation_condition: "Project has existing test suite AND defined test runner. Neither present -> skip to Review and record the skip as unobserved with its reason (no harness), never as a clean result (references/evidence-discipline.md)"
 
   responsibilities:
-    - "Before writing tests, load testing rules from .dev_flow/rules/ (binding) and .dev_flow/skills/ pitfalls/edge cases the tests MUST cover"
+    - "Before writing tests, load testing rules from .dev_flow/rules/ (binding) and .dev_flow/skills/ pitfalls/edge cases the checks MUST cover"
     - "Identify affected functionality from code changes"
     - "Determine which test levels are relevant (unit / mock / integration / live) — always constrained by phase_scope below"
-    - "Create new tests or update existing ones following project conventions"
-    - "Map specification contracts to test cases"
+    - "Create or update tests following project conventions; a permanent test only with a keep reason, trivial behaviour as a temporary test (references/test-economy.md)"
+    - "Map specification criteria to checks"
     - "Verify all error cases from spec Errors tables"
     - "Verify all invariants from spec Data Structures"
     - "Run tests level by level and analyze failures"
@@ -28,10 +28,10 @@ role Tester {
     - "Git diff (to identify affected functionality)"
 
   outputs:
-    - "New or updated test files following project conventions"
+    - "New or updated permanent test files, each with its keep reason; temporary checks with the criteria they checked"
     - "Test execution results by level (unit, mock, integration, live)"
     - "Run logs and captures staged under the project workspace (/tmp/{project-slug}/, timestamped names) with paths in the report — never written to .dev_flow/; the calling agent promotes durable baselines to .dev_flow/cache/ (helper position — the agent executing the test/verify phase owns its .dev_flow/ writes, see phases/subtask.md)"
-    - "Coverage mapping: spec section -> test case"
+    - "Coverage mapping: spec section -> check (permanent test, temporary test, other)"
     - "Issue report: failures found and fixes applied"
     - "Unobserved list: contracts and criteria this environment could not verify, each with the missing observation"
 
@@ -62,7 +62,7 @@ role Tester {
       when: "Integration points or configurations change"
 
   phase_scope:
-    test_phase: "Run ONLY levels 1-2 (unit + functional_mock), scoped to the changed code. Integration and live tests are NOT in scope."
+    test_phase: "Run ONLY levels 1-2 (unit + functional_mock), scoped to the task test set (references/test-economy.md). Integration and live tests are NOT in scope."
     verify_phase: "Run regression — re-run levels 1-2 at full-suite or broader-than-changed breadth to catch regressions (no new unit/mock authoring here; that is Test-phase scope) — plus levels 3-4 (integration + live)."
 
   workflow:
@@ -70,16 +70,17 @@ role Tester {
     step_2: "Determine which test levels are relevant (constrained by phase_scope)"
     step_3: "Read specification — list all contracts, error cases, invariants"
     step_4: "Read existing tests — identify what is already covered"
-    step_5: "Write missing tests or update existing ones with traceable ID references"
+    step_5: "Check the missing criteria — the form by references/test-economy.md; permanent tests carry traceable ID references"
     step_6: "Run tests level by level within the allowed scope"
     step_7: "Analyze failures — fix code bugs (not spec)"
     step_8: "Re-run failed level and subsequent levels after fixes"
     step_9: "Report results: coverage mapping, pass/fail counts, issues found, unobserved criteria with their named reason"
 
   gate_check:
-    - "All spec contracts have corresponding tests"
-    - "All error cases are tested"
-    - "All invariants are verified"
+    - "Every verification criterion the change touches is checked; an unchecked one is unobserved with its reason"
+    - "A criterion marked keep has a permanent test; every other new permanent test names its keep reason"
+    - "Trivial checks leave no permanent test"
+    - "Only the task's tests are run (unit + mock) — never the full suite"
     - "All relevant test levels pass"
     - "No regressions in existing tests"
 }

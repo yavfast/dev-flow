@@ -82,9 +82,9 @@ Verify runs on **every** fix — including the fast path that skipped Diagnosis.
 
 1. **Build** — run the project's build command and confirm success. Use whatever build tool the project uses (e.g., `make`, `npm run build`, `./gradlew build`, `go build ./...`, `cargo build`, `python -m build`). If the fix is in a specific module, build that module.
 
-2. **Test** — if applicable tests exist, run them using the project's test runner (e.g., `pytest`, `npm test`, `./gradlew test`, `go test ./...`, `cargo test`).
+2. **Test** — if applicable tests exist, run the [task test set](../references/test-economy.md#task-test-set) once with the project's test runner and explicit test paths (e.g., `pytest tests/test_x.py`, `go test ./pkg/x`, `cargo test x`) — never the full suite. Keep a regression test only as [Test Economy](../references/test-economy.md#regression-test-after-a-fix) says: permanent for a bug in `complex` logic, a cause the diagnosis loop found, or a bug a `keep` criterion or a project rule covers; otherwise temporary.
 
-3. **Review the diff** — re-read all changed files to check for regressions, missed edge cases, or rule violations. If a Diagnosis sub-step added `[DEBUG-xxxx]` instrumentation or a throwaway harness, remove it now — one `grep` on the tag — and confirm none survives.
+3. **Review the diff** — re-read all changed files to check for regressions, missed edge cases, or rule violations. If a Diagnosis sub-step added `[DEBUG-xxxx]` instrumentation or a throwaway harness, remove it now — one `grep` on the tag — and confirm none survives. Delete in-tree temporary tests too.
 
 4. **Report result** — summarize to the user:
    - Root cause (one sentence)
@@ -100,7 +100,7 @@ After the fix is verified, check whether the code changes require updates to rel
 1. **Specifications** — does the fix change behavior described in any `*.sp.md`? (e.g., different error handling, changed contract, new edge case).
 2. **Concepts** — does the fix affect architectural assumptions in any `*.concept.md`? (rare for bug fixes, but possible if the root cause reveals a design flaw).
 3. **Plans** — does the fix invalidate or complete tasks in any `*.plan.md`?
-4. **Tests** — do existing tests need updating, or should new test cases be added to cover the fixed scenario?
+4. **Tests** — do existing tests need updating? A new permanent test needs a keep reason and a `Keep-Test` trailer ([Test Economy](../references/test-economy.md#keep-reasons)).
 5. **Rules** — does the fix expose a missing rule? (already covered in Step 3 Rule Detection).
 
 If any updates are needed, either apply them immediately (for small changes) or flag them explicitly in the result report for the user to decide.
@@ -114,10 +114,11 @@ A fix is the highest-yield **rule auto-discovery** moment: a bug just proved a g
 - **Rule from a violated invariant.** If the root cause was a violated invariant or convention with no matching rule in `.dev_flow/rules/` — write the rule automatically (default `should`), even when the problem text carried no explicit directive. (That explicit-directive path is Step 3's [Rule Detection](#rule-detection); this one fires on what the *analysis* revealed.) See [Project Rules → Auto-discovery](../SKILL.md#project-rules).
 - **Skill from a non-obvious diagnosis.** If diagnosis produced broadly-useful, non-trivial knowledge — a stack-specific pitfall, a debugging technique that paid off — write/update a skill through the [skill phase](skill.md) non-triviality filter — never a fact about the developer or the machine, which belongs to `.dev_flow/profile/` under its consent regime ([Adaptation Profile](../references/adaptation-profile.md)).
 - **Tool to keep.** A script written in the session workspace that you judge worth reusing — and, as a must-consider, a deterministic check or operation hand-rolled in this and at least one earlier task, or hand-rolled wrong — is [promoted](../references/project-tools.md#promote) to a project tool: header contract, real acceptance samples, your own run of every sample; it stays `unverified` until the audit tools step verifies it. A covering tool you did not use is recorded as a bypass with its reason ([Experience Capture](../references/experience-capture.md#applying-experience--auto-apply-through-structural-gates)).
+- **Observation for a covered lesson.** A lesson an existing rule, skill, or tool already covers is not dropped: when its problem class recurred or the artifact was breached, append a `recurred` observation to that artifact's ledger entry; when the artifact fired on its sanctioned path and left a non-model by-product, append `exercised` ([Experience Capture](../references/experience-capture.md#applying-experience--auto-apply-through-structural-gates)).
 
 **Auto-apply, no permission prompt** — written through the structural rule/skill/tool gate; **never auto-write a `must`**, and route a would-be `must` or a contradiction with an existing rule to an [independent clean-context review](../references/delegation.md) first. Every write is visible in the commit diff. Then distill the segment, demote the raw diagnosis turns, and promote durable parts to the fix's task file. See **[Experience Capture](../references/experience-capture.md)**. (For a code-only fix, the auto-written rule and any open decision are recorded as in [Interview Mode in Fix](#interview-mode-in-fix).)
 
-**Commit sign-off.** Before `git commit`: changed files, review verdict, intent verdict, proportionality block; "Ready to commit?" and wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)).
+**Commit sign-off.** Before `git commit`: changed files, review verdict, intent verdict, proportionality block; "Ready to commit?" and wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)). The commit message carries one `Keep-Test` trailer per new permanent test ([Test Economy](../references/test-economy.md#keep-reasons)).
 
 ## Diagnosis (optional)
 
