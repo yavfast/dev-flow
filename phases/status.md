@@ -155,7 +155,7 @@ For `/dev-flow status` (no argument):
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-When the current branch has an upstream, **Warnings** names the unpushed commits — the count and the age of the oldest ([SKILL.md → Git Workflow Integration](../SKILL.md#git-workflow-integration)). `status` changes nothing, so it counts against the last fetched state and does not fetch. No git, no upstream, or nothing unpushed → no line.
+When the current branch has an upstream, **Warnings** names the unpushed commits — the count and the age of the oldest; the commit sign-off shows them in the same form ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)). `status` changes nothing, so it counts against the last fetched state and does not fetch. No git, no upstream, or nothing unpushed → no line.
 
 If `.dev_flow/todos/_index.md` exists, include the **Deferred (todos)** line with the count of `candidate` entries (omit the line when the register is absent or empty). `queued` follow-ups are not counted here — they surface at their originating task's completion, not in this view. It is a pointer, not a listing — `todo` files them, `audit` grooms them. If `.dev_flow/evidence/ledger.yaml` has `open` entries under `outcomes:`, add the outcome-checks line: their count and the nearest trigger ([Outcome check](../references/task-intent.md#outcome-check)).
 
