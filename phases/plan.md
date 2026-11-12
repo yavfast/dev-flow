@@ -182,7 +182,7 @@ When a code change restructures modules, files, or internal organization **witho
    - Reference which existing plan phases are affected
    - Design sign-off: present the Refactor phase and the proportionality block, and wait for the developer's go (SKILL.md → Developer Checkpoints)
 3. Implement the refactoring
-4. Run the tests bound to the moved/renamed code once (Test Selection) — they must pass without modification
+4. Run tests — all existing tests must pass without modification
 5. Update the plan: mark Refactor phase [DONE], update file paths in other phases
 6. Skip Concept and Specification updates — contracts did not change
 7. Commit sign-off — changed files, review verdict, intent verdict, proportionality block; "Ready to commit?" and wait
@@ -196,7 +196,7 @@ When a code change restructures modules, files, or internal organization **witho
 **Type:** refactor (no spec changes)
 **Depends on:** {phases whose file paths will change}
 **Affects phases:** {list of phases that reference moved/renamed files}
-**Verify:** tests bound to the moved/renamed code pass unchanged (contracts unchanged)
+**Verify:** existing tests pass unchanged (contracts unchanged)
 
 Changes:
 | From | To | Reason |

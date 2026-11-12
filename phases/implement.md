@@ -71,10 +71,10 @@ Before writing code, verify:
 3. Write code that satisfies ALL spec contracts and the phase's `Verify:` checklist.
 4. Add traceable ID comments linking back to concept/spec.
 5. Add or update tests covering the spec's error cases and invariants — see [Test phase](testing.md).
-6. Run the selected set of functional tests (unit → mock) once, when the phase's code is complete — not after each edit; see [Test Selection](../references/test-selection.md).
-7. Fix any test failures — code must satisfy the spec; re-run only the failing tests, then the set once.
+6. Run functional tests (unit → mock) covering the changed code.
+7. Fix any test failures — code must satisfy the spec.
 8. Run pre-commit review (clean-context subagent) — see [Review phase](review.md).
-9. Fix any blocking issues from the review; re-run only the selected tests covering the fixed locations, and only when the fix changed code they cover.
+9. Fix any blocking issues from the review; re-run tests if needed.
 10. Run verification (regression, integration, live) — see [Verify phase](verify.md).
 11. If Verify fails → fix code → re-run steps 6-10.
 12. Update the plan phase status to [DONE].

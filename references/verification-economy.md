@@ -18,7 +18,7 @@ An entry condition is **computed from a fact outside the acting agent's own pros
 | unsatisfied | Do not run it; write a suppression record |
 | undeterminable | Run the check in full |
 
-Absence of a fact always favours the check. A project with no vcs, no ledger, or a fresh session runs everything, exactly as before. One exception: an undeterminable test selection never falls back to the whole suite — [Test Selection](test-selection.md#selection-undeterminable) owns test runs.
+Absence of a fact always favours the check. A project with no vcs, no ledger, or a fresh session runs everything, exactly as before.
 
 **A new check declares its kind.** Any check added to dev-flow names which of the conditions below governs it. One that declares none is unconditional and always runs — the safe default, never a licence to invent a new kind.
 
@@ -74,9 +74,9 @@ The ledger of what was read — target, state reference, time, extent — lives 
 | D2 | The review record names one concrete fix | the finding text, written before the fix existed |
 | D3 | The fix diff is contained in the locations the finding named | diff |
 | D4 | Nothing outside those locations changed in this round | diff |
-| D5 | The selected tests covering the fix's locations that were green stayed green ([Test Selection](test-selection.md)) | exit code |
+| D5 | Tests that were green stayed green | exit code |
 
-`confirm` is a mechanical check in the main context: the diff matches the prescribed fix and the covering tests that were green are still green. No clean-context reviewer is spawned. Any discriminator false or undeterminable → `full`, the current procedure.
+`confirm` is a mechanical check in the main context: the diff matches the prescribed fix and the tests that were green are still green. No clean-context reviewer is spawned. Any discriminator false or undeterminable → `full`, the current procedure.
 
 **A confirm round that does not confirm escalates.** If the diff does not do what the finding prescribed, or a previously green test is not green, the round **replays as `full`** with the clean-context reviewer. A `confirm` round has two outcomes only — the finding closes, or the full round runs. It never closes a finding it did not confirm. A finding with a `bypassed_list` confirms only when the diff changes the path; a list member alone replays the round as `full` ([List bypass](review-convergence.md#list-bypass--fix-the-path-not-the-list)).
 
@@ -95,7 +95,7 @@ These cases refuse the suppression outright — run the check instead:
 
 ## Boundaries
 
-- **`must` findings and security findings are never economized** — not by mode, not by signal, not by ledger. Test breadth follows [Test Selection](test-selection.md#boundaries), whose `must`/security boundary always re-runs the covering tests.
+- **`must` findings and security findings are never economized** — not by mode, not by signal, not by ledger.
 - **Commit approval is untouched.** The economy applies to the size of a check, never to the point where the decision passes to the developer.
 - **Clean-context review is not skipped.** `confirm` applies to a **repeat** round of a review already performed.
 - **Cost is not an entry condition.** The condition is an absent subject, not an expensive check.

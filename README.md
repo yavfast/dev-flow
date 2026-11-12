@@ -220,7 +220,7 @@ class RateLimiter:
 | Spec → Plan | All fields typed, error cases specified, constraints explicit |
 | Plan → Code | All spec sections covered, technology decisions documented |
 | Code → Test | All contracts tested, error cases covered |
-| Test → Review | All relevant functional tests pass, no regressions |
+| Test → Review | All tests pass, no regressions |
 | Review → Verify | Clean-context review passes, no blocking issues |
 | Verify → Commit | All verification levels pass, user approval |
 
@@ -244,8 +244,6 @@ Criticality values, materiality verdicts and the tripwire: [`references/review-c
 The opposite failure of a missed check is a check with no subject: comparing code comments against docs when nothing suggests they diverge, re-reading a document already in context, re-reviewing a one-line fix the reviewer itself prescribed. That is not free caution — it spends the context the plan and the spec need, and its findings dilute the real ones. So every check carries an **entry condition**: a **signal** that gives it a subject, an **invalidator** that justifies a re-read, and **confirm discriminators** that let a contained fix be checked mechanically instead of re-reviewed.
 
 Each condition is computed from a fact outside the agent's own prose — a diff, a file state, an exit code — never from "it looks fine to me". When the fact cannot be computed, the check runs in full; a check that does not run is **written down** as `unobserved` with the missing fact. `must` findings, security findings, `read-before-write` on shared files and the mandatory knowledge gates are never economized.
-
-Test runs have their own entry condition: only the tests bound to the change, once per finished unit of work, and the full suite only when you ask or a project rule requires it — what is left unrun is shown to you at the commit sign-off ([`references/test-selection.md`](references/test-selection.md)).
 
 The conditions in full: [`references/verification-economy.md`](references/verification-economy.md).
 

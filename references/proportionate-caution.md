@@ -191,8 +191,8 @@ A row is **open** until an answer with the same `kind`, `ref`, and occurrence ex
 
 | Kind | Allowed answers | Owner |
 |------|-----------------|-------|
-| `unrun-tests` | `run-full-local` · `run-full-ci` · `skip` | [test selection](test-selection.md#breadth-beyond-the-set) |
-| `test-recipe-field` | `confirm` · `keep-default` | test selection (not yet defined) |
+| `unrun-tests` | `run-full-local` · `run-full-ci` · `skip` | test selection |
+| `test-recipe-field` | `confirm` · `keep-default` | test selection |
 | `risk-awaiting` | `handle` · `accept` | risk triage |
 | `hardening` | `build` · `decline` | security exposure |
 

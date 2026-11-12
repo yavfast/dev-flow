@@ -148,7 +148,7 @@ This is also where [`resume`](status.md#resume--re-enter-a-task-in-a-fresh-sessi
    - Gate: plan → implement
    - Design sign-off — DEC batch, changed docs, files to touch, proportionality block; wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints))
    - Implement the change
-   - Run the change's selected tests once, if a suite exists ([Test Selection](../references/test-selection.md))
+   - Run tests if suite exists
    - Review, then commit sign-off — changed files, review verdict, intent verdict, proportionality block; "Ready to commit?"
 
 #### Scenario C — New feature (no existing documents)
