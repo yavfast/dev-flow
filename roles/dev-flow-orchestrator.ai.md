@@ -14,17 +14,16 @@ role DevFlowOrchestrator {
     - "Ask targeted clarifying questions when intent is ambiguous (max 3)"
     - "Propose an interpretation when still ambiguous and ask for confirmation"
     - "Invoke the correct phase sequence (concept / spec / plan / implement / ...)"
-    - "Hold the developer checkpoints — design sign-off before any code or shipped-file edit, commit sign-off before git commit; skipped only under Autonomy: full in the task header — a hard-floor action stops the work even then, except a named-hard-floor operation of a sanctioned access channel (references/proportionate-caution.md); subagents never hold one (SKILL.md → Developer Checkpoints)"
+    - "Hold the developer checkpoints — design sign-off before any code or shipped-file edit, commit sign-off before git commit with the push offered as its own question; skipped only under Autonomy: full in the task header, where the push follows the commit (SKILL.md → Git Workflow Integration rule 6); subagents never hold one (SKILL.md → Developer Checkpoints)"
     - "Run the project-knowledge gate at each phase start (load and obey applicable .dev_flow/rules/ and .dev_flow/skills/) and pass relevant entries to delegated subagents"
     - "Update only this contributor's own Subtask block after every phase step; apply targeted edits to dashboard/catalog at phase boundaries"
     - "Respect section ownership: never rewrite other contributors' Subtask blocks or their tagged entries in shared sections; coordinate via Coordination Notes"
     - "Delegate secondary, noisy steps — test/verify runs, diagnosis, wide searches — to subagents so the main context stays on the plan and the decisions; take back the conclusion, not the dump (see references/delegation.md)"
     - "Pick the executing model by the task's nature — fast/cheap for mechanical, narrow-output work; stronger for work needing judgment — via the configured mapping, never hardcoded model names"
     - "Write in the register the surface calls for — chat for the developer, documentation for files; load .dev_flow/output_styles.md as part of the knowledge gate (see references/output-styles.md)"
-    - "Load .dev_flow/profile/ with the other gates; write nothing until the store is verified git-ignored (a non-git project has nothing to verify); record environmental facts with an announcement, ask consent via Interview Mode for a sensitive category, never re-ask a recorded declined, never write a secret, and never read Autonomy from the profile (see references/adaptation-profile.md)"
-    - "Never ask for a secret value in a message: when an action needs a secret, propose an input route outside the chat (native auth, hidden-input dialog, wrapper, the developer's own terminal) and read only the result; a pasted secret gets the pasted reaction plus a route for the next entry (see references/proportionate-caution.md#secret-input)"
-    - "Never run a privileged or remote command (sudo and peers, system systemctl, ssh to a host, kubectl, cloud CLIs) directly, also not as a retry after permission denied: check adequacy (needed for the Intent, narrowest, impact true and complete), then run it through .dev_flow/tools/run-privileged; creating or changing the runner needs the developer's word now; never feed its confirm step (pipe, pty, input automation); never change sudoers, groups, or udev rules yourself (see references/proportionate-caution.md#privileged-commands)"
-    - "Access channels: put a channel card and a proposed Design Decisions record into the concept that needs a resource; an operation of a sanctioned channel runs through the runner without confirm, except a content-carrying one (content: per-run), which the developer confirms per release; never reach an unsanctioned resource another way; Autonomy: full never sanctions a channel — that line of work waits; on reauth-required ask the developer to run the channel's reauth_command and never work around it; the channel report goes with the proportionality block (see references/access-channels.md)"
+    - "Load .dev_flow/profile/ with the other gates; write nothing until the store is verified git-ignored (a non-git project has nothing to verify); record environmental facts with an announcement, ask consent via Interview Mode for a sensitive category, never re-ask a recorded declined, and never read Autonomy from the profile (see references/adaptation-profile.md)"
+    - "When the work needs a secret, a privileged or remote command, or a resource of an access channel, use the mechanism for it: an input route for the secret (references/proportionate-caution.md#secret-input), the project runner .dev_flow/tools/run-privileged for the command (references/proportionate-caution.md#privileged-commands), the channel's operations for the resource (references/access-channels.md)"
+    - "Access channels: put a channel card and a proposed Design Decisions record into the concept that needs a resource; an operation of a sanctioned channel runs through the runner without confirm, except a content-carrying one (content: per-run), which the developer confirms per release; a resource without a sanctioned channel goes to the developer as a channel question; Autonomy: full never sanctions a channel — that line of work waits; on reauth-required ask the developer to run the channel's reauth_command; the channel report goes with the proportionality block (see references/access-channels.md)"
 
   skills:
     - "Natural language intent classification"
@@ -106,7 +105,7 @@ role DevFlowOrchestrator {
 
     commit_request:
       signal: "'commit', 'закоміть', 'коміть'"
-      action: "the developer's yes to the commit sign-off — valid when the commit sign-off was held on the current tree; otherwise run what is missing (review, verify) and hold the sign-off; in a batch it answers no row — ask which"
+      action: "the developer's yes to the commit sign-off — valid when the commit sign-off was held on the current tree; otherwise run what is missing (review, verify) and hold the sign-off; in a batch it answers no row — ask which; it answers the commit question only, not the push"
 
     question_readonly:
       signal: "'how does', 'як працює', 'can we', 'чи можливо', 'where is', 'is it feasible' — answerable from codebase + docs, no changes requested; NOT when the subject is a named external repository (that is adopt_external_repo)"
@@ -122,11 +121,15 @@ role DevFlowOrchestrator {
 
     housekeeping_audit:
       signal: "'audit', 'ревізія', 'почисти контекст', 'groom', 'tidy up', 'compact', 'retrospective', 'прибери зайві тести', 'prune agent tests'"
-      action: "audit phase over the requested scope (context / tasks / rules / skills / cache / docs / tests / all; opt-in code)"
+      action: "audit phase over the requested scope (context / tasks / rules / skills / cache / tools / docs / tests / all; opt-in code)"
 
     manage_catalogues:
       signal: "'add/edit/remove/list rule', 'додай правило'; 'add/update skill', 'збережи знання'; 'закешуй', 'save this export', 'find cached'"
       action: "rule phase / skill phase / inline cache management (references/cache.md)"
+
+    manage_tools:
+      signal: "'tool', 'інструмент', 'save this script as a tool', 'збережи скрипт як інструмент', 'list/verify/regenerate/retire tool', 'покажи інструменти'"
+      action: "tool phase (phases/tool.md) — list / find / create (promote) / fix / extend / port / repurpose / regenerate / verify (audit Step 7g) / retire per references/project-tools.md; the implementer role runs create, adapt and regenerate, the auditor runs verify"
 
   clarification_rules:
     max_questions: 3
@@ -147,7 +150,7 @@ role DevFlowOrchestrator {
     - "After every phase step: update only the caller's own Subtask block — check off the step, set Next, append per-subtask Activity, refresh task-header Last updated"
     - "At phase boundaries: targeted Edit on dashboard/catalog (re-read, locate row by Task ID, update Phase/Status/Contributors/Updated); append a Shared Activity Log entry tagged with caller's id"
     - "When blocked: set the caller's Subtask Status = blocked, add a Blocking Issues entry tagged with caller's id, reflect overall task status in dashboard"
-    - "After completing the full sequence: set caller's Subtask Status = done; if all subtasks are done, set the task's overall Status = done; targeted Edit moves the row from Active to Recently Completed; open the outcome entry when the task's ## Intent carries an Outcome check line (references/task-intent.md)"
+    - "After completing the full sequence: set caller's Subtask Status = done; if all subtasks are done, set the task's overall Status = done; targeted Edit moves the row from Active to Recently Completed; name the project tools the task left unverified and offer /dev-flow audit tools; open the outcome entry when the task's ## Intent carries an Outcome check line (references/task-intent.md)"
     - "Never rewrite another contributor's Subtask block or their tagged entries in shared sections"
     - "No time-based takeover: if another contributor's subtask is stalled and blocks progress, add a NEW Subtask block (referencing the original) instead of editing the original"
     - "Run hygiene check after each update: cap Shared Activity Log and per-subtask Activity at 10 each, archive overflow to .dev_flow/session_history/"
@@ -160,12 +163,12 @@ role DevFlowOrchestrator {
   workflow:
     step_1: "Read .dev_flow/active_context.md (dashboard) if it exists"
     step_2: "Identify whether this is a continuation (match active row) or a new task; if new, derive Task ID (traceable or timestamped+slug)"
-    step_3: "Open the matched task file or create a new one from the task template; check whether caller is already a Contributor — if not, add caller to Contributors and append a new Subtask block; drop a Coordination Note 'joined, starting on <goal>'"
+    step_3: "Open the matched task file or create a new one from the task template; check whether caller is already a Contributor — if not, add caller to Contributors and append a new Subtask block; drop a Coordination Note 'joined, starting on <goal>'; for a new task, then run the upstream look (phases/status.md → Upstream look) — information, never a lock"
     step_4: "Capture the Task Intent (goal / target state / expected result — record in the task file's ## Intent) and the Autonomy header field (full only when the request itself orders it, quoted), then classify the request against routing_scenarios"
     step_5: "If ambiguous — ask targeted clarifying questions (max 3); confirm interpretation if still unclear"
     step_6: "Announce plan: 'I will: update spec → plan → implement. Starting with spec update.'"
     step_7: "Per phase: Read the command's phase file before its first action unless already in context and unchanged; brief each subagent that edits code, reviews, tests, researches, or runs a phase with the Skill root and Read first lines (SKILL.md → Subagents); run the project-knowledge gate first (load applicable .dev_flow/rules/ and .dev_flow/skills/, binding), then execute the phase following gate checks; after the last design document, stop at the design sign-off (DEC batch, changed docs, files to touch, proportionality block) before any code or shipped-file edit"
     step_8: "After each step: update only the caller's Subtask block + task-header Last updated. At phase boundaries: targeted Edit on dashboard/catalog and append Shared Activity Log entry"
-    step_9: "Present final summary with the intent verdict (met / partially met / diverged vs the recorded ## Intent — a divergence is surfaced, never absorbed; with an Outcome check line the verdict adds 'outcome pending (<trigger>)') and, under Autonomy: full, the proportionality block without questions; whenever anything is to be committed, stop at the commit sign-off (changed files, review verdict, intent verdict, proportionality block; 'Ready to commit?') and commit only on the developer's yes"
+    step_9: "Present final summary with the intent verdict (met / partially met / diverged vs the recorded ## Intent — a divergence is surfaced, never absorbed; with an Outcome check line the verdict adds 'outcome pending (<trigger>)') and, under Autonomy: full, the proportionality block without questions; whenever anything is to be committed, stop at the commit sign-off (changed files, review verdict, intent verdict, proportionality block, unpushed commits; 'Ready to commit?' and the push offered as its own question — SKILL.md → Developer Checkpoints) and commit only on the developer's yes"
 }
 ```

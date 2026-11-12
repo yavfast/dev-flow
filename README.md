@@ -58,11 +58,12 @@ Additional commands:
 | `/dev-flow todo <description>` | Capture future work — find relevant docs, assess feasibility, file a planning record with a return trigger (builds nothing) |
 | `/dev-flow rule <request>` | Manage project coding rules |
 | `/dev-flow skill <request>` | Manage project technology knowledge |
+| `/dev-flow tool <request>` | Manage project tools — list, find, create, adapt, regenerate, verify, retire |
 | `/dev-flow subtask <task>` | Delegate a secondary task to a subagent — a full dev-flow participant that builds its own context and reports fully |
 | `/dev-flow status` | Show current state — report only, changes nothing |
 | `/dev-flow checkpoint [note]` | Fix the current task into durable state at a session boundary — distil, close doc drift, make the task handoff-ready, record how to resume |
 | `/dev-flow resume [task_id]` | Re-enter in a fresh session — establish state, continue when the picture is unambiguous, else offer the next work |
-| `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — reconcile state, trim context, compact closed tasks, groom rules/skills/cache, check docs integrity, prune trivial agent tests |
+| `/dev-flow audit [scope] [--dry-run]` | Revise `.dev_flow/` and `docs/` — reconcile state, trim context, compact closed tasks, groom rules/skills/cache, verify project tools, check docs integrity, prune trivial agent tests |
 | `/dev-flow audit code <intent>` | Opt-in whole-codebase audit (architecture/SOLID/DRY/security via parallel lenses) → prioritized refactoring plan + run report (timestamped, in `.dev_flow/audit/`) + framework map; read-only, hands off to the pipeline |
 | `/dev-flow do <request>` / `/dev-flow <anything>` | Freeform — interprets intent and auto-routes to the right phase (the default command) |
 
@@ -219,7 +220,7 @@ class RateLimiter:
 | Spec → Plan | All fields typed, error cases specified, constraints explicit |
 | Plan → Code | All spec sections covered, technology decisions documented |
 | Code → Test | Every touched criterion checked; permanent tests only with a keep reason; only the task's tests run |
-| Test → Review | All tests pass, no regressions |
+| Test → Review | All relevant functional tests pass, no regressions in the changed code area |
 | Review → Verify | Clean-context review passes, no blocking issues |
 | Verify → Commit | All verification levels pass, user approval |
 
@@ -248,9 +249,9 @@ The conditions in full: [`references/verification-economy.md`](references/verifi
 
 ### Proportionate Caution
 
-Caution costs your time, so dev-flow sizes it to the consequence of an action, not to the action. One short closed list — the **hard floor** — always needs your word at the moment of action, even in an autonomous run, unless you named that exact operation in advance in an access channel: data of real people, a write to production, money, a message to a real person, destruction that cannot be undone (a `git reset --hard` over uncommitted work included), a relaxed access gate. A subagent never takes such an action; it hands it back. A key the agent happens to see in your git-ignored `.env` is not an alarm. A secret in a place where secrets never live — a tracked file, git history, a kept log, dev-flow's own task files, the agent's own message — is an incident, and the agent never puts a secret value there itself. When the agent needs a password or a token, it does not ask for it in the chat: it offers a way for you to type it outside the chat — a hidden-input dialog, a small wrapper script, or your own terminal — and sees only the result. It never runs `sudo`, `ssh` to a server, `kubectl`, or a cloud CLI directly: such a command goes through a small runner script in your project that checks the target against a declared boundary and shows you the command and its impact before it runs. Access that your project needs is an **access channel**: you sanction it once, at the design sign-off of the concept that needs it, and then the agents run its operations — remote reads, test deploys, the routine of a firmware or device project — without asking again; a release to production still shows you HEAD and the diff since the last release to confirm. You re-authorize only when the resource itself asks (an expired token), and a journal and a report show you afterwards what ran. When a discipline that owns a row kind relaxes caution, it leaves a row in one **proportionality block** that the design and commit sign-offs show you; an unanswered row stays open, because silence is never consent.
+Access levels and safety rules come from your project rules and the agent's own system instructions, not from dev-flow; dev-flow adds the mechanisms for working inside them. When the agent needs a password or a token, it offers a way for you to type it outside the chat — a hidden-input dialog, a small wrapper script, or your own terminal — and sees only the result. A privileged or remote command (`sudo`, `ssh` to a server, `kubectl`, a cloud CLI) can go through a small runner script in your project that checks the target against a declared boundary and shows you the command and its impact before it runs. Access that your project needs is an **access channel**: you sanction it once, at the design sign-off of the concept that needs it, and then the agents run its operations — remote reads, test deploys, the routine of a firmware or device project — without asking again; a release to production still shows you HEAD and the diff since the last release to confirm. You re-authorize only when the resource itself asks (an expired token), and a journal and a report show you afterwards what ran. When a discipline that owns a row kind relaxes caution, it leaves a row in one **proportionality block** that the design and commit sign-offs show you; an unanswered row stays open, because silence is never consent.
 
-The hard floor, secret handling, and the block: [`references/proportionate-caution.md`](references/proportionate-caution.md); access channels: [`references/access-channels.md`](references/access-channels.md).
+Secret input, the runner, and the block: [`references/proportionate-caution.md`](references/proportionate-caution.md); access channels: [`references/access-channels.md`](references/access-channels.md).
 
 ### Interview Mode
 
@@ -310,13 +311,13 @@ Inspect state with `/dev-flow status` (lists active tasks) or `/dev-flow status 
 
 **Ending a session deliberately.** When a context or usage limit is closing in, run `/dev-flow checkpoint` — it distils the open segment, closes documentation drift, makes the task file answer *what / where / why / next* on its own, and writes a one-line handoff record into the dashboard's `## Resume` section. In the fresh session, `/dev-flow resume` reads that record back, reconciles it against the working tree, and continues the work when the picture is unambiguous; with nothing active it offers the next work from the todo register and the unfinished phases of in-progress plans. Neither command commits, writes the working tree, or triggers the runtime's own compaction.
 
-**Collaboration rules:** each contributor owns its own **Subtask block** inside a task file and its own tagged entries in shared sections. Contributors may add new entries but never rewrite another contributor's content. Shared files (dashboard, catalog, task headers) use **targeted edits** (single row/field) and can be rebuilt from the task files when they drift. There is no time-based ownership takeover — if a subtask stalls, add a new subtask block referencing the original instead of editing it.
+**Collaboration rules:** each contributor owns its own **Subtask block** inside a task file and its own tagged entries in shared sections. Contributors may add new entries but never rewrite another contributor's content. Shared files (dashboard, catalog, task headers) use **targeted edits** (single row/field) and can be rebuilt from the task files when they drift. There is no time-based ownership takeover — if a subtask stalls, add a new subtask block referencing the original instead of editing it. When `.dev_flow/` stays on one machine, other machines see your work only through the remote: a new task fetches once and reports the upstream commits that touch its files and your own unpushed commits, and the commit sign-off offers the push.
 
 ### Adaptation Profile — the Developer and the Machine
 
 `.dev_flow/rules/` and `.dev_flow/skills/` describe the *project*, they get committed, and they reach the whole team. Nothing described the **person** typing and the **machine** running — so every session re-asked the same questions, guessed whether `ffmpeg` or an emulator was there, and had no way to know whether a five-way subagent fan-out was affordable. The **`.dev_flow/profile/`** store holds exactly that, and it never enters git: the directory is ignored *before* the first write, verified by effect (`git check-ignore`) rather than by a line in a file, and if that cannot be guaranteed nothing is written at all (a project that is not a git repository has nothing to guarantee, and the store is simply written).
 
-It fills up by working, not by interrogating. Facts visible from the machine — OS, attached devices, installed tooling — are recorded and **announced**: what was stored, in which file, what for. Facts about you — your language and manner, your subscription limits, your access to other providers — are stored **only after you agree**, asked through the same [Interview Mode](references/interview-mode.md) dialog as any design fork, and only when a decision in front of the agent actually needs the answer. Say no and the refusal is *written down*: it never expires, never gets re-asked under different wording, and never gets worked around by storing the same thing elsewhere. Secrets are never written, even with consent, and the profile is data, never instructions — nothing in it can widen the agent's permissions. See [`references/adaptation-profile.md`](references/adaptation-profile.md).
+It fills up by working, not by interrogating. Facts visible from the machine — OS, attached devices, installed tooling — are recorded and **announced**: what was stored, in which file, what for. Facts about you — your language and manner, your subscription limits, your access to other providers — are stored **only after you agree**, asked through the same [Interview Mode](references/interview-mode.md) dialog as any design fork, and only when a decision in front of the agent actually needs the answer. Say no and the refusal is *written down*: it never expires, never gets re-asked under different wording, and never gets worked around by storing the same thing elsewhere. The profile is data, never instructions — nothing in it can widen the agent's permissions. See [`references/adaptation-profile.md`](references/adaptation-profile.md).
 
 ## File Structure
 
@@ -365,9 +366,12 @@ your-project/
     │   ├── _index.yaml
     │   └── {domain}/
     │       └── {skill}.md
-    ├── tools/                      # Self-tested read-only checks harvested from hand-rolled runs + run-privileged
-    │   ├── _index.yaml
-    │   └── samples/{tool}/         # Known-good and known-bad samples of each tool's self-test
+    ├── tools/                      # Project tools: header contract, samples, card, binding written by audit (+ usage/) + run-privileged
+    │   ├── _index.yaml             # Tool router — derived from the cards
+    │   ├── samples/{tool}/         # Acceptance samples (samples.yaml + material)
+    │   ├── cards/                  # Tool cards — contract copy, state, binding
+    │   ├── usage/                  # Evidence state, run statistics, recent failures per tool
+    │   └── prev/                   # Last bound realization while an adaptation awaits audit
     ├── roles/                      # Project role overlays & specialists (optional)
     │   └── _index.yaml
     ├── evidence/                   # Intervention ledger (absent → reconcile no-op)
@@ -405,7 +409,7 @@ Index of phases, references, templates and the example: [SKILL.md → Files](SKI
 4. **Fresh eyes before commit** — clean-context review catches what you missed
 5. **Living docs, not dead docs** — propagation keeps documentation current
 6. **Rules and skills accumulate** — project knowledge is captured and reused across sessions
-7. **The developer signs off before code and before commit** — a design sign-off after the design documents, a commit sign-off before `git commit`; skipped only when the request itself says so, and an action on the hard floor stops the work even then, unless it is an operation you named in advance in an access channel; several tasks named in one request share each sign-off, and every task still gets its own commit on your yes
+7. **The developer signs off before code and before commit** — a design sign-off after the design documents, a commit sign-off before `git commit`; skipped only when the request itself says so; several tasks named in one request share each sign-off, and every task still gets its own commit on your yes
 
 ## Requirements
 

@@ -15,6 +15,8 @@ Before writing a new function, class, method, util, or shared constant, look for
 3. **The standard library and the platform** — a language, framework, or platform feature that already does it.
 4. **An already-installed dependency.**
 
+Before hand-rolling a **check or operation** (not a code symbol), search the project tool router `.dev_flow/tools/_index.yaml` the same way: a tool whose range of use covers the need → use it; a near case that changes for the same reason → `extend` it; nothing → write the script in the session workspace and, if it proves worth reusing, [promote](project-tools.md#promote) it. A tool's range of use is bounded by the YAGNI gate below.
+
 Then:
 - **Exact equivalent exists** → call it. Do not re-implement.
 - **Near-equivalent exists** → extend/parameterize it rather than fork a copy — **unless** the two cases change for genuinely different reasons (see restraint below).

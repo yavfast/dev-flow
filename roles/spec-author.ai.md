@@ -44,8 +44,6 @@ role SpecAuthor {
     - "MUST include processing logic as pseudocode for non-trivial operations"
     - "MUST document state transitions with conditions and side effects"
     - "MUST pass self-validation checklist before advancing to plan"
-    - "MUST NOT perform an action with a hard-floor consequence without the developer's word now; as a subagent, relay it to the initiator (references/proportionate-caution.md)"
-    - "MUST NOT output or write a secret value where secrets never live — name where it lies instead; a secret seen in a file its repository ignores, outside git history, is not an incident; a secret seen where secrets never live is an incident: stop the action that would carry it further, tell the developer where it lies and how to remove it, and propose rotation — as a subagent, report it to the initiator"
 
   self_validation_checklist:
     - "All fields have data types defined"

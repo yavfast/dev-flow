@@ -1,5 +1,17 @@
 # Phase 4: Code Implementation
 
+## Contents
+
+- [Purpose](#purpose) — code as an artifact derived from the specification and the plan
+- [Role Responsible](#role-responsible) — the Implementer role; the brief lines of a delegated code edit
+- [Rules](#rules) — what holds for every code edit of the phase
+- [Gate Check Before Starting](#gate-check-before-starting) — the Plan → Code gate, knowledge checks, the design sign-off
+- [Implementation Workflow](#implementation-workflow) — the steps of one plan phase, from the plan's `Verify:` field to the commit sign-off
+- [Delegation for Focus](#delegation-for-focus) — which steps go to a subagent and with which brief
+- [Reflection — harvest rules, skills, and tools](#reflection--harvest-rules-skills-and-tools) — the reflection checkpoint and its filters
+- [When the Spec Pushes Back](#when-the-spec-pushes-back) — upstream escalation instead of bending the code
+- [Anti-Patterns](#anti-patterns) — what the phase never does
+
 ## Purpose
 
 Write code following the implementation plan. Code is a derived artifact from the specification — never write code without an up-to-date plan.
@@ -28,7 +40,7 @@ class PermissionInterceptor:
 
 ## Gate Check Before Starting
 
-**Design sign-off (stop).** Before the first code edit, the task file must show the developer's go at the design sign-off; missing → present it (DEC batch, changed docs, files to touch, proportionality block) and wait. No stop for a Trivial change (no design documents); otherwise skipped only under `Autonomy: full` — a [hard-floor](../references/proportionate-caution.md#hard-floor) action stops the work even then. A `proposed` Design Decision counts as settled for the checklist below, but no code edit runs on one. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
+**Design sign-off (stop).** Before the first code edit, the task file must show the developer's go at the design sign-off; missing → present it (DEC batch, changed docs, files to touch, proportionality block) and wait. No stop for a Trivial change (no design documents); otherwise skipped only under `Autonomy: full`. A `proposed` Design Decision counts as settled for the checklist below, but no code edit runs on one. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
 
 Before writing code, verify:
 - [ ] The plan covers ALL specification sections
@@ -75,13 +87,13 @@ Before writing code, verify:
 6. After each edit, run the task-set tests (unit → mock) that cover the edited code — never the full suite ([When to run](../references/test-economy.md#when-to-run)).
 7. Fix any test failures — code must satisfy the spec.
 8. Run pre-commit review (clean-context subagent) — see [Review phase](review.md).
-9. Fix any blocking issues from the review; re-run tests if needed.
+9. Fix any blocking issues from the review; re-run the task-set tests that cover the fix ([When to run](../references/test-economy.md#when-to-run)).
 10. Run verification (regression, integration, live) — see [Verify phase](verify.md).
 11. If Verify fails → fix code → re-run steps 6-10.
 12. Update the plan phase status to [DONE].
 13. Update the plan Progress checkboxes.
 14. Reflection checkpoint — harvest rules/skills/tools, auto-applied through the structural gate; see [Reflection](#reflection--harvest-rules-skills-and-tools) below.
-15. Commit sign-off — changed files, review verdict, intent verdict, proportionality block; "Ready to commit?" and wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)). The commit message carries one `Keep-Test` trailer per new permanent test ([Test Economy](../references/test-economy.md#keep-reasons)).
+15. Commit sign-off — changed files, review verdict, intent verdict, proportionality block, unpushed commits; "Ready to commit?" and offer the push as its own question; wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)). The commit message carries one `Keep-Test` trailer per new permanent test ([Test Economy](../references/test-economy.md#keep-reasons)).
 
 ## Delegation for Focus
 
@@ -93,8 +105,8 @@ At the phase/subtask boundary, before asking for commit approval, run the [Trans
 
 - **Rule from a recurring pattern.** If the plan phase or the code surfaced an architectural constraint, naming convention, or error-handling pattern not yet in `.dev_flow/rules/` — write it as a rule automatically (default severity `should`, or `prefer`) — never a fact about the developer or the machine, which belongs to `.dev_flow/profile/` under its consent regime ([Adaptation Profile](../references/adaptation-profile.md)). See [Project Rules → Auto-discovery](../references/conventions.md#project-rules) and the [rule phase](rule.md).
 - **Skill from non-trivial knowledge.** If research during the task produced broadly-useful, non-obvious technology knowledge — write/update a skill through the [skill phase](skill.md) non-triviality filter, so the next task starts ahead — never a fact about the developer or the machine, which belongs to `.dev_flow/profile/` under its consent regime ([Adaptation Profile](../references/adaptation-profile.md)).
-- **Tool from a hand-rolled check.** A deterministic check or operation hand-rolled in this and at least one earlier task, or hand-rolled wrong — write a read-only, self-tested tool in `.dev_flow/tools/` ([Experience Capture](../references/experience-capture.md#applying-experience--auto-apply-through-structural-gates)).
-- **Observation for a covered lesson.** A lesson an existing rule, skill, or tool already covers is not dropped: when its problem class recurred or the artifact was breached, append a `recurred` observation to that artifact's ledger entry; when the artifact fired on its sanctioned path and left a non-model by-product, append `exercised` ([Experience Capture](../references/experience-capture.md#applying-experience--auto-apply-through-structural-gates)).
+- **Tool to keep.** A script written in the session workspace that you judge worth reusing — and, as a must-consider, a deterministic check or operation hand-rolled in this and at least one earlier task, or hand-rolled wrong — is [promoted](../references/project-tools.md#promote) to a project tool: header contract, real acceptance samples, your own run of every sample; it stays `unverified` until the audit tools step verifies it. A covering tool you did not use is recorded as a bypass with its reason ([Experience Capture](../references/experience-capture.md#applying-experience--auto-apply-through-structural-gates)).
+- **Observation for a covered lesson.** A lesson an existing rule, skill, or tool already covers is not dropped: when its problem class recurred or the artifact was breached, append a `recurred` observation to that artifact's ledger entry (a hand-rolled check a covering tool covers: a [bypass](../references/project-tools.md#use-accounting) instead, unless one is already recorded for this check — by a failed run or an earlier rung — never a second); when the artifact fired on its sanctioned path and left a non-model by-product, append `exercised` ([Experience Capture](../references/experience-capture.md#applying-experience--auto-apply-through-structural-gates)).
 
 **Auto-apply, no permission prompt.** A harvested lesson is written to the catalogue automatically through the rule/skill/tool gate (the gate is structural, not a self-score). **Never auto-write a `must`**, and route any rule that would contradict an existing one to an [independent clean-context review](../references/delegation.md) — write only if confirmed. Every write is visible to the developer in the commit diff. Then distill the segment into a pinned summary, demote its raw turns, and promote durable working-memory parts to the task file. See **[Experience Capture](../references/experience-capture.md)**.
 

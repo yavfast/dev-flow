@@ -18,6 +18,7 @@ role Reviewer {
     - "Grep the callers of every symbol whose signature, return value, or behaviour the diff changes — from the code itself, never from the author's list (references/impact.md)"
     - "Scope a repeat review round from the recorded baseline instead of re-reading the whole diff"
     - "State finding severity; let materiality be computed from the declared Criticality"
+    - "Independent tool review (tool_review below) when audit Step 7g or a tool retire spawns it"
     - "Name one concrete fix in a finding whenever the fix is unambiguous — it is what lets the repeat round run as confirm (references/verification-economy.md)"
 
   skills:
@@ -47,8 +48,9 @@ role Reviewer {
     - "Pre-commit review report (PASS / FAIL / WARNINGS) with round number, scope mode, round mode, routed contested records, and suppressed checks"
     - "Round state written to the task file: baseline, carry_over, always_in_scope"
 
-  # Review briefs name the blocks `rules`, `pre_commit_review`, `convergence` (SKILL.md → Subagents, phases/review.md step 1).
-  # Rename one → update both sites in the same commit.
+  # Review briefs name the blocks `rules`, `pre_commit_review`, `convergence` (SKILL.md → Subagents, phases/review.md step 1);
+  # a tool review brief names `tool_review` (references/project-tools.md → Independent review, Retire).
+  # Rename one → update its sites in the same commit.
   rules:
     - "MUST check ALL gate criteria before allowing pipeline advancement"
     - "MUST detect overlapping responsibilities between concepts"
@@ -66,8 +68,6 @@ role Reviewer {
     - "MUST NOT let a must or security finding reach a confirm round, at any criticality"
     - "MUST name the closed list in bypassed_list when a case got past an allow-list, no-confirm list, pattern or class signs; prescribe a path fix, and keep the finding open when the fix only adds or removes list members (references/review-convergence.md)"
     - "MUST name every check suppressed for a missing entry condition as unobserved with the absent fact (references/verification-economy.md)"
-    - "MUST NOT perform an action with a hard-floor consequence without the developer's word now; as a subagent, relay it to the initiator (references/proportionate-caution.md)"
-    - "MUST NOT output or write a secret value where secrets never live — name where it lies instead; a secret seen in a file its repository ignores, outside git history, is not an incident and not a finding; secret-exposure is only a secret seen where secrets never live: stop the action that would carry it further, tell the developer where it lies and how to remove it, and propose rotation — as a subagent, report it to the initiator"
 
   pre_commit_review:
     description: "Code review performed before commit by a subagent with clean context"
@@ -120,7 +120,7 @@ role Reviewer {
     severity_axis: "must | should | prefer — the same axis as project rules. The reviewer states severity; it never states materiality"
     results:
       pass: "Proceed to commit approval"
-      fail: "Fix issues, re-run tests if needed, then re-review"
+      fail: "Fix issues, re-run the task-set tests that cover the fix (references/test-economy.md#when-to-run), then re-review"
       warnings: "Present warnings to the user, proceed if user approves"
 
   convergence:
@@ -207,5 +207,23 @@ role Reviewer {
       - "prefer violations are informational — note but do not block"
       - "Flag new undocumented patterns for rules update"
       - "Include rules compliance table in review report"
+
+  tool_review:
+    description: "Independent review of a project tool, spawned by audit Step 7g or Adapt retire as a clean-context subagent — never the session that wrote the realization, never the auditor's own context (references/project-tools.md#verification-in-audit)"
+    inputs:
+      - "The realization with its header contract block"
+      - "samples/<name>/samples.yaml and the sample material"
+      - "Scope: full, or diff with the prev/<name> realization as the base"
+      - "For retire: the stated reason (replaced, merged, or no exercised in the retention window, ~30 days — usage file or ledger observation), the usage file, the tool's ledger entry in .dev_flow/evidence/ledger.yaml (observations, bypasses), the router, and the card of the replacing tool when replaced_by is named"
+    rules:
+      - "Read only the inputs above — never the author's task notes"
+      - "Adversarial framing: look for what the contract does not declare, not for reasons to pass"
+      - "effects — a finding on any read, write, network call, environment read or child process the contract does not declare"
+      - "contract — a finding when an agent seeing the tool for the first time could not choose it, call it, or read its answer from the header alone"
+      - "range — a finding on a range_of_use case without a sample, or code serving cases outside the range"
+      - "behavior — a finding when the code departs from the contract's behavior on inputs the samples do not pin"
+      - "Never edit the tool; report only"
+    severity: "blocking — any effects finding; a contract an agent could not use; a range_of_use case without a sample; a departure from behavior on input inside the range of use. limit — code serving cases outside the range; behaviour on input outside the range, or that no sample can pin (special files, permissions, encodings)"
+    output: "Review Verdict {date, scope: full|diff, verdict: pass|fail, findings: [{check: effects|contract|range|behavior, severity: blocking|limit, detail}]} — pass when no finding is blocking (limit findings travel with the pass as known limits); for retire, pass confirms the deletion and fail rejects it, with the reason"
 }
 ```

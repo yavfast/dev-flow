@@ -85,7 +85,7 @@ Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../S
 
 **Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml` and load testing rules (test environments, CI conventions); verification MUST follow them. See [rule phase](rule.md).
 
-**Profile check (gate).** Read `.dev_flow/profile/environment.md` — `devices` and `software` say which live scenarios are runnable at all. A `devices`/`software` entry is always stale before you rely on it: run the cheap presence check first. Not confirmed → update the entry (value, state, date) — writing only once the store is verified git-ignored (a non-git project has nothing to verify and the write proceeds), never a secret — and record the scenario `unobserved` with the missing observation boundary, never as passed. No entry means `unknown`, not `absent`. See [Adaptation Profile](../references/adaptation-profile.md).
+**Profile check (gate).** Read `.dev_flow/profile/environment.md` — `devices` and `software` say which live scenarios are runnable at all. A `devices`/`software` entry is always stale before you rely on it: run the cheap presence check first. Not confirmed → update the entry (value, state, date) — writing only once the store is verified git-ignored (a non-git project has nothing to verify and the write proceeds) — and record the scenario `unobserved` with the missing observation boundary, never as passed. No entry means `unknown`, not `absent`. See [Adaptation Profile](../references/adaptation-profile.md).
 
 **Knowledge activation (per-burst).** Re-trigger the gate above at the moment of action — before each verification burst (live run, integration scenario) re-surface the applicable rules/skills with a pointer-only Pre-Action Marker; a long verify session drifts from what was loaded. Prefer a deterministic tripwire on a non-model signal (exit code / log / diff) over self-report, and escalate high-stakes conformance to a sampled cross-model verifier where the runtime allows. Self-attestation is never the control. See [Application Enforcement](../references/application-enforcement.md).
 
@@ -95,12 +95,12 @@ Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../S
 
 ### Guidelines
 
-1. **Use a dedicated test account.** If the project supports multiple accounts or tenants, always run destructive operations (delete, modify, reset) under a test account, never a real user account. A sanctioned [access channel](../references/access-channels.md) to a test resource (`test` mark) runs its `write` and `destroy-test` operations without a confirmation per call. Its password reaches the tool by an [input route](../references/proportionate-caution.md#secret-input), never through the chat.
+1. **Use a dedicated test account.** If the project supports multiple accounts or tenants, always run destructive operations (delete, modify, reset) under a test account, never a real user account. A sanctioned [access channel](../references/access-channels.md) to a test resource (`test` mark) runs its `write` and `destroy-test` operations without a confirmation per call. Its password reaches the tool by an [input route](../references/proportionate-caution.md#secret-input).
 
 2. **Use test entities.** For operations like deletion, parameter changes, or state transitions:
    - Use existing test entities if they are available (e.g., items marked as test data).
    - If none exist — create new entities with an explicit test marker (e.g., prefix `[TEST]`, tag `test`, or a dedicated flag) so they are clearly distinguishable from real data.
-   - Record each created entity as a created record in the task file right after creating it — what and where only, never a secret value ([Proportionate Caution](../references/proportionate-caution.md#proportionality-block)).
+   - Record each created entity as a created record in the task file right after creating it — what and where only ([Proportionate Caution](../references/proportionate-caution.md#proportionality-block)).
    - After verification, clean up test entities unless they serve as fixtures.
 
 3. **Ask before touching real data.** If a verification scenario requires interaction with real user data and there is no safe alternative — stop and ask the user for explicit confirmation before proceeding. Describe exactly which data will be affected and what the operation does.
@@ -117,7 +117,7 @@ Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../S
 - Triggering payments, subscriptions, or billing events
 - Altering shared state (queues, caches, feature flags)
 
-When in doubt, treat the operation as destructive. An operation with a [hard-floor](../references/proportionate-caution.md#hard-floor) consequence needs the developer's word now, under any `Autonomy`; a subagent relays it to its initiator. A `named-hard-floor` operation of a sanctioned [access channel](../references/access-channels.md#operations) carries that word in advance, for role `main` only.
+When in doubt, treat the operation as destructive.
 
 ## Verification Workflow
 
@@ -183,7 +183,7 @@ Steps:
 
 For integration and live tests that require setup:
 
-1. **Check prerequisites** — required services, test databases, API keys. A missing key reaches the tool by an [input route](../references/proportionate-caution.md#secret-input), never through the chat. A command of the privileged class runs through the [privileged runner](../references/proportionate-caution.md#privileged-commands); a subagent calls it only for an operation of an [access channel](../references/access-channels.md#roles) that lists its role, else relays it.
+1. **Check prerequisites** — required services, test databases, API keys. A missing key reaches the tool by an [input route](../references/proportionate-caution.md#secret-input). A privileged or remote command can go through the [privileged runner](../references/proportionate-caution.md#privileged-commands), in channel mode for an operation of a sanctioned [access channel](../references/access-channels.md#roles) (a subagent passes the role its brief sets).
 2. **Prepare test environment** — fixtures, seed data, mock servers.
 3. **Run the scenario** — capture output, logs, timing.
 4. **Verify results** — compare against spec expectations.
@@ -195,8 +195,8 @@ Once verification passes, run the [Transition Checkpoint](../references/experien
 
 - **Rule from a recurring failure mode.** A regression that a convention would have prevented, a flaky-test pattern, an integration contract that needed a guard — write a rule automatically (default `should`; testing-area rules live under `.dev_flow/rules/testing.md`). See [Project Rules → Auto-discovery](../references/conventions.md#project-rules).
 - **Skill from a verification gotcha.** A non-obvious environment setup, a sandbox/seed-data trick, a known-pitfall in a live integration — write/update a skill through the [skill phase](skill.md) non-triviality filter — never a fact about the developer or the machine, which belongs to `.dev_flow/profile/` under its consent regime ([Adaptation Profile](../references/adaptation-profile.md)) — a machine's own tooling and devices are profile facts, not skills.
-- **Tool from a hand-rolled check.** A deterministic check or operation hand-rolled in this and at least one earlier task, or hand-rolled wrong — write a read-only, self-tested tool in `.dev_flow/tools/` ([Experience Capture](../references/experience-capture.md#applying-experience--auto-apply-through-structural-gates)).
-- **Observation for a covered lesson.** A lesson an existing rule, skill, or tool already covers is not dropped: when its problem class recurred or the artifact was breached, append a `recurred` observation to that artifact's ledger entry; when the artifact fired on its sanctioned path and left a non-model by-product, append `exercised` ([Experience Capture](../references/experience-capture.md#applying-experience--auto-apply-through-structural-gates)).
+- **Tool to keep.** A script written in the session workspace that you judge worth reusing — and, as a must-consider, a deterministic check or operation hand-rolled in this and at least one earlier task, or hand-rolled wrong — is [promoted](../references/project-tools.md#promote) to a project tool: header contract, real acceptance samples, your own run of every sample; it stays `unverified` until the audit tools step verifies it. A covering tool you did not use is recorded as a bypass with its reason ([Experience Capture](../references/experience-capture.md#applying-experience--auto-apply-through-structural-gates)).
+- **Observation for a covered lesson.** A lesson an existing rule, skill, or tool already covers is not dropped: when its problem class recurred or the artifact was breached, append a `recurred` observation to that artifact's ledger entry (a hand-rolled check a covering tool covers: a [bypass](../references/project-tools.md#use-accounting) instead, unless one is already recorded for this check — by a failed run or an earlier rung — never a second); when the artifact fired on its sanctioned path and left a non-model by-product, append `exercised` ([Experience Capture](../references/experience-capture.md#applying-experience--auto-apply-through-structural-gates)).
 
 **Auto-apply, no permission prompt** — written through the structural rule/skill/tool gate; **never auto-write a `must`**, and route a would-be `must` or a contradiction to an [independent clean-context review](../references/delegation.md) first. Every write is visible in the commit diff. Then distill the segment (the noisy run output stays in the workspace, referenced by path), demote raw turns, and promote durable parts to the task file. See **[Experience Capture](../references/experience-capture.md)**.
 

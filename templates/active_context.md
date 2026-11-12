@@ -10,7 +10,7 @@ A thin index over the task files in [`tasks/`](tasks/) — active and recently c
      checkpointed ACTIVE task: invocation — phase — next action — working tree — [note] — timestamp.
      A second checkpoint of the same task REPLACES its line; records never accumulate.
      Derived from the task files + the tree — regenerable, never a second source of truth.
-     No secrets, diffs, command output, or /tmp paths. Omit the whole section when empty. -->
+     No diffs, command output, or /tmp paths. Omit the whole section when empty. -->
 
 - `/dev-flow resume task_…` — `implement` — next: {the first action the next session takes} — branch `…`, N files modified — YYYY-MM-DD HH:MM
 

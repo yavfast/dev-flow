@@ -8,7 +8,7 @@
 - [Context Files](#context-files) — `.dev_flow/` layout, source-of-truth rule (task files win over derived indexes), templates, legacy single-file migration
 - [Collaboration Model (read first)](#collaboration-model-read-first) — Table of who may edit each region of a shared task file; no exclusive locking, no time-based takeover
 - [Read Protocol](#read-protocol) — Re-attention first, then Steps 1–5: read dashboard, read task file, validate freshness, output templates, continuation
-- [Write Protocol](#write-protocol) — Working-memory promotion; updates at phase start / step end / phase end / completion; project pointer; targeted-edit safety, append-only
+- [Write Protocol](#write-protocol) — Working-memory promotion; updates at phase start / step end / phase end / completion; the upstream look at a new task; project pointer; targeted-edit safety, append-only
 - [Checkpoint — Fix the Task for a Session Boundary](#checkpoint--fix-the-task-for-a-session-boundary) — On-demand fixation at a session boundary: four movements, readiness set R1–R7, the handoff record, what it must not do
 - [Resume — Re-enter a Task in a Fresh Session](#resume--re-enter-a-task-in-a-fresh-session) — Re-entry in a fresh session: reconcile against the tree, the unambiguous test, the brief, the work offer
 - [Regeneration Procedure](#regeneration-procedure) — How any contributor rebuilds `active_context.md` and `tasks/_index.md` from task headers, incl. Deferred (todos)
@@ -50,8 +50,8 @@ For the periodic whole-directory revision see the [audit phase](audit.md): `stat
 ├── output_styles.md           # Project style profiles — documentation + chat registers (Output Styles); absent → shipped defaults
 ├── profile/                   # user.md (consent required) + environment.md (announced) — developer/machine adaptation facts (Adaptation Profile); gitignored, created lazily
 ├── cache/                     # Durable resources (Figma exports, downloads, baselines) + _index.yaml (Resource Cache)
-├── tools/                     # _index.yaml + samples/ — deterministic checks harvested by Experience Capture (self-tested, read-only); run-privileged — the privileged runner (Proportionate Caution), written only with the developer's word; never a secret
-├── access/                    # channels.yaml — sanctioned access channels (committed, no secrets); journal.log — hash-chained call journal (gitignored) (Access Channels)
+├── tools/                     # _index.yaml (router) + realizations + samples/ + cards/ + usage/ + prev/ — project tools (Project Tools): header contract, acceptance samples, card, binding written by audit; run-privileged — the privileged runner (Proportionate Caution), written only with the developer's word
+├── access/                    # channels.yaml — sanctioned access channels (committed); journal.log — hash-chained call journal (gitignored) (Access Channels)
 ├── proto/                     # <slug>/ — working project prototypes kept for the developer's verdict or promotion (research); git-ignored, never committed
 ├── evidence/                  # ledger.yaml — intervention ledger + outcome entries (Evidence Discipline); absent → reconcile is a no-op
 ├── tasks/
@@ -97,6 +97,8 @@ A task file is **shared** between multiple AI contributors. Each contributor app
 | Shared Activity Log | Any contributor | Append-only, newest first, tagged `[agent-id]` |
 
 **There is no exclusive locking and no time-based takeover.** If a subtask is stalled, a contributor who wants to push it forward adds a *new* Subtask block referencing the stale one — never rewrites the stale block.
+
+**Across machines.** When `.dev_flow/` is not committed, a task file does not reach another machine; there the shared channel is the remote. The [upstream look](#upstream-look) reads it when a new task starts, and the push offer ([SKILL.md → Git Workflow Integration](../SKILL.md#git-workflow-integration)) writes to it.
 
 ## Read Protocol
 
@@ -149,8 +151,11 @@ For `/dev-flow status` (no argument):
 
 ⚠️ Warnings
    • task_… — stale (>7 days)
+   • master — 3 unpushed commits, oldest 6 days
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+
+When the current branch has an upstream, **Warnings** names the unpushed commits — the count and the age of the oldest ([SKILL.md → Git Workflow Integration](../SKILL.md#git-workflow-integration)). `status` changes nothing, so it counts against the last fetched state and does not fetch. No git, no upstream, or nothing unpushed → no line.
 
 If `.dev_flow/todos/_index.md` exists, include the **Deferred (todos)** line with the count of `candidate` entries (omit the line when the register is absent or empty). `queued` follow-ups are not counted here — they surface at their originating task's completion, not in this view. It is a pointer, not a listing — `todo` files them, `audit` grooms them. If `.dev_flow/evidence/ledger.yaml` has `open` entries under `outcomes:`, add the outcome-checks line: their count and the nearest trigger ([Outcome check](../references/task-intent.md#outcome-check)).
 
@@ -214,6 +219,20 @@ Every dev-flow command MUST update context using this protocol. The goal is **to
    - If your task's row exists → update Phase / Status / Contributors / Updated.
    - If the row is missing (new task) → insert a new row in the Active Tasks table.
 4. **Update the catalog** (`tasks/_index.md`) the same way: targeted `Edit`, single row.
+5. **New task only — run the [upstream look](#upstream-look).**
+
+### Upstream look
+
+When `.dev_flow/` is not committed, a contributor on another machine sees only what reaches the remote. A new task looks there once, before its first design or code step.
+
+1. **Applies when** the project is a git repository and the current branch has an upstream (`@{u}`). Otherwise there is nothing to do and nothing to record.
+2. **Fetch** the upstream's remote without a terminal prompt (`GIT_TERMINAL_PROMPT=0 git fetch <remote>`). The fetch changes neither the working tree nor a local branch; for an SSH remote add `-o BatchMode=yes` to its ssh command. A failed fetch (offline, no credentials) goes into your Activity as `unobserved` with its reason ([Evidence Discipline](../references/evidence-discipline.md)); the look goes on with the last fetched state, and the task starts either way.
+3. **Incoming** — the upstream commits the branch does not have (`HEAD..@{u}`) and the files they change (`git diff --name-only HEAD...@{u}`).
+4. **Overlap** — the incoming files that are also the task's files: the files and directories the request, a linked plan or an [Impact Walk](../references/impact.md) names. Match by files, not by traceable IDs: one policy can spread over several concepts, so two commits on the same files may share no ID. When the task's files are not known yet, list the incoming commits with their file counts.
+5. **Outgoing** — the branch's commits the upstream does not have (`@{u}..HEAD`): the count and the age of the oldest.
+6. **Report** one line to the developer: `upstream: <N> incoming (<K> touch the task: <files>) · <M> unpushed (oldest <age>)`. When K or M is above zero, or N is above zero and the task's files are not known yet, append the same line as a Coordination Note. The developer decides: integrate first, coordinate with the other line, or go on. The look is information, never a lock ([Collaboration Model](#collaboration-model-read-first)).
+
+The look runs once per new task; a continuation or a [resume](#resume--re-enter-a-task-in-a-fresh-session) does not repeat it.
 
 ### After completing a step
 
@@ -233,8 +252,9 @@ Every dev-flow command MUST update context using this protocol. The goal is **to
 1. **In the task file:** set the task-level `Status: done`. Append a final Shared Activity Log entry.
 2. **In the dashboard:** targeted `Edit` — move your task's row from "Active Tasks" to "Recently Completed". If that list now exceeds 5 entries, move the oldest into `session_history/session_YYYY-MM-DD.md` and remove the row from the dashboard.
 3. **In the catalog:** same — move from Active to Recently Completed.
-4. **Surface queued follow-ups:** scan `.dev_flow/todos/` and plan backlogs for `queued` records triggered `after task_<this ID>` and offer to run each next (`/dev-flow do …`) — a suggestion, not an auto-run; the executed work still passes its own gates and commit approval. See [todo phase](todo.md).
-5. **Open the outcome entry** when the task's `## Intent` carries an Outcome check line, and refresh the dashboard's outcome-checks line — [Outcome check](../references/task-intent.md#outcome-check).
+4. **Tools awaiting audit:** name the project tools this task promoted, adapted or regenerated that are still `unverified`, and offer `/dev-flow audit tools` — a suggestion, not an auto-run ([Project Tools](../references/project-tools.md#verification-in-audit)).
+5. **Surface queued follow-ups:** scan `.dev_flow/todos/` and plan backlogs for `queued` records triggered `after task_<this ID>` and offer to run each next (`/dev-flow do …`) — a suggestion, not an auto-run; the executed work still passes its own gates and commit approval. See [todo phase](todo.md).
+6. **Open the outcome entry** when the task's `## Intent` carries an Outcome check line, and refresh the dashboard's outcome-checks line — [Outcome check](../references/task-intent.md#outcome-check).
 
 ### Project pointer
 
@@ -325,7 +345,7 @@ Rules:
 - **One record per Task ID** — a second checkpoint of the same task **replaces** its line; records never accumulate.
 - **A resume does not consume it** — the record stays until a later checkpoint replaces it or [regeneration](#regeneration-procedure) drops it with its closed task. Re-entering a task twice reads the same record twice.
 - The record is **derived data**: it repeats nothing that the task file plus the working tree do not already say, and it is rebuilt by the [regeneration procedure](#regeneration-procedure), never treated as a source of truth.
-- It carries no secrets, no diffs, no command output, and no path under the `/tmp` workspace.
+- It carries no diffs, no command output, and no path under the `/tmp` workspace.
 
 ### What a checkpoint must not do
 

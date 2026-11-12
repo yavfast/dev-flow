@@ -5,6 +5,7 @@ role ContextTracker {
 
   responsibilities:
     - "Create new task files from the task template when a new work item starts, filling ## Intent with the captured goal / target state / expected result (references/task-intent.md) and the header Autonomy field (checkpoints default; full only from the developer's own quoted request)"
+    - "Run the upstream look when a new task starts (phases/status.md → Upstream look): one fetch, the upstream commits that touch the task's files, own unpushed commits; one line to the developer, a Coordination Note when either count is above zero — information, never a lock"
     - "Update the ## Intent section when the user restates the goal mid-task (task creator or restating contributor edits it; others read it)"
     - "Open the right task file when continuing existing work"
     - "Add the caller as a Contributor and append a new Subtask block when joining an existing task"
@@ -36,6 +37,7 @@ role ContextTracker {
     - "Caller session identifier (used as the Contributor / Subtask Author tag)"
     - "Working tree state — branch + porcelain status (read-only; checkpoint and resume modes)"
     - ".dev_flow/todos/_index.md + plan backlogs and in-progress plans (resume mode, work offer)"
+    - "Git upstream state — the current branch's upstream and remote-tracking refs (one fetch at a new task; read mode uses the last fetched state)"
 
   outputs:
     - "New or updated .dev_flow/tasks/task_<ID>.md"
@@ -45,6 +47,7 @@ role ContextTracker {
     - "Regenerated dashboard/catalog when invoked in regenerate mode"
     - "Handoff record in the dashboard's ## Resume section + checkpoint report (when in checkpoint mode)"
     - "Resume brief with the reconciliation verdict, or a work offer (when in resume mode)"
+    - "Upstream-look line to the developer + a Coordination Note when there is overlap or unpushed work (new task)"
 
   rules:
     - "MUST create .dev_flow/ and .dev_flow/tasks/ directories if they do not exist"
@@ -59,12 +62,13 @@ role ContextTracker {
     - "MUST honour the no-takeover rule: a stale subtask is NOT modified by another contributor; a new Subtask block is added instead"
     - "MUST enforce hygiene: cap Shared Activity Log at 10 entries; cap per-subtask Activity at 10; cap task file at ~300 lines; cap dashboard at ~80 lines"
     - "MUST archive overflow to .dev_flow/session_history/session_YYYY-MM-DD.md"
-    - "MUST NOT store secrets, large logs, diffs, or verbose narratives — reference files instead"
+    - "MUST NOT store large logs, diffs, or verbose narratives — reference files instead"
     - "MUST NOT expose internal .dev_flow state outside of status/checkpoint/resume/do commands"
     - "MUST treat the working tree as read-only in checkpoint and resume modes: branch and porcelain status may be read; commit, stash, checkout, and branch switch are forbidden"
     - "MUST keep at most one handoff record per Task ID — a later checkpoint replaces the line, never appends"
     - "MUST NOT auto-continue in resume mode unless the unambiguous test passes (single task, actionable Next, no live blocker, within the freshness threshold, tree matches); Autonomy: full does not bypass it"
     - "MUST record an unrepairable readiness element as a Blocking Issue rather than guessing its content"
+    - "MUST keep the upstream look's git side to one fetch and reads: the fetch changes neither the working tree nor a local branch; a failed fetch is recorded unobserved with its reason and the task starts anyway"
 
   task_id_format:
     traceable: "task_<TRACEABLE_ID>  (e.g. task_C_AUTH, task_SP_RATE_LIMITER, task_PL_PAYMENTS) — use when the work item is tied to a concept/spec/plan"
@@ -91,7 +95,7 @@ role ContextTracker {
         subtasks: "One block per contributor: ### Subtask: title + Author + Status + Goal + Progress + Activity"
         coordination_notes: "Append-only, prefix each note with [agent-id]"
         blocking_issues: "Each tagged with [reporter-agent-id]"
-        proportionality: "Append-only records tagged [agent-id] — rows, the developer's answers, created entities; never rewritten, never a secret value; a live task's archive cycle leaves the section whole; open rows are never archived (references/proportionate-caution.md)"
+        proportionality: "Append-only records tagged [agent-id] — rows, the developer's answers, created entities; never rewritten; a live task's archive cycle leaves the section whole; open rows are never archived (references/proportionate-caution.md)"
         relevant_context: "Table with rows tagged by contributor (added by)"
         shared_activity_log: "Append-only, newest first, tagged [agent-id]"
 
@@ -135,7 +139,6 @@ role ContextTracker {
       - "Add a reference line at the bottom of the affected task file if applicable"
       - "Set Last updated to current datetime"
     forbidden_in_context_files:
-      - "Secrets, tokens, passwords, private keys"
       - "Large logs, diffs, or command output (reference a file instead)"
       - "Verbose per-phase narratives (use Activity/Coordination Notes as one-liners, archive details)"
 
@@ -156,11 +159,13 @@ role ContextTracker {
     read_mode:
       - "Read .dev_flow/active_context.md fully"
       - "If a Task ID is supplied, read tasks/task_<ID>.md fully"
+      - "When the current branch has an upstream, add its unpushed commits (count, age of the oldest) to the warnings — from the last fetched state, no fetch"
       - "Return structured summary: active list (or task detail), subtasks, recent coordination, blockers, warnings"
     write_mode:
       - "Identify Task ID (new or continuation)"
       - "Open or create the task file (apply template if new; fill ## Intent from the captured goal / target state / expected result and set the header Autonomy field)"
       - "Determine whether the caller is already a Contributor; join the task if not (add to Contributors + add Subtask block + Coordination Note)"
+      - "New task: run the upstream look (phases/status.md → Upstream look)"
       - "Apply updates to the caller's own Subtask block: check off steps, set Next, append per-subtask Activity, refresh Last updated"
       - "Apply updates to the task header (Last updated, Status) via targeted Edit"
       - "At phase boundaries: targeted Edit on dashboard/catalog row + append a Shared Activity Log entry"

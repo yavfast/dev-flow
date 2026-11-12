@@ -46,7 +46,7 @@ This command is handled by **DevFlowOrchestrator**: [roles/dev-flow-orchestrator
 1. Read `.dev_flow/active_context.md` (the dashboard) if it exists. Identify which task this request relates to:
    - User said "continue" → resume the most recently updated active task that already lists your session in `Contributors`. If only one active task exists, resume it.
    - User described a specific item → match against active task titles/IDs.
-   - No match → this is a new task; a new `tasks/task_<ID>.md` will be created in Step 6.
+   - No match → this is a new task; a new `tasks/task_<ID>.md` will be created in Step 6, and the [upstream look](status.md#upstream-look) runs before Step 4 routes into the first design or code step.
    - The dashboard shows an open outcome check whose trigger is due → offer to reconcile it ([Outcome check](../references/task-intent.md#outcome-check)); run it on the developer's yes, then continue with the request.
 
 2. For the chosen task (continuation), read its file `.dev_flow/tasks/task_<ID>.md`:
@@ -82,9 +82,10 @@ Analyze the freeform request against the loaded context to determine:
 | **Fix documentation** | "update docs", "propagate", "оновити специфікацію" | propagate |
 | **Fix a bug** | "fix", "виправи", "bug", "баг", "падає", "crash", "NPE", "не працює", error description | fix |
 | **Review/validate** | "check", "validate", "чи правильно", "review" | review |
-| **Commit** | "commit", "закоміть", "коміть" | The developer's yes to the commit sign-off — valid when the commit sign-off was held on the current tree; otherwise run what is missing (review, verify) and hold the sign-off; in a [batch](#batch-of-tasks) it answers no row — ask which |
+| **Commit** | "commit", "закоміть", "коміть" | The developer's yes to the commit sign-off — valid when the commit sign-off was held on the current tree; otherwise run what is missing (review, verify) and hold the sign-off; in a [batch](#batch-of-tasks) it answers no row — ask which. It answers the commit question only, not the push |
 | **Manage rules** | "add rule", "додай правило", "edit rule", "remove rule", "list rules", "show rule" | rule |
 | **Manage skills** | "add skill", "update skill", "додай знання", "збережи знання про X", "capture what we learned" | skill |
+| **Manage tools** | "tool", "інструмент", "збережи скрипт як інструмент", "покажи інструменти", "перевір інструменти", "save this script as a tool", "list tools", "verify tools", "regenerate tool" | [tool](tool.md) |
 | **Manage cached resources** | "cache", "закешуй", "збережи макет/скріншот/документ", "save this export", "find cached" | inline cache management — [Resource Cache](../references/cache.md) |
 | **Understand state** | "що зроблено", "status", "де я?" | status |
 | **Revise / housekeep context** | "ревізія", "audit", "почисти контекст", "синхронізуй задачі", "оновити індекси", "groom", "tidy up", "compact", "retrospective", "прибери зайві тести", "prune agent tests" | audit |
@@ -152,14 +153,14 @@ This is also where [`resume`](status.md#resume--re-enter-a-task-in-a-fresh-sessi
    - Gate: plan → implement
    - Design sign-off — DEC batch, changed docs, files to touch, proportionality block; wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints))
    - Implement the change
-   - Run tests if suite exists
-   - Review, then commit sign-off — changed files, review verdict, intent verdict, proportionality block; "Ready to commit?"
+   - Run the task's tests if a suite exists ([Test Economy](../references/test-economy.md#when-to-run))
+   - Review, then commit sign-off — changed files, review verdict, intent verdict, proportionality block, unpushed commits; "Ready to commit?" and offer the push as its own question ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints))
 
 #### Scenario C — New feature (no existing documents)
 
 1. Confirm: "No existing concept found for this. I'll start from concept phase."
 2. Execute: `/dev-flow concept` → `/dev-flow spec` → `/dev-flow plan` → **design sign-off** → `/dev-flow implement` → … → review → **commit sign-off**
-3. Follow all gate checks between phases; the checkpoints are skipped only under `Autonomy: full` in the task header ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)) — a [hard-floor](../references/proportionate-caution.md#hard-floor) action stops the work even then, except a `named-hard-floor` operation of a sanctioned [access channel](../references/access-channels.md) — one with `content: per-run` still waits for its `confirm`; a needed channel sanction or `reauth-required` stops only that line of work.
+3. Follow all gate checks between phases; the checkpoints are skipped only under `Autonomy: full` in the task header ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)); a needed [access channel](../references/access-channels.md) sanction or `reauth-required` stops only that line of work.
 
 #### Scenario D — Documentation only
 
@@ -186,7 +187,7 @@ Never rewrite another contributor's Subtask block or their tagged entries in sha
 
 If the user ends the session (or after completing a full phase chain):
 1. **Intent verdict (on completion).** When reporting the task done or stopping at the commit sign-off, compare the outcome to the task's `## Intent` (Expected result) and state `intent: met / partially met / diverged (+why)` in the report — a divergence is surfaced, never silently absorbed. At the sign-off of the task's last commit, an intent with an [Outcome check](../references/task-intent.md#outcome-check) adds `— outcome pending (<trigger>)`. Skip for a mid-task hand-off. See [Task Intent](../references/task-intent.md).
-2. Run the [status write protocol → on task completion](status.md#write-protocol) — Subtask `Status` and wrap-up Activity entry, header `Last updated` (task-level `Status: done` only when every contributor's subtask is done), the dashboard and catalog row move, the outcome entry of a task whose intent carries an Outcome check, and the [hygiene caps](status.md#context-hygiene) with overflow archived to `.dev_flow/session_history/`. Optionally add a hand-off Coordination Note (`[your-id] — stepping away, anyone may pick up from <here>`).
+2. Run the [status write protocol → on task completion](status.md#write-protocol) — Subtask `Status` and wrap-up Activity entry, header `Last updated` (task-level `Status: done` only when every contributor's subtask is done), the dashboard and catalog row move, the `unverified` tools named with the `/dev-flow audit tools` offer, the outcome entry of a task whose intent carries an Outcome check, and the [hygiene caps](status.md#context-hygiene) with overflow archived to `.dev_flow/session_history/`. Optionally add a hand-off Coordination Note (`[your-id] — stepping away, anyone may pick up from <here>`).
 3. **Surface queued follow-ups.** If the task became `done`, scan `.dev_flow/todos/` and plan backlogs for `queued` records triggered `after task_<this ID>` (fixes deferred *because their context overlapped this task*). List each and offer to run it next via `/dev-flow do …` — a suggestion, not an auto-run; the executed work passes its own gates and commit approval. See [todo phase](todo.md).
 
 ## Batch of Tasks
@@ -199,19 +200,19 @@ A request that names two or more tasks forms a batch: each checkpoint is held on
 2. Establish each member's file set: from its design documents and the [Impact Walk](../references/impact.md); for a Trivial change, the files to edit.
 3. Two members' file sets intersect → the task named later in the request leaves the batch and runs after it. An intersection found during the work → the task that reached the shared file second leaves.
 4. Fewer than two members remain → no batch.
-5. Record the members in each member's Coordination Notes.
+5. Record the members in each member's Coordination Notes. The [upstream look](status.md#upstream-look) runs once for the batch; the overlap is reported per member.
 6. Run the members in sequence, or as [parallel subtasks](subtask.md#parallel-subtasks) where they are independent.
 
 **Design sign-off** — once, before the first code edit of any member. Present each member's decisions, documents, files, and proportionality rows; a member with no design documents presents nothing and starts without an answer, and a batch with no design documents holds no design stop. The developer answers per member; any other member with no answer does not start.
 
-**Commit sign-off** — once, when each member has passed review or is blocked. A blocked member is not in the table and gets its own sign-off later. One row per member: task · files · review verdict with open advisories · intent verdict · open proportionality rows. The developer answers per row; "all" is valid only when the developer says it.
+**Commit sign-off** — once, when each member has passed review or is blocked. A blocked member is not in the table and gets its own sign-off later. One row per member: task · files · review verdict with open advisories · intent verdict · open proportionality rows. The developer answers per row; "all" is valid only when the developer says it. The unpushed commits are shown once, and the push is offered once, as its own question, with the table; it runs after the approved rows are committed ([SKILL.md → Git Workflow Integration](../SKILL.md#git-workflow-integration)).
 
 - approved row → one commit, with its own message and IDs, staged from its own file list;
 - declined row → stays uncommitted and returns to its own loop;
 - row with no answer → no commit;
 - two approved rows share a file → neither is committed; run the two tasks in sequence.
 
-Never one commit for several tasks; never an inferred yes. A [hard-floor](../references/proportionate-caution.md#hard-floor) action stops its own task at any point — a separate stop, not a batch stop. Under `Autonomy: full` the batch holds no stops. A subagent holds no checkpoint and makes no commit.
+Never one commit for several tasks; never an inferred yes. Under `Autonomy: full` the batch holds no stops. A subagent holds no checkpoint and makes no commit.
 
 ## Routing Decision Tree
 
@@ -245,8 +246,8 @@ User request received
 ├─ Question about state / what's done
 │   └─ status
 │
-├─ Manage a project catalogue (coding rules / knowledge skills / cached resources)
-│   └─ rule / skill / inline cache management ([Resource Cache](../references/cache.md))
+├─ Manage a project catalogue (coding rules / knowledge skills / project tools / cached resources)
+│   └─ rule / skill / [tool](tool.md) / inline cache management ([Resource Cache](../references/cache.md))
 │
 ├─ Revise / clean up .dev_flow (reconcile state, trim context, dedupe rules/skills/cache)
 │   └─ audit

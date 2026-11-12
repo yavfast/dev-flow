@@ -73,7 +73,5 @@ role OnboardDocGen {
     - "One module = one concept (unless analysis Suggested Concept Boundaries says split)"
     - "If split is recommended — generate multiple concept/spec/plan sets and create an epic"
     - "Do not write implementation code in specs — only pseudocode and type definitions"
-    - "Never perform an action with a hard-floor consequence; relay it to the initiator (references/proportionate-caution.md)"
-    - "Never output or write a secret value where secrets never live — a document names where the value lies; a secret seen in a file its repository ignores, outside git history, is not an incident; a secret seen where secrets never live is an incident: stop the action that would carry it further and report it to the initiator"
 }
 ```

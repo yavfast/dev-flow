@@ -102,10 +102,10 @@ updated: {YYYY-MM-DD}
 
 ## Key Concepts
 {Consolidated knowledge: patterns, APIs, configuration, gotchas.}
-{Include code snippets only when they are non-obvious project patterns; never a secret value — cite file:line instead.}
+{Include code snippets only when they are non-obvious project patterns.}
 
 ## Usage in This Project
-{Concrete examples from the codebase with file paths; never a secret value — cite file:line instead.}
+{Concrete examples from the codebase with file paths.}
 
 ## Pitfalls
 {Non-obvious issues discovered during research or implementation.}

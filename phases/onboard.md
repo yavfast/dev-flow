@@ -105,7 +105,7 @@ After analyzing all modules, extract coding rules, patterns, and style conventio
 └── testing.md          # Testing patterns and requirements (if tests exist)
 ```
 
-6. Every rule MUST include at least one real code example with file path reference; an example never quotes a secret value — cite `file:line` instead ([Proportionate Caution](../references/proportionate-caution.md#secrets)). Write each rule in the unit form of [Knowledge Scaling](../references/knowledge-scaling.md) — `## {id} — {directive} ({severity})  {#{id}}` over a bounded body — a directive over `directive_max` is split into two rules, never truncated; a body stays within `unit_body_max`; give every category an `applies_to` selector (`paths` globs / `phases`) derived from the layer it governs and let a rule's own selector only narrow it, add the `## Contents` digest above `digest_min` rules, and write the index as the derived router with those selectors.
+6. Every rule MUST include at least one real code example with file path reference. Write each rule in the unit form of [Knowledge Scaling](../references/knowledge-scaling.md) — `## {id} — {directive} ({severity})  {#{id}}` over a bounded body — a directive over `directive_max` is split into two rules, never truncated; a body stays within `unit_body_max`; give every category an `applies_to` selector (`paths` globs / `phases`) derived from the layer it governs and let a rule's own selector only narrow it, add the `## Contents` digest above `digest_min` rules, and write the index as the derived router with those selectors.
 7. Flag inconsistencies (same pattern done differently in different modules) in `issues.md`.
 8. Update `state.yaml`: `step: rules_extracted`.
 
@@ -123,7 +123,7 @@ After extracting rules, establish the domain knowledge hierarchy in `.dev_flow/s
    - Which build/CI/tooling decisions are non-standard?
 2. **Create directory hierarchy** under `.dev_flow/skills/` based on identified domains. Create `_index.yaml` for each directory — initially empty skill lists.
 3. **Create root `_index.yaml`** listing all domains with their `topics` keywords.
-4. **Populate initial skills** — for any non-trivial pattern already discovered during module analysis that passes the non-triviality filter (an example never quotes a secret value — cite `file:line` instead):
+4. **Populate initial skills** — for any non-trivial pattern already discovered during module analysis that passes the non-triviality filter:
    - Required external research to understand
    - Not obvious to a senior dev new to the project
    - Likely to be needed again in future tasks

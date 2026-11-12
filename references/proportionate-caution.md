@@ -160,7 +160,7 @@ Read only the result: `refused`, `declined`, or the exit code and the output.
 - **Hard floor** — a consequence on the hard floor (for example, `production-write`) is still asked now in the chat, and the runner then confirms the exact command — except a `named-hard-floor` operation of a sanctioned channel, which is not asked; the runner confirms it only when it carries content (`content: per-run`). A `read` operation with `personal_data: present` exists only as `named-hard-floor`.
 - **Never feed `confirm`** — no pipe, no pty, no input automation.
 - **No graphical session** — give the developer the runner command for their own terminal.
-- **No runner** — propose to write it (the developer's word now), or give the developer the command for their own terminal. A written runner gets an entry in `.dev_flow/tools/_index.yaml`: `regime: developer-word`, `self_test: null` ([Experience Capture](experience-capture.md#applying-experience--auto-apply-through-structural-gates)).
+- **No runner** — propose to write it (the developer's word now), or give the developer the command for their own terminal. A written runner gets an entry in `.dev_flow/tools/_index.yaml`: `regime: developer-word`, `self_test: null` ([Project Tools](project-tools.md#card-binding-router-usage-file)).
 - **Subagent** — call the runner only for an operation of a channel that lists your role, and pass the role (never `main`). Else hand `argv`, `target`, `reason`, and `impact` to the initiator.
 - **`Autonomy: full`** — `confirm` still waits for the developer; an operation of a sanctioned channel does not, except one with `content: per-run`.
 - **Never** change `sudoers`, groups, or udev rules yourself — give the exact lines to the developer.

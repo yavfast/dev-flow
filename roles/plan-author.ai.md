@@ -37,13 +37,12 @@ role PlanAuthor {
     - "MUST include Progress section with checkboxes at the top"
     - "MUST assign status to every phase: [DONE], [IN PROGRESS], [TODO], [BACKLOG]"
     - "MUST reference which specification sections each phase implements"
+    - "In a Refactor phase, fill the Goldens field — each output of the refactored code that no covering test asserts with its comparison policy, or none with the covering tests named (phases/plan.md → Refactor Phase Format; references/test-economy.md → Golden capture)"
     - "MUST give every phase a Verify field — the spec Verification Criteria (SP_XXX_05_*) for its contracts + any phase-local acceptance check (the definition-of-done reused by Test/Verify)"
     - "MUST NOT have orphaned phases — every phase references a spec section"
     - "MUST NOT contain complete implementation code — only pseudocode sketches"
     - "MUST include Backlog section for deferred items"
     - "MUST state phase dependencies explicitly"
-    - "MUST NOT perform an action with a hard-floor consequence without the developer's word now; as a subagent, relay it to the initiator (references/proportionate-caution.md)"
-    - "MUST NOT output or write a secret value where secrets never live — name where it lies instead; a secret seen in a file its repository ignores, outside git history, is not an incident; a secret seen where secrets never live is an incident: stop the action that would carry it further, tell the developer where it lies and how to remove it, and propose rotation — as a subagent, report it to the initiator"
 
   validation_gate:
     description: "Plan -> Code gate (canonical criteria only)"

@@ -436,7 +436,7 @@ Steps:
 
 ## Step 8 — Commit
 
-Commit sign-off: changed files, review verdict, intent verdict, proportionality block (empty here, so not shown); "Ready to commit?" — commit on the developer's yes ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)).
+Commit sign-off: changed files, review verdict, intent verdict, proportionality block (empty here, so not shown), unpushed commits; "Ready to commit?" and the push offered as its own question — commit on the developer's yes ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)).
 
 ```
 All checks passed:

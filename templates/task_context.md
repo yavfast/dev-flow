@@ -92,10 +92,10 @@ A subtask is a thread of work claimed by one contributor. To join this task, add
 ## Proportionality
 
 <!-- Append-only, oldest first. Any contributor appends records tagged [agent-id];
-     the developer's answer is its own record; no record is rewritten and none holds
-     a secret value. A row stays open until an answer with the same kind, ref, and
-     occurrence exists; a live task's archive cycle leaves this section whole, and open
-     rows are never archived. The design and commit sign-offs show the open rows. See `references/proportionate-caution.md` (dev-flow skill). -->
+     the developer's answer is its own record; no record is rewritten. A row stays
+     open until an answer with the same kind, ref, and occurrence exists; a live
+     task's archive cycle leaves this section whole, and open rows are never archived.
+     The design and commit sign-offs show the open rows. See `references/proportionate-caution.md` (dev-flow skill). -->
 
 - row `<kind>` `<ref>` #1 — {text} — [agent-id] YYYY-MM-DD
 - answer `<kind>` `<ref>` #1 → `<answer>` — [agent-id] YYYY-MM-DD

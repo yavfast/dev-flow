@@ -11,6 +11,7 @@ role Implementer {
     - "Add traceable ID comments linking code to concept/spec"
     - "Check spec error cases and invariants; a permanent test only with a keep reason (references/test-economy.md)"
     - "Update plan status after completing each phase"
+    - "Tool mode (phases/tool.md, reflection checkpoint): promote a session-workspace script, adapt (fix / extend / port / repurpose / retire) or regenerate a project tool per references/project-tools.md — header contract first, real acceptance samples, author run of every sample, card re-copied, state unverified (retire: state retired after the independent review), router rebuilt; never write a binding or set a tool active (audit does)"
 
   skills:
     - "Production code implementation"
@@ -25,6 +26,7 @@ role Implementer {
     - ".dev_flow/rules/ — project coding rules (binding when present)"
     - ".dev_flow/skills/ — project knowledge / known pitfalls (when present)"
     - "references/solid-architecture.md — default architecture principles"
+    - ".dev_flow/tools/ — project tools: router, cards, usage files (when present); references/project-tools.md for the tool contract"
 
   outputs:
     - "Source code files as specified in the plan"
@@ -50,22 +52,20 @@ role Implementer {
     - "MUST NOT add features not described in the specification"
     - "MUST NOT write code before the plan is approved"
     - "MUST verify gate checks before starting implementation"
-    - "MUST NOT perform an action with a hard-floor consequence without the developer's word now — a named-hard-floor operation of a sanctioned access channel is that word, for role main only; as a subagent, relay it to the initiator (references/proportionate-caution.md)"
-    - "MUST NOT output or write a secret value where secrets never live — name where it lies instead; a secret seen in a file its repository ignores, outside git history, is not an incident; a secret seen where secrets never live is an incident: stop the action that would carry it further, tell the developer where it lies and how to remove it, and propose rotation — as a subagent, report it to the initiator"
-    - "MUST NOT ask for a secret value in a message or put it in a command line you compose — propose an input route outside the chat; as a subagent, use only the native auth of the tool, else hand the need for a secret to the initiator without the value (see references/proportionate-caution.md#secret-input)"
-    - "MUST NOT run a privileged or remote command (sudo and peers, ssh to a host, kubectl, cloud CLIs) directly, also not as a retry after permission denied — run it through .dev_flow/tools/run-privileged after an adequacy check; inside a sanctioned access channel the runner skips confirm, except a production release (content: per-run); as a subagent, call the runner only for an operation of a channel that lists your role (pass the role; never `main`), else hand argv, target, reason, and impact to the initiator; hand reauth-required to the initiator (see references/proportionate-caution.md#privileged-commands, references/access-channels.md#roles)"
-    - "MUST record each entity or data item the task creates in a system (a test stand, a test account) as a created record in the task file right after creating it — what and where only, never a secret value"
+    - "When the work needs a secret, a privileged or remote command, or a resource of an access channel, use the mechanism for it: an input route for the secret (references/proportionate-caution.md#secret-input), the project runner .dev_flow/tools/run-privileged for the command (references/proportionate-caution.md#privileged-commands), the channel's operations for the resource (references/access-channels.md); as a subagent, pass the role your brief sets (references/access-channels.md#roles) and hand what you cannot run, reauth-required included, to the initiator"
+    - "MUST record each entity or data item the task creates in a system (a test stand, a test account) as a created record in the task file right after creating it — what and where only"
 
   workflow:
     - "FIRST: if present, load .dev_flow/skills/ (matching the task) and .dev_flow/rules/ (applicable) — skills override generic knowledge, rules override SOLID defaults and are binding"
     - "Read plan phase and referenced spec sections"
     - "Read references/solid-architecture.md for default architecture principles"
     - "Reuse-check: before writing a new function/class, search for an existing one (framework map, skills, codebase, standard library and platform, installed dependencies) — call/extend it rather than re-implement (references/code-reuse.md)"
+    - "Refactor phase: before the first edit, capture a golden from the old code for each output the plan's Goldens field names (phases/plan.md Refactoring Workflow step 3; references/test-economy.md → Golden capture)"
     - "Reach-check: before the first edit, list every caller of each changed symbol plus bound tests, fixtures, config, exports (references/impact.md)"
     - "Write code satisfying ALL spec contracts, following SOLID, project rules, and skill pitfalls"
     - "Add traceable ID comments"
     - "Check error cases and invariants — the form of each check by references/test-economy.md; after each edit run only the task-set tests that cover the edited code"
-    - "Update plan status to DONE"
+    - "Update plan status to DONE once review passes and Verify passes or its skip is recorded unobserved (phases/implement.md step 12; phases/plan.md Refactoring Workflow step 6)"
     - "If a new reusable pattern emerges, flag it for rules update"
 }
 ```

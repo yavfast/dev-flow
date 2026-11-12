@@ -18,7 +18,7 @@ An entry condition is **computed from a fact outside the acting agent's own pros
 | unsatisfied | Do not run it; write a suppression record |
 | undeterminable | Run the check in full |
 
-Absence of a fact always favours the check. A project with no vcs, no ledger, or a fresh session runs everything, exactly as before.
+Absence of a fact always favours the check. A project with no vcs, no ledger, or a fresh session runs everything, exactly as before. A test run stays bounded even then: "in full" is the test set its phase runs by [Test Economy](test-economy.md#the-rule), never a wider one.
 
 **A new check declares its kind.** Any check added to dev-flow names which of the conditions below governs it. One that declares none is unconditional and always runs — the safe default, never a licence to invent a new kind.
 
@@ -60,6 +60,8 @@ Boundaries:
 - **`read-before-write` is not weakened.** A shared file (task file, index, external ticket) is re-read before **every** write, unconditionally — the ledger never answers for it.
 - **Knowledge gates are untouched.** `.dev_flow/rules/_index.yaml`, `.dev_flow/skills/_index.yaml` and `.dev_flow/tools/_index.yaml` stay mandatory at phase start. Re-triggering knowledge at the moment of action stays pointer-only per [Application Enforcement](application-enforcement.md), so it never re-reads a body either.
 
+- **A project tool's binding has its own invalidators** — the realization hash, the samples hash, the environment. A trust-check verdict holds in working memory until one of them changes, and the audit tools step verifies only a tool whose binding one of them invalidated ([Project Tools](project-tools.md#verification-in-audit)).
+
 The ledger of what was read — target, state reference, time, extent — lives in the [session working memory](cache.md#session-working-memory-l1). No entry means "not read", never "read long ago".
 
 ## Discriminator — re-verifying a known fix
@@ -72,9 +74,9 @@ The ledger of what was read — target, state reference, time, extent — lives 
 | D2 | The review record names one concrete fix | the finding text, written before the fix existed |
 | D3 | The fix diff is contained in the locations the finding named | diff |
 | D4 | Nothing outside those locations changed in this round | diff |
-| D5 | Tests that were green stayed green | exit code |
+| D5 | The tests the phase runs ([Test Economy](test-economy.md#the-rule)) that were green stayed green | exit code |
 
-`confirm` is a mechanical check in the main context: the diff matches the prescribed fix and the tests that were green are still green. No clean-context reviewer is spawned. Any discriminator false or undeterminable → `full`, the current procedure.
+`confirm` is a mechanical check in the main context: the diff matches the prescribed fix and the phase's tests that were green are still green. No clean-context reviewer is spawned. Any discriminator false or undeterminable → `full`, the current procedure.
 
 **A confirm round that does not confirm escalates.** If the diff does not do what the finding prescribed, or a previously green test is not green, the round **replays as `full`** with the clean-context reviewer. A `confirm` round has two outcomes only — the finding closes, or the full round runs. It never closes a finding it did not confirm. A finding with a `bypassed_list` confirms only when the diff changes the path; a list member alone replays the round as `full` ([List bypass](review-convergence.md#list-bypass--fix-the-path-not-the-list)).
 

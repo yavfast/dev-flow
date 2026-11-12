@@ -60,6 +60,7 @@ Describe the *nature* of the task and let the orchestrator map it to whatever mo
 | Broad code search ("where is X used?") | Yes | findings + file:line list | fast / cheap |
 | Distill a closing segment at a checkpoint (experience capture) | Yes | segment summary + any proposed lessons | standard — judging what's durable |
 | Pre-commit review | Yes (clean ctx) | blocking issues + warnings | standard / strong |
+| Independent tool review (audit Step 7g, tool retire) | Yes (clean ctx, never the tool's author or the auditor's context) | Review Verdict — pass/fail + findings by check ([Project Tools](project-tools.md#verification-in-audit)) | standard / strong |
 | Untangle a tangled root cause | Borderline | cause + reasoning | stronger |
 
 ## Named specialists and the routing reflex

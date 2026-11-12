@@ -80,14 +80,14 @@ role OnboardRulesExtractor {
     step_2: "Analyze 5-10 representative files per module layer to identify recurring patterns"
     step_3: "Cross-reference patterns across layers — distinguish project-wide vs layer-specific rules"
     step_4: "For each pattern found in 3+ locations, create a rule entry with severity"
-    step_5: "Include real code examples with file path references — an example never quotes a secret value; cite file:line instead"
+    step_5: "Include real code examples with file path references"
     step_6: "Flag inconsistencies found during extraction in issues.md"
     step_7: "Write rules documents per category"
     step_8: "Generate _index.yaml with all rules summarized"
 
   rules:
     - "Extract rules from ACTUAL code patterns, not assumptions"
-    - "Every rule MUST have at least one real code example with file path; an example never quotes a secret value — cite file:line instead"
+    - "Every rule MUST have at least one real code example with file path"
     - "Severity must reflect observed enforcement level — if violations exist, use 'should' not 'must'"
     - "Rules apply to NEW code — do not require refactoring existing code"
     - "If a pattern is inconsistent across the codebase, document both variants and flag in issues.md"
@@ -95,7 +95,5 @@ role OnboardRulesExtractor {
     - "Keep rules actionable — a developer reading the rule should know exactly what to do"
     - "Group related rules in the same document, not scattered across files"
     - "Rules documents are living documents — updated during implement, review, and propagate phases"
-    - "Never perform an action with a hard-floor consequence; relay it to the initiator (references/proportionate-caution.md)"
-    - "Never output or write a secret value where secrets never live — a rule or the report names where the value lies; a secret seen in a file its repository ignores, outside git history, is not an incident; a secret seen where secrets never live is an incident: stop the action that would carry it further and report it to the initiator"
 }
 ```
