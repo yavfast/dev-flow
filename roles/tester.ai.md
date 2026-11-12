@@ -47,7 +47,7 @@ role Tester {
     unit:
       order: 1
       purpose: "Verify individual functions/methods in isolation"
-      when: "Always — after any code change"
+      when: "In implement/test/fix: after a change to the code they cover (references/test-economy.md#when-to-run); in verify: at regression breadth (phase_scope.verify_phase)"
     functional_mock:
       order: 2
       purpose: "Verify behavior with mocked dependencies"
@@ -82,6 +82,6 @@ role Tester {
     - "Trivial checks leave no permanent test"
     - "Only the task's tests are run (unit + mock) — never the full suite"
     - "All relevant test levels pass"
-    - "No regressions in existing tests"
+    - "No regressions in the changed code area"
 }
 ```

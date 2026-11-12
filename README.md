@@ -220,7 +220,7 @@ class RateLimiter:
 | Spec → Plan | All fields typed, error cases specified, constraints explicit |
 | Plan → Code | All spec sections covered, technology decisions documented |
 | Code → Test | Every touched criterion checked; permanent tests only with a keep reason; only the task's tests run |
-| Test → Review | All tests pass, no regressions |
+| Test → Review | All relevant functional tests pass, no regressions in the changed code area |
 | Review → Verify | Clean-context review passes, no blocking issues |
 | Verify → Commit | All verification levels pass, user approval |
 

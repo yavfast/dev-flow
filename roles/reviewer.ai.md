@@ -114,7 +114,7 @@ role Reviewer {
     severity_axis: "must | should | prefer — the same axis as project rules. The reviewer states severity; it never states materiality"
     results:
       pass: "Proceed to commit approval"
-      fail: "Fix issues, re-run tests if needed, then re-review"
+      fail: "Fix issues, re-run the task-set tests that cover the fix (references/test-economy.md#when-to-run), then re-review"
       warnings: "Present warnings to the user, proceed if user approves"
 
   convergence:
@@ -208,7 +208,7 @@ role Reviewer {
       - "The realization with its header contract block"
       - "samples/<name>/samples.yaml and the sample material"
       - "Scope: full, or diff with the prev/<name> realization as the base"
-      - "For retire: the stated reason (replaced, merged, or no exercised run in the retention window, ~30 days), the usage file, the router, and the card of the replacing tool when replaced_by is named"
+      - "For retire: the stated reason (replaced, merged, or no exercised in the retention window, ~30 days — usage file or ledger observation), the usage file, the tool's ledger entry in .dev_flow/evidence/ledger.yaml (observations, bypasses), the router, and the card of the replacing tool when replaced_by is named"
     rules:
       - "Read only the inputs above — never the author's task notes"
       - "Adversarial framing: look for what the contract does not declare, not for reasons to pass"

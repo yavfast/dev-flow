@@ -181,11 +181,12 @@ When a code change restructures modules, files, or internal organization **witho
    - List file moves, renames, and structural changes
    - Reference which existing plan phases are affected
    - Design sign-off: present the Refactor phase and the proportionality block, and wait for the developer's go (SKILL.md → Developer Checkpoints)
-3. Implement the refactoring
-4. Run tests — all existing tests must pass without modification
-5. Update the plan: mark Refactor phase [DONE], update file paths in other phases
-6. Skip Concept and Specification updates — contracts did not change
-7. Commit sign-off — changed files, review verdict, intent verdict, proportionality block; "Ready to commit?" and wait
+3. Implement the refactoring; update file paths in other phases of the plan
+4. Run the task's tests that cover the refactored code (references/test-economy.md → When to run) — all must pass without modification; wider breadth belongs to Verify
+5. Review (clean-context, phases/review.md) → Verify when its Activation Condition holds (phases/verify.md → Activation Condition); otherwise record the skip as `unobserved` with its reason
+6. Update the plan: mark Refactor phase [DONE]
+7. Skip Concept and Specification updates — contracts did not change
+8. Commit sign-off — changed files, review verdict, intent verdict, proportionality block; "Ready to commit?" and wait
 ```
 
 ### Refactor Phase Format in Plan
@@ -196,7 +197,7 @@ When a code change restructures modules, files, or internal organization **witho
 **Type:** refactor (no spec changes)
 **Depends on:** {phases whose file paths will change}
 **Affects phases:** {list of phases that reference moved/renamed files}
-**Verify:** existing tests pass unchanged (contracts unchanged)
+**Verify:** the task's tests covering the refactored code pass unchanged (contracts unchanged); regression breadth in Verify when it activates
 
 Changes:
 | From | To | Reason |

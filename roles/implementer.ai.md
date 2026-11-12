@@ -63,7 +63,7 @@ role Implementer {
     - "Write code satisfying ALL spec contracts, following SOLID, project rules, and skill pitfalls"
     - "Add traceable ID comments"
     - "Check error cases and invariants — the form of each check by references/test-economy.md; after each edit run only the task-set tests that cover the edited code"
-    - "Update plan status to DONE"
+    - "Update plan status to DONE once review passes and Verify passes or its skip is recorded unobserved (phases/implement.md step 12; phases/plan.md Refactoring Workflow step 6)"
     - "If a new reusable pattern emerges, flag it for rules update"
 }
 ```

@@ -262,12 +262,12 @@ This is the **L1 data cache** — the *data* half of session scratch (see [Memor
 
 ```
 /tmp/{project-slug}/                  # project workspace — survives a session restart, wiped on reboot
-├── logs/         # test / build / run output             ┐ data cache (data half):
-├── screenshots/  # transient captures                    │ project-scoped, shared by
-├── downloads/    # staging for fetched resources          │ every session on this repo
-├── scratch/      # spike prototypes, throwaway harnesses  │
-│   └── tests/<task-id>/  # temporary tests (references/test-economy.md)
-├── tools/        # tool drafts, sample work copies, output ┘
+├── logs/         # test / build / run output                            ┐ data cache (data half):
+├── screenshots/  # transient captures                                   │ project-scoped, shared by
+├── downloads/    # staging for fetched resources                        │ every session on this repo
+├── scratch/      # spike prototypes, throwaway harnesses                │
+│   └── tests/<task-id>/  # temporary tests (references/test-economy.md) │
+├── tools/        # tool drafts, sample work copies, output              ┘
 └── sessions/
     └── {session-uuid}/
         └── working_memory/   # L1 working memory (notes.md · params · reminders.md · reads) — session-scoped
