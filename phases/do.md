@@ -45,7 +45,7 @@ This command is handled by **DevFlowOrchestrator**: [roles/dev-flow-orchestrator
 1. Read `.dev_flow/active_context.md` (the dashboard) if it exists. Identify which task this request relates to:
    - User said "continue" → resume the most recently updated active task that already lists your session in `Contributors`. If only one active task exists, resume it.
    - User described a specific item → match against active task titles/IDs.
-   - No match → this is a new task; a new `tasks/task_<ID>.md` will be created in Step 6.
+   - No match → this is a new task; a new `tasks/task_<ID>.md` will be created in Step 6, and the [upstream look](status.md#upstream-look) runs before Step 4 routes into the first design or code step.
 
 2. For the chosen task (continuation), read its file `.dev_flow/tasks/task_<ID>.md`:
    - Current Work Item (document, phase, traceable ID)
@@ -149,7 +149,7 @@ This is also where [`resume`](status.md#resume--re-enter-a-task-in-a-fresh-sessi
    - Design sign-off — DEC batch, changed docs, files to touch, proportionality block; wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints))
    - Implement the change
    - Run the task's tests if a suite exists ([Test Economy](../references/test-economy.md#when-to-run))
-   - Review, then commit sign-off — changed files, review verdict, intent verdict, proportionality block; "Ready to commit?"
+   - Review, then commit sign-off — changed files, review verdict, intent verdict, proportionality block, unpushed commits; "Ready to commit?" and offer the push as its own question ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints))
 
 #### Scenario C — New feature (no existing documents)
 

@@ -59,6 +59,7 @@ role Implementer {
     - "Read plan phase and referenced spec sections"
     - "Read references/solid-architecture.md for default architecture principles"
     - "Reuse-check: before writing a new function/class, search for an existing one (framework map, skills, codebase, standard library and platform, installed dependencies) — call/extend it rather than re-implement (references/code-reuse.md)"
+    - "Refactor phase: before the first edit, capture a golden from the old code for each output the plan's Goldens field names (phases/plan.md Refactoring Workflow step 3; references/test-economy.md → Golden capture)"
     - "Reach-check: before the first edit, list every caller of each changed symbol plus bound tests, fixtures, config, exports (references/impact.md)"
     - "Write code satisfying ALL spec contracts, following SOLID, project rules, and skill pitfalls"
     - "Add traceable ID comments"

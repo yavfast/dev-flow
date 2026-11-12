@@ -118,7 +118,7 @@ A fix is the highest-yield **rule auto-discovery** moment: a bug just proved a g
 
 **Auto-apply, no permission prompt** — written through the structural rule/skill/tool gate; **never auto-write a `must`**, and route a would-be `must` or a contradiction with an existing rule to an [independent clean-context review](../references/delegation.md) first. Every write is visible in the commit diff. Then distill the segment, demote the raw diagnosis turns, and promote durable parts to the fix's task file. See **[Experience Capture](../references/experience-capture.md)**. (For a code-only fix, the auto-written rule and any open decision are recorded as in [Interview Mode in Fix](#interview-mode-in-fix).)
 
-**Commit sign-off.** Before `git commit`: changed files, review verdict, intent verdict, proportionality block; "Ready to commit?" and wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)). The commit message carries one `Keep-Test` trailer per new permanent test ([Test Economy](../references/test-economy.md#keep-reasons)).
+**Commit sign-off.** Before `git commit`: changed files, review verdict, intent verdict, proportionality block, unpushed commits; "Ready to commit?" and offer the push as its own question; wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)). The commit message carries one `Keep-Test` trailer per new permanent test ([Test Economy](../references/test-economy.md#keep-reasons)).
 
 ## Diagnosis (optional)
 

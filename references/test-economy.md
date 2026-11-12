@@ -1,6 +1,6 @@
 # Test Economy — A Permanent Test Needs a Keep Reason
 
-Cross-cutting sub-procedure of [test](../phases/testing.md), [implement](../phases/implement.md), [fix](../phases/fix.md), [specification](../phases/specification.md), [review](../phases/review.md) and [audit](../phases/audit.md). A project rule in `.dev_flow/rules/testing.md` overrides every default in this file ([Project rule](#project-rule)).
+Cross-cutting sub-procedure of [test](../phases/testing.md), [implement](../phases/implement.md), [plan → Refactoring Protocol](../phases/plan.md#refactoring-protocol), [fix](../phases/fix.md), [specification](../phases/specification.md), [review](../phases/review.md) and [audit](../phases/audit.md). A project rule in `.dev_flow/rules/testing.md` overrides every default in this file ([Project rule](#project-rule)).
 
 ## The rule
 
@@ -63,6 +63,16 @@ A temporary test that exposes `complex` behaviour moves into the project tree as
 
 - A temporary test ends with its task. A temporary test in the review diff is a finding.
 - Never record a workspace path in a document or a task file.
+
+## Golden capture
+
+A refactor under the [Refactoring Protocol](../phases/plan.md#refactoring-protocol) keeps every output of the code it restructures — what a caller or a user can observe: a return value, printed or written data, a message sent. A `covering` test that passes unchanged proves this only for the outputs it asserts. For each output of the refactored code that no `covering` test asserts, capture a golden from the old code:
+
+1. Before the first edit, run the old code on the inputs its callers pass and on the edge cases the spec names. Save the result as a temporary test whose expected value is that output ([Temporary tests](#temporary-tests)).
+2. Write the comparison policy into the Refactor phase's `Goldens:` field ([Refactor Phase Format](../phases/plan.md#refactor-phase-format-in-plan)): exact, or the fields that change between runs (a time, a random ID, the order of an unordered set) with how each is normalized. A field leaves the comparison only with its reason in the policy.
+3. After the refactor, run each golden with the task set. A mismatch the policy does not explain means the behaviour changed: restore it, or stop — the change is not a refactor and takes the spec route ([do → Change Classes](../phases/do.md#change-classes)).
+
+A golden ends with its task, like every temporary test; one that exposes complex behaviour moves into the project tree as a permanent test with reason complex ([Choosing the form](#choosing-the-form)). An output that cannot be captured (the old code cannot be run) is `unobserved` with its reason.
 
 ## Task test set
 

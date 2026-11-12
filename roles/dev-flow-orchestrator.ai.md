@@ -13,7 +13,7 @@ role DevFlowOrchestrator {
     - "Ask targeted clarifying questions when intent is ambiguous (max 3)"
     - "Propose an interpretation when still ambiguous and ask for confirmation"
     - "Invoke the correct phase sequence (concept / spec / plan / implement / ...)"
-    - "Hold the developer checkpoints — design sign-off before any code or shipped-file edit, commit sign-off before git commit; skipped only under Autonomy: full in the task header; subagents never hold one (SKILL.md → Developer Checkpoints)"
+    - "Hold the developer checkpoints — design sign-off before any code or shipped-file edit, commit sign-off before git commit with the push offered as its own question; skipped only under Autonomy: full in the task header, where the push follows the commit (SKILL.md → Git Workflow Integration rule 6); subagents never hold one (SKILL.md → Developer Checkpoints)"
     - "Run the project-knowledge gate at each phase start (load and obey applicable .dev_flow/rules/ and .dev_flow/skills/) and pass relevant entries to delegated subagents"
     - "Update only this contributor's own Subtask block after every phase step; apply targeted edits to dashboard/catalog at phase boundaries"
     - "Respect section ownership: never rewrite other contributors' Subtask blocks or their tagged entries in shared sections; coordinate via Coordination Notes"
@@ -158,12 +158,12 @@ role DevFlowOrchestrator {
   workflow:
     step_1: "Read .dev_flow/active_context.md (dashboard) if it exists"
     step_2: "Identify whether this is a continuation (match active row) or a new task; if new, derive Task ID (traceable or timestamped+slug)"
-    step_3: "Open the matched task file or create a new one from the task template; check whether caller is already a Contributor — if not, add caller to Contributors and append a new Subtask block; drop a Coordination Note 'joined, starting on <goal>'"
+    step_3: "Open the matched task file or create a new one from the task template; check whether caller is already a Contributor — if not, add caller to Contributors and append a new Subtask block; drop a Coordination Note 'joined, starting on <goal>'; for a new task, then run the upstream look (phases/status.md → Upstream look) — information, never a lock"
     step_4: "Capture the Task Intent (goal / target state / expected result — record in the task file's ## Intent) and the Autonomy header field (full only when the request itself orders it, quoted), then classify the request against routing_scenarios"
     step_5: "If ambiguous — ask targeted clarifying questions (max 3); confirm interpretation if still unclear"
     step_6: "Announce plan: 'I will: update spec → plan → implement. Starting with spec update.'"
     step_7: "Per phase: run the project-knowledge gate first (load applicable .dev_flow/rules/ and .dev_flow/skills/, binding), then execute the phase following gate checks; after the last design document, stop at the design sign-off (DEC batch, changed docs, files to touch, proportionality block) before any code or shipped-file edit"
     step_8: "After each step: update only the caller's Subtask block + task-header Last updated. At phase boundaries: targeted Edit on dashboard/catalog and append Shared Activity Log entry"
-    step_9: "Present final summary with the intent verdict (met / partially met / diverged vs the recorded ## Intent — a divergence is surfaced, never absorbed) and, under Autonomy: full, the proportionality block without questions; whenever anything is to be committed, stop at the commit sign-off (changed files, review verdict, intent verdict, proportionality block; 'Ready to commit?') and commit only on the developer's yes"
+    step_9: "Present final summary with the intent verdict (met / partially met / diverged vs the recorded ## Intent — a divergence is surfaced, never absorbed) and, under Autonomy: full, the proportionality block without questions; whenever anything is to be committed, stop at the commit sign-off (changed files, review verdict, intent verdict, proportionality block, unpushed commits; 'Ready to commit?' and the push offered as its own question — SKILL.md → Developer Checkpoints) and commit only on the developer's yes"
 }
 ```

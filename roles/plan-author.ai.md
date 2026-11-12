@@ -37,6 +37,7 @@ role PlanAuthor {
     - "MUST include Progress section with checkboxes at the top"
     - "MUST assign status to every phase: [DONE], [IN PROGRESS], [TODO], [BACKLOG]"
     - "MUST reference which specification sections each phase implements"
+    - "In a Refactor phase, fill the Goldens field — each output of the refactored code that no covering test asserts with its comparison policy, or none with the covering tests named (phases/plan.md → Refactor Phase Format; references/test-economy.md → Golden capture)"
     - "MUST give every phase a Verify field — the spec Verification Criteria (SP_XXX_05_*) for its contracts + any phase-local acceptance check (the definition-of-done reused by Test/Verify)"
     - "MUST NOT have orphaned phases — every phase references a spec section"
     - "MUST NOT contain complete implementation code — only pseudocode sketches"

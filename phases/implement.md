@@ -80,7 +80,7 @@ Before writing code, verify:
 12. Update the plan phase status to [DONE].
 13. Update the plan Progress checkboxes.
 14. Reflection checkpoint — harvest rules/skills/tools, auto-applied through the structural gate; see [Reflection](#reflection--harvest-rules-skills-and-tools) below.
-15. Commit sign-off — changed files, review verdict, intent verdict, proportionality block; "Ready to commit?" and wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)). The commit message carries one `Keep-Test` trailer per new permanent test ([Test Economy](../references/test-economy.md#keep-reasons)).
+15. Commit sign-off — changed files, review verdict, intent verdict, proportionality block, unpushed commits; "Ready to commit?" and offer the push as its own question; wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)). The commit message carries one `Keep-Test` trailer per new permanent test ([Test Economy](../references/test-economy.md#keep-reasons)).
 
 ## Delegation for Focus
 
