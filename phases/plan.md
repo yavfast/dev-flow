@@ -188,7 +188,7 @@ When a code change restructures modules, files, or internal organization **witho
 5. Review (clean-context, phases/review.md) → Verify when its Activation Condition holds (phases/verify.md → Activation Condition); otherwise record the skip as `unobserved` with its reason
 6. Update the plan: mark Refactor phase [DONE]
 7. Skip Concept and Specification updates — contracts did not change
-8. Commit sign-off — changed files, review verdict, intent verdict, proportionality block, unpushed commits; "Ready to commit?" and offer the push as its own question (SKILL.md → Git Workflow Integration rule 6); wait
+8. Commit sign-off — changed files, review verdict, intent verdict, proportionality block, unpushed commits; "Ready to commit?" and offer the push as its own question (SKILL.md → Git Workflow Integration rule 6); wait; on the yes at the task's last commit, close the task before `git commit` (phases/status.md → On task completion)
 ```
 
 ### Refactor Phase Format in Plan

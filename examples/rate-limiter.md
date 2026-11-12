@@ -448,7 +448,7 @@ All checks passed:
 Ready to commit?
 ```
 
-After user confirms:
+After user confirms — this is the task's last commit, so the task is closed first: `Status: done`, the dashboard and catalog rows moved to Recently Completed ([status → On task completion](../phases/status.md#on-task-completion)). Here `.dev_flow/` is git-ignored, so nothing more is staged:
 
 ```
 git add engine/rate_limiter.py tests/test_rate_limiter.py docs/rate_limiter.plan.md
@@ -459,7 +459,7 @@ git commit -m "[SP_RLM] Implement token-bucket rate limiter with per-agent limit
 
 ## Step 9 — Propagate (`/dev-flow propagate`)
 
-Code landed → keep the docs in sync. The plan's phases are marked `[DONE]` and its `Status` moves to `completed`; the concept/spec stay `active`. An [Impact Walk](../references/impact.md) confirms nothing else references the changed contracts (e.g. `LLMRouter` integration).
+Code landed → check the docs are in sync; the check writes nothing here. The plan's phases were marked `[DONE]` and its `Status` moved to `completed` before the commit; the concept/spec stay `active`. An [Impact Walk](../references/impact.md) confirms nothing else references the changed contracts (e.g. `LLMRouter` integration).
 
 ```
 Propagation check for [SP_RLM]:

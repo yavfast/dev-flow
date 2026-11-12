@@ -41,7 +41,7 @@ An optional line of the record, after Expected result: `- **Outcome check:** <si
 
 **Verdict form** — at the sign-off of the task's last commit: `intent: <verdict> — outcome pending (<trigger>)`.
 
-**Open** — when the task becomes `done`, the contributor that sets it appends one entry to `outcomes:` in the ledger ([Evidence Discipline](evidence-discipline.md#outcome-entries)) and refreshes the dashboard's outcome-checks line. One entry per task: a task that has an entry gets no second one.
+**Open** — when the task becomes `done` — with its closure, before its last commit ([status](../phases/status.md#on-task-completion)) — the contributor that sets it appends one entry to `outcomes:` in the ledger ([Evidence Discipline](evidence-discipline.md#outcome-entries)) and refreshes the dashboard's outcome-checks line. One entry per task: a task that has an entry gets no second one.
 
 **Reconcile** — when the trigger of an open entry is due: in [audit](../phases/audit.md) Step 7b, at `do` intake as an offer that runs on the developer's yes, or on the developer's request. Append one verdict:
 
@@ -54,7 +54,7 @@ Then:
 - a verdict other than `still-unobserved` closes the entry;
 - a second consecutive `still-unobserved` goes to the developer: a new trigger, or the entry becomes `dropped`;
 - `partially met` and `diverged` come with an offered follow-up ([fix](../phases/fix.md) or [todo](../phases/todo.md)), never an auto-run;
-- the verdict goes into the report of the run that wrote it, and the dashboard's outcome-checks line is refreshed;
+- the verdict goes into the report of the run that wrote it, and the dashboard's outcome-checks line is refreshed; the write belongs to that run and goes into its commit;
 - the developer's word overrides the agent's verdict: append the new verdict, keep the old one;
 - `audit --dry-run` lists the due entries and appends nothing.
 

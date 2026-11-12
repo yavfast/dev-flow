@@ -141,11 +141,11 @@ Stops in every route where the main agent presents its work to the developer and
 ## Git Workflow Integration
 
 **Commit rules:**
-1. **Never commit without explicit user approval.** After completing a phase, stop at the commit sign-off ([Developer Checkpoints](#developer-checkpoints)): present the changes and ask "Ready to commit?". Only `Autonomy: full` in the task header skips it.
+1. **Never commit without explicit user approval** — the commit sign-off ([Developer Checkpoints](#developer-checkpoints)). Only `Autonomy: full` skips it.
 2. **Run pre-commit review** by a clean-context subagent before asking for commit approval.
 3. Only commit after the review passes and the user confirms.
 4. Commit message must reference the traceable ID: `[C_XXX] / [SP_XXX] / [PL_XXX]`. When the task is tied to a tracker ticket, the ticket key joins the ID in the message (e.g. `[PROJ-123][SP_XXX] …`) and the tracker's commit-time conventions apply, **each outward write confirmed first**. See [Ticket Tracker Integration](references/ticket-tracker.md).
-5. **After the commit (and push, when pushed)** on a ticket-tied task, proactively propose adding the corresponding ticket comment/worklog + status transition per the tracker's conventions — confirmed, never silent.
+5. **After the commit (and push, when pushed)** on a ticket-tied task, propose the ticket comment/worklog + status transition per the tracker's conventions — confirmed, never silent.
 6. **Offer the push with the commit.** When the branch has an upstream, the commit sign-off offers the push as its own question — a yes to the commit is not a yes to the push; under `Autonomy: full` the push follows the commit. A rejected push (the upstream moved) is reported with the upstream's incoming commits; the developer decides how to integrate.
 
 ## Subagents
@@ -175,7 +175,7 @@ dev-flow keeps a **collaborative per-task context** in `.dev_flow/` for several 
 - **Phase boundary.** Targeted Edit on the dashboard row. **Transition** (phase/subtask boundary, task switch): run the Transition Checkpoint — `{s:pin}` summary, demote raw entries, harvest durable lessons through the structural rule/skill/tool gate (never an auto-`must`), promote working memory to the task file ([Experience Capture](references/experience-capture.md)); a lesson with no matching rule is written without asking, never a fact about the developer or the machine ([Project Rules](references/conventions.md#project-rules)).
 - **Spotted-defect reflex.** An out-of-scope, deferrable defect is filed as an agent-initiated [`todo`](phases/todo.md) (cheap subagent, or inline if trivial) — never chased, never lost. In-scope or urgent → fix or escalate.
 - **Subtask finished.** Set its `Status: done`; the task stays `in-progress` until every subtask is done.
-- **Task completion.** Any contributor sets `Status: done`, moves the dashboard row to Recently Completed, updates the catalog, names the project tools the task left `unverified` and offers `/dev-flow audit tools`, then **surfaces queued follow-ups** (`.dev_flow/todos/` and plan backlogs triggered `after task_<this ID>`) as offers, not auto-runs, and opens the [outcome entry](references/task-intent.md#outcome-check) when the intent carries an Outcome check.
+- **Task completion.** On the yes to the task's last commit, before `git commit` (no commit → when the work ends): close your Subtask block, set `Status: done`, move the dashboard and catalog rows to Recently Completed, open an Outcome check's entry; stage what git tracks — no file records its own commit's hash, push or tracker ids. After the commit the report names each of the task's files `git status` still lists and the tools left `unverified` (offer `/dev-flow audit tools`), and **surfaces queued follow-ups** (todos, plan backlogs triggered `after task_<this ID>`) as offers, not auto-runs ([sequence](phases/status.md#on-task-completion)).
 - **Shared files.** Own your Subtask block and your tagged entries; append to shared sections, never rewrite others'; re-read a shared file immediately before writing it ([Collaboration Model](phases/status.md#collaboration-model-read-first)).
 - **Hygiene.** No logs, diffs, or narratives in context files; never link a `/tmp` path from a doc or task file; caps and archive: [Context Hygiene](phases/status.md#context-hygiene).
 

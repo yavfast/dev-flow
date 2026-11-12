@@ -31,7 +31,7 @@ The parent file [`../active_context.md`](../active_context.md) is a thin dashboa
 
 ## Recently Completed
 
-<!-- Latest 5. Older ones archive to ../session_history/. -->
+<!-- Latest 5. Older ones archive to ../session_history/. Outcome as in the dashboard row: no hash of the task's own commit. -->
 
 - [task_…](task_….md) — done YYYY-MM-DD — short outcome
 

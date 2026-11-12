@@ -110,6 +110,7 @@ For each task, compare its recorded header `Status` against ground truth:
 Then:
 
 - If reality is clearly ahead of the header (committed / closed but header lags) → update the header `Status` via a targeted Edit, refresh `Last updated`, and drop a `[your-id]` Coordination Note recording what evidence drove the change. Do **not** touch contributor Subtask blocks.
+- If the header says `done` but the task's files are uncommitted and no commit carries its ID → **flag in the report**, change nothing.
 - If reality and header disagree in a way evidence cannot settle → **flag in the report**, change nothing.
 - If a task references a document or traceable ID that no longer exists → flag as an orphan for the report; consider it for archival in Step 3 only if its work is demonstrably finished.
 

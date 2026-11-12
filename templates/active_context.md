@@ -25,7 +25,9 @@ A thin index over the task files in [`tasks/`](tasks/) — active and recently c
 
 ## Recently Completed
 
-<!-- Keep the latest 5. Older completed tasks move to .dev_flow/session_history/. -->
+<!-- Keep the latest 5. Older completed tasks move to .dev_flow/session_history/.
+     Result = the outcome. A row committed with the task carries no hash, push state or tracker id of that commit.
+     See `phases/status.md` → On task completion (dev-flow skill). -->
 
 | Task | Phase | Completed | Contributors | Result |
 |------|-------|-----------|--------------|--------|

@@ -18,8 +18,8 @@ This phase is handled by **Propagator**: [roles/propagator.ai.md](../roles/propa
 | 2 | Update specification | Only if the change is purely a plan/phase adjustment |
 | 3 | Update implementation plan | Only for trivial one-line fixes |
 | 4 | Implement in code | Never skip |
-| 5 | Run Test → Review → Verify → Commit | Follow the main pipeline phases |
-| 6 | Update document index | Only if no new/removed concepts |
+| 5 | Update document index | Only if no new/removed concepts |
+| 6 | Run Test → Review → Verify → Commit | Follow the main pipeline phases |
 
 **Anti-pattern:** "I'll just fix the code and update the spec later." This ALWAYS leads to drift.
 

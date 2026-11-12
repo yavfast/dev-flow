@@ -228,6 +228,8 @@ Before proceeding to commit:
 - [ ] Reflection checkpoint run — recurring failure modes harvested and auto-applied as rules/skills/tools (see [Reflection](#reflection--harvest-verification-lessons))
 - [ ] Ask the user for explicit commit approval — the commit sign-off of [Developer Checkpoints](../SKILL.md#developer-checkpoints)
 
+On the yes at the task's last commit: [close the task](status.md#on-task-completion) before `git commit`.
+
 ## Anti-Patterns
 
 - Skipping verification for "small" changes that affect shared code

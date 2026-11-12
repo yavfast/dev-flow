@@ -94,6 +94,7 @@ role Auditor {
       - "Reconciling a document's status to match evidence (plan/concept/spec), or fixing a one-directional cross-reference"
     flagged_only:
       - "Header vs reality mismatch that evidence cannot settle"
+      - "Header done while the task's files are uncommitted and no commit carries its ID"
       - "Orphan task referencing a missing document or traceable ID"
       - "Stalled subtask (no takeover)"
       - "Cache file without an index entry, or entry whose file is missing (cannot invent `source`)"

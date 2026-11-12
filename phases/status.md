@@ -243,18 +243,31 @@ The look runs once per new task; a continuation or a [resume](#resume--re-enter-
 ### After completing a phase
 
 1. **In your own Subtask block:** update Status (`review-pending` / `done`), set final Activity entry.
-2. **In the task header:** targeted Edit on `Status` (use the most active subtask's status, or "in-progress" if any subtask is still running).
+2. **In the task header:** targeted Edit on `Status` (use the most active subtask's status, or "in-progress" if any subtask is still running; never `done` — [On task completion](#on-task-completion) writes it).
 3. **In the dashboard:** targeted `Edit` of your task's row — update Phase, Status, Updated.
 4. **Append a Shared Activity Log entry** in the task file: `HH:MM [your-id] — subtask "<goal>" → <status>`.
 
-### On task completion (all subtasks done)
+### On task completion
 
-1. **In the task file:** set the task-level `Status: done`. Append a final Shared Activity Log entry.
-2. **In the dashboard:** targeted `Edit` — move your task's row from "Active Tasks" to "Recently Completed". If that list now exceeds 5 entries, move the oldest into `session_history/session_YYYY-MM-DD.md` and remove the row from the dashboard.
-3. **In the catalog:** same — move from Active to Recently Completed.
-4. **Tools awaiting audit:** name the project tools this task promoted, adapted or regenerated that are still `unverified`, and offer `/dev-flow audit tools` — a suggestion, not an auto-run ([Project Tools](../references/project-tools.md#verification-in-audit)).
-5. **Surface queued follow-ups:** scan `.dev_flow/todos/` and plan backlogs for `queued` records triggered `after task_<this ID>` and offer to run each next (`/dev-flow do …`) — a suggestion, not an auto-run; the executed work still passes its own gates and commit approval. See [todo phase](todo.md).
-6. **Open the outcome entry** when the task's `## Intent` carries an Outcome check line, and refresh the dashboard's outcome-checks line — [Outcome check](../references/task-intent.md#outcome-check).
+The task's last commit is the one after which no step of the task remains: every other subtask is `done`, and your Progress has no open item but the commit and what follows it. The closure goes into that commit.
+
+1. **Moment.** The developer's yes at the sign-off of the task's last commit (or `Autonomy: full`), before `git commit`. A declined sign-off writes nothing. A route with no commit (`research`, `ask`, `adopt`, a project without git) → when the work is done.
+2. **Write the closure:**
+   - **task file** — your Subtask block: `Status: done`, Progress checked off, no `Next` item; task-level `Status: done`; header `Last updated`; the final Shared Activity Log entry;
+   - **dashboard** — targeted `Edit`: move the task's row from "Active Tasks" to "Recently Completed". If that list now exceeds 5 entries, move the oldest into `session_history/session_YYYY-MM-DD.md` and remove the row from the dashboard;
+   - **catalog** — the same move, from Active to Recently Completed;
+   - **outcome entry** — when the task's `## Intent` carries an Outcome check line; refresh the dashboard's outcome-checks line ([Outcome check](../references/task-intent.md#outcome-check)).
+3. **Stage** the closure files git tracks, with the task's changes. Git ignores them → nothing to stage.
+4. **Commit.** One yes covers commits in several repositories → the closure is written before the first and goes into the commit of the repository that tracks it. The commit fails (a hook rejects it) → a retry on the same tree keeps the closure staged; a fix that changes the tree → undo the closure and return to review. The commit is abandoned → undo the closure.
+5. **After the commit:** the push, when approved; the tracker write, each confirmed ([Ticket Tracker Integration](../references/ticket-tracker.md)). Nothing after the commit is written to a file git tracks.
+6. **Clean check.** `git status --porcelain` in each repository the task touched, over the files the task changed and its closure files only. Empty, or the report names each leftover file and why.
+7. **Report:**
+   - **Tools awaiting audit:** name the project tools this task promoted, adapted or regenerated that are still `unverified`, and offer `/dev-flow audit tools` — a suggestion, not an auto-run ([Project Tools](../references/project-tools.md#verification-in-audit)).
+   - **Queued follow-ups:** scan `.dev_flow/todos/` and plan backlogs for `queued` records triggered `after task_<this ID>` and offer to run each next (`/dev-flow do …`) — a suggestion, not an auto-run; the executed work still passes its own gates and commit approval. See [todo phase](todo.md).
+
+**No post-commit facts.** A file in the commit records nothing that exists only after it: the commit's own hash, the push, a tracker comment id or status. `git log --grep <ID>` finds the hash. The Result of a Recently Completed row is the outcome. A later run that needs such a fact writes it in its own commit.
+
+**Other commits.** A commit that is not the task's last writes no closure. A contributor whose subtask ends while another is open closes its own Subtask block before its commit; task-level `done` goes into the commit that leaves no subtask open. A [batch](do.md#batch-of-tasks) closes each approved row in that row's commit.
 
 ### Project pointer
 

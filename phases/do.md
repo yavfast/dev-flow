@@ -154,7 +154,7 @@ This is also where [`resume`](status.md#resume--re-enter-a-task-in-a-fresh-sessi
    - Design sign-off — DEC batch, changed docs, files to touch, proportionality block; wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints))
    - Implement the change
    - Run the task's tests if a suite exists ([Test Economy](../references/test-economy.md#when-to-run))
-   - Review, then commit sign-off — changed files, review verdict, intent verdict, proportionality block, unpushed commits; "Ready to commit?" and offer the push as its own question ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints))
+   - Review, then commit sign-off — changed files, review verdict, intent verdict, proportionality block, unpushed commits; "Ready to commit?" and offer the push as its own question ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)); on the yes at the task's last commit, [close the task](status.md#on-task-completion) before `git commit`
 
 #### Scenario C — New feature (no existing documents)
 
@@ -187,8 +187,8 @@ Never rewrite another contributor's Subtask block or their tagged entries in sha
 
 If the user ends the session (or after completing a full phase chain):
 1. **Intent verdict (on completion).** When reporting the task done or stopping at the commit sign-off, compare the outcome to the task's `## Intent` (Expected result) and state `intent: met / partially met / diverged (+why)` in the report — a divergence is surfaced, never silently absorbed. At the sign-off of the task's last commit, an intent with an [Outcome check](../references/task-intent.md#outcome-check) adds `— outcome pending (<trigger>)`. Skip for a mid-task hand-off. See [Task Intent](../references/task-intent.md).
-2. Run the [status write protocol → on task completion](status.md#write-protocol) — Subtask `Status` and wrap-up Activity entry, header `Last updated` (task-level `Status: done` only when every contributor's subtask is done), the dashboard and catalog row move, the `unverified` tools named with the `/dev-flow audit tools` offer, the outcome entry of a task whose intent carries an Outcome check, and the [hygiene caps](status.md#context-hygiene) with overflow archived to `.dev_flow/session_history/`. Optionally add a hand-off Coordination Note (`[your-id] — stepping away, anyone may pick up from <here>`).
-3. **Surface queued follow-ups.** If the task became `done`, scan `.dev_flow/todos/` and plan backlogs for `queued` records triggered `after task_<this ID>` (fixes deferred *because their context overlapped this task*). List each and offer to run it next via `/dev-flow do …` — a suggestion, not an auto-run; the executed work passes its own gates and commit approval. See [todo phase](todo.md).
+2. Run the [status write protocol](status.md#write-protocol) — Subtask `Status` and wrap-up Activity entry, header `Last updated`, and the [hygiene caps](status.md#context-hygiene) with overflow archived to `.dev_flow/session_history/`. A task that ends here is closed by [On task completion](status.md#on-task-completion): these writes and the closure are made on the developer's yes at the sign-off of the task's last commit, before `git commit`, and go into that commit. Optionally add a hand-off Coordination Note (`[your-id] — stepping away, anyone may pick up from <here>`).
+3. **Surface queued follow-ups** — after the commit. If the task became `done`, scan `.dev_flow/todos/` and plan backlogs for `queued` records triggered `after task_<this ID>` (fixes deferred *because their context overlapped this task*). List each and offer to run it next via `/dev-flow do …` — a suggestion, not an auto-run; the executed work passes its own gates and commit approval. See [todo phase](todo.md).
 
 ## Batch of Tasks
 
@@ -205,12 +205,12 @@ A request that names two or more tasks forms a batch: each checkpoint is held on
 
 **Design sign-off** — once, before the first code edit of any member. Present each member's decisions, documents, files, and proportionality rows; a member with no design documents presents nothing and starts without an answer, and a batch with no design documents holds no design stop. The developer answers per member; any other member with no answer does not start.
 
-**Commit sign-off** — once, when each member has passed review or is blocked. A blocked member is not in the table and gets its own sign-off later. One row per member: task · files · review verdict with open advisories · intent verdict · open proportionality rows. The developer answers per row; "all" is valid only when the developer says it. The unpushed commits are shown once, and the push is offered once, as its own question, with the table; it runs after the approved rows are committed ([SKILL.md → Git Workflow Integration](../SKILL.md#git-workflow-integration)).
+**Commit sign-off** — once, when each member has passed review or is blocked. A blocked member is not in the table and gets its own sign-off later. One row per member: task · files · review verdict with open advisories · intent verdict · open proportionality rows. The developer answers per row; "all" is valid only when the developer says it. The unpushed commits are shown once, and the push is offered once, as its own question, with the table; it runs after the approved rows are committed ([SKILL.md → Git Workflow Integration](../SKILL.md#git-workflow-integration)). Approved rows, one at a time: [close](status.md#on-task-completion) the row's task, commit it, then the next.
 
 - approved row → one commit, with its own message and IDs, staged from its own file list;
 - declined row → stays uncommitted and returns to its own loop;
 - row with no answer → no commit;
-- two approved rows share a file → neither is committed; run the two tasks in sequence.
+- two approved rows share a file other than a closure file (dashboard, catalog, ledger) → neither is committed; run the two tasks in sequence.
 
 Never one commit for several tasks; never an inferred yes. Under `Autonomy: full` the batch holds no stops. A subagent holds no checkpoint and makes no commit.
 
@@ -237,8 +237,9 @@ User request received
 │   └─ fix
 │
 ├─ "commit" / "закоміть"
-│   └─ commit sign-off held on the current tree → commit; else run what is
-│      missing (review, verify), then hold the sign-off; batch → ask which row
+│   └─ commit sign-off held on the current tree → close the task when this is its
+│      last commit, then commit; else run what is missing (review, verify),
+│      then hold the sign-off; batch → ask which row
 │
 ├─ Describes documentation update
 │   └─ propagate / review

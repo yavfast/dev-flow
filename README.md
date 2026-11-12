@@ -305,6 +305,8 @@ Work state is persisted in a **collaborative per-task** model so multiple AI age
 - `.dev_flow/active_context.md` — lightweight dashboard listing active tasks and recently completed ones (links to the task files).
 - `.dev_flow/tasks/_index.md` — directory catalog with conventions and lists.
 
+A finished task is closed inside its last commit: on your yes at the commit sign-off the agent marks the task done, moves its dashboard and catalog rows, and stages those files with the code — no state file trails the commit, and the agent ends by checking that the task left nothing uncommitted.
+
 Inspect state with `/dev-flow status` (lists active tasks) or `/dev-flow status <task_id>` (details for one task); pick the work back up with `/dev-flow resume`.
 
 **What the agent loads, and how it finds its place again.** Each `/dev-flow` call loads `SKILL.md` — the rules that hold on every route; the agent reads the command's phase file before its first action, and a subagent gets its role file by path in its brief. After a context compaction or in a new session the agent reads the task file: the `Next` item of its progress list names the step, the phase file, and the section to read. On the project's first task dev-flow offers once to add a short `## dev-flow` paragraph to the project's `CLAUDE.md` or `AGENTS.md`, so that a session that never called the skill still finds it; it is written only on your yes.

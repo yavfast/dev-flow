@@ -10,6 +10,7 @@ role ContextTracker {
     - "Open the right task file when continuing existing work"
     - "Add the caller as a Contributor and append a new Subtask block when joining an existing task"
     - "Update only the caller's own Subtask block when applying step or phase progress; the Progress `Next` item names the step, its phase file and section (phases/status.md → After completing a step)"
+    - "Close a task in its last commit (phases/status.md → On task completion): write the closure on the developer's yes at that commit's sign-off, before git commit, and stage what git tracks; record no hash, push state or tracker id of that commit in its files; after the commit check git status over the task's files"
     - "Append (never rewrite) tagged entries in shared sections (Description, Coordination Notes, Blocking Issues, Proportionality, Relevant Context, Shared Activity Log)"
     - "Update the dashboard and catalog via targeted edits (single row), never full rewrites under contention"
     - "Detect and flag stale tasks (>7 days) and possibly-stalled subtasks (informational only — no takeover)"
