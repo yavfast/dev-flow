@@ -28,7 +28,7 @@ Descending the pipeline: **scope narrows, fidelity sharpens, gate strictness ris
 
 Each anticipation gets exactly one verdict. Discriminators, cheap (don't expand into an analysis tree — that is the overthinking failure mode):
 
-- **Is there a named, near-term trigger?** (a concrete consumer / requirement / event) — **no trigger → never `build now`** (this is the [Minimality gate](../SKILL.md#validation-gates): no consumer → cut).
+- **Is there a named, near-term trigger?** (a concrete consumer / requirement / event) — **no trigger → never `build now`** (this is the [Minimality gate](../phases/concept.md#gate-check-concept---specification): no consumer → cut).
 - **Cost asymmetry:** is retrofitting later more expensive than acting now?
 - **Seam or commitment?** A reversible *seam* (interface, extension point, nullable boundary) is cheap — take it freely. A *commitment* (imposes a present design tax, constrains the future) needs a trigger. A seam counts as "free" only when it costs ≈nothing **and** improves the code in front of you now; at strict (implement/fix) altitude a seam that exists *solely* for an untriggered future is the speculation the gate drops, not a free affordance.
 

@@ -5,7 +5,7 @@
 - [Purpose](#purpose) — scope of the phase: gates, document conflicts, deprecation, doc-code alignment, pre-commit review
 - [Pre-Commit Code Review](#pre-commit-code-review) — clean-context reviewer, tripwires, round scoping/mode, checks table, materiality, report format
 - [After Review: Verify Phase](#after-review-verify-phase) — hand-off to verify before commit; Review -> Verify gate checklist
-- [Validation Gates](#validation-gates) — pointer to canonical SKILL.md gates and this phase's supplements
+- [Validation Gates](#validation-gates) — where each gate's criteria live, and this phase's supplements
 - [Hallucination-Risk Heuristics](#hallucination-risk-heuristics) — red/yellow flag tables for specs, application steps, precision test
 - [Project Rules Compliance](#project-rules-compliance) — rules activation protocol, severity handling, findings table, rule-update procedure
 - [Conflict Resolution Protocol](#conflict-resolution-protocol) — conflict detection criteria, resolution steps table, changelog audit
@@ -111,7 +111,7 @@ After the review passes, proceed to the [Verify phase](verify.md) for regression
 
 ## Validation Gates
 
-Run gate checks before advancing to the next pipeline stage. The canonical, complete criteria for every gate live in [SKILL.md → Validation Gates](../SKILL.md#validation-gates) — run that full checklist, never a from-memory subset. Review-phase supplements: the [Hallucination-Risk Heuristics](#hallucination-risk-heuristics) below extend the Specification → Plan gate; [Project Rules Compliance](#project-rules-compliance) extends the pre-commit code review.
+Run gate checks before advancing to the next pipeline stage. Each gate's complete criteria live in a phase file; the table in [SKILL.md → Validation Gates](../SKILL.md#validation-gates) links each one — run that full checklist, never a from-memory subset. Review-phase supplements: the [Hallucination-Risk Heuristics](#hallucination-risk-heuristics) below extend the Specification → Plan gate; [Project Rules Compliance](#project-rules-compliance) extends the pre-commit code review.
 
 ## Hallucination-Risk Heuristics
 

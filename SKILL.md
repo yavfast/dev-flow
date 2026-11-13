@@ -75,58 +75,17 @@ A rule, skill or project tool carries an optional **evidence state** (`present` 
 
 ## Validation Gates
 
-**Concept -> Specification:**
-- No contradictions with existing active concepts
-- All integration points listed in Dependencies
-- Scope clearly bounded (what this IS and IS NOT)
-- Pre-Concept Checklist answered (see concept phase) — answers rest on verified knowledge: an unverified critical assumption goes through [research](phases/research.md) (spike) first, or is explicitly accepted by the user as an open decision with a trigger
-- Reuse Check completed — no unjustified overlap with existing concepts
-- No banned phrases (see concept phase — Banned Phrases)
-- Minimality: concept describes the minimum viable solution — no "just in case" sections with no stated consumer
-- Design decisions settled: every material fork is resolved (consensus + rationale) or recorded as an open decision with a resolution trigger (see [Interview Mode](references/interview-mode.md))
+A phase starts only when the gate before it passes. Read the gate's criteria at its row's link and check every one — never from memory.
 
-**Specification -> Plan:**
-- All data structures fully defined with types, constraints, invariants
-- All contracts specified with inputs, outputs, error cases
-- Verification criteria defined for all contracts (expected outcomes, edge cases)
-- Integration scenarios described for cross-module interactions
-- Rollback strategy documented (Section 06)
-- No banned phrases (see specification phase — Banned Phrases)
-- Minimality: no contracts or entities without a stated consumer
-- Self-validation checklist passes (see [specification phase](phases/specification.md))
-- Design decisions settled: every material modelling/contract fork is resolved (consensus + rationale) or recorded as an open decision with a resolution trigger (see [Interview Mode](references/interview-mode.md))
-
-**Plan -> Code:**
-- Plan covers ALL specification sections
-- Technology decisions documented with rationale
-- Contested technology forks resolved (consensus + rationale) or recorded as open decisions with a resolution trigger (see [Interview Mode](references/interview-mode.md))
-- Phase dependencies explicitly stated
-- Every phase declares what to verify on completion — a `Verify:` field naming the spec Verification Criteria (`SP_XXX_05_*`) for its contracts plus any phase-local acceptance check (the reusable checklist for [Test](phases/testing.md)/[Verify](phases/verify.md))
-
-**Code -> Test** (conditional — functional tests):
-- Every verification criterion the change touches is checked; an unchecked one is `unobserved` with its reason
-- A criterion marked `keep` has a permanent test; every other new permanent test names its keep reason
-- Trivial checks leave no permanent test
-- Only the task's tests are run (unit + mock) — never the full suite
-
-**Test -> Review:**
-- All relevant functional tests pass
-- No regressions in changed code area
-
-**Review -> Verify** (conditional — regression/live):
-- Pre-commit review by a clean-context subagent passes (no blocking issues)
-- Warnings presented to user and acknowledged
-- Ask user permission before creating new integration/live test scenarios
-- If no automated verification is possible — provide manual verification steps
-
-**Verify -> Commit:**
-- Regression tests pass (if applicable)
-- Integration tests pass (if applicable)
-- Live tests pass or manual verification completed (app/service launched, scenario checked)
-- If Verify finds issues → fix code → re-run Test (if exists) → re-run Review → re-run Verify — no fix cycle left incomplete
-- If a failure traces to the spec/plan itself (not the code) — do not bend the code: escalate upstream first (see [Upstream Escalation](references/escalation.md))
-- Reflection checkpoint run — durable lessons harvested (see [Experience Capture](references/experience-capture.md))
-- Ask the user for explicit commit approval before committing — the commit sign-off of [Developer Checkpoints](#developer-checkpoints)
+| Transition | Criteria |
+|------------|----------|
+| Concept -> Specification | [concept § Gate Check](phases/concept.md#gate-check-concept---specification) |
+| Specification -> Plan | [specification § Gate Check](phases/specification.md#gate-check-specification---plan) |
+| Plan -> Code | [implement § Gate Check](phases/implement.md#gate-check-plan---code) |
+| Code -> Test (conditional) | [testing § Gate Check](phases/testing.md#gate-check-code---test) |
+| Test -> Review | [testing § Gate Check](phases/testing.md#gate-check-test---review) |
+| Review -> Verify (conditional) | [review § Gate Check](phases/review.md#gate-check-review---verify) |
+| Verify -> Commit | [verify § Gate Check](phases/verify.md#gate-check-verify---commit) |
 
 ## Developer Checkpoints
 

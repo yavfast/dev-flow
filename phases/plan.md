@@ -40,7 +40,7 @@ A rule, an existing concept, or a documented convention that already settles a c
 
 ## Design Sign-off
 
-When the plan passes its gate, stop before implementation: present the developer's Design Decisions (question → options → recommendation) and the agent's, one line each, the documents created or changed, the files implementation will touch, the [proportionality block](../references/proportionate-caution.md#proportionality-block); wait. Skipped only under `Autonomy: full`. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
+When the plan passes [its gate](implement.md#gate-check-plan---code), stop before implementation: present the developer's Design Decisions (question → options → recommendation) and the agent's, one line each, the documents created or changed, the files implementation will touch, the [proportionality block](../references/proportionate-caution.md#proportionality-block); wait. Skipped only under `Autonomy: full`. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
 
 ## Structure
 
@@ -184,7 +184,7 @@ When a code change restructures modules, files, or internal organization **witho
    - Name each output of the refactored code that no covering test asserts; each gets a golden (references/test-economy.md → Golden capture)
    - Design sign-off: present the Refactor phase and the proportionality block, and wait for the developer's go (SKILL.md → Developer Checkpoints)
 3. Capture the goldens from the old code before the first edit; implement the refactoring; update file paths in other phases of the plan
-4. Run the task's tests that cover the refactored code (references/test-economy.md → When to run) — all must pass without modification — and the goldens, each matching under its comparison policy; wider breadth belongs to Verify
+4. Run the task's tests that cover the refactored code (references/test-economy.md → When to run; gates around the run: phases/testing.md → Gate Check (Code -> Test), Gate Check (Test -> Review)) — all must pass without modification — and the goldens, each matching under its comparison policy; wider breadth belongs to Verify
 5. Review (clean-context, phases/review.md) → Verify when its Activation Condition holds (phases/verify.md → Activation Condition); otherwise record the skip as `unobserved` with its reason
 6. Update the plan: mark Refactor phase [DONE]
 7. Skip Concept and Specification updates — contracts did not change

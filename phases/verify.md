@@ -154,7 +154,7 @@ Here the prescription must come from a record written **before** the fix existed
 
 ### Manual Verification
 
-When automated verification is not available, provide the user with a step-by-step checklist of actions to perform:
+When automated verification is not available, provide the user with a step-by-step checklist of actions to perform; manual verification is completed by the user — wait for their result:
 
 1. **Prerequisites** — running services, test data, environment setup
 2. **Step-by-step actions** the user should perform
@@ -222,11 +222,11 @@ No claim outruns its evidence — "verified" / "clean" only for what actually ra
 Before proceeding to commit:
 - [ ] Regression tests pass (if applicable)
 - [ ] Integration tests pass (if applicable)
-- [ ] Live tests pass or manual verification completed by user
-- [ ] If Verify found issues → fix → re-run Test (if exists) → Review → Verify — no fix cycle left incomplete
-- [ ] A failure that traces to the spec/plan itself is escalated upstream, not coded around (see [Upstream Escalation](../references/escalation.md))
-- [ ] Reflection checkpoint run — recurring failure modes harvested and auto-applied as rules/skills/tools (see [Reflection](#reflection--harvest-verification-lessons))
-- [ ] Ask the user for explicit commit approval — the commit sign-off of [Developer Checkpoints](../SKILL.md#developer-checkpoints)
+- [ ] Live tests pass or manual verification completed (app/service launched, scenario checked)
+- [ ] If Verify finds issues → fix code → re-run Test (if exists) → re-run Review → re-run Verify — no fix cycle left incomplete
+- [ ] If a failure traces to the spec/plan itself (not the code) — do not bend the code: escalate upstream first (see [Upstream Escalation](../references/escalation.md))
+- [ ] Reflection checkpoint run — durable lessons harvested (see [Experience Capture](../references/experience-capture.md))
+- [ ] Ask the user for explicit commit approval before committing — the commit sign-off of [Developer Checkpoints](../SKILL.md#developer-checkpoints)
 
 On the yes at the task's last commit: [close the task](status.md#on-task-completion) before `git commit`.
 

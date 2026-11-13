@@ -30,7 +30,7 @@ When the code you are about to write has a *known or near-term* second consumer,
 - a **plausible but untriggered** one → `seam + flag` at most (a thin extension point, no speculative machinery);
 - **no trigger** → `drop + record` — write the direct, single-use version; do not pre-abstract.
 
-This never overrides [Minimality](../SKILL.md#validation-gates): a reuse seam with no stated consumer is itself dead weight.
+This never overrides [Minimality](../phases/concept.md#gate-check-concept---specification): a reuse seam with no stated consumer is itself dead weight.
 
 ## Restraint — resist over-DRY
 

@@ -226,8 +226,8 @@ class RateLimiter:
 
 > This table is an at-a-glance summary. The **authoritative, complete** gate criteria
 > (Pre-Concept Checklist, Reuse Check, banned phrases, minimality, design-decision
-> settlement, rollback strategy, self-validation) live in
-> [SKILL.md → Validation Gates](SKILL.md#validation-gates).
+> settlement, rollback strategy, self-validation) live in the phase file where each
+> gate is checked; [SKILL.md → Validation Gates](SKILL.md#validation-gates) names it.
 
 ### Pre-Commit Review
 

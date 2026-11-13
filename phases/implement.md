@@ -5,7 +5,7 @@
 - [Purpose](#purpose) — code as an artifact derived from the specification and the plan
 - [Role Responsible](#role-responsible) — the Implementer role; the brief lines of a delegated code edit
 - [Rules](#rules) — what holds for every code edit of the phase
-- [Gate Check Before Starting](#gate-check-before-starting) — the Plan → Code gate, knowledge checks, the design sign-off
+- [Gate Check (Plan -> Code)](#gate-check-plan---code) — the gate criteria, the design sign-off, knowledge checks
 - [Implementation Workflow](#implementation-workflow) — the steps of one plan phase, from the plan's `Verify:` field to the commit sign-off
 - [Delegation for Focus](#delegation-for-focus) — which steps go to a subagent and with which brief
 - [Reflection — harvest rules, skills, and tools](#reflection--harvest-rules-skills-and-tools) — the reflection checkpoint and its filters
@@ -38,16 +38,16 @@ class PermissionInterceptor:
 
 - **Update the plan status** after completing each phase: `[TODO]` → `[IN PROGRESS]` when starting, `[IN PROGRESS]` → `[DONE]` when the phase's verification passes (workflow steps 6-11), and tick the checkbox in the Progress section.
 
-## Gate Check Before Starting
+## Gate Check (Plan -> Code)
 
 **Design sign-off (stop).** Before the first code edit, the task file must show the developer's go at the design sign-off; missing → present it (DEC batch, changed docs, files to touch, proportionality block) and wait. No stop for a Trivial change (no design documents); otherwise skipped only under `Autonomy: full`. A `proposed` Design Decision counts as settled for the checklist below, but no code edit runs on one. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
 
 Before writing code, verify:
-- [ ] The plan covers ALL specification sections
-- [ ] Technology decisions are documented with rationale
-- [ ] Contested technology forks are resolved (consensus + rationale) or recorded as open decisions with a resolution trigger (see [Interview Mode](../references/interview-mode.md))
-- [ ] Phase dependencies are explicitly stated
-- [ ] The phase you're implementing declares a `Verify:` field (what to check on completion)
+- [ ] Plan covers ALL specification sections
+- [ ] Technology decisions documented with rationale
+- [ ] Contested technology forks resolved (consensus + rationale) or recorded as open decisions with a resolution trigger (see [Interview Mode](../references/interview-mode.md))
+- [ ] Phase dependencies explicitly stated
+- [ ] Every phase declares what to verify on completion — a `Verify:` field naming the spec Verification Criteria (`SP_XXX_05_*`) for its contracts plus any phase-local acceptance check (the reusable checklist for [Test](testing.md)/[Verify](verify.md))
 
 **Skill check (gate).** Identify the technologies/patterns this task uses. MUST read `.dev_flow/skills/_index.yaml` and load matching skills BEFORE writing code or doing research. If research is still needed, save consolidated results to `.dev_flow/skills/` after the task. See [skill phase](skill.md).
 
@@ -84,7 +84,7 @@ Before writing code, verify:
 3. Write code that satisfies ALL spec contracts and the phase's `Verify:` checklist.
 4. Add traceable ID comments linking back to concept/spec.
 5. Check the spec's error cases and invariants; choose the form of each check by [Test Economy](../references/test-economy.md#choosing-the-form) — a permanent test only with a keep reason, trivial behaviour as a temporary test; see [Test phase](testing.md).
-6. After each edit, run the task-set tests (unit → mock) that cover the edited code — never the full suite ([When to run](../references/test-economy.md#when-to-run)).
+6. After each edit, run the task-set tests (unit → mock) that cover the edited code — never the full suite ([When to run](../references/test-economy.md#when-to-run)); gates around the run: [Code -> Test](testing.md#gate-check-code---test), [Test -> Review](testing.md#gate-check-test---review).
 7. Fix any test failures — code must satisfy the spec.
 8. Run pre-commit review (clean-context subagent) — see [Review phase](review.md).
 9. Fix any blocking issues from the review; re-run the task-set tests that cover the fix ([When to run](../references/test-economy.md#when-to-run)).

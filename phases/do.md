@@ -153,7 +153,7 @@ This is also where [`resume`](status.md#resume--re-enter-a-task-in-a-fresh-sessi
    - Gate: plan → implement
    - Design sign-off — DEC batch, changed docs, files to touch, proportionality block; wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints))
    - Implement the change
-   - Run the task's tests if a suite exists ([Test Economy](../references/test-economy.md#when-to-run))
+   - Run the task's tests if a suite exists ([Test Economy](../references/test-economy.md#when-to-run)); gates around the run: [Code -> Test](testing.md#gate-check-code---test), [Test -> Review](testing.md#gate-check-test---review)
    - Review, then commit sign-off — changed files, review verdict, intent verdict, proportionality block, unpushed commits; "Ready to commit?" and offer the push as its own question ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)); on the yes at the task's last commit, [close the task](status.md#on-task-completion) before `git commit`
 
 #### Scenario C — New feature (no existing documents)

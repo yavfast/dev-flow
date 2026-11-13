@@ -72,6 +72,19 @@ Every specification must pass these checks before advancing to the plan:
 - [ ] Is the spec minimal — no "just in case" contracts with no stated consumer?
 - [ ] Is every material design fork either resolved (consensus + rationale) or recorded as an open decision with a resolution trigger in Design Decisions (see Interview Mode)?
 
+## Gate Check (Specification -> Plan)
+
+Before the plan starts, verify:
+- [ ] All data structures fully defined with types, constraints, invariants
+- [ ] All contracts specified with inputs, outputs, error cases
+- [ ] Verification criteria defined for all contracts (expected outcomes, edge cases)
+- [ ] Integration scenarios described for cross-module interactions
+- [ ] Rollback strategy documented (Section 06)
+- [ ] No [banned phrases](#banned-phrases)
+- [ ] Minimality: no contracts or entities without a stated consumer
+- [ ] [Self-validation checklist](#self-validation-checklist) passes
+- [ ] Design decisions settled: every material modelling/contract fork is resolved (consensus + rationale) or recorded as an open decision with a resolution trigger (see [Interview Mode](../references/interview-mode.md))
+
 ## Structure
 
 File structure: [templates/specification.md](../templates/specification.md).

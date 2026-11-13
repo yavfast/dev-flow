@@ -235,6 +235,6 @@ A row is **open** until an answer with the same `kind`, `ref`, and occurrence ex
 
 ## Boundaries
 
-- No criterion of `## Validation Gates` changes. The developer checkpoints stay as they are; each one shows the block.
+- No gate criterion changes. The developer checkpoints stay as they are; each one shows the block.
 - The [Adaptation Profile](adaptation-profile.md) rule "secrets are never written" does not change.
 - The [Safe Testing Principle](../phases/verify.md#safe-testing-principle) of verify stays in force; its list of destructive operations is read together with the hard floor.

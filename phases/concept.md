@@ -12,6 +12,7 @@
 - [Authoring Principles](#authoring-principles) — ideas over implementation, domain language, diagrams, boundaries, criticality header, formatting, Contents, changelog
 - [Interview Mode for Design Decisions](#interview-mode-for-design-decisions) — surface material forks as interviews; open decisions vs banned deferrals; forecast check
 - [Banned Phrases](#banned-phrases) — table of deferral phrases ("temporarily", "for now", "TBD", …) with what to write instead
+- [Gate Check (Concept -> Specification)](#gate-check-concept---specification) — the criteria a concept meets before its specification starts
 - [Structure](#structure) — points at `templates/concept.md` for the concept file structure
 - [Spike / Exploration (Optional)](#spike--exploration-optional) — when to run a research spike before or during authoring and how to reference it
 - [Concept Granularity](#concept-granularity) — when to split, when to keep together, rule of thumb; size thresholds from Docs Scaling
@@ -108,6 +109,18 @@ Reject or flag the following phrases in any concept.
 | "for now" / "поки що" | Same as "temporarily" | State the permanent design decision |
 | "simple wrapper around X" | Wrappers grow into unmaintainable layers | Describe the actual abstraction and its boundaries |
 | "TBD" / "to be defined" | A hidden deferral with no owner and no trigger | Resolve it now, run a [research spike](research.md), or record an open decision with a resolution trigger |
+
+## Gate Check (Concept -> Specification)
+
+Before the specification starts, verify:
+- [ ] No contradictions with existing active concepts
+- [ ] All integration points listed in Dependencies
+- [ ] Scope clearly bounded (what this IS and IS NOT)
+- [ ] [Pre-Concept Checklist](#pre-concept-checklist) answered — answers rest on verified knowledge: an unverified critical assumption goes through [research](research.md) (spike) first, or is explicitly accepted by the user as an open decision with a trigger
+- [ ] [Reuse Check](#reuse-check) completed — no unjustified overlap with existing concepts
+- [ ] No [banned phrases](#banned-phrases)
+- [ ] Minimality: concept describes the minimum viable solution — no "just in case" sections with no stated consumer
+- [ ] Design decisions settled: every material fork is resolved (consensus + rationale) or recorded as an open decision with a resolution trigger (see [Interview Mode](../references/interview-mode.md))
 
 ## Structure
 
