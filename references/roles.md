@@ -25,6 +25,10 @@ Roles are written in one of the framings below — a **convention**, not a fixed
 
 Both framings typically carry the shared spine (`title`/`description`/`inputs`/`outputs` — a lean role like `advisor` or `todo-planner` keeps only what it needs) and a `workflow` step list (structured `step_N:` entries, or a short prose block for a simple role). Everything else is role-specific and added freely. Don't normalise a role into the other framing for uniformity's sake; choose by whether the role is *obligated* or *autonomous*.
 
+## Role style
+
+A role fixes what is done and returned; the manner — how far to go beyond the given, how to treat doubt — is the **role style**, selected per phase and handed to a subagent in its brief. It never changes a role's obligations or output contract, and a role file names no style. Owner: [Role Styles](role-styles.md).
+
 ## Base roles by phase
 
 These are the base roles the skill ships, by phase (paths relative to the skill root). A project overlay or specialization with the same concern takes precedence over its base where it applies.

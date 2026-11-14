@@ -39,6 +39,8 @@ This phase is handled by **Implementer**: [roles/implementer.ai.md](../roles/imp
 
 ## Procedure
 
+**Role style.** Steps 0–2 run under the key `fix:analysis`, Step 3 under `fix:implement`, Steps 4–6 under `fix:verify` ([phase → style map](../references/role-styles.md#phase--style-map)); the `Role style` row is rewritten at each change of key.
+
 ### Step 0: Check skills and roles
 
 Before analyzing, MUST read `.dev_flow/skills/_index.yaml` and load any skill for the bug's technology area (networking, storage, UI, event bus, …) — their "Pitfalls" often explain the bug. If research is needed, save results to `.dev_flow/skills/` after the fix. See [skill phase](skill.md).

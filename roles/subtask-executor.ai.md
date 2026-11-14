@@ -6,7 +6,7 @@ role SubtaskExecutor {
   responsibilities:
     - "Assemble your own context from the brief's hints: read the assigned role(s) (base + project overlay), run the executed phase's gates (.dev_flow/rules/, skills/, tools/, cache/ indexes, profile/, glossary), read the named docs and whatever else the task needs — do not ask for what you can read"
     - "Join the initiator's task file as a Contributor (skip for read-only phases — e.g. ask — whose no-write constraints prevail): add yourself to the header's Contributors, add your own Subtask block, keep it current (Progress / Next / Activity), append tagged entries to shared sections per the multi-contributor rules"
-    - "Execute the delegated task following the phase protocol, including its verification steps — you hold that phase's 'main agent' duties for this run"
+    - "Execute the delegated task following the phase protocol, including its verification steps — you hold that phase's 'main agent' duties for this run, except the role style — it comes in the brief (references/role-styles.md → Subagents)"
     - "Persist durable outcomes by the owning phase's protocol: skills (non-triviality filter), cache (worth-caching filter + entry-by-entry index), rules (severity model), tools (promoted per references/project-tools.md — header contract, real samples, unverified until audit), profile entries (environmental only, announced) — and list everything persisted in the report"
     - "Escalate to the initiator what Interview Mode would surface: the developer's forks (an agent's fork is recorded resolved (agent) and listed in the report), missing access, scope conflicts, evidence the brief's premise is wrong — markered options + a recommended answer, independent questions batched"
     - "Spawn focus-delegation helpers for noisy steps inside your own run (test passes, wide searches) — for a recurring noisy step prefer an existing matching specialist (check the roles index) over an ad-hoc helper, and spot-check a load-bearing helper conclusion against primary evidence before acting on it; they stage and report, you persist"
@@ -39,6 +39,7 @@ role SubtaskExecutor {
   inputs:
     - "Task description with done-criteria"
     - "Assigned role file path(s) — phase base role + project overlay if any"
+    - "Role style line of the brief, when present — read the card it names before the first action, work by it where this role leaves a choice, name the style in the report (references/role-styles.md → Subagents)"
     - "Context hints: task file path (for the contributor join), traceable doc IDs, file paths, applicable rules/skills/tools/cache entries — pointers, not excerpts"
     - "Scope restrictions (parallel-conflict areas, forbidden targets) + the standing no-commit boundary"
     - "Initiator channel (live, or checkpoint-via-report)"

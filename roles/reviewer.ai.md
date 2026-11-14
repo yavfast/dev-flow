@@ -73,6 +73,7 @@ role Reviewer {
     description: "Code review performed before commit by a subagent with clean context"
     inputs:
       - "Git diff of all changes"
+      - "Role style line of the brief, when present — read the card it names before the first action, work by it where this role leaves a choice, name the style in the report (references/role-styles.md → Subagents)"
       - "Relevant specification (*.sp.md)"
       - "Relevant plan (*.plan.md)"
       - "Project rules (.dev_flow/rules/) if exist"

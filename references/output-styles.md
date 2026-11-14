@@ -2,6 +2,8 @@
 
 Cross-cutting sub-procedure of **every phase that writes a documentation file or answers the developer**. Not a pipeline stage, no command. **Advisory:** loading the project file is a gate, applying a profile is judgment at the moment of writing — it adds no gate criterion. Text *mechanics* belong to [Documentation Formatting](formatting.md); this reference owns the *register* — language, semantic complexity, and how a pointer to another document is carried.
 
+A register is how text is written; how the work itself is done is a **role style** — [Role Styles](role-styles.md).
+
 ## The surfaces
 
 | Surface | Reader | What is written there |

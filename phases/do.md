@@ -69,6 +69,8 @@ This command is handled by **DevFlowOrchestrator**: [roles/dev-flow-orchestrator
 
 **Capture the intent first.** If the request itself orders an unattended run ("автономно", "без зупинок"), set the task header `Autonomy: full — "<quote>"`; a harness or system autonomy setting does not ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)). Before classifying, extract the [Task Intent](../references/task-intent.md) — the goal (why), target state, and expected result — from the request wording, active context, and any linked ticket. Distinguish the *requested action* from the *underlying goal*; mark inferred parts `(inferred)`. Record it in the task file's `## Intent` section (in Step 6 for a new task). Skip the record for trivial routes with self-evident intent.
 
+**Role style.** A manner the request names ("creative", "строго за планом") is [the developer's choice](../references/role-styles.md#the-developers-choice) — a pin in the task file's `Role style` row (in Step 6 for a new task). Each phase of the route sets its style at its start ([Role Styles](../references/role-styles.md#selecting-the-style)).
+
 **Two or more tasks in one request** → [Batch of Tasks](#batch-of-tasks).
 
 Analyze the freeform request against the loaded context to determine:
@@ -94,6 +96,7 @@ Analyze the freeform request against the loaded context to determine:
 | **Capture for later** | "todo", "колись", "на майбутнє", "maybe later", "capture this idea", "потім" (deferred); or "виправити після поточної", "fix after this task", "помітив … але не зараз", "after this is done" (queued follow-up noticed mid-task, contexts overlap) — work to file, not execute now | todo |
 | **Research / investigate** | "research", "дослідити", "spike", "compare approaches", "порівняй підходи", "не знаю, який підхід", "what's the best way to" — answer needs external sources, measurements, or an unexplored solution space; "prototype first", "спершу прототип", "спробуй прототипом" → scope `prototype` ([Prototype in the Project](research.md#prototype-in-the-project)) | research |
 | **Learn from an external repo** | "adopt", "analyze repo", "розбери репозиторій", "проаналізуй репо", "що взяти з X", "what can we borrow from", "which ideas from X are useful here" — a *named external repository* (path or URL) is the subject | adopt — [External Repo Adoption](../references/repo-adoption.md) |
+| **Set / change the role style** | "стиль: креативний", "працюй прискіпливо", "switch to formal", "додай стиль проєкту" | inline — [the developer's choice](../references/role-styles.md#the-developers-choice) or a [project card](../references/role-styles.md#project-styles); work the request also orders is routed by its own row |
 | **Plan only** | "plan", "сплануй", no code changes mentioned | plan |
 
 When the intent is **ambiguous**, ask targeted clarifying questions before routing (capped at Step 3). Do **not** start executing before the intent is clear.
@@ -177,7 +180,7 @@ If updates are needed:
 
 ### Step 6: Update context
 
-For a **new task**, set the header `Autonomy` field and fill the task file's `## Intent` section with what Step 2 captured (goal / target state / expected result) — it is the reference every later check compares against ([Task Intent](../references/task-intent.md)). If the user restates the goal mid-task, update the section and re-check open work against it.
+For a **new task**, set the header `Autonomy` field, write the role-style pin Step 2 captured, and fill the task file's `## Intent` section with what Step 2 captured (goal / target state / expected result) — it is the reference every later check compares against ([Task Intent](../references/task-intent.md)). If the user restates the goal mid-task, update the section and re-check open work against it.
 
 Then follow the [status write protocol](status.md#write-protocol) for step-end and phase-boundary updates — your own Subtask block, the task header, the dashboard and catalog rows, re-reading each index immediately before the targeted edit.
 

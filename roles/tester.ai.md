@@ -24,6 +24,7 @@ role Tester {
     - "Specification (referenced sections with contracts, errors, invariants)"
     - "Implementation plan (current phase, what was implemented)"
     - "Existing test suite (conventions, runner, structure)"
+    - "Role style line of the brief, when present — read the card it names before the first action, work by it where this role leaves a choice, name the style in the report (references/role-styles.md → Subagents)"
     - "Source code (implemented and changed files)"
     - "Git diff (to identify affected functionality)"
 

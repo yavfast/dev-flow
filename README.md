@@ -8,7 +8,7 @@ A [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skill that enfor
 - [The Pipeline](#the-pipeline) — phase chain with gates, the command per phase, the service commands
 - [Installation](#installation) — where the skill directory goes
 - [Quick Start](#quick-start) — first commands for a greenfield project and for taking over an existing codebase
-- [How It Works](#how-it-works) — the mechanisms behind the pipeline: IDs, gates, review and its bounds, proportionate caution, design decisions, research, todos, adoption, intent, escalation, cache, tickets, continuity, profile
+- [How It Works](#how-it-works) — the mechanisms behind the pipeline: IDs, gates, review and its bounds, proportionate caution, design decisions, role styles, research, todos, adoption, intent, escalation, cache, tickets, continuity, profile
 - [File Structure](#file-structure) — what dev-flow creates inside a project (`docs/`, `.dev_flow/`)
 - [Skill Structure](#skill-structure) — the layout of this skill: `SKILL.md`, phases, references, templates, roles
 - [Key Principles](#key-principles) — the standing rules in one list
@@ -261,6 +261,20 @@ Why the developer and not the AI? Because the developer holds the full context (
 
 Every fork lands in a traceable **Design Decisions** (ADR-style) section, and the validation gates will not pass while a material decision is open without a trigger. See [`references/interview-mode.md`](references/interview-mode.md).
 
+### Role Styles
+
+A role says what an agent must do; a **role style** says how it works while doing it. The agent sets it at the start of each styled phase, declares it in one line, and hands it to subagents in their brief.
+
+| Style | Manner | Default for |
+|-------|--------|-------------|
+| `exploratory` | ambitious, ideas of its own before the sources | research, prototypes |
+| `deliberate` | options, their cost, a recorded choice | concept, spec, plan, adopt, ask |
+| `formal` | the approved document is the instruction | implement, propagate, onboard |
+| `investigative` | competing hypotheses, the check that tells them apart | bug analysis |
+| `meticulous` | a defect is assumed until the check shows otherwise | test, review, verify, audit |
+
+The developer can name a style at any time; a project adds its own in `.dev_flow/role_styles.md`. A style changes the manner, never an obligation, a rule or a gate. See [Role Styles](references/role-styles.md).
+
 ### Research Spikes
 
 Interview Mode chooses among *known* options — but sometimes the options themselves are unknown: an unfamiliar domain, an unverified library capability, an unexplored solution space. That is the **research phase** (`/dev-flow research <topic>`, alias `spike`): a time-boxed, cost-gated investigation that produces a `docs/*.spike.md` artifact (questions → exploration log → alternatives → verdict) and persists durable findings to `.dev_flow/skills/`. Spikes are throwaway research — they feed the concept, never replace it, and they are the sanctioned way to close an open Design Decision that waits on facts. When the question is "will this work at all", the spike can build a **prototype** in a separate worktree, with no documents or review. It is built under `/tmp`; once it works, it moves into the project (git-ignored), so it does not disappear while it waits for you. You see it run and decide what happens to it — and a promoted prototype enters the project as a normal task, with design documents, a sign-off, and review. See [`phases/research.md`](phases/research.md).
@@ -346,6 +360,7 @@ your-project/
 └── .dev_flow/
     ├── active_context.md           # Dashboard of active tasks (+ `## Resume` handoff records)
     ├── output_styles.md            # Project style profiles (documentation / chat registers)
+    ├── role_styles.md              # Project role styles: new styles and overlays of the shipped ones (optional)
     ├── profile/                    # Developer + machine adaptation facts (gitignored, lazy)
     │   ├── user.md                 # Communication, interaction, budget, provider access, misc — consent required
     │   └── environment.md          # OS/hardware, devices, available software — announced, not asked

@@ -23,6 +23,7 @@ role Implementer {
     - "Specification (*.sp.md) — referenced sections"
     - "Concept (*.concept.md) — for traceable ID comments"
     - "Existing codebase and conventions"
+    - "Role style line of the brief, when present — read the card it names before the first action, work by it where this role leaves a choice, name the style in the report (references/role-styles.md → Subagents)"
     - ".dev_flow/rules/ — project coding rules (binding when present)"
     - ".dev_flow/skills/ — project knowledge / known pitfalls (when present)"
     - "references/solid-architecture.md — default architecture principles"

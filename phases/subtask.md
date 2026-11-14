@@ -115,14 +115,14 @@ Analyze the task description to identify which dev-flow phase protocol the subag
 | "Update spec", "update docs" | `propagate` | Documentation updates |
 | General / no clear phase | — | Freeform execution with scope boundaries |
 
-The subagent executing a phase holds that phase's "main agent" duties — gates, verification steps, persistence. Helper roles it spawns inside its own run (a noisy test pass, a wide search) follow focus delegation, as anywhere else: before doing a recurring noisy step inline it checks `.dev_flow/roles/_index.yaml` for a matching specialist and **prefers it over an inline pass**, then treats that helper's conclusion as load-bearing — spot-checking the specific claim against primary evidence before acting on it, per [Delegation for Focus](../references/delegation.md).
+The subagent executing a phase holds that phase's "main agent" duties — gates, verification steps, persistence, except the role style — it comes in the brief ([Role Styles → Subagents](../references/role-styles.md#subagents)). Helper roles it spawns inside its own run (a noisy test pass, a wide search) follow focus delegation, as anywhere else: before doing a recurring noisy step inline it checks `.dev_flow/roles/_index.yaml` for a matching specialist and **prefers it over an inline pass**, then treats that helper's conclusion as load-bearing — spot-checking the specific claim against primary evidence before acting on it, per [Delegation for Focus](../references/delegation.md).
 
 ### Step 2: Formulate the brief — keys, not content
 
 The brief hands over pointers; the subagent assembles its own context:
 
 1. **Task** — the goal and its done-criteria, in 1–3 sentences. Include the *why*: the initiating task's recorded intent (or the slice of it this subtask serves), so the subagent optimizes for the same goal as the initiator — see [Task Intent](../references/task-intent.md).
-2. **Role(s)** — `roles/subtask-executor.ai.md` and the phase's base role; a project overlay listed in `.dev_flow/roles/_index.yaml` is added after the base role (see [Roles](../references/roles.md)). They go into the brief's `Read first:` line, separated by `; `.
+2. **Role(s)** — `roles/subtask-executor.ai.md` and the phase's base role; a project overlay listed in `.dev_flow/roles/_index.yaml` is added after the base role (see [Roles](../references/roles.md)). They go into the brief's `Read first:` line, separated by `; `. When the phase has a [role style](../references/role-styles.md#subagents), its `Role style:` line follows.
 3. **Context hints** — the task file path (for the contributor join), relevant doc/spec traceable IDs, file paths, known constraints, applicable `.dev_flow/rules/` / `skills/` / `cache/` entries worth starting from. *Hints, not excerpts* — do not paste what the subagent can read itself.
 4. **Scope** — only the genuine restrictions: parallel-conflict areas, forbidden targets, plus the standing boundary (no commits). Name the subagent's role when it needs an [access channel](../references/access-channels.md#roles); never `main`.
 5. **Report expectations** — anything needed beyond the standard full report.
@@ -139,6 +139,7 @@ Use the Agent tool with a prompt structured as:
 Skill root: <absolute path to the dev-flow skill> — skill paths below are
 relative to it; expand them yourself (your cwd is the project, not the skill).
 Read first: roles/subtask-executor.ai.md; <phase role file path(s)>
+Role style: <name> — before your first action read <card file> § <name>; work by it and name the style in your report
 Follow the `<phase>` phase protocol (phases/<phase>.md). You are a full
 dev-flow participant with delegated rights — see phases/subtask.md →
 Delegated Rights & Boundaries. A base role's
@@ -172,6 +173,8 @@ Never stall mid-run waiting for an answer.
 Full report per phases/subtask.md → Full Report Contract. Raw output stays in
 the project workspace (/tmp/{project-slug}/, timestamped names), referenced by path.
 ```
+
+Omit the `Role style:` line when the phase has no style.
 
 Choose the appropriate subagent type:
 - **Explore** — for `ask` (read-only search and analysis)

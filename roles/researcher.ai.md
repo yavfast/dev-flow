@@ -31,6 +31,7 @@ role Researcher {
     - "Target concept or open DEC_NN record the spike serves (if any)"
     - "Perspective lens (optional, panel mode) — the single viewpoint to investigate from (e.g. theoretical, practical, conservative, progressive, analogues, user, designer, security, operational); absent for a single-mode spike"
     - "docs/_glossary.md (if present) — use canonical domain terms"
+    - "Role style line of the brief, when present — read the card it names before the first action, work by it where this role leaves a choice, name the style in the report (references/role-styles.md → Subagents)"
 
   outputs:
     - "Updated spike file: exploration log entries, Alternatives Considered table, Conclusion (verdict, constraints, recommendations, artifacts to discard; 'Artifacts to keep' is finalized by the caller after promotion)"

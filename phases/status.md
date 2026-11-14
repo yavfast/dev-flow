@@ -87,7 +87,7 @@ A task file is **shared** between multiple AI contributors. Each contributor app
 | Region of the file | Who edits it | Rule |
 |--------------------|--------------|------|
 | Header (Status, Last updated, Contributors) | Any contributor | Targeted Edit on the specific field; re-read before write |
-| Current Work Item | Any contributor (rare changes) | Targeted Edit on a row; re-read before write |
+| Current Work Item | Any contributor (the `Pipeline phase` and `Role style` rows as the phase or the style changes; otherwise rare changes) | Targeted Edit on a row; re-read before write |
 | Description | Any contributor | **Append-only** paragraphs, each signed `— <agent-id>`. Never rewrite others' paragraphs |
 | Subtask blocks | The block's `Author` only | The author is the sole editor of their block |
 | Coordination Notes | Any contributor | Append-only entries, each prefixed `[agent-id]` |
@@ -220,6 +220,7 @@ Every dev-flow command MUST update context using this protocol. The goal is **to
    - If the row is missing (new task) → insert a new row in the Active Tasks table.
 4. **Update the catalog** (`tasks/_index.md`) the same way: targeted `Edit`, single row.
 5. **New task only — run the [upstream look](#upstream-look).**
+6. **Set the role style** — the main agent only: [select](../references/role-styles.md#selecting-the-style) the style of the starting phase, [declare](../references/role-styles.md#declaring-the-style) it, and write the `Role style` row together with the `Pipeline phase` row (a new task: select before step 2, so its Write fills both).
 
 ### Upstream look
 

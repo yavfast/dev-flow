@@ -90,7 +90,7 @@ role ContextTracker {
       authority: "source of truth (shared between contributors)"
       sections:
         header: "Task ID, Created, Last updated, Status, Contributors, Autonomy"
-        current_work_item: "Document type/title/path, Pipeline phase, Traceable ID — shared metadata (+ optional Ticket: link)"
+        current_work_item: "Document type/title/path, Pipeline phase, Role style, Traceable ID — shared metadata (+ optional Ticket: link)"
         intent: "## Intent — goal / target state / expected result captured at intake (inferred parts marked); the reference for decision checks and the completion verdict (references/task-intent.md)"
         description: "Shared, additive paragraphs signed `— <agent-id>`"
         subtasks: "One block per contributor: ### Subtask: title + Author + Status + Goal + Progress + Activity"
@@ -167,6 +167,7 @@ role ContextTracker {
       - "Open or create the task file (apply template if new; fill ## Intent from the captured goal / target state / expected result and set the header Autonomy field)"
       - "Determine whether the caller is already a Contributor; join the task if not (add to Contributors + add Subtask block + Coordination Note)"
       - "New task: run the upstream look (phases/status.md → Upstream look)"
+      - "Write the Role style row of ## Current Work Item together with the Pipeline phase row — the style the main agent selected, its source, the pins (references/role-styles.md → Declaring the style)"
       - "Apply updates to the caller's own Subtask block: check off steps, set Next, append per-subtask Activity, refresh Last updated"
       - "Apply updates to the task header (Last updated, Status) via targeted Edit"
       - "At phase boundaries: targeted Edit on dashboard/catalog row + append a Shared Activity Log entry"
