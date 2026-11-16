@@ -9,7 +9,7 @@ Captured in the task file (see the [task template](../templates/task_context.md)
 | Field | Answers |
 |-------|---------|
 | **Goal (why)** | What problem this solves / why the user wants it — the purpose the task serves |
-| **Target state** | How the system/docs/behavior should look when the task is done |
+| **Target state** | How the system/docs/behavior should look when the task is done; a scope the request names beyond this task is quoted here too — the push waits for it ([SKILL.md → Git Workflow Integration](../SKILL.md#git-workflow-integration) rule 6); a later task opened within that scope quotes it again, and a trivial route that names one keeps the record for it |
 | **Expected result** | The observable outcome the user will check — the success criteria |
 | **Outcome check** *(optional)* | The signal and the return trigger of a result that shows only after the commit — [Outcome check](#outcome-check) |
 
@@ -60,7 +60,7 @@ Then:
 
 ## When NOT to fire
 
-- **Trivial route with self-evident intent** (typo, comment, log message) — no record, no questions; the action *is* the intent.
+- **Trivial route with self-evident intent** (typo, comment, log message) — no record, no questions; the action *is* the intent, unless the request names a scope beyond the task ([Target state](#the-intent-record)).
 - **Don't interrogate.** Infer first; ask only when a material decision depends on an inference you cannot make. Routine goal-quizzing trains the user to answer noise.
 - **Intent is not a scope license.** Serving the goal does not authorize work beyond the request — a "while we're at it" that the goal merely *suggests* routes through the YAGNI-gate ([Consequence Forecasting](consequence-forecasting.md)) or an agent-initiated [todo](../phases/todo.md), not into the task.
 
@@ -77,3 +77,4 @@ Then:
 | [status](../phases/status.md) | Outcome entry opened on task completion; the dashboard line of open outcome checks |
 | [audit](../phases/audit.md) | Due outcome checks reconciled in Step 7b |
 | task context ([template](../templates/task_context.md)) | The `## Intent` section is the record's home |
+| commit sign-off ([Git Workflow](../SKILL.md#git-workflow-integration) rule 6) | A named scope quoted in Target state holds the push offer until it is done |

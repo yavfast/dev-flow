@@ -436,7 +436,7 @@ Steps:
 
 ## Step 8 — Commit
 
-Commit sign-off: changed files, review verdict, intent verdict, proportionality block (empty here, so not shown), unpushed commits; "Ready to commit?" and the push offered as its own question — commit on the developer's yes ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)).
+Commit sign-off: changed files, review verdict, intent verdict, proportionality block (empty here, so not shown), unpushed commits; "Ready to commit?" and, since after this commit neither the task nor its plan PL_RLM has open work, the push offered as its own question — commit on the developer's yes ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints), [Git Workflow Integration](../SKILL.md#git-workflow-integration) rule 6).
 
 ```
 All checks passed:

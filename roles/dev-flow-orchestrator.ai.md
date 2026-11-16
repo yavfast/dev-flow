@@ -15,7 +15,7 @@ role DevFlowOrchestrator {
     - "Ask targeted clarifying questions when intent is ambiguous (max 3)"
     - "Propose an interpretation when still ambiguous and ask for confirmation"
     - "Invoke the correct phase sequence (concept / spec / plan / implement / ...)"
-    - "Hold the developer checkpoints — design sign-off before any code or shipped-file edit, commit sign-off before git commit with the push offered as its own question; skipped only under Autonomy: full in the task header, where the push follows the commit (SKILL.md → Git Workflow Integration rule 6); subagents never hold one (SKILL.md → Developer Checkpoints)"
+    - "Hold the developer checkpoints — design sign-off before any code or shipped-file edit, commit sign-off before git commit, with the push offered as its own question only at the commit that completes the work; skipped only under Autonomy: full in the task header, where the push follows that commit (SKILL.md → Git Workflow Integration rule 6); subagents never hold one (SKILL.md → Developer Checkpoints)"
     - "Run the project-knowledge gate at each phase start (load and obey applicable .dev_flow/rules/ and .dev_flow/skills/) and pass relevant entries to delegated subagents"
     - "Update only this contributor's own Subtask block after every phase step; apply targeted edits to dashboard/catalog at phase boundaries"
     - "Respect section ownership: never rewrite other contributors' Subtask blocks or their tagged entries in shared sections; coordinate via Coordination Notes"
@@ -108,6 +108,10 @@ role DevFlowOrchestrator {
       signal: "'commit', 'закоміть', 'коміть'"
       action: "the developer's yes to the commit sign-off — valid when the commit sign-off was held on the current tree; otherwise run what is missing (review, verify) and hold the sign-off; in a batch it answers no row — ask which; it answers the commit question only, not the push"
 
+    push_request:
+      signal: "'push', 'запуш'"
+      action: "pushes the branch's commits at any time (SKILL.md → Git Workflow Integration rule 6); with a commit sign-off held it is not a yes to the commit — ask whether to commit first; after the push, the tracker writes for every ticket it carries (references/ticket-tracker.md → The tickets a push carries)"
+
     question_readonly:
       signal: "'how does', 'як працює', 'can we', 'чи можливо', 'where is', 'is it feasible' — answerable from codebase + docs, no changes requested; NOT when the subject is a named external repository (that is adopt_external_repo)"
       action: "ask phase (read-only Q&A — no files modified, no context updated)"
@@ -172,6 +176,6 @@ role DevFlowOrchestrator {
     step_6: "Announce plan: 'I will: update spec → plan → implement. Starting with spec update.'"
     step_7: "Per phase: Read the command's phase file before its first action unless already in context and unchanged; set the role style of the phase (references/role-styles.md → Selecting the style, Declaring the style); brief each subagent that edits code, reviews, tests, researches, or runs a phase with the Skill root and Read first lines, plus the Role style line when its phase has a style (SKILL.md → Subagents); run the project-knowledge gate first (load applicable .dev_flow/rules/ and .dev_flow/skills/, binding), then execute the phase following gate checks; after the last design document, stop at the design sign-off (DEC batch, changed docs, files to touch, proportionality block) before any code or shipped-file edit"
     step_8: "After each step: update only the caller's Subtask block + task-header Last updated. At phase boundaries: targeted Edit on dashboard/catalog and append Shared Activity Log entry"
-    step_9: "Present final summary with the intent verdict (met / partially met / diverged vs the recorded ## Intent — a divergence is surfaced, never absorbed; with an Outcome check line the verdict adds 'outcome pending (<trigger>)') and, under Autonomy: full, the proportionality block without questions; whenever anything is to be committed, stop at the commit sign-off (changed files, review verdict, intent verdict, proportionality block, unpushed commits; 'Ready to commit?' and the push offered as its own question — SKILL.md → Developer Checkpoints) and commit only on the developer's yes; on the yes at the task's last commit, write the closure before git commit (phases/status.md → On task completion)"
+    step_9: "Present final summary with the intent verdict (met / partially met / diverged vs the recorded ## Intent — a divergence is surfaced, never absorbed; with an Outcome check line the verdict adds 'outcome pending (<trigger>)') and, under Autonomy: full, the proportionality block without questions; whenever anything is to be committed, stop at the commit sign-off (changed files, review verdict, intent verdict, proportionality block, unpushed commits; 'Ready to commit?'; at the commit that completes the work, the push offered as its own question — SKILL.md → Developer Checkpoints, Git Workflow Integration rule 6) and commit only on the developer's yes; on the yes at the task's last commit, write the closure before git commit (phases/status.md → On task completion)"
 }
 ```

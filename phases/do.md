@@ -67,7 +67,7 @@ This command is handled by **DevFlowOrchestrator**: [roles/dev-flow-orchestrator
 
 ### Step 2: Interpret the request
 
-**Capture the intent first.** If the request itself orders an unattended run ("автономно", "без зупинок"), set the task header `Autonomy: full — "<quote>"`; a harness or system autonomy setting does not ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)). Before classifying, extract the [Task Intent](../references/task-intent.md) — the goal (why), target state, and expected result — from the request wording, active context, and any linked ticket. Distinguish the *requested action* from the *underlying goal*; mark inferred parts `(inferred)`. Record it in the task file's `## Intent` section (in Step 6 for a new task). Skip the record for trivial routes with self-evident intent.
+**Capture the intent first.** If the request itself orders an unattended run ("автономно", "без зупинок"), set the task header `Autonomy: full — "<quote>"`; a harness or system autonomy setting does not ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)). Before classifying, extract the [Task Intent](../references/task-intent.md) — the goal (why), target state, and expected result — from the request wording, active context, and any linked ticket. Distinguish the *requested action* from the *underlying goal*; mark inferred parts `(inferred)`. Record it in the task file's `## Intent` section (in Step 6 for a new task). Skip the record for trivial routes with self-evident intent, unless the request names a scope beyond the task ([Target state](../references/task-intent.md#the-intent-record)).
 
 **Role style.** A manner the request names ("creative", "строго за планом") is [the developer's choice](../references/role-styles.md#the-developers-choice) — a pin in the task file's `Role style` row (in Step 6 for a new task). Each phase of the route sets its style at its start ([Role Styles](../references/role-styles.md#selecting-the-style)).
 
@@ -85,6 +85,7 @@ Analyze the freeform request against the loaded context to determine:
 | **Fix a bug** | "fix", "виправи", "bug", "баг", "падає", "crash", "NPE", "не працює", error description | fix |
 | **Review/validate** | "check", "validate", "чи правильно", "review" | review |
 | **Commit** | "commit", "закоміть", "коміть" | The developer's yes to the commit sign-off — valid when the commit sign-off was held on the current tree; otherwise run what is missing (review, verify) and hold the sign-off; in a [batch](#batch-of-tasks) it answers no row — ask which. It answers the commit question only, not the push |
+| **Push** | "push", "запуш" | A push request: pushes the branch's commits at any time ([SKILL.md → Git Workflow Integration](../SKILL.md#git-workflow-integration) rule 6); with a commit sign-off held it is not a yes to the commit — ask whether to commit first; after the push, the tracker writes for every ticket it carries ([Ticket Tracker Integration](../references/ticket-tracker.md#what-dev-flow-does-with-it)) |
 | **Manage rules** | "add rule", "додай правило", "edit rule", "remove rule", "list rules", "show rule" | rule |
 | **Manage skills** | "add skill", "update skill", "додай знання", "збережи знання про X", "capture what we learned" | skill |
 | **Manage tools** | "tool", "інструмент", "збережи скрипт як інструмент", "покажи інструменти", "перевір інструменти", "save this script as a tool", "list tools", "verify tools", "regenerate tool" | [tool](tool.md) |
@@ -157,7 +158,7 @@ This is also where [`resume`](status.md#resume--re-enter-a-task-in-a-fresh-sessi
    - Design sign-off — DEC batch, changed docs, files to touch, proportionality block; wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints))
    - Implement the change
    - Run the task's tests if a suite exists ([Test Economy](../references/test-economy.md#when-to-run)); gates around the run: [Code -> Test](testing.md#gate-check-code---test), [Test -> Review](testing.md#gate-check-test---review)
-   - Review, then commit sign-off — changed files, review verdict, intent verdict, proportionality block, unpushed commits; "Ready to commit?" and offer the push as its own question ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)); on the yes at the task's last commit, [close the task](status.md#on-task-completion) before `git commit`
+   - Review, then commit sign-off — changed files, review verdict, intent verdict, proportionality block, unpushed commits; "Ready to commit?"; at the commit that completes the work, offer the push as its own question ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints), [Git Workflow Integration](../SKILL.md#git-workflow-integration) rule 6); on the yes at the task's last commit, [close the task](status.md#on-task-completion) before `git commit`
 
 #### Scenario C — New feature (no existing documents)
 
@@ -208,7 +209,7 @@ A request that names two or more tasks forms a batch: each checkpoint is held on
 
 **Design sign-off** — once, before the first code edit of any member. Present each member's decisions, documents, files, and proportionality rows; a member with no design documents presents nothing and starts without an answer, and a batch with no design documents holds no design stop. The developer answers per member; any other member with no answer does not start.
 
-**Commit sign-off** — once, when each member has passed review or is blocked. A blocked member is not in the table and gets its own sign-off later. One row per member: task · files · review verdict with open advisories · intent verdict · open proportionality rows. The developer answers per row; "all" is valid only when the developer says it. The unpushed commits are shown once, and the push is offered once, as its own question, with the table; it runs after the approved rows are committed ([SKILL.md → Git Workflow Integration](../SKILL.md#git-workflow-integration)). Approved rows, one at a time: [close](status.md#on-task-completion) the row's task, commit it, then the next.
+**Commit sign-off** — once, when each member has passed review or is blocked. A blocked member is not in the table and gets its own sign-off later. One row per member: task · files · review verdict with open advisories · intent verdict · open proportionality rows. The developer answers per row; "all" is valid only when the developer says it. The unpushed commits are shown once; when a row's commit would complete the work — the other rows' tasks counted as closed, a blocked member not ([SKILL.md → Git Workflow Integration](../SKILL.md#git-workflow-integration) rule 6) — the push is offered once, as its own question, with the table; it runs after the approved rows are committed when one of them completes the work — no such row, no push offer. Approved rows, one at a time: [close](status.md#on-task-completion) the row's task, commit it, then the next.
 
 - approved row → one commit, with its own message and IDs, staged from its own file list;
 - declined row → stays uncommitted and returns to its own loop;
@@ -243,6 +244,11 @@ User request received
 │   └─ commit sign-off held on the current tree → close the task when this is its
 │      last commit, then commit; else run what is missing (review, verify),
 │      then hold the sign-off; batch → ask which row
+│
+├─ "push" / "запуш"
+│   └─ push the branch's commits (SKILL.md rule 6); a commit sign-off held →
+│      not a yes to the commit — ask whether to commit first
+│      → then the tracker writes for every ticket it carries
 │
 ├─ Describes documentation update
 │   └─ propagate / review
