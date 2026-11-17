@@ -10,6 +10,7 @@ role SubtaskExecutor {
     - "Persist durable outcomes by the owning phase's protocol: skills (non-triviality filter), cache (worth-caching filter + entry-by-entry index), rules (severity model), tools (promoted per references/project-tools.md — header contract, real samples, unverified until audit), profile entries (environmental only, announced) — and list everything persisted in the report"
     - "Escalate to the initiator what Interview Mode would surface: the developer's forks (an agent's fork is recorded resolved (agent) and listed in the report), missing access, scope conflicts, evidence the brief's premise is wrong — markered options + a recommended answer, independent questions batched"
     - "Spawn focus-delegation helpers for noisy steps inside your own run (test passes, wide searches) — for a recurring noisy step prefer an existing matching specialist (check the roles index) over an ad-hoc helper, and spot-check a load-bearing helper conclusion against primary evidence before acting on it; they stage and report, you persist"
+    - "Keep the duties of the watch level the brief sets (references/supervision.md → Delegate duties): the Run bounds whenever you execute shell commands beyond a read-only search; at record or watched the progress record — plan first, step per step, run before a command expected to take a minute or more, spawn / wait per helper, end last; note on a wrong premise or a conflict that blocks the rest, then go on with what it does not block; the question also goes into the report's Open items; and the inbox, read at each step boundary and between checks of a command you wait on, and obeyed (at record, when the file is not empty). Supervise the helpers you start by the same file — you are their initiator"
     - "Produce a full report: complete in coverage, conclusion in style (see phases/subtask.md → Full Report Contract)"
 
   capabilities: [
@@ -43,12 +44,14 @@ role SubtaskExecutor {
     - "Context hints: task file path (for the contributor join), traceable doc IDs, file paths, applicable rules/skills/tools/cache entries — pointers, not excerpts"
     - "Scope restrictions (parallel-conflict areas, forbidden targets) + the standing no-commit boundary"
     - "Initiator channel (live, or checkpoint-via-report)"
+    - "Run: / Progress: / Inbox: lines and the Run bounds block, when present (references/supervision.md → The brief)"
 
   outputs:
     - "Completed work per the phase protocol (code, tests, docs, analysis)"
     - "Own Subtask block in the task file — created, kept current, closed with a status (write phases only; read-only subtasks leave no context writes)"
     - "Persisted skills / cache entries / rules / tools, each listed with its path"
     - "Full report per the Full Report Contract (Result / Decisions / Changes / Verification / Open items / Materials)"
+    - "Progress record, at watch level record or watched — its path under Materials"
 
   report_structure: """
     ## Result        — outcome vs the task goal (met / partially / blocked + why)
@@ -56,17 +59,18 @@ role SubtaskExecutor {
     ## Changes       — files created/modified; own Subtask block (if joined); persisted entries (paths)
     ## Verification  — build / test / review status per the phase protocol
     ## Open items    — questions (markered options + recommendation), follow-ups, risks
-    ## Materials     — workspace paths to raw logs, dumps, captures
+    ## Materials     — workspace paths to raw logs, dumps, captures; at `record` /
+                       `watched` the line `Progress: <record path>`
   """
 
   workflow:
-    step_1: "Read the brief; read the assigned role file(s) and the phase file for the full protocol"
+    step_1: "Read the brief; read the assigned role file(s) and the phase file for the full protocol; at record or watched write the plan event first (references/supervision.md → Progress record)"
     step_2: "Join the task file as a Contributor — add yourself to Contributors + your own Subtask block (Author: your id, Status: in-progress, Goal, first Progress items). Skip this step for read-only phases (ask)"
     step_3: "GATES — load .dev_flow/rules/, skills/, tools/, cache/, roles/ indexes, .dev_flow/profile/ and docs/_glossary.md as the phase prescribes; read the docs named in the hints; gather the rest yourself"
     step_4: "Execute the phase protocol; keep your Subtask block current; escalate material forks to the initiator (batched, markered options + recommendation); for a recurring noisy step prefer an existing matching specialist (roles index) over an inline pass, and spot-check its load-bearing conclusions against primary evidence before acting; spawn ad-hoc focus-delegation helpers only where no matching specialist fits"
     step_5: "Verify per the phase protocol (build, tests, review steps it prescribes)"
     step_6: "Persist durable outcomes per the owning phases (skills / cache / rules / tools / profile — environmental only) and record what was persisted"
-    step_7: "Close your Subtask block (Status: done / blocked / review-pending) and write the full report"
+    step_7: "Close your Subtask block (Status: done / blocked / review-pending), write the end event at record or watched, and write the full report"
 
   output_style:
     - "Work in the same language as the task description"

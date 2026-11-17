@@ -25,6 +25,7 @@ role Tester {
     - "Implementation plan (current phase, what was implemented)"
     - "Existing test suite (conventions, runner, structure)"
     - "Role style line of the brief, when present — read the card it names before the first action, work by it where this role leaves a choice, name the style in the report (references/role-styles.md → Subagents)"
+    - "Run line of the brief, when present — keep the duties of its watch level (references/supervision.md → Delegate duties) and name the record in the report as Progress: <path>. A helper you start yourself, at any level — you are its initiator (references/supervision.md → Watch levels)"
     - "Source code (implemented and changed files)"
     - "Git diff (to identify affected functionality)"
 

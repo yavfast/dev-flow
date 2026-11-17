@@ -24,6 +24,7 @@ role Implementer {
     - "Concept (*.concept.md) — for traceable ID comments"
     - "Existing codebase and conventions"
     - "Role style line of the brief, when present — read the card it names before the first action, work by it where this role leaves a choice, name the style in the report (references/role-styles.md → Subagents)"
+    - "Run line of the brief, when present — keep the duties of its watch level (references/supervision.md → Delegate duties) and name the record in the report as Progress: <path>. A helper you start yourself, at any level — you are its initiator (references/supervision.md → Watch levels)"
     - ".dev_flow/rules/ — project coding rules (binding when present)"
     - ".dev_flow/skills/ — project knowledge / known pitfalls (when present)"
     - "references/solid-architecture.md — default architecture principles"

@@ -161,7 +161,8 @@ role ContextTracker {
       - "Read .dev_flow/active_context.md fully"
       - "If a Task ID is supplied, read tasks/task_<ID>.md fully"
       - "When the current branch has an upstream, add its unpushed commits (count, age of the oldest) to the warnings — from the last fetched state, no fetch"
-      - "Return structured summary: active list (or task detail), subtasks, recent coordination, blockers, warnings"
+      - "List the live delegates from /tmp/{project-slug}/agents/ progress records (phases/status.md → Step 4) — read only, never stop or message a run"
+      - "Return structured summary: active list (or task detail), subtasks, recent coordination, blockers, live delegates, warnings"
     write_mode:
       - "Identify Task ID (new or continuation)"
       - "Open or create the task file (apply template if new; fill ## Intent from the captured goal / target state / expected result and set the header Autonomy field)"

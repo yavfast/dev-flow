@@ -9,8 +9,8 @@
 - [When to Use](#when-to-use) — side bugs, off-plan side tasks, context-heavy research, peripheral changes
 - [When NOT to Use](#when-not-to-use) — main task, dialogue-heavy work, file conflicts (use todo), trivial tasks
 - [Delegated Rights & Boundaries](#delegated-rights--boundaries) — code/task-file/skills rights, read-only phases prevail, no commits, scope narrowing
-- [Talking to the Initiator](#talking-to-the-initiator) — what to escalate, Interview-Mode discipline, checkpoint dialogue default
-- [Procedure](#procedure) — Steps 1–5: pick phase (table), formulate brief, spawn (prompt template, agent type, model), mid-task exchanges, integrate
+- [Talking to the Initiator](#talking-to-the-initiator) — what to escalate, Interview-Mode discipline, checkpoint dialogue default, the `note` early signal
+- [Procedure](#procedure) — Steps 1–5: pick phase (table), formulate brief (watch level), spawn (prompt template, run bounds, agent type, model), while it runs (watcher, continue or fresh), integrate
 - [Full Report Contract](#full-report-contract) — required report sections: Result, Decisions, Changes, Verification, Open items, Materials
 - [Parallel Subtasks](#parallel-subtasks) — launching independent subtasks together; disjoint source scopes
 - [Output Style](#output-style) — task-description language for the subagent, chat register for the relayed report
@@ -56,7 +56,7 @@ Not every delegation is a subtask. The rights follow the shape:
 | Protocol | [Delegation for Focus](../references/delegation.md) | This phase |
 | Context writes | None — stage artifacts in the workspace, report paths | Own Subtask block + tagged entries, per the contributor rules |
 | `.dev_flow/` writes (skills, cache, rules, tools) | Stage + report; the initiator persists | Directly, by executing the owning phase's protocol (its gates, filters, and index discipline) |
-| Dialogue | None — returns a verdict | Escalates real questions to the initiator mid-task |
+| Dialogue | None beyond the supervision channels of its watch level — returns a verdict | Escalates real questions to the initiator mid-task |
 | Report | Conclusion, not the dump | Full report (below) — complete in coverage, conclusion in style |
 
 Rule of thumb: the moment delegated work outgrows one exchange — multi-step, may pause on a question, produces durable artifacts — it is a **task delegation** and the subagent joins as a contributor. A one-shot mechanical step stays focus delegation and never touches `.dev_flow/`.
@@ -97,6 +97,7 @@ The subagent's escalation channel is its **initiator** — the developer channel
 - **Same discipline as [Interview Mode](../references/interview-mode.md):** exhaust your own context assembly first — anything answerable from code, docs, or indexes is homework, not a question. Batch independent questions; attach a recommended answer to each.
 - **The initiator decides:** answer from the main-task picture, relay to the developer what only the developer can decide, or re-scope the task.
 - **Checkpoint dialogue is the default.** In most runtimes the end-of-turn report IS the channel: finish everything the question does not block, put the questions under the report's *Open items* (markered options + recommendation, Interview-Mode style); the initiator answers and **continues the same subagent** so its assembled context survives. Never stall mid-run waiting for an answer. Live mid-task dialogue is the exception, used when the harness supports it. A subagent with no continuation channel at all records open decisions exactly like a delegated subagent in Interview Mode — options, recommendation, resolution trigger.
+- **Early signal.** At watch level `record` or `watched`, a wrong premise or a conflict that blocks the rest is also a `note` line in the progress record, which wakes a watching initiator; the run goes on with what it does not block ([Supervising a Delegate → Delegate duties](../references/supervision.md#delegate-duties)).
 
 ## Procedure
 
@@ -126,6 +127,7 @@ The brief hands over pointers; the subagent assembles its own context:
 3. **Context hints** — the task file path (for the contributor join), relevant doc/spec traceable IDs, file paths, known constraints, applicable `.dev_flow/rules/` / `skills/` / `cache/` entries worth starting from. *Hints, not excerpts* — do not paste what the subagent can read itself.
 4. **Scope** — only the genuine restrictions: parallel-conflict areas, forbidden targets, plus the standing boundary (no commits). Name the subagent's role when it needs an [access channel](../references/access-channels.md#roles); never `main`.
 5. **Report expectations** — anything needed beyond the standard full report.
+6. **Supervision** — the watch level by the run's type and complexity, and at `record` or `watched` the run id, reserved before the spawn, and the expected duration ([Supervising a Delegate → Watch levels](../references/supervision.md#watch-levels), [The brief](../references/supervision.md#the-brief)); the run bounds when the subagent will execute shell commands beyond a read-only search.
 
 ### Step 3: Spawn the subagent
 
@@ -140,6 +142,10 @@ Skill root: <absolute path to the dev-flow skill> — skill paths below are
 relative to it; expand them yourself (your cwd is the project, not the skill).
 Read first: roles/subtask-executor.ai.md; <phase role file path(s)>
 Role style: <name> — before your first action read <card file> § <name>; work by it and name the style in your report
+Run: <run id> · Watch: <record|watched> · Expected: <N>m
+Progress: /tmp/{project-slug}/agents/<run id>.progress
+Inbox: /tmp/{project-slug}/agents/<run id>.inbox
+Duties: before your first action read references/supervision.md § Delegate duties, § Progress record and § Inbox; keep the duties of your watch level
 Follow the `<phase>` phase protocol (phases/<phase>.md). You are a full
 dev-flow participant with delegated rights — see phases/subtask.md →
 Delegated Rights & Boundaries. A base role's
@@ -162,19 +168,23 @@ phase's no-write constraints DO prevail.
 <genuine restrictions for this run; parallel-conflict areas>
 - Do NOT commit — leave the work commit-ready; the initiator owns the approval chain.
 
+## Run bounds
+<the block from references/supervision.md → The brief>
+
 ## Communication
 Material fork / missing access / wrong premise → escalate to me: markered
 options + your recommendation, independent questions batched. The default
 channel is the checkpoint: finish what the question does not block, put the
 questions under "Open items" in your report — I will answer and continue you.
-Never stall mid-run waiting for an answer.
+Never stall mid-run waiting for an answer. A wrong premise or a conflict that
+blocks the rest is also a `note` in your progress record.
 
 ## Report
 Full report per phases/subtask.md → Full Report Contract. Raw output stays in
 the project workspace (/tmp/{project-slug}/, timestamped names), referenced by path.
 ```
 
-Omit the `Role style:` line when the phase has no style.
+Omit the `Role style:` line when the phase has no style. Omit the `Run:`, `Progress:`, `Inbox:` and `Duties:` lines at watch level `none`, and the `## Run bounds` block when the subagent executes no shell commands beyond a read-only search; drop the `note` sentence at `none`. The lines and the block: [Supervising a Delegate → The brief](../references/supervision.md#the-brief).
 
 Choose the appropriate subagent type:
 - **Explore** — for `ask` (read-only search and analysis)
@@ -182,9 +192,11 @@ Choose the appropriate subagent type:
 
 **Pick the model to fit the task** by its nature, not a fixed name — fast/cheap for mechanical, narrow-output work; stronger when it needs judgment; when unsure, the stronger one. See **[Delegation for Focus](../references/delegation.md)**.
 
-### Step 4: Mid-task exchanges
+### Step 4: While it runs
 
-When the subagent escalates, answer with the same care as an Interview-Mode reply: pick a marker, amend, or relay the question to the developer. Continue the same subagent rather than respawning — its assembled context is the asset.
+At `watched`, start the subagent in the background, arm one watcher after the spawn and handle its events ([Supervising a Delegate → The watcher](../references/supervision.md#the-watcher), [Handling a watcher event](../references/supervision.md#handling-a-watcher-event)); a `stall` goes down [the stall ladder](../references/supervision.md#the-stall-ladder).
+
+When the subagent escalates, answer with the same care as an Interview-Mode reply: pick a marker, amend, or relay the question to the developer. Continue the same subagent rather than respawning — its assembled context is the asset — unless [Running a delegate](../references/delegation.md#running-a-delegate) says to start fresh.
 
 ### Step 5: Receive the full report and integrate
 
@@ -205,7 +217,8 @@ Complete in **coverage**, conclusion in **style** — every section present, raw
                    (if joined); persisted skills/cache/rules entries (paths)
 ## Verification  — build / test / review status, per the phase's protocol
 ## Open items    — questions (markered options + recommendation), follow-ups, risks
-## Materials     — workspace paths to raw logs, dumps, captures
+## Materials     — workspace paths to raw logs, dumps, captures; at `record` /
+                   `watched` the line `Progress: <record path>`
 ```
 
 ## Parallel Subtasks

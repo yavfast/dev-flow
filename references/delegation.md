@@ -2,7 +2,17 @@
 
 Shared sub-procedure for the **Implement**, **Fix**, and **Verify** phases (and the mechanism behind **Review** and the **Subtask** command). This is **not** a standalone pipeline stage — it runs *inside* those phases whenever a step is about to flood the main context with secondary, noisy work.
 
-**Delegation shapes.** This reference covers **focus delegation** — a single noisy *step* inside your own phase run: minimal rights, no `.dev_flow/` writes, stage-and-report, no dialogue. Delegating a whole secondary *task* is the [subtask phase](../phases/subtask.md) — there the subagent is a **full dev-flow participant with delegated rights**: it assembles its own context, joins the task file as a contributor, persists skills/cache per the phase protocols, and can converse with its initiator. The moment a delegated step outgrows one exchange, it is a subtask.
+**Delegation shapes.** This reference covers **focus delegation** — a single noisy *step* inside your own phase run: minimal rights, no `.dev_flow/` writes, stage-and-report, no dialogue beyond the supervision channels of its watch level. Delegating a whole secondary *task* is the [subtask phase](../phases/subtask.md) — there the subagent is a **full dev-flow participant with delegated rights**: it assembles its own context, joins the task file as a contributor, persists skills/cache per the phase protocols, and can converse with its initiator. The moment a delegated step outgrows one exchange, it is a subtask.
+
+## Contents
+
+- [Where the line falls](#where-the-line-falls) — what stays in the main context, what goes to a delegate
+- [The habit that makes it pay off](#the-habit-that-makes-it-pay-off) — the conclusion, not the dump; spot-check a load-bearing conclusion; clean context for review
+- [Fit the model to the task](#fit-the-model-to-the-task--by-its-nature-not-its-name) — the model by the task's nature, never by name; fan-out from the profile
+- [Scenarios](#scenarios) — situation → what to delegate
+- [Named specialists and the routing reflex](#named-specialists-and-the-routing-reflex) — project roles for a recurring noisy step
+- [Running a delegate](#running-a-delegate) — continue, fork or start fresh; talking to a running delegate; supervision by risk
+- [How](#how) — the brief's lines and the delegate's report
 
 ## Where the line falls
 
@@ -74,12 +84,28 @@ A specialist is a **read-only focus helper**: it owns one task-signature, return
 
 **They accumulate, and they self-compact.** A specialist warm-starts from a small role-local memory of distilled heuristics (`.dev_flow/roles/<name>.memory.md`) so the next run starts ahead of cold; what proves broadly useful is *auto-applied* as a skill via [Experience Capture](experience-capture.md) through its structural gate (no permission prompt; a doubtful promotion routes to independent review). Crucially they store **only the distillation, never the raw payload** — raw output stays staged in the workspace, referenced by path. Because this memory is self-written **per call** (the skill promotion still passes the structural non-triviality gate), a heuristic is a *falsifiable, evidence-scoped observation* ("callers wrapping `.refresh()` in `try/except` **may** depend on the raise — check each"), never a standing verdict or absolute blocker — an over-stated heuristic poisons every later warm-start, and nothing downstream re-reads the evidence to catch it. Whether an instance stays warm across a burst or re-spawns per call follows the work: one that builds an expensive reusable artifact (a repo/symbol map) is kept alive across ≥2 calls, while large call-specific inputs (a log, an image) re-spawn fresh and warm-start from memory.
 
+## Running a delegate
+
+**Choose the vehicle.** The rights follow the shape — focus or task delegation — never the vehicle.
+
+- **Inline** — a trivial step, or one that needs the core context and makes little noise.
+- **Continue** an existing delegate when the new work extends its own line and what it assembled is the asset: an answer to its Open items, a follow-up on its own result, the next step of the same investigation, a specialist kept warm for a burst.
+- **Start fresh instead of continuing** when the next step judges work the delegate made or saw (a re-review after a fix); when it read a tree the project does not own (above); when it was stopped as stalled or ran off its scope; when a load-bearing claim of its failed a spot-check; when the scope, the role or the model changes; when files it read have changed and telling it costs more than a new brief.
+- **Fork yourself** when the work needs what only your context holds — the developer's words, decisions not yet written down, a design half-formed — briefing it would cost more than the fork, and doing it inline would flood your context. A fork is the wrong vehicle for independent judgment (it shares your assumptions and tends to confirm them), for work meant for another model (it runs on yours), for work that needs little of a large context (it pays for all of it), and for reading a tree the project does not own.
+- **Fresh** — the default for focus delegation and subtasks: a narrow brief, a model fit for the work, a clean context.
+
+One line of work, one runner: while a delegate runs, doing its work in parallel wastes one of the two runs and predicting its result invents one — wait for its report, or stop it.
+
+**Talk while it runs.** The brief goes down and the report with its Open items comes up — the default channel ([subtask → Talking to the Initiator](../phases/subtask.md#talking-to-the-initiator)). Between them: the delegate's progress record, one line per step, read by its initiator, a watcher, an ancestor and `status`; a `note` in it on a wrong premise or a conflict that blocks the rest; an instruction down — wrap up, stop, a fact, a changed scope — through the delegate's inbox or a harness message to a running agent, which arrives only at the delegate's next step and so cannot reach one blocked inside a command; and a stop, when the result is no longer needed, the run has left its scope, or it stalled. Asking a delegate whether it is done buys nothing: the harness reports the end, the record tells the rest.
+
+**Supervise by risk.** The initiator sets a watch level — `none`, `record` or `watched` — by the run's type and complexity: [Supervising a Delegate](supervision.md).
+
 ## How
 
 The spawning mechanics live in the [Subtask phase](../phases/subtask.md): formulate the brief, spawn the subagent (picking type and model), and take back the conclusion. For a focus delegation the brief is a narrow step description; for a task delegation it is "keys, not content" — task + role + context hints, and the subagent assembles the rest. Use delegation not only as the explicit `/dev-flow subtask` command but as a *reflex* during implement / fix / verify — the moment a step is about to dump noise into the main context, delegate it.
 
-**The brief names the role by path.** The brief of a subagent that edits code, reviews, tests, researches, or runs a phase opens with `Skill root: <absolute path of the skill>` — taken from the `Base directory for this skill` line of the loaded skill — and `Read first: <role file> — blocks: <names>`. The role file of each launch step: [SKILL.md → Subagents](../SKILL.md#subagents); a path there is relative to the skill root. No blocks named → the subagent reads the whole file. A project overlay listed in `.dev_flow/roles/_index.yaml` is added after the base role; its path is relative to the project root. Several files in the line are separated by `; `. A phase with a role style adds the `Role style:` line after `Read first:` ([Role Styles → Subagents](role-styles.md#subagents)). A subagent that only searches, reads, or counts gets none of these lines.
+**The brief names the role by path.** The brief of a subagent that edits code, reviews, tests, researches, or runs a phase opens with `Skill root: <absolute path of the skill>` — taken from the `Base directory for this skill` line of the loaded skill — and `Read first: <role file> — blocks: <names>`. The role file of each launch step: [SKILL.md → Subagents](../SKILL.md#subagents); a path there is relative to the skill root. No blocks named → the subagent reads the whole file. A project overlay listed in `.dev_flow/roles/_index.yaml` is added after the base role; its path is relative to the project root. Several files in the line are separated by `; `. A phase with a role style adds the `Role style:` line after `Read first:` ([Role Styles → Subagents](role-styles.md#subagents)). A subagent that only searches, reads, or counts gets none of these lines. A run supervised at `record` or `watched` adds `Skill root:` (even without a role) and its `Run:`, `Progress:`, `Inbox:` and `Duties:` lines, and a run that executes shell commands beyond a read-only search its `## Run bounds` block ([Supervising a Delegate → The brief](supervision.md#the-brief)).
 
 Project-specific delegation practice (how *this* project runs its tests, where its live scenarios live, what counts as pass/fail) belongs in a project role overlay under `.dev_flow/roles/`, not here — see [Roles](roles.md) for using and creating them.
 
-These scenarios and rules are **projections, not a formal protocol** — heuristics the agent applies with judgment. When a call is genuinely unclear, it asks the initiator rather than following an algorithm. Don't encode merge rules or rigid MUST/NEVER machinery here; keep the guidance in prose.
+These scenarios and rules are **projections, not a formal protocol** — heuristics the agent applies with judgment. When a call is genuinely unclear, it asks the initiator rather than following an algorithm. Don't encode merge rules or rigid MUST/NEVER machinery here; keep the guidance in prose. What is fixed — the formats a script reads, the delegate duties and the stall ladder — lives in [Supervising a Delegate](supervision.md).

@@ -149,6 +149,10 @@ For `/dev-flow status` (no argument):
 📥 Deferred (todos) — 3 candidate
    • .dev_flow/todos/ — run `/dev-flow audit docs` to groom
 
+🤖 Live delegates
+   • tests_20261116_194005 — step 3/3 — wait, 13m of exp 5m
+   • tests_20261116_194005.triage — step 1/2 — step, 12m since it — silent
+
 ⚠️ Warnings
    • task_… — stale (>7 days)
    • master — 3 unpushed commits, oldest 6 days
@@ -156,6 +160,8 @@ For `/dev-flow status` (no argument):
 ```
 
 When the current branch has an upstream, **Warnings** names the unpushed commits — the count and the age of the oldest; the commit sign-off shows them in the same form ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)). `status` changes nothing, so it counts against the last fetched state and does not fetch. No git, no upstream, or nothing unpushed → no line.
+
+If `/tmp/{project-slug}/agents/` holds live progress records — the last event not `end`, the last line younger than a day — include **Live delegates**, one line per run: run id, `k/N` of its last `step`, its last event, the minutes since it against its `exp`, and `silent` when the [silence threshold](../references/supervision.md#silence-threshold) is passed. No live record → no block. `status` reads the records only; it never stops or messages a run.
 
 If `.dev_flow/todos/_index.md` exists, include the **Deferred (todos)** line with the count of `candidate` entries (omit the line when the register is absent or empty). `queued` follow-ups are not counted here — they surface at their originating task's completion, not in this view. It is a pointer, not a listing — `todo` files them, `audit` grooms them. If `.dev_flow/evidence/ledger.yaml` has `open` entries under `outcomes:`, add the outcome-checks line: their count and the nearest trigger ([Outcome check](../references/task-intent.md#outcome-check)).
 
