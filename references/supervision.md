@@ -170,6 +170,8 @@ For a `watched` run the initiator arms one watcher — a background process with
 
 One poll with several of them prints the first in this order: `note`, `done`, `stall`.
 
+**Only while the delegate runs.** The initiator arms a watcher, and arms it again, only while the run's delegate runs: the harness, where it reports one, has not reported its finish (in Claude Code, the background agent's notice) since the delegate last started — its spawn or its continuation. Once it has, no watcher is armed for that run until the delegate is continued, whatever event is still unhandled when the notice comes, or comes after it; that event is not acted on — the finish is handled once, and a watcher still running is stopped ([Handling a watcher event](#handling-a-watcher-event)).
+
 A `watched` delegate itself runs in the background — in Claude Code, a background agent — so the initiator is free when the watcher's line comes back; a harness that can only run it in the foreground gets no watcher, as when nothing runs in the background. Copy the example to `/tmp/{project-slug}/agents/watch.sh` once per session and run it through the harness's background facility, so that its one line comes back as a notice — in Claude Code, Bash with `run_in_background`, or `Monitor` with `timeout_ms: 1800000`, its cap. Settings:
 
 - `WATCH_LIMIT`, in whole seconds, defaults to 1740, under that cap, so the watcher ends with `expired` instead of being cut off without a line.
@@ -267,14 +269,14 @@ done
 
 ## Handling a watcher event
 
-To **re-arm** is to run the watcher again on the same run, with the `WATCH_FROM` and `WATCH_NOTED` it had. Two moves change one of them: after the initiator has acted on silence — judged a run "slow but alive", taken ladder step 2 or 3 — `WATCH_FROM=$(date +%s)`, so the silence it has just acted on does not fire again at once (to re-arm **from now**); after it has handled a `note`, `WATCH_NOTED="<run id> <time> <line>"` from that note. A note is not silence: it moves no floor.
+To **re-arm** is to run the watcher again on the same run, with the `WATCH_FROM` and `WATCH_NOTED` it had — only while its delegate runs ([Only while the delegate runs](#the-watcher)). Two moves change one of them: after the initiator has acted on silence — judged a run "slow but alive", taken ladder step 2 or 3 — `WATCH_FROM=$(date +%s)`, so the silence it has just acted on does not fire again at once (to re-arm **from now**); after it has handled a `note`, `WATCH_NOTED="<run id> <time> <line>"` from that note. A note is not silence: it moves no floor.
 
 - `done` → where the harness reports the finish (in Claude Code, the background agent's notice), wait for that notice — the report comes with it; then read the report: the conclusion, not the dump.
 - `note` → read the line; answer through the inbox or a harness message, or let the run go on; re-arm with `WATCH_NOTED` set to its key.
 - `stall` → [the stall ladder](#the-stall-ladder).
 - `expired` → re-arm.
 - `error` → correct the setting it names and arm again.
-- The harness reports the run finished while its watcher still runs → stop the watcher through the harness. The record has no `end` → append `<time> end stopped -- finished without an end line`, then salvage (ladder step 5) before trusting the report.
+- The harness reports the run finished → stop its watcher through the harness if one still runs; arm none until the delegate is continued ([Only while the delegate runs](#the-watcher)). The record has no `end` → append `<time> end stopped -- finished without an end line`, then salvage (ladder step 5) before trusting the report.
 - The harness reports the delegate stopped with background work of its own still running → a command of the run is still running, whatever the record says. Stop it by the rule of step 2 ([Which process step 2 may stop](#the-stall-ladder)), the leftover command in place of the one step 1 names — or, when its result is still needed, continue the delegate to wait for it; the rule leaves none or several → name the command to the developer instead. Then salvage (ladder step 5) before trusting `done` or the report. No re-arm on the ended run: its old `end` would read as a continuation.
 
 The watcher is the only periodic check: the initiator neither loops over its own turns nor asks a delegate whether it is done.
