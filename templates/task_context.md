@@ -14,6 +14,7 @@
 | **Document** | `{type: concept/spec/plan/code}` — {title and file path} |
 | **Pipeline phase** | `{onboard / research / concept / spec / plan / implement / test / review / verify / propagate / fix / rule / skill / ask / todo / do / subtask / status / audit / adopt}` |
 | **Role style** | `{style of the phase above / n/a}` — {default / developer / delegated}{; pinned: <key>=<name>, task=<name>} — see `references/role-styles.md` (dev-flow skill) |
+| **Stage** | `{prototype / working / production}` — {the fact it is inferred from, or "developer"} — see `references/delivery-focus.md` (dev-flow skill) |
 | **Traceable ID** | `{C_XXX / SP_XXX / PL_XXX / E_XXX or n/a}` |
 | **Ticket** | `{PROJ-123 (external tracker) or n/a}` — present only when the task is explicitly tied to a tracker ticket; see `references/ticket-tracker.md` (dev-flow skill) |
 
@@ -64,16 +65,17 @@ A subtask is a thread of work claimed by one contributor. To join this task, add
 <!-- Written by the review phase at the CLOSE of each round, so the next round can
      scope from it instead of re-reading the whole diff. Omit the section until a
      first round has closed. See `references/review-convergence.md` (dev-flow skill).
+     Baseline: the snapshot tree hash taken when the round's input was captured, written at
+     its close; the next round
+     reads only `git diff <baseline> <snapshot>` + carry-over (§ Incremental round scope).
      Mode: `full` (clean-context reviewer) or `confirm` (mechanical check of a contained,
      prescribed fix). Round 1 is always `full`, and a `must` or security finding never
      gets a `confirm` round. See `references/verification-economy.md`. -->
 
-| Round | Scope | Mode | Baseline | Verdict | Carry-over (identity → recurrence[, bypassed list]) |
-|-------|-------|------|----------|---------|------------------------------------------------------|
-| 1 | full (no-baseline) | full | `<tree-ref>` | FAIL | `src/x.ts:41#logic:null` → 1 · `src/gate.ts:12#security:null` → 1, `SKIP_CONFIRM — src/gate.ts:5` |
-| 2 | delta | confirm | `<tree-ref>` | PASS | — |
-
-**Always in scope:** {areas declared `Criticality: critical` — read every round regardless of the delta, or "—"}
+| Round | Scope | Mode | Baseline | Verdict | Carry-over (identity → recurrence, prescribed fix[, bypassed list]) |
+|-------|-------|------|----------|---------|----------------------------------------------------------------------|
+| 1 | full (round 1) | full | `<tree-hash>` | FAIL | `src/x.ts:41#logic:null` → 1, guard `x` before `.length` · `src/gate.ts:12#security:null` → 1, derive the decision from the operation, `SKIP_CONFIRM — src/gate.ts:5` |
+| 2 | delta | full | `<tree-hash>` | PASS | — |
 
 ## Coordination Notes
 

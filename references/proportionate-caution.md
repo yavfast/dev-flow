@@ -194,7 +194,7 @@ A row is **open** until an answer with the same `kind`, `ref`, and occurrence ex
 | `unrun-tests` | `run-full-local` · `run-full-ci` · `skip` | test selection |
 | `test-recipe-field` | `confirm` · `keep-default` | test selection |
 | `risk-awaiting` | `handle` · `accept` | risk triage |
-| `hardening` | `build` · `decline` | security exposure |
+| `hardening` | `build` · `decline` | [delivery focus](delivery-focus.md#security-findings-and-the-stage) |
 
 **Append a row** (the owner discipline does it):
 

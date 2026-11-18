@@ -8,7 +8,7 @@ A [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skill that enfor
 - [The Pipeline](#the-pipeline) — phase chain with gates, the command per phase, the service commands
 - [Installation](#installation) — where the skill directory goes
 - [Quick Start](#quick-start) — first commands for a greenfield project and for taking over an existing codebase
-- [How It Works](#how-it-works) — the mechanisms behind the pipeline: IDs, gates, review and its bounds, proportionate caution, design decisions, role styles, research, todos, adoption, intent, escalation, cache, tickets, continuity, profile
+- [How It Works](#how-it-works) — the mechanisms behind the pipeline: IDs, gates, review and its bounds, delivery focus, proportionate caution, design decisions, role styles, research, todos, adoption, intent, escalation, cache, tickets, continuity, profile
 - [File Structure](#file-structure) — what dev-flow creates inside a project (`docs/`, `.dev_flow/`)
 - [Skill Structure](#skill-structure) — the layout of this skill: `SKILL.md`, phases, references, templates, roles
 - [Key Principles](#key-principles) — the standing rules in one list
@@ -219,7 +219,7 @@ class RateLimiter:
 | Concept → Spec | No contradictions, dependencies listed, scope bounded |
 | Spec → Plan | All fields typed, error cases specified, constraints explicit |
 | Plan → Code | All spec sections covered, technology decisions documented |
-| Code → Test | Every touched criterion checked; permanent tests only with a keep reason; only the task's tests run |
+| Code → Test | Every touched main-case criterion checked, no test for an exotic case; permanent tests only with a keep reason; only the task's tests run |
 | Test → Review | All relevant functional tests pass, no regressions in the changed code area |
 | Review → Verify | Clean-context review passes, no blocking issues |
 | Verify → Commit | All verification levels pass, user approval |
@@ -235,7 +235,7 @@ Code review is performed by a **clean-context subagent** — a fresh AI instance
 
 ### Review Convergence
 
-Two agents can disagree forever about a detail that does not matter — on a large project that turns the review loop into an infinite ping-pong over, say, the states of a button that carries no weight in the module at all. dev-flow bounds the loop: a document declares its **criticality** once, when the question is cheap; the reviewer states a finding's severity and never decides whether it blocks — that verdict is **computed** from the two, so "this does not matter here" stops being one agent's opinion. A non-`must` finding raised twice unresolved leaves the loop as a **`contested`** todo carrying both readings, while a `must` or security finding blocks **without limit** — the mechanism terminates arguments, never defects. A repeat round reads only the delta since the previous baseline.
+Two agents can disagree forever about a detail that does not matter — on a large project that turns the review loop into an infinite ping-pong over, say, the states of a button that carries no weight in the module at all. dev-flow bounds the loop: a document declares its **criticality** once, when the question is cheap; the reviewer states a finding's severity and never decides whether it blocks — that verdict is **computed** from the two, so "this does not matter here" stops being one agent's opinion. A non-`must` finding raised twice unresolved leaves the loop as a **`contested`** todo carrying both readings, while a `must` or security finding blocks **without limit** — except a security finding whose attack needs users outside the team or a deployment others reach, which waits as a todo for the first external exposure while the project has neither (never a leaked secret); the mechanism terminates arguments, never defects. A repeat round reads only the fixes — the diff since the snapshot of the tree the previous round reviewed — plus the open findings; an advisory applied after the review is confirmed mechanically when its fix matches the prescribed one.
 
 Criticality values, materiality verdicts and the tripwire: [`references/review-convergence.md`](references/review-convergence.md).
 
@@ -246,6 +246,12 @@ The opposite failure of a missed check is a check with no subject: comparing cod
 Each condition is computed from a fact outside the agent's own prose — a diff, a file state, an exit code — never from "it looks fine to me". When the fact cannot be computed, the check runs in full; a check that does not run is **written down** as `unobserved` with the missing fact. `must` findings, security findings, `read-before-write` on shared files and the mandatory knowledge gates are never economized.
 
 The conditions in full: [`references/verification-economy.md`](references/verification-economy.md).
+
+### Delivery Focus
+
+Work that is not needed now delays the work that is: a threat model for a product that does not run yet, a test for a case nobody has met, a third review round over a detail that changes nothing. Each task records the project **stage** — `prototype`, `working`, `production` — inferred from facts and shown at the design sign-off. Before an item enters a plan or the work, the agent asks whether the task's goal needs it at that stage; if not, it records the item once with a stage trigger ("before the first external exposure") instead of building it. Tests cover the main use cases and complex logic; an exotic case waits for a real incident. The agent also watches its own process — a third review round, a repeated check, rework, a check bigger than the change — names the cause and corrects it.
+
+Stages, the needed-now check and the delay watch: [`references/delivery-focus.md`](references/delivery-focus.md).
 
 ### Proportionate Caution
 

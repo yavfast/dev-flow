@@ -155,7 +155,7 @@ This is also where [`resume`](status.md#resume--re-enter-a-task-in-a-fresh-sessi
    - Gate: spec → plan
    - Update `auth.plan.md` — add task for Skip button
    - Gate: plan → implement
-   - Design sign-off — DEC batch, changed docs, files to touch, proportionality block; wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints))
+   - Design sign-off — DEC batch, changed docs, files to touch, project stage, proportionality block; wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints))
    - Implement the change
    - Run the task's tests if a suite exists ([Test Economy](../references/test-economy.md#when-to-run)); gates around the run: [Code -> Test](testing.md#gate-check-code---test), [Test -> Review](testing.md#gate-check-test---review)
    - Review, then commit sign-off — changed files, review verdict, intent verdict, proportionality block, unpushed commits; "Ready to commit?"; at the commit that completes the work, offer the push as its own question ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints), [Git Workflow Integration](../SKILL.md#git-workflow-integration) rule 6); on the yes at the task's last commit, [close the task](status.md#on-task-completion) before `git commit`
@@ -181,7 +181,7 @@ If updates are needed:
 
 ### Step 6: Update context
 
-For a **new task**, set the header `Autonomy` field, write the role-style pin Step 2 captured, and fill the task file's `## Intent` section with what Step 2 captured (goal / target state / expected result) — it is the reference every later check compares against ([Task Intent](../references/task-intent.md)). If the user restates the goal mid-task, update the section and re-check open work against it.
+For a **new task**, set the header `Autonomy` field, write the role-style pin Step 2 captured, write the `Stage` row inferred from facts ([Delivery Focus → Project stage](../references/delivery-focus.md#project-stage)), and fill the task file's `## Intent` section with what Step 2 captured (goal / target state / expected result) — it is the reference every later check compares against ([Task Intent](../references/task-intent.md)). If the user restates the goal mid-task, update the section and re-check open work against it.
 
 Then follow the [status write protocol](status.md#write-protocol) for step-end and phase-boundary updates — your own Subtask block, the task header, the dashboard and catalog rows, re-reading each index immediately before the targeted edit.
 
@@ -207,7 +207,7 @@ A request that names two or more tasks forms a batch: each checkpoint is held on
 5. Record the members in each member's Coordination Notes. The [upstream look](status.md#upstream-look) runs once for the batch; the overlap is reported per member.
 6. Run the members in sequence, or as [parallel subtasks](subtask.md#parallel-subtasks) where they are independent.
 
-**Design sign-off** — once, before the first code edit of any member. Present each member's decisions, documents, files, and proportionality rows; a member with no design documents presents nothing and starts without an answer, and a batch with no design documents holds no design stop. The developer answers per member; any other member with no answer does not start.
+**Design sign-off** — once, before the first code edit of any member. Present each member's decisions, documents, files, project stage, and proportionality rows; a member with no design documents presents nothing and starts without an answer, and a batch with no design documents holds no design stop. The developer answers per member; any other member with no answer does not start.
 
 **Commit sign-off** — once, when each member has passed review or is blocked. A blocked member is not in the table and gets its own sign-off later. One row per member: task · files · review verdict with open advisories · intent verdict · open proportionality rows. The developer answers per row; "all" is valid only when the developer says it. The unpushed commits are shown once; when a row's commit would complete the work — the other rows' tasks counted as closed, a blocked member not ([SKILL.md → Git Workflow Integration](../SKILL.md#git-workflow-integration) rule 6) — the push is offered once, as its own question, with the table; it runs after the approved rows are committed when one of them completes the work — no such row, no push offer. Approved rows, one at a time: [close](status.md#on-task-completion) the row's task, commit it, then the next.
 

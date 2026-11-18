@@ -96,7 +96,8 @@ Transition rules:
 ## 05. Verification Criteria  {#SP_XXX_05}
 
 <!-- `Test` column: `keep` — a permanent test is required (complex logic or the developer's request);
-     `—` — the check is required, the agent chooses its form. See `references/test-economy.md` (dev-flow skill). -->
+     `—` — a check when the case is a main use case or complex logic, none for an exotic case; the agent chooses
+     its form. See `references/test-economy.md` (dev-flow skill), § What gets a test. -->
 
 ### 05_01. Functional Expectations  {#SP_XXX_05_01}
 

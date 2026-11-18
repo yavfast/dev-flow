@@ -244,7 +244,7 @@ Implement token-bucket rate limiting for per-agent LLM calls.
 | 2026-03-24 | Initial version |
 ```
 
-**Gate check:** All spec sections covered (§01+§03 → Phase 1, §02+§04 → Phase 2; §05 is the `Verify:` source, §06 has no code surface). Technology decisions with rationale; no contested forks. Dependencies stated. Each phase names what to verify. `Status` → `in-progress` as coding starts. **Design sign-off:** plan, Design Decisions (none contested), files to touch presented; the proportionality block is empty, so it is not shown; developer: go. **Proceed to code.**
+**Gate check:** All spec sections covered (§01+§03 → Phase 1, §02+§04 → Phase 2; §05 is the `Verify:` source, §06 has no code surface). Technology decisions with rationale; no contested forks. Dependencies stated. Each phase names what to verify. `Status` → `in-progress` as coding starts. **Design sign-off:** plan, Design Decisions (none contested), files to touch and the project stage (`prototype`) presented; the proportionality block is empty, so it is not shown; developer: go. **Proceed to code.**
 
 ---
 
@@ -304,7 +304,7 @@ Update plan after each phase's Verify checklist passes (Steps 5-7): Phase 1 and 
 
 ## Step 5 — Test (Functional)
 
-Run only the task's unit and mock tests ([Test Economy](../references/test-economy.md)); no unit or mock test needs permission. The rows marked `keep` in section 05 get permanent tests (reason `spec`). The `Concurrent agents` row (concurrency) and the `Min refill rate` row (calculation and timing) are class `complex`: permanent tests, reason `complex`. The trivial rows (full bucket, unknown agent, capacity boundaries) are checked by a temporary test outside the project tree.
+Run only the task's unit and mock tests ([Test Economy](../references/test-economy.md)); no unit or mock test needs permission. The rows marked `keep` in section 05 get permanent tests (reason `spec`). The `Concurrent agents` row (concurrency) and the `Min refill rate` row (calculation and timing) are class `complex`: permanent tests, reason `complex`. The trivial rows (full bucket, unknown agent) are checked by a temporary test outside the project tree; the capacity boundaries are exotic — no test.
 
 ```
 $ pytest tests/test_rate_limiter.py -v
@@ -321,10 +321,8 @@ $ pytest /tmp/{project-slug}/scratch/tests/task_C_RLM/test_rate_limiter_trivial.
 
 test_rate_limiter_trivial.py::test_acquire_token_immediate      PASSED
 test_rate_limiter_trivial.py::test_acquire_token_unknown_agent  PASSED
-test_rate_limiter_trivial.py::test_min_capacity                 PASSED
-test_rate_limiter_trivial.py::test_max_capacity                 PASSED
 
-4 passed in 0.04s
+2 passed in 0.04s
 ```
 
 Example test with traceable ID:
@@ -342,7 +340,7 @@ def test_acquire_token_rate_limited():
     assert wait > 0
 ```
 
-**Gate check:** Every touched criterion checked. The `keep` rows have permanent tests with reason `spec`; the concurrency and refill-rate tests have reason `complex`. Trivial checks leave no permanent test. The commit carries five `Keep-Test` trailers. Only the task's tests ran. Proceed to Review.
+**Gate check:** Every touched main-case criterion checked; no test for an exotic case. The `keep` rows have permanent tests with reason `spec`; the concurrency and refill-rate tests have reason `complex`. Trivial checks leave no permanent test. The commit carries five `Keep-Test` trailers. Only the task's tests ran. Proceed to Review.
 
 ---
 

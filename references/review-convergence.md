@@ -2,7 +2,7 @@
 
 Cross-cutting sub-procedure of [review](../phases/review.md) (reads), [concept](../phases/concept.md) and [specification](../phases/specification.md) (declare), [todo](../phases/todo.md) (receives), and [audit](../phases/audit.md) (grooms). Not a pipeline stage and no command.
 
-It bounds the `Review → fix → re-Review` loop with a **declared criticality** the reviewer reads instead of judging, a **recurrence limit** on a single finding, a **path rule** for a finding that got past a closed list, and an **incremental round scope**.
+It bounds the `Review → fix → re-Review` loop with a **declared criticality** the reviewer reads instead of judging, a **recurrence limit** on a single finding, a **path rule** for a finding that got past a closed list, and an **incremental round scope**: a repeat round reads only the fixes.
 
 Advisory throughout — the Review→Verify gate criteria are unchanged. What changes is which findings can reach `blocking`.
 
@@ -32,8 +32,9 @@ The reviewer assigns `severity` (`must` / `should` / `prefer`) as before, and do
 
 Overrides first, in order:
 
-1. `type` in a security class (`vuln:*`, `secret-exposure`, `missing-authz`) → `blocking` (`secret-exposure` is only a secret in a place where secrets never live — [Proportionate Caution](proportionate-caution.md#secrets))
-2. `severity: must` → `blocking`
+1. A security finding — the Security check, or a type `vuln:*` or `missing-authz` — with `exposure: external` while the stage written in the task file is not `production` → `deferrable`, routed as a todo of flavor `deferred` with the trigger "before the first external exposure", not the `contested` route ([Delivery Focus](delivery-focus.md#security-findings-and-the-stage)). `secret-exposure` never takes this override.
+2. `type` in a security class (`vuln:*`, `secret-exposure`, `missing-authz`) → `blocking` (`secret-exposure` is only a secret in a place where secrets never live — [Proportionate Caution](proportionate-caution.md#secrets))
+3. `severity: must` → `blocking`
 
 Then the table (so `severity` is `should` or `prefer`):
 
@@ -46,7 +47,7 @@ Then the table (so `severity` is `should` or `prefer`):
 - **advisory** — reported to the developer, spawns no round.
 - **deferrable** — routes to the todo register at once, spawns no round.
 
-The unstated column equals the `core` column: silence never lowers a severity. `critical` differs from `core` only in round scope, below.
+The unstated column equals the `core` column: silence never lowers a severity. `critical` reads like `core` here; it differs in [Test Economy](test-economy.md#logic-class), where a `critical` area counts as `complex` logic.
 
 **A reviewer who holds the declaration wrong does not argue and does not lower it** — that is an evidence ↔ doc conflict for [Upstream Escalation](escalation.md).
 
@@ -54,7 +55,7 @@ The unstated column equals the `core` column: silence never lowers a severity. `
 
 Finding identity is `(normalized location + type)` — the dedup key of the audit `Finding`, reused unchanged.
 
-- `must` and security findings block **without limit**. They must be fixed; no exit exists.
+- `must` and security findings block **without limit**. They must be fixed; no exit exists — except a security finding override 1 defers by the project stage.
 - Any other `blocking` finding gets at most two rounds. The same identity raised a second time unresolved fires the tripwire.
 - `deferrable` spawns no round; it routes immediately.
 
@@ -75,7 +76,7 @@ A fix whose only change to the decision is a member added to or removed from the
 
 ## The `contested` route
 
-A tripped or `deferrable` finding leaves the loop as a todo record of flavor `contested`, beside `candidate` and `queued`. It carries **both** readings, the reviewer's and the author's, so the next session does not re-derive the argument.
+A tripped or `deferrable` finding — except one override 1 defers — leaves the loop as a todo record of flavor `contested`, beside `candidate` and `queued`. It carries **both** readings, the reviewer's and the author's, so the next session does not re-derive the argument.
 
 - Not speculative — the YAGNI-gate does not drop it.
 - Does not surface when the originating task completes — that would reopen the argument right after the commit.
@@ -87,19 +88,30 @@ Name every routed record in the review report. Silent deferral is a report-ceili
 
 ## Incremental round scope
 
-Round state is written into the task file at the **close** of a round: `baseline` (tree state), `carry_over` (open blocking findings + their recurrence and bypassed list), `always_in_scope`.
+A repeat round reviews the fixes, not the whole task again.
 
-Round 1, and any round with a full reason, reads everything. Full reasons: no reachable baseline · upstream spec/plan/rules changed · change class `architectural`.
+**Baseline.** Take a snapshot of the working tree when the round's input is captured, before the reviewer starts. Round 1 and a full round read `git diff HEAD <snapshot>`, untracked files included (no commit yet: `git diff $(git hash-object -t tree /dev/null) <snapshot>`). At the **close** of the round, write that snapshot into the task file as `baseline`, with `carry_over` — the open blocking findings, each with its recurrence, prescribed fix and bypassed list. The snapshot is a git tree object; taking it changes no index, branch or working-tree file (it writes only unreachable objects into `.git`):
 
-Otherwise the round reads **delta ∪ carry-over ∪ always-in-scope**:
+```
+( d="$(mktemp -d)" || exit 1; trap 'rm -rf "$d"' EXIT
+  cp "$(git rev-parse --git-path index)" "$d/index" 2>/dev/null
+  GIT_INDEX_FILE="$d/index" git add -A && GIT_INDEX_FILE="$d/index" git write-tree )
+```
 
-- **delta** — everything changed since the baseline, so a regression introduced into an already-reviewed file stays in scope.
+It prints the tree hash; untracked files are in it, ignored files are not. The next round takes its own snapshot and reads the delta as `git diff <baseline> <snapshot>`.
+
+Round 1 reads everything, and so does a round with no reachable baseline (no git, or the baseline object is gone) — its one full reason.
+
+Otherwise the round reads **delta ∪ carry-over**:
+
+- **delta** — everything changed since the baseline: the fixes and any other edit since, so a regression introduced into an already-reviewed file stays in scope. A changed spec, plan or rule is in the delta like any other file; one the snapshot does not hold (a git-ignored `docs/` or `.dev_flow/`) that changed since the baseline is named in the brief with its changed sections, and code it breaks is in scope like code a changed function breaks.
 - **carry-over** — previously open findings, whether or not their file changed, so moving code cannot close a finding.
-- **always-in-scope** — every area declared `critical`, whether or not it changed.
+
+The reviewer reads unchanged code only as the context of the delta. It raises a finding only in the delta, or in unchanged code the delta breaks (a caller of a changed function). One exception: a `must` or security defect it sees outside the delta is still reported, and classified as usual.
 
 An empty delta with a non-empty carry-over is a legitimate round. Every part empty means no round is needed.
 
-The report names the round's scope, the round mode, and the reason for a full round. A narrowed scope with no named reason violates the no-silent-truncation rule.
+The report names the round's scope — `delta` with its baseline, or `full` with its reason — and the round mode. A full round with no named reason, or a delta round with no recorded baseline, violates the no-silent-truncation rule.
 
 Scope and mode are independent: scope says **what the round reads**, mode says **who performs it**. A `confirm` round reads the fix diff against the prescribed fix; `must` and security findings never reach it (discriminator D1).
 

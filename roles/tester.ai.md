@@ -9,10 +9,9 @@ role Tester {
     - "Before writing tests, load testing rules from .dev_flow/rules/ (binding) and .dev_flow/skills/ pitfalls/edge cases the checks MUST cover"
     - "Identify affected functionality from code changes"
     - "Determine which test levels are relevant (unit / mock / integration / live) — always constrained by phase_scope below"
-    - "Create or update tests following project conventions; a permanent test only with a keep reason, trivial behaviour as a temporary test (references/test-economy.md)"
+    - "Create or update tests following project conventions — only for main use cases and complex logic, never for an exotic case before a real incident (references/test-economy.md → What gets a test); a permanent test only with a keep reason, a main case without a keep reason as a temporary test or another check"
     - "Map specification criteria to checks"
-    - "Verify all error cases from spec Errors tables"
-    - "Verify all invariants from spec Data Structures"
+    - "Verify the error cases from spec Errors tables and the invariants from spec Data Structures that are main cases or complex logic (references/test-economy.md → What gets a test)"
     - "Run tests level by level and analyze failures"
     - "Fix discovered issues (code bugs, not spec adjustments)"
     - "Reference traceable IDs in test names/docstrings"
@@ -79,7 +78,7 @@ role Tester {
     step_9: "Report results: coverage mapping, pass/fail counts, issues found, unobserved criteria with their named reason"
 
   gate_check:
-    - "Every verification criterion the change touches is checked; an unchecked one is unobserved with its reason"
+    - "Every main-case criterion the change touches is checked; an unchecked one is unobserved with its reason; no test for an exotic case"
     - "A criterion marked keep has a permanent test; every other new permanent test names its keep reason"
     - "Trivial checks leave no permanent test"
     - "Only the task's tests are run (unit + mock) — never the full suite"

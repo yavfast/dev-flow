@@ -24,16 +24,17 @@ This clean-context review also **realizes the `sampled-verifier` tier** of [Appl
 
 A checkable guard on the reviewer itself: **2+ consecutive substantive diffs** (non-trivial change class) reviewed with **zero actionable findings** (blocking/should-fix, not nits) is a `verifier-rubber-stamp` tripwire. Surface it to the user; switch model if the harness has one.
 
-Findings carry a computed **materiality**, a recurring non-`must` finding trips `review-non-convergence` and leaves the loop as a `contested` todo, and a repeat round reads only the delta from its baseline. Procedure: **[Review Convergence](../references/review-convergence.md)**.
+Findings carry a computed **materiality**, a recurring non-`must` finding trips `review-non-convergence` and leaves the loop as a `contested` todo, and a repeat round reads only the fixes — the delta from the snapshot of the previous round — plus the open findings. Procedure: **[Review Convergence](../references/review-convergence.md)**.
 
 ### Pre-Commit Review Procedure
 
-0. **Scope the round** ([Review Convergence](../references/review-convergence.md)). Round 1 reads the whole diff. A later round reads **delta ∪ carry-over ∪ always-in-scope** from the baseline written at the close of the previous round, unless a full reason holds: no reachable baseline · upstream spec/plan/rules changed · change class `architectural`. Areas declared `Criticality: critical` are always in scope. Name `scope_mode` — and the reason for a full round — in the report.
+0. **Scope the round** ([Incremental round scope](../references/review-convergence.md#incremental-round-scope)). Take this round's snapshot now, before the reviewer starts. Round 1 reads `git diff HEAD <snapshot>`, untracked files included (no commit yet: `git diff $(git hash-object -t tree /dev/null) <snapshot>`). A later round reads only **delta ∪ carry-over**: the delta is `git diff <baseline> <snapshot>` — the baseline the previous round wrote against this round's snapshot. The one full reason is no reachable baseline. Name the scope — and the reason for a full round — in the report. Check the `Stage` row against the facts and rewrite it when they make the stage `production` ([Project stage](../references/delivery-focus.md#project-stage)); steps 0b, 1 and 3 read the rewritten row.
 
 0b. **Select the round mode** (repeat rounds only — [Verification Economy](../references/verification-economy.md)). A contained fix of a prescribed finding that is neither `must` nor a security class runs as `confirm`: check the diff against the prescribed fix and that every task-set test that was green is still green ([Test Economy](../references/test-economy.md#task-test-set)), then skip to step 5. Everything else, and round 1 always, runs `full` — continue to step 1. A `confirm` round that does not confirm replays as `full` from step 1.
 
 1. **Launch a reviewer subagent** (role: [reviewer.ai.md](../roles/reviewer.ai.md)). Its brief opens with `Skill root: <absolute path of the skill>` and `Read first: roles/reviewer.ai.md — blocks: rules, pre_commit_review, convergence`; a project overlay listed in `.dev_flow/roles/_index.yaml` is added after the base role ([SKILL.md → Subagents](../SKILL.md#subagents)). Besides these lines, the clean context contains only:
-   - The git diff of all staged/unstaged changes
+   - Round 1 and a full round: `git diff HEAD <snapshot>` of this round, untracked files included. A delta round: the delta diff and the carry-over findings with their prescribed fixes — never the whole diff; the brief states that a finding is raised only in the delta or where the delta breaks unchanged code, except a `must` or security defect seen anywhere ([Incremental round scope](../references/review-convergence.md#incremental-round-scope))
+   - While the stage written in the task file is `production`: every open deferred security finding with the trigger "before the first external exposure" — in `.dev_flow/todos/` and the plan backlogs — as a carry-over finding (step 3)
    - The relevant specification (`*.sp.md`) for contract verification
    - The relevant plan (`*.plan.md`) for completeness verification
    - Project rules (`.dev_flow/rules/`) if they exist — binding
@@ -59,32 +60,32 @@ Findings carry a computed **materiality**, a recurring non-`must` finding trips 
    | Test economy | Each new permanent test has a keep reason in the test report; no temporary test in the diff; no test deleted outside `audit tests` while the code it checked stays ([Test Economy](../references/test-economy.md#review-check)) | `should` |
    | Promoted prototype | The task promotes a prototype → a file of the diff identical to its counterpart in the prototype place the spike names has the `keep` mark in the plan; an unmarked one is a finding ([research](research.md#prototype-in-the-project)) | `must` |
    | Code quality | Naming, structure, readability follow project conventions | `prefer` |
-   | Security | No obvious vulnerabilities (injection, exposure, etc.); a secret counts only where secrets never live ([Proportionate Caution](../references/proportionate-caution.md#secrets)) | `must` |
+   | Security | No obvious vulnerabilities (injection, exposure, etc.); a secret counts only where secrets never live ([Proportionate Caution](../references/proportionate-caution.md#secrets)). Each finding states its `exposure` — `external` or `local` ([Delivery Focus](../references/delivery-focus.md#security-findings-and-the-stage)) | `must` |
 
    The column is the finding's **severity**, on the same `must` / `should` / `prefer` axis as project rules. It is the reviewer's input to the materiality computation in step 3 — not the verdict. A check's severity is a ceiling per finding, not a floor: a reviewer states a lower severity when the concrete finding warrants it.
 
-3. **Classify each finding** ([Review Convergence](../references/review-convergence.md)). The reviewer assigns `severity` (`must` / `should` / `prefer`); **materiality is computed, never assigned** — from `severity`, finding type, and the effective `Criticality` declared by the owning concept/spec. `blocking` spawns the next round; `advisory` is reported only; `deferrable` leaves the loop at once. A `must` or security finding is always `blocking` and never leaves the loop.
+3. **Classify each finding** ([Review Convergence](../references/review-convergence.md)). The reviewer assigns `severity` (`must` / `should` / `prefer`); **materiality is computed, never assigned** — from `severity`, finding type, and the effective `Criticality` declared by the owning concept/spec. `blocking` spawns the next round; `advisory` is reported only; `deferrable` leaves the loop at once. A `must` or security finding is always `blocking` and never leaves the loop — except a security finding the project stage defers ([override 1](../references/review-convergence.md#finding-materiality--computed-not-judged)). Such a finding is filed as a `deferred` todo and appends a `hardening` row ([Delivery Focus](../references/delivery-focus.md#security-findings-and-the-stage)). While the stage written in the task file is `production`, every open deferred security finding with the trigger "before the first external exposure" — in `.dev_flow/todos/` and the plan backlogs — is `blocking` in this review, inside or outside the diff ([The first external exposure](../references/delivery-focus.md#project-stage)); step 1 passes them to the reviewer as carry-over. When the review closes the finding of such a record — or the developer answers `build` on its `hardening` row — mark the record `promoted` with this task's id (a plan backlog item: append `— promoted: task_<ID>`), in the task's commit.
 
 4. **Review result:**
    - **Pass** — proceed to commit approval; on the yes at the task's last commit, [close the task](status.md#on-task-completion) before `git commit`.
    - **Fail (blocking)** — fix issues, re-run the task-set tests that cover the fix ([When to run](../references/test-economy.md#when-to-run)), then re-review. Select the repeat round's mode first: a contained fix of a prescribed finding that is neither `must` nor a security class is a `confirm` round in the main context, everything else spawns the clean-context reviewer. A `confirm` round that does not confirm replays as `full` — it never closes a finding it did not confirm. See [Verification Economy](../references/verification-economy.md). A non-`must` blocking finding that recurs unresolved into a second round trips `review-non-convergence` and routes to a `contested` todo instead of a third round. A finding with a `bypassed_list` is fixed by changing the path, not by a list member alone unless the owning document records the list as the defence; no path → upstream escalation ([List bypass](../references/review-convergence.md#list-bypass--fix-the-path-not-the-list)).
-   - **Warnings only** — present warnings to the user, proceed if user approves.
+   - **Warnings only** — present warnings to the user, proceed if user approves. An advisory applied after the review is checked as a `confirm` round ([Verification Economy → An applied advisory is confirmed](../references/verification-economy.md#discriminator--re-verifying-a-known-fix)).
 
 5. **Report format:**
 
    ```
-   ## Pre-Commit Review — round {N}, scope {full|incremental}, mode {full|confirm}{, reason: {full reason}}
+   ## Pre-Commit Review — round {N}, scope {full|delta}{, baseline {tree-hash}}, mode {full|confirm}{, reason: {full reason}}
 
    **Result:** PASS / FAIL / WARNINGS
 
    ### Blocking Issues
-   - [ ] {issue description} — {file:line} — severity {must|should}, criticality {value|unstated}, recurrence {n}{, bypassed list {name — file:line}}
+   - [ ] {issue description} — {file:line} — severity {must|should}, criticality {value|unstated}, recurrence {n}{, bypassed list {name — file:line}}{, exposure {external|local}}
 
    ### Warnings
    - {warning description} — {file:line} — advisory under criticality {value|unstated}
 
-   ### Routed to todo (contested)
-   - {TD_id} — {issue} — {why it did not converge; both positions recorded in the register}
+   ### Routed to todo
+   - {TD_id} — {issue} — contested: {why it did not converge; both positions recorded} | deferred: exposure external, stage {stage}, trigger "before the first external exposure"
 
    ### Unobserved
    - {check the reviewer could not evaluate} — {what was missing: no spec for the area, no test result, no runtime access}
@@ -96,7 +97,7 @@ Findings carry a computed **materiality**, a recurring non-`must` finding trips 
 
    A check the reviewer could not evaluate, or did not open for a missing entry condition ([Verification Economy](../references/verification-economy.md)), is listed as `unobserved` with the absent fact — it is neither a pass nor a warning, and never omitted. Every routed record is named; a silently deferred finding is a report-ceiling violation. The summary claims no more than the evidence supports. See [Evidence Discipline](../references/evidence-discipline.md).
 
-6. **Close the round.** Write `baseline` (tree state), the round mode, `carry_over` (open blocking findings + recurrence + bypassed list), and `always_in_scope` into the task file, so the next round scopes from them.
+6. **Close the round.** Write `baseline` (this round's snapshot tree hash, taken in step 0 — [Incremental round scope](../references/review-convergence.md#incremental-round-scope)), the round mode, and `carry_over` (open blocking findings + recurrence + prescribed fix + bypassed list) into the task file, so the next round scopes from them.
 
 ## After Review: Verify Phase
 

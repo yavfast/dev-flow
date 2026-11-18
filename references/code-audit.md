@@ -123,7 +123,7 @@ Static audit only — **never run or execute exploits**. Mirrors [review](../pha
 - **Missing authz** — an action/endpoint without an access check; broken object-level authorization.
 - **Unsafe defaults & error leakage** — permissive defaults, verbose errors leaking internals, missing input validation / output encoding.
 - **Auth/crypto sub-angles** fold in here.
-- **Fast-track rule:** an **exploitable `must`-severity** finding is *not* parked in the refactoring backlog — it is surfaced for an immediate [fix](../phases/fix.md) (or escalation). Security findings are never silently down-prioritized.
+- **Fast-track rule:** an **exploitable `must`-severity** finding is *not* parked in the refactoring backlog — it is surfaced for an immediate [fix](../phases/fix.md) (or escalation). Security findings are never silently down-prioritized. Exception: a finding of type `vuln:*` or `missing-authz` whose exposure is `external` while the [project stage](delivery-focus.md#project-stage) is not `production` goes to the backlog with the trigger "before the first external exposure" ([Delivery Focus](delivery-focus.md#security-findings-and-the-stage)); `secret-exposure` never takes it.
 - Finding types: `vuln:injection`, `vuln:ssrf`, `vuln:path-traversal`, `vuln:insecure-crypto`, `vuln:unsafe-deserialization`, `secret-exposure`, `missing-authz`, `unsafe-default`.
 
 ### `correctness`

@@ -82,6 +82,8 @@ The ledger of what was read — target, state reference, time, extent — lives 
 
 The first pre-commit review round is always `full`. The same discriminator set scopes the [verify](../phases/verify.md) fix cycle.
 
+**An applied advisory is confirmed, not re-reviewed.** A fix of an `advisory` finding, applied as the finding prescribed after the review, is checked as a `confirm` round against that finding (D2–D5). A discriminator false or undeterminable → the round runs `full` over the delta only ([Incremental round scope](review-convergence.md#incremental-round-scope)), never over the whole task.
+
 ## Suppression is written, never silent
 
 A **suppressed check** — one the signal gate did not open — writes a record: what was not checked, which condition failed, and the **named missing fact**. It enters the phase report as evidence state `unobserved` per [Evidence Discipline](evidence-discipline.md). A reason states the absent fact ("no signal is true for this file"), not an intention ("judged unimportant").
@@ -97,6 +99,6 @@ These cases refuse the suppression outright — run the check instead:
 
 - **`must` findings and security findings are never economized** — not by mode, not by signal, not by ledger.
 - **Commit approval is untouched.** The economy applies to the size of a check, never to the point where the decision passes to the developer.
-- **Clean-context review is not skipped.** `confirm` applies to a **repeat** round of a review already performed.
+- **Clean-context review is not skipped.** `confirm` applies to a **repeat** round of a review already performed, or to an applied advisory.
 - **Cost is not an entry condition.** The condition is an absent subject, not an expensive check.
 - **No gate criterion moves.** Every transition's criteria list stays byte-identical.

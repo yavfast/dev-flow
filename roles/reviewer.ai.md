@@ -35,7 +35,7 @@ role Reviewer {
     - "Codebase for traceable ID reference checking and for the callers of changed symbols"
     - ".dev_flow/rules/ — project coding rules (if exists)"
     - ".dev_flow/skills/ — for detecting reintroduced pitfalls (if exists)"
-    - "Git diff of staged/unstaged changes (for pre-commit review)"
+    - "Git diff of all changes, untracked files included (pre-commit review, round 1 or a full round); in a delta round only the delta diff and the carry-over findings with their prescribed fixes"
     - "Relevant specification and plan (for pre-commit review)"
     - "references/solid-architecture.md — default architecture principles"
 
@@ -46,7 +46,9 @@ role Reviewer {
     - "Updated documents after conflict resolution"
     - "Rules compliance report (if .dev_flow/rules/ exists)"
     - "Pre-commit review report (PASS / FAIL / WARNINGS) with round number, scope mode, round mode, routed contested records, and suppressed checks"
-    - "Round state written to the task file: baseline, carry_over, always_in_scope"
+    - "Round state written to the task file: baseline (snapshot tree hash), carry_over"
+    - "Stage row rewritten when the facts make the stage production (phases/review.md step 0)"
+    - "A fired 'before the first external exposure' record marked promoted with the task's id, in the task's commit (phases/review.md step 3)"
 
   # Review briefs name the blocks `rules`, `pre_commit_review`, `convergence` (SKILL.md → Subagents, phases/review.md step 1);
   # a tool review brief names `tool_review` (references/project-tools.md → Independent review, Retire).
@@ -64,7 +66,7 @@ role Reviewer {
     - "MUST NOT assign materiality to a finding — it is computed (references/review-convergence.md)"
     - "MUST NOT lower a declared Criticality to win an argument — a wrong declaration is an upstream escalation"
     - "MUST NOT route a must or security finding to a contested todo, at any criticality, at any recurrence"
-    - "MUST name every routed contested record and the round scope in the report"
+    - "MUST name every routed record (contested or stage-deferred) and the round scope in the report"
     - "MUST NOT let a must or security finding reach a confirm round, at any criticality"
     - "MUST name the closed list in bypassed_list when a case got past an allow-list, no-confirm list, pattern or class signs; prescribe a path fix, and keep the finding open when the fix only adds or removes list members (references/review-convergence.md)"
     - "MUST name every check suppressed for a missing entry condition as unobserved with the absent fact (references/verification-economy.md)"
@@ -72,7 +74,8 @@ role Reviewer {
   pre_commit_review:
     description: "Code review performed before commit by a subagent with clean context"
     inputs:
-      - "Git diff of all changes"
+      - "Git diff of all changes, untracked files included (round 1 or a full round); in a delta round only the delta diff and the carry-over findings with their prescribed fixes"
+      - "While the stage written in the task file is production: every open deferred security finding with the trigger 'before the first external exposure', as a carry-over finding (phases/review.md step 3)"
       - "Role style line of the brief, when present — read the card it names before the first action, work by it where this role leaves a choice, name the style in the report (references/role-styles.md → Subagents)"
       - "Relevant specification (*.sp.md)"
       - "Relevant plan (*.plan.md)"
@@ -116,21 +119,20 @@ role Reviewer {
         description: "Naming, structure, readability follow project conventions"
         severity: "prefer"
       security:
-        description: "No obvious vulnerabilities (injection, exposure, etc.); a secret counts only where secrets never live (references/proportionate-caution.md)"
+        description: "No obvious vulnerabilities (injection, exposure, etc.); a secret counts only where secrets never live (references/proportionate-caution.md). Each security finding states its exposure: external (needs users outside the team or a deployment others reach) or local (references/delivery-focus.md → Security findings and the stage)"
         severity: "must"
     severity_axis: "must | should | prefer — the same axis as project rules. The reviewer states severity; it never states materiality"
     results:
       pass: "Proceed to commit approval"
-      fail: "Fix issues, re-run the task-set tests that cover the fix (references/test-economy.md#when-to-run), then re-review"
-      warnings: "Present warnings to the user, proceed if user approves"
+      fail: "Fix issues, re-run the task-set tests that cover the fix (references/test-economy.md#when-to-run), then re-review the fixes only (convergence.scope_round.later_round)"
+      warnings: "Present warnings to the user, proceed if user approves; an advisory applied after the review is checked as a confirm round (references/verification-economy.md → An applied advisory is confirmed)"
 
   convergence:
     reference: "references/review-convergence.md"
     scope_round:
       round_1: "Read the whole diff"
-      later_round: "Read delta from baseline UNION carry-over UNION always-in-scope"
-      full_reasons: ["no reachable baseline", "upstream spec/plan/rules changed", "change class architectural"]
-      always_in_scope: "Every area declared Criticality: critical"
+      later_round: "Read only the delta (git diff <baseline> <snapshot>) UNION carry-over; unchanged code is context only. Raise a finding only in the delta or where the delta breaks unchanged code; a must or security defect seen anywhere is still reported"
+      full_reasons: ["no reachable baseline"]
     materiality:
       computed_from: ["finding severity", "finding type", "effective Criticality of the owning concept/spec"]
       never: "Assigned by the reviewer — it is derived, not judged"
@@ -142,14 +144,14 @@ role Reviewer {
       name: "review-non-convergence"
       condition: "A non-must, non-security blocking finding raised a second time unresolved (identity = normalized location + type)"
       action: "Route to a contested todo carrying BOTH positions; do not spawn a third round"
-      exempt: "must findings and security findings block without limit and never leave the loop"
+      exempt: "must findings and security findings block without limit and never leave the loop — except a security finding with exposure external while the stage written in the task file is not production: deferrable, a deferred todo with the trigger 'before the first external exposure' (references/review-convergence.md → override 1); secret-exposure never"
       twin: "Symmetric to verifier-rubber-stamp; both may fire together, neither cancels the other"
     list_bypass:
       field: "bypassed_list — name + file:line of the closed list the case got past"
       closes: "A path change: the case takes a route where the list is not the defence, or the decision derives from the operation itself, not from a declared field, and an unrecognised case falls into the stricter branch"
       never_closes: "A fix whose only change to the decision is a list member added or removed — the finding stays open under the same identity"
       no_path: "Upstream escalation; a fix adding the member that covers the case closes the finding only after the owning document (the task file when there is none) records the list as the defence"
-    close_round: "Write baseline, round mode, carry_over, and always_in_scope into the task file"
+    close_round: "Write baseline (the round's snapshot tree hash, taken when its input was captured — references/review-convergence.md → Incremental round scope), round mode, and carry_over into the task file"
 
   conflict_resolution:
     step_1: "Identify conflicting documents and list contradictions"

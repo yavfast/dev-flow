@@ -39,7 +39,7 @@ At a transition, run a **checkpoint** over the segment that is closing.
 1. **Distill** the closing segment — a noisy read, so delegate it (see [Delegation for Focus](delegation.md)) and keep only the conclusion.
 2. **Record a segment summary** as a Shared Activity Log entry tagged `{s:pin}` — a few lines of "what happened / what was decided", referencing any raw material by path, never inlining it (the no-large-blobs rule).
 3. **Demote the raw turns** of the segment — re-grade them `{s:noise}`, or `{s:superseded→<summary>}` when the summary replaces them.
-4. **Apply durable lessons** (next section) — auto-written through structural gates; a doubtful write goes to independent review first.
+4. **Apply durable lessons** (next section) — auto-written through structural gates; a doubtful write goes to independent review first. A cause of delay the [Delay watch](delivery-focus.md#delay-watch) recorded in this task and in an earlier one is such a lesson.
 5. **Close the segment**, and **promote** the durable part of working memory to L2 (see [Relation to working memory](#relation-to-working-memory)).
 
 ## Harvest before demote (ordering invariant)

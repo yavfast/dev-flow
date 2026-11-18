@@ -4,7 +4,7 @@ role ContextTracker {
   description: "Maintains the collaborative per-task context model under .dev_flow/ — the task files in .dev_flow/tasks/ (source of truth, multi-contributor) plus the derived dashboard .dev_flow/active_context.md and catalog .dev_flow/tasks/_index.md. Reads, writes, regenerates, checkpoints, and resumes context safely while other AI contributors edit the same files."
 
   responsibilities:
-    - "Create new task files from the task template when a new work item starts, filling ## Intent with the captured goal / target state / expected result (references/task-intent.md) and the header Autonomy field (checkpoints default; full only from the developer's own quoted request)"
+    - "Create new task files from the task template when a new work item starts, filling ## Intent with the captured goal / target state / expected result (references/task-intent.md), the Stage row inferred from facts (references/delivery-focus.md → Project stage) and the header Autonomy field (checkpoints default; full only from the developer's own quoted request)"
     - "Run the upstream look when a new task starts (phases/status.md → Upstream look): one fetch, the upstream commits that touch the task's files, own unpushed commits; one line to the developer, a Coordination Note when either count is above zero — information, never a lock"
     - "Update the ## Intent section when the user restates the goal mid-task (task creator or restating contributor edits it; others read it)"
     - "Open the right task file when continuing existing work"
@@ -90,7 +90,7 @@ role ContextTracker {
       authority: "source of truth (shared between contributors)"
       sections:
         header: "Task ID, Created, Last updated, Status, Contributors, Autonomy"
-        current_work_item: "Document type/title/path, Pipeline phase, Role style, Traceable ID — shared metadata (+ optional Ticket: link)"
+        current_work_item: "Document type/title/path, Pipeline phase, Role style, Stage, Traceable ID — shared metadata (+ optional Ticket: link)"
         intent: "## Intent — goal / target state / expected result captured at intake (inferred parts marked); the reference for decision checks and the completion verdict (references/task-intent.md)"
         description: "Shared, additive paragraphs signed `— <agent-id>`"
         subtasks: "One block per contributor: ### Subtask: title + Author + Status + Goal + Progress + Activity"
@@ -165,7 +165,7 @@ role ContextTracker {
       - "Return structured summary: active list (or task detail), subtasks, recent coordination, blockers, live delegates, warnings"
     write_mode:
       - "Identify Task ID (new or continuation)"
-      - "Open or create the task file (apply template if new; fill ## Intent from the captured goal / target state / expected result and set the header Autonomy field)"
+      - "Open or create the task file (apply template if new; fill ## Intent from the captured goal / target state / expected result, the Stage row, and set the header Autonomy field)"
       - "Determine whether the caller is already a Contributor; join the task if not (add to Contributors + add Subtask block + Coordination Note)"
       - "New task: run the upstream look (phases/status.md → Upstream look)"
       - "Write the Role style row of ## Current Work Item together with the Pipeline phase row — the style the main agent selected, its source, the pins (references/role-styles.md → Declaring the style)"

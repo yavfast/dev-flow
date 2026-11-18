@@ -24,11 +24,11 @@ Descending the pipeline: **scope narrows, fidelity sharpens, gate strictness ris
 
 ## The YAGNI-gate
 
-**Never-cut set — outside the gate.** A requirement of the present change, never an anticipation: validation at a trust boundary (external input, network, user files, integration responses) · error handling that prevents data loss · security controls (authorization, integrity checks) · accessibility · anything the request or a spec contract names. Build it with the change; never `drop` it, never cut it for Minimality. A limit, not a mandate: it adds no member where the code has no need of it.
+**Never-cut set — outside the gate.** A requirement of the present change, never an anticipation: validation at a trust boundary (external input, network, user files, integration responses) · error handling that prevents data loss · security controls (authorization, integrity checks) · accessibility · anything the request or a spec contract names. Build it with the change; never `drop` it, never cut it for Minimality. A limit, not a mandate: it adds no member where the code has no need of it. The set guards an exposure the [project stage](delivery-focus.md#project-stage) has now: before the stage `production`, a control whose attack needs an `external` exposure ([Delivery Focus](delivery-focus.md#security-findings-and-the-stage)) is `drop + record` with the trigger "before the first external exposure", recorded in the owning plan's backlog or as a todo of flavor `deferred` ([Needed now](delivery-focus.md#needed-now)), unless the request, the developer, a project rule or a spec contract names it; a control against a `local` attack and error handling that prevents the loss of real data stay at every stage.
 
 Each anticipation gets exactly one verdict. Discriminators, cheap (don't expand into an analysis tree — that is the overthinking failure mode):
 
-- **Is there a named, near-term trigger?** (a concrete consumer / requirement / event) — **no trigger → never `build now`** (this is the [Minimality gate](../phases/concept.md#gate-check-concept---specification): no consumer → cut).
+- **Is there a named, near-term trigger?** (a concrete consumer / requirement / event; a trigger of a later [project stage](delivery-focus.md#project-stage) is not near-term) — **no trigger → never `build now`** (this is the [Minimality gate](../phases/concept.md#gate-check-concept---specification): no consumer → cut).
 - **Cost asymmetry:** is retrofitting later more expensive than acting now?
 - **Seam or commitment?** A reversible *seam* (interface, extension point, nullable boundary) is cheap — take it freely. A *commitment* (imposes a present design tax, constrains the future) needs a trigger. A seam counts as "free" only when it costs ≈nothing **and** improves the code in front of you now; at strict (implement/fix) altitude a seam that exists *solely* for an untriggered future is the speculation the gate drops, not a free affordance.
 
@@ -40,7 +40,7 @@ Each anticipation gets exactly one verdict. Discriminators, cheap (don't expand 
 
 **No silent deferral.** Every `seam`/`drop` leaves a record (backlog with trigger / open decision / a logged note) — "not now" is never lost. Strictness rises as altitude lowers: at `implement`, speculative future-need builds default to `drop`.
 
-Worked contrast: a URL shortener's **abuse handling** has a day-one trigger (public links) and a costly retrofit → **build now**; a **multi-tenancy** posture on an email-on-signup launch has no near-term trigger and imposes a present tax → **drop + record**.
+Worked contrast: a URL shortener's **abuse handling**, on the task that makes its links public, has a day-one trigger (public links) and a costly retrofit → **build now**; a **multi-tenancy** posture on an email-on-signup launch has no near-term trigger and imposes a present tax → **drop + record**.
 
 ## The one-step check (lowest altitude, free)
 

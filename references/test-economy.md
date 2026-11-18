@@ -1,13 +1,26 @@
-# Test Economy — A Permanent Test Needs a Keep Reason
+# Test Economy — Tests for Main Use Cases and Complex Logic; a Permanent Test Needs a Keep Reason
 
 Cross-cutting sub-procedure of [test](../phases/testing.md), [implement](../phases/implement.md), [plan → Refactoring Protocol](../phases/plan.md#refactoring-protocol), [fix](../phases/fix.md), [specification](../phases/specification.md), [review](../phases/review.md) and [audit](../phases/audit.md). A project rule in `.dev_flow/rules/testing.md` overrides every default in this file ([Project rule](#project-rule)).
 
 ## The rule
 
-- A permanent test is maintained code. Create one only with a [keep reason](#keep-reasons). Check all other behaviour with a temporary test, a read, a build or a run.
-- Check every verification criterion the change touches. A criterion that is not checked is `unobserved` with its reason ([Evidence Discipline](evidence-discipline.md)). Never drop a criterion to save a test.
+- Write a test — permanent or temporary — only for a case that [gets a test](#what-gets-a-test): a main use case or `complex` logic. Check other behaviour with a read, a build or a run, or not at all.
+- An exotic case gets no test and no record until a real incident in its area; the `fix` of that incident brings the test ([Regression test after a fix](#regression-test-after-a-fix)).
+- A permanent test is maintained code. Create one only with a [keep reason](#keep-reasons).
+- Check every main-case criterion the change touches. A main-case criterion that is not checked is `unobserved` with its reason ([Evidence Discipline](evidence-discipline.md)). Never drop a main-case criterion to save a test.
 - No unit or mock test needs the developer's permission.
 - Run only the [task's tests](#task-test-set). The full suite runs only in [verify](../phases/verify.md) or on the developer's request.
+
+## What gets a test
+
+| Case | True when | Check |
+|------|-----------|-------|
+| `main` | A use case the change exists for: its main path, and an error a user meets in normal use | A test; permanent only with a [keep reason](#keep-reasons) |
+| `complex` | Logic of class `complex` ([Logic class](#logic-class)) that a read, a build or one run does not verify | A permanent test, reason `complex` |
+| `exotic` | A rare input or combination, an unlikely failure of an external system, a boundary value — outside the main use cases and outside `complex` logic, with no observed bug | None until a real incident in its area: no test, no record |
+| other | Anything else | A read, a build or a run; or none |
+
+A case named by the developer, a project rule, a `keep` mark, or the pitfalls of a project skill is never `exotic`.
 
 ## Keep reasons
 
@@ -37,7 +50,7 @@ A test the developer asks for is permanent: mark its criterion `keep`.
 | `complex` | A defect survives a careful read of the code: calculation, format parsing or serialization, state machine, ordering or merge, concurrency, timing, retries, cache, transactions; or an area declared `Criticality: critical` |
 | `trivial` | Field access, constructors, constants and enums, direct delegation and wiring, framework or library behaviour, data-structure shape, linear mapping, logging; a test that only asserts a mock call |
 
-Doubt between the classes → `complex`.
+Doubt between the classes → `complex`. For a new check in `implement`, `test` or `fix`, ask first whether a careful read and one run would catch a defect: yes → `trivial`.
 
 ## Choosing the form
 
@@ -46,9 +59,12 @@ For each criterion or behaviour you check in `implement`, `test` or `fix`:
 ```
 if a project rule requires a test       -> permanent, reason rule
 elif a 05 row with Test = keep           -> permanent, reason spec
-elif logic class = complex               -> permanent, reason complex
-else                                     -> temporary test | other check | none
-none -> record the criterion unobserved with its reason
+elif complex logic that a read, a build
+     or one run does not verify          -> permanent, reason complex
+elif main use case                       -> temporary test | other check
+elif exotic case                         -> none, no record
+else                                     -> other check | none
+a main case left unchecked -> record the criterion unobserved with its reason
 ```
 
 A temporary test that exposes `complex` behaviour moves into the project tree as a permanent test with reason `complex`.
@@ -116,7 +132,7 @@ The last column of the specification tables `05_01`–`05_04` is `Test` ([templa
 | Value | Meaning |
 |-------|---------|
 | `keep` | A permanent test is required; reason `spec` |
-| `—` or empty | A check is required; the agent chooses its form |
+| `—` or empty | A check when the case is `main` or `complex`, none when it is `exotic` ([What gets a test](#what-gets-a-test)); the agent chooses the form |
 
 Mark `keep` only for `complex` logic or on the developer's request.
 

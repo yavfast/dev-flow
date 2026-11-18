@@ -52,9 +52,9 @@ This phase covers **functional tests only** — fast, isolated checks of the cha
 
 ## Rules
 
-1. **Check every verification criterion the change touches** — contracts, error cases, invariants. A criterion that is not checked is `unobserved` with its reason.
+1. **Test only the main use cases and the complex logic** ([What gets a test](../references/test-economy.md#what-gets-a-test)) — the main path, the errors a user meets in normal use, and `complex` logic a read or a run does not verify. An exotic case gets no test until a real incident in its area. A main-case criterion the change touches that is not checked is `unobserved` with its reason.
 2. **A permanent test needs a [keep reason](../references/test-economy.md#keep-reasons).** A criterion marked `keep` in the spec's `Test` column always gets a permanent test.
-3. **Check trivial behaviour with a [temporary test](../references/test-economy.md#temporary-tests).** It ends with the task.
+3. **Check a main case that has no keep reason with a [temporary test](../references/test-economy.md#temporary-tests) or another check.** It ends with the task.
 4. **Use the project's existing test conventions.** Do not introduce a new test framework or test structure — follow what the project already uses.
 5. **Reference traceable IDs in test names or docstrings:**
    ```python
@@ -75,7 +75,7 @@ Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../S
 ## Gate Check (Code -> Test)
 
 Before running tests, verify:
-- [ ] Every verification criterion the change touches is checked; an unchecked one is `unobserved` with its reason
+- [ ] Every main-case criterion the change touches is checked; an unchecked one is `unobserved` with its reason; no test for an exotic case
 - [ ] A criterion marked `keep` has a permanent test; every other new permanent test names its keep reason
 - [ ] Trivial checks leave no permanent test
 - [ ] Only the task's tests are run (unit + mock) — never the full suite
@@ -90,7 +90,8 @@ Before running tests, verify:
 2. Find existing unit and mock tests covering the changed code
 3. Choose the form of each needed check by Test Economy
    (../references/test-economy.md#choosing-the-form): a permanent test only with
-   a keep reason, trivial behaviour as a temporary test; no permission needed
+   a keep reason, a main case without one as a temporary test or another
+   check; no permission needed
 4. Run the task test set once (unit + mock) — never the full suite
 5. If any test fails:
    a. Analyze the failure — a code bug, a test bug, or a spec problem?
@@ -114,7 +115,7 @@ When the `test` command targets test creation or modification:
 3. **Write or update tests** following the project's patterns:
    - Choose the form of each check by [Test Economy](../references/test-economy.md#choosing-the-form); a permanent test only with a keep reason.
    - Group permanent tests by contract or entity.
-   - Check the happy path, error cases, and edge cases.
+   - Check the main path and the errors a user meets in normal use; an edge case only when it is `complex` logic or named by the developer, a rule, a `keep` mark or a skill's pitfalls ([What gets a test](../references/test-economy.md#what-gets-a-test)).
    - Include traceable ID references.
 4. **Run the new/updated tests** to verify they pass.
 
@@ -149,6 +150,7 @@ At the phase boundary, run the [Transition Checkpoint](../references/experience-
 
 - Writing tests that verify implementation details instead of spec contracts
 - Skipping error-case checks ("happy path only")
+- Testing an exotic case before a real incident in its area
 - Modifying the spec to match failing code instead of fixing the code (a genuine spec defect goes through [Upstream Escalation](../references/escalation.md), not a silent edit)
 - Introducing a new test framework when the project already has one
 - Writing tests without traceable ID references
