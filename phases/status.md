@@ -102,7 +102,7 @@ A task file is **shared** between multiple AI contributors. Each contributor app
 
 ## Read Protocol
 
-**Re-attention first (after a compaction or subtask switch).** Before re-reading the task files, re-read the **session working memory** area — the L1 notes / parameters / reminders / reads that survive a compaction (see [Resource Cache → Session Working Memory](../references/cache.md#session-working-memory-l1)).
+**Re-attention first (after a compaction or subtask switch).** Before re-reading the task files, re-read the **session working memory** area — the L1 notes / parameters / reminders / reads / runs that survive a compaction (see [Resource Cache → Session Working Memory](../references/cache.md#session-working-memory-l1)).
 
 ### Step 1: Read the dashboard
 
@@ -206,7 +206,7 @@ If the user says **continue** — hand off to [`resume`](#resume--re-enter-a-tas
 
 Every dev-flow command MUST update context using this protocol. The goal is **tolerance to other contributors**: an agent's writes must not destroy state another contributor has written.
 
-**Working memory → durable (promote at a checkpoint).** Transient working state — the L1 notes / parameters / reminders / reads — is *not* written to task files on every step. At a checkpoint (a phase or subtask boundary, or an [Experience Capture](../references/experience-capture.md) checkpoint) **promote** the durable part — a settled decision, a confirmed parameter, a harvested lesson — into the task file (or an auto-applied rule/skill). The rest stays L1 scratch, acceptably lost on restart. See [Resource Cache → Session Working Memory](../references/cache.md#session-working-memory-l1).
+**Working memory → durable (promote at a checkpoint).** Transient working state — the L1 notes / parameters / reminders / reads / runs — is *not* written to task files on every step. At a checkpoint (a phase or subtask boundary, or an [Experience Capture](../references/experience-capture.md) checkpoint) **promote** the durable part — a settled decision, a confirmed parameter, a harvested lesson — into the task file (or an auto-applied rule/skill). The rest stays L1 scratch, acceptably lost on restart. See [Resource Cache → Session Working Memory](../references/cache.md#session-working-memory-l1).
 
 ### When a phase starts on a task
 

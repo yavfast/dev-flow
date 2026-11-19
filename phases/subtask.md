@@ -201,7 +201,7 @@ When the subagent escalates, answer with the same care as an Interview-Mode repl
 
 ### Step 5: Receive the full report and integrate
 
-1. Read the report; spot-check the changes it claims (diff, key files).
+1. Read the report; spot-check the changes it claims (diff, key files). Write each run record the report returns into your working memory `runs` ([Run Economy → Run record](../references/run-economy.md#run-record)); a claimed pass is checked against its record — `state` equals your snapshot, `log` shows the exit ([Reuse](../references/run-economy.md#reuse)).
 2. The subagent has already updated **its own** Subtask block and any shared entries it owns — verify the task file reflects reality; do not rewrite the subagent's block. (A read-only subtask made no context writes — record its outcome yourself in step 3.)
 3. Record the outcome in **your own** Subtask block / Shared Activity Log: `subtask completed (<phase>): <one line> — <key result>`.
 4. Carry *Open items* into the main flow: answer, escalate to the developer, or convert to tracked items (backlog with trigger, Blocking Issue, DEC record).
@@ -217,7 +217,8 @@ Complete in **coverage**, conclusion in **style** — every section present, raw
 ## Decisions     — choices made (incl. DEC records added), escalations and answers
 ## Changes       — files created/modified: code, tests, docs; own Subtask block
                    (if joined); persisted skills/cache/rules entries (paths)
-## Verification  — build / test / review status, per the phase's protocol
+## Verification  — build / test / review status, per the phase's protocol,
+                   with the run record of each build or test run
 ## Open items    — questions (markered options + recommendation), follow-ups, risks
 ## Materials     — workspace paths to raw logs, dumps, captures; at `record` /
                    `watched` the line `Progress: <record path>`

@@ -11,6 +11,7 @@ role Implementer {
     - "Add traceable ID comments linking code to concept/spec"
     - "Check spec error cases and invariants of the main use cases and of complex logic — no test for an exotic case (references/test-economy.md → What gets a test); a permanent test only with a keep reason"
     - "Update plan status after completing each phase"
+    - "Build and test economically: reuse a run record by its Reuse verdict (references/run-economy.md#reuse); build the narrowest scope and the cheapest variant with the commands of the run map (.dev_flow/skills/build/run-map.md); write a run record for each run; after the last code edit run once the checks the fast variant turned off (references/run-economy.md)"
     - "Tool mode (phases/tool.md, reflection checkpoint): promote a session-workspace script, adapt (fix / extend / port / repurpose / retire) or regenerate a project tool per references/project-tools.md — header contract first, real acceptance samples, author run of every sample, card re-copied, state unverified (retire: state retired after the independent review), router rebuilt; never write a binding or set a tool active (audit does)"
 
   skills:
@@ -34,6 +35,7 @@ role Implementer {
     - "Source code files as specified in the plan"
     - "Permanent test files, each with its keep reason (references/test-economy.md)"
     - "Updated plan with phase status changes"
+    - "Run records — one per build or test run — and the run map updates at the phase's Reflection (references/run-economy.md)"
 
   rules:
     - "MUST follow plan phases in dependency order"
@@ -66,7 +68,7 @@ role Implementer {
     - "Reach-check: before the first edit, list every caller of each changed symbol plus bound tests, fixtures, config, exports (references/impact.md)"
     - "Write code satisfying ALL spec contracts, following SOLID, project rules, and skill pitfalls"
     - "Add traceable ID comments"
-    - "Check error cases and invariants of the main use cases and of complex logic — the form of each check by references/test-economy.md; after each edit run only the task-set tests that cover the edited code"
+    - "Check error cases and invariants of the main use cases and of complex logic — the form of each check by references/test-economy.md; after each edit run only the task-set tests that cover the edited code, and not a run its record answers (references/run-economy.md#reuse)"
     - "Update plan status to DONE once review passes and Verify passes or its skip is recorded unobserved (phases/implement.md step 12; phases/plan.md Refactoring Workflow step 6)"
     - "If a new reusable pattern emerges, flag it for rules update"
 }

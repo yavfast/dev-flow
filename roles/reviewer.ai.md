@@ -125,7 +125,7 @@ role Reviewer {
     severity_axis: "must | should | prefer — the same axis as project rules. The reviewer states severity; it never states materiality"
     results:
       pass: "Proceed to commit approval"
-      fail: "Fix issues, re-run the task-set tests that cover the fix (references/test-economy.md#when-to-run), then re-review the fixes only (convergence.scope_round.later_round)"
+      fail: "Fix issues, re-run the task-set tests that cover the fix (references/test-economy.md#when-to-run) and, when the fix edited code, the checks the fast variant turned off on the modules it touched (references/run-economy.md#fast-variant), then re-review the fixes only (convergence.scope_round.later_round)"
       warnings: "Present warnings to the user, proceed if user approves; an advisory applied after the review is checked as a confirm round (references/verification-economy.md → An applied advisory is confirmed)"
 
   convergence:

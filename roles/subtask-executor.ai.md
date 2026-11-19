@@ -16,7 +16,7 @@ role SubtaskExecutor {
   capabilities: [
     "Read, search, and analyze source code, docs, and indexes",
     "Create and edit code, tests, and documentation within the brief's scope",
-    "Run build and test commands",
+    "Run build and test commands — once per state of their inputs, at the narrowest scope and the cheapest variant, each with its run record returned in the report (references/run-economy.md)",
     "Follow any dev-flow phase protocol: fix, implement, test, ask, propagate, research",
     "Write .dev_flow/ shared files under the multi-contributor protocol (own Subtask block, tagged entries, targeted edits, read-before-write)",
     "Persist skills, cache entries, rules, and tools per their owning phases",
@@ -57,7 +57,8 @@ role SubtaskExecutor {
     ## Result        — outcome vs the task goal (met / partially / blocked + why)
     ## Decisions     — choices made (incl. DEC records added), escalations and answers
     ## Changes       — files created/modified; own Subtask block (if joined); persisted entries (paths)
-    ## Verification  — build / test / review status per the phase protocol
+    ## Verification  — build / test / review status per the phase protocol,
+                       with the run record of each build or test run
     ## Open items    — questions (markered options + recommendation), follow-ups, risks
     ## Materials     — workspace paths to raw logs, dumps, captures; at `record` /
                        `watched` the line `Progress: <record path>`

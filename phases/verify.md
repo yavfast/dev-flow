@@ -65,6 +65,8 @@ If none apply — skip directly to commit approval, recording the skip as `unobs
 | 2 | **Integration tests** | Verify interaction between real components | When contracts between modules change |
 | 3 | **Live tests** | Launch the app/service and verify changed behavior end-to-end | When user-facing behavior, integrations, or configurations change |
 
+**Builds.** A change to a shared module builds its dependents at level 1; a live test runs the debug variant. The full or release build runs once per task, after the last code change, only under [When the full build runs](../references/run-economy.md#when-the-full-build-runs); otherwise the report names CI as its place, or with no CI records it `unobserved` with its reason. A build or a test whose run record answers is not run again, and each run writes its record ([Run Economy](../references/run-economy.md)).
+
 ### Live Tests Include
 
 - Running requests against a real API and verifying responses
@@ -127,6 +129,7 @@ When in doubt, treat the operation as destructive.
 4. If any verification fails:
    - Analyze the failure — a code bug, a config issue, an environment problem, or a spec/plan defect? The last one → escalate upstream first, see [Upstream Escalation](../references/escalation.md).
    - Fix the root cause.
+   - Run the checks the fast variant turned off on the modules the fix touched ([Run Economy → Fast variant](../references/run-economy.md#fast-variant)).
    - Re-run functional tests ([Test phase](testing.md)) on the fix.
    - Re-run code review ([Review phase](review.md)) on the fix.
    - Re-run the failed verification level and all subsequent levels.
@@ -139,6 +142,7 @@ When verification finds an issue that requires a code change:
 ```
 Verify fails
   → Fix code
+  → Run the checks the fast variant turned off on the modules the fix touched
   → Re-run functional tests (unit + mock) on the fix
   → Re-run code review on the fix
   → Re-run verification from the failed level
@@ -196,7 +200,8 @@ Once verification passes, run the [Transition Checkpoint](../references/experien
 - **Rule from a recurring failure mode.** A regression that a convention would have prevented, a flaky-test pattern, an integration contract that needed a guard — write a rule automatically (default `should`; testing-area rules live under `.dev_flow/rules/testing.md`); a `mechanical` class goes to a `check` tool instead, a `mixed` one to both ([Checkability rung](../references/experience-capture.md#checkability-rung)). See [Project Rules → Auto-discovery](../references/conventions.md#project-rules).
 - **Skill from a verification gotcha.** A non-obvious environment setup, a sandbox/seed-data trick, a known-pitfall in a live integration — write/update a skill through the [skill phase](skill.md) non-triviality filter — never a fact about the developer or the machine, which belongs to `.dev_flow/profile/` under its consent regime ([Adaptation Profile](../references/adaptation-profile.md)) — a machine's own tooling and devices are profile facts, not skills.
 - **Tool to keep.** A script written in the session workspace that you judge worth reusing — and, as a must-consider, a deterministic check or operation hand-rolled in this and at least one earlier task, or hand-rolled wrong — is [promoted](../references/project-tools.md#promote) to a project tool: header contract, real acceptance samples, your own run of every sample; it stays `unverified` until the audit tools step verifies it. A covering tool you did not use is recorded as a bypass with its reason ([Experience Capture](../references/experience-capture.md#applying-experience--auto-apply-through-structural-gates)).
-- **Pointer or access from friction.** A cause the [Delay watch](../references/delivery-focus.md#delay-watch) recorded — the agent's own or a delegate's `Friction:` item — becomes a lesson by its step 3: a `pointer` for a file or fact found late, an `access` proposal for information no channel reached.
+- **Pointer or access from friction.** A cause the [Delay watch](../references/delivery-focus.md#delay-watch) recorded — the agent's own or a delegate's `Friction:` item — becomes a lesson by its step 3: a `pointer` for a file or fact found late, an `access` proposal for information no channel reached, a run-map line or an `improvement` for a wide or slow run ([Run Economy](../references/run-economy.md#process-improvement)).
+- **Run map.** Update `.dev_flow/skills/build/run-map.md` by [Run Economy → Run map](../references/run-economy.md#run-map): absent → write it from the commands this task ran; a narrower or faster command, the first one for a module, a newer duration; a command that fails on the current tree fixed or removed.
 - **Sweep question from a spec escalation.** A gap escalated to a specification in the closing segment is routed by the sweep questions its Activity entry names ([Sweep gaps](../references/experience-capture.md#sweep-gaps)): a question of the six → `none`; a project rule → `recurred` on the rule's ledger entry, `ref` the task file, once per rule per task; `no sweep question` → `rule`, a new sweep question in the category `spec-sweep`. Any other escalation to a specification — an ambiguity, a wrong value, a change of a published contract — carries no sweep name and goes through the [owner menu](../references/experience-capture.md#applying-experience--auto-apply-through-structural-gates) like any lesson.
 - **Observation for a covered lesson.** A lesson an existing rule, skill, or tool already covers is not dropped: when its problem class recurred or the artifact was breached, append a `recurred` observation to that artifact's ledger entry (a hand-rolled check a covering tool covers: a [bypass](../references/project-tools.md#use-accounting) instead, unless one is already recorded for this check — by a failed run or an earlier rung — never a second); when the artifact fired on its sanctioned path and left a non-model by-product, append `exercised` ([Experience Capture](../references/experience-capture.md#applying-experience--auto-apply-through-structural-gates)).
 
@@ -216,6 +221,7 @@ After running verification, report:
 | Unobserved | Levels/criteria this environment could not verify + the missing observation boundary (no CI, no service access, no credentials, no device) |
 | Intent verdict | Outcome vs the task's recorded expected result: `met / partially met / diverged (+why)` ([Task Intent](../references/task-intent.md)); a result that shows only after the commit is the intent's [Outcome check](../references/task-intent.md#outcome-check), reported `outcome pending` — not an `unobserved` criterion |
 | Fix cycles | Number of fix → test → review → verify iterations |
+| Runs | The run records reused in place of a run; the checks the fast variant turned off and where they ran; the full or release build — run, CI, or `unobserved`; the local switches turned on ([Run Economy](../references/run-economy.md)) |
 
 No claim outruns its evidence — "verified" / "clean" only for what actually ran; everything else is `unobserved` with a named reason. See [Evidence Discipline](../references/evidence-discipline.md).
 
@@ -225,10 +231,12 @@ Before proceeding to commit:
 - [ ] Regression tests pass (if applicable)
 - [ ] Integration tests pass (if applicable)
 - [ ] Live tests pass or manual verification completed (app/service launched, scenario checked)
-- [ ] If Verify finds issues → fix code → re-run Test (if exists) → re-run Review → re-run Verify — no fix cycle left incomplete
+- [ ] If Verify finds issues → fix code → re-run Test (if exists) and the checks the fast variant turned off on the modules the fix touched ([Run Economy → Fast variant](../references/run-economy.md#fast-variant)) → re-run Review → re-run Verify — no fix cycle left incomplete
 - [ ] If a failure traces to the spec/plan itself (not the code) — do not bend the code: escalate upstream first (see [Upstream Escalation](../references/escalation.md))
 - [ ] Reflection checkpoint run — durable lessons harvested (see [Experience Capture](../references/experience-capture.md))
 - [ ] Ask the user for explicit commit approval before committing — the commit sign-off of [Developer Checkpoints](../SKILL.md#developer-checkpoints)
+
+A passing run record of the current state satisfies a test criterion above; it needs no new run ([Run Economy](../references/run-economy.md#reuse)).
 
 On the yes at the task's last commit: [close the task](status.md#on-task-completion) before `git commit`.
 
@@ -241,3 +249,4 @@ On the yes at the task's last commit: [close the task](status.md#on-task-complet
 - Not providing manual verification steps when no automated tests exist
 - Creating new integration/live test scenarios without asking the user first
 - Committing after review without running verification
+- Running a build or a test again on an unchanged state, a full or release build its condition does not call for, or a `clean`, a cache wipe or a daemon stop when neither stale output was observed nor the build configuration or the toolchain changed ([Run Economy](../references/run-economy.md#build-scope))

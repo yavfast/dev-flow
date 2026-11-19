@@ -108,7 +108,7 @@ Find `covering` from traceable IDs in tests, code↔test file pairs and imports.
 | `test` phase | The whole task set, once, after the edits are complete |
 | `fix` verify step | The whole task set, once, after the fix |
 
-A test that passed after the last change to the code it covers is not run again ([Verification Economy](verification-economy.md)).
+A test that passed after the last change to the code it covers is not run again: its [run record](run-economy.md#reuse) answers, at a gate and a sign-off too ([Verification Economy](verification-economy.md)).
 
 Never:
 

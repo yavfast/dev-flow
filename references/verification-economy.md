@@ -60,6 +60,8 @@ Boundaries:
 - **`read-before-write` is not weakened.** A shared file (task file, index, external ticket) is re-read before **every** write, unconditionally — the ledger never answers for it.
 - **Knowledge gates are untouched.** `.dev_flow/rules/_index.yaml`, `.dev_flow/skills/_index.yaml` and `.dev_flow/tools/_index.yaml` stay mandatory at phase start. Re-triggering knowledge at the moment of action stays pointer-only per [Application Enforcement](application-enforcement.md), so it never re-reads a body either.
 
+- **A build or a test run has its own invalidators** — the `run` row of [Run Economy → Reuse](run-economy.md#reuse); none → the record answers, no run.
+
 - **A project tool's binding has its own invalidators** — the realization hash, the samples hash, the environment. A trust-check verdict holds in working memory until one of them changes, and the audit tools step verifies only a tool whose binding one of them invalidated ([Project Tools](project-tools.md#verification-in-audit)).
 
 The ledger of what was read — target, state reference, time, extent — lives in the [session working memory](cache.md#session-working-memory-l1). No entry means "not read", never "read long ago".
@@ -74,7 +76,7 @@ The ledger of what was read — target, state reference, time, extent — lives 
 | D2 | The review record names one concrete fix | the finding text, written before the fix existed |
 | D3 | The fix diff is contained in the locations the finding named | diff |
 | D4 | Nothing outside those locations changed in this round | diff |
-| D5 | The tests the phase runs ([Test Economy](test-economy.md#the-rule)) that were green stayed green | exit code |
+| D5 | The tests the phase runs ([Test Economy](test-economy.md#the-rule)) that were green stayed green — their [run records](run-economy.md#reuse) after the fix; a record from before the fix whose [Reuse](run-economy.md#reuse) verdict is `reuse` answers, with no run | exit code (the run record) |
 
 `confirm` is a mechanical check in the main context: the diff matches the prescribed fix and the phase's tests that were green are still green. No clean-context reviewer is spawned. Any discriminator false or undeterminable → `full`, the current procedure.
 

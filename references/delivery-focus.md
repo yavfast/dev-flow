@@ -8,7 +8,7 @@ Cross-cutting discipline of every phase that plans or does work — [concept](..
 - [Project stage](#project-stage) — `prototype` / `working` / `production`, inferred from facts, shown at the design sign-off
 - [Needed now](#needed-now) — the check before an item enters a plan or the work; what each stage defers; what is never deferred
 - [Security findings and the stage](#security-findings-and-the-stage) — a finding whose attack needs an exposure the stage does not have is deferred
-- [Delay watch](#delay-watch) — signals of delay in the agent's own process (searching, costly calls and missing access included), the correction, and a delegate's `Friction:` line
+- [Delay watch](#delay-watch) — signals of delay in the agent's own process (searching, costly calls, missing access, wide and slow runs included), the correction, and a delegate's `Friction:` line
 - [Boundaries](#boundaries) — what the stage and the watch never change
 
 ## Why this exists
@@ -81,12 +81,14 @@ The agent watches its own process for what delays the result.
 | `costly-call` | The harness cuts a tool call's output or saves it aside, or the same call runs again to read the rest |
 | `no-access` | Information the work needs sits behind a credential, a privilege or a resource that no channel or tool reaches |
 | `brief-gap` | A delegate's run needed a fact its brief did not carry ([A delegate's run](#a-delegates-run)) |
+| `wide-run` | A build or a test run is wider than its question: the whole project where a module answers, a release variant where a debug one answers, a `clean`, a cache wipe or a daemon stop when neither stale output was observed nor the build configuration or the toolchain changed ([Run Economy](run-economy.md#build-scope)) |
+| `slow-run` | One build or test command takes 2 minutes or more and runs a third time in the session (its [run record](run-economy.md#run-record): `duration`, `count`) |
 
 On a signal:
 
 1. Write one Activity line in the task file: the signal and its cause.
 2. Correct now: narrow the scope, defer the item ([Needed now](#needed-now)), drop a repeated check, or ask the developer when the correction changes what they approved.
-3. At the [Transition Checkpoint](experience-capture.md#transition-checkpoint--the-primary-cadence), the cause becomes a lesson through the [owner menu](experience-capture.md#applying-experience--auto-apply-through-structural-gates) (never an auto-`must`): `search` and `brief-gap` → `pointer` and `no-access` → `access` at their first occurrence; any other cause once it is seen in this task and in an earlier one — `costly-call` → `tool`, the rest → `rule` or `tool` by the [checkability rung](experience-capture.md#checkability-rung).
+3. At the [Transition Checkpoint](experience-capture.md#transition-checkpoint--the-primary-cadence), the cause becomes a lesson through the [owner menu](experience-capture.md#applying-experience--auto-apply-through-structural-gates) (never an auto-`must`): `search` and `brief-gap` → `pointer`, `no-access` → `access`, `wide-run` and `slow-run` → by [Run Economy → Process improvement](run-economy.md#process-improvement), at their first occurrence; any other cause once it is seen in this task and in an earlier one — `costly-call` → `tool`, the rest → `rule` or `tool` by the [checkability rung](experience-capture.md#checkability-rung).
 
 ### A delegate's run
 

@@ -92,7 +92,9 @@ Before running tests, verify:
    (../references/test-economy.md#choosing-the-form): a permanent test only with
    a keep reason, a main case without one as a temporary test or another
    check; no permission needed
-4. Run the task test set once (unit + mock) — never the full suite
+4. Run the task test set once (unit + mock) — never the full suite; a test
+   whose run record answers is not run again, and each run writes its record
+   (Run Economy: ../references/run-economy.md)
 5. If any test fails:
    a. Analyze the failure — a code bug, a test bug, or a spec problem?
    b. Code or test bug → fix the root cause (code must satisfy the spec,
@@ -102,7 +104,10 @@ Before running tests, verify:
       reality → stop and escalate upstream instead of guessing; see
       Upstream Escalation (../references/escalation.md)
    d. Re-run the failed tests
-6. All functional tests pass → delete in-tree temporary tests → proceed to Review phase
+6. All functional tests pass → delete in-tree temporary tests → when this
+   phase changed code, run once the checks the fast variant turned off (lint,
+   static analysis) on the touched modules (Run Economy → Fast variant) →
+   proceed to Review phase
 ```
 
 **Note:** Do NOT run integration or live tests at this stage. Those are handled in the [Verify phase](verify.md) after Review passes.
@@ -143,9 +148,11 @@ Before the review starts, verify:
 - [ ] All relevant functional tests pass
 - [ ] No regressions in changed code area
 
+A passing run record of the current state satisfies these criteria; it needs no new run ([Run Economy](../references/run-economy.md#reuse)).
+
 ## Reflection
 
-At the phase boundary, run the [Transition Checkpoint](../references/experience-capture.md): if writing tests surfaced a recurring assertion/mocking pattern or a coverage gap worth a convention, write a testing rule (`.dev_flow/rules/testing.md`) — a `mechanical` class goes to a `check` tool instead, a `mixed` one to both ([Checkability rung](../references/experience-capture.md#checkability-rung)); if it produced a non-trivial fixture/harness technique, write/update a skill — never a fact about the developer or the machine, which belongs to `.dev_flow/profile/` under its consent regime ([Adaptation Profile](../references/adaptation-profile.md)). Auto-apply through the structural [rule](rule.md)/[skill](skill.md) gate — no permission prompt; never auto-write a `must` (route those + contradictions to independent review); every write is visible in the commit diff. A lesson an existing rule, skill, or tool already covers appends a `recurred` or `exercised` observation to that artifact's ledger entry instead of a new write — a hand-rolled check a covering tool covers records a [bypass](../references/project-tools.md#use-accounting) in place of `recurred`, unless one is already recorded for this check (by a failed run or an earlier rung) — never a second ([Experience Capture](../references/experience-capture.md#applying-experience--auto-apply-through-structural-gates)). A gap escalated to a specification is routed by [Sweep gaps](../references/experience-capture.md#sweep-gaps). See **[Experience Capture](../references/experience-capture.md)**.
+At the phase boundary, run the [Transition Checkpoint](../references/experience-capture.md): if writing tests surfaced a recurring assertion/mocking pattern or a coverage gap worth a convention, write a testing rule (`.dev_flow/rules/testing.md`) — a `mechanical` class goes to a `check` tool instead, a `mixed` one to both ([Checkability rung](../references/experience-capture.md#checkability-rung)); if it produced a non-trivial fixture/harness technique, write/update a skill — never a fact about the developer or the machine, which belongs to `.dev_flow/profile/` under its consent regime ([Adaptation Profile](../references/adaptation-profile.md)). Auto-apply through the structural [rule](rule.md)/[skill](skill.md) gate — no permission prompt; never auto-write a `must` (route those + contradictions to independent review); every write is visible in the commit diff. Update the run map by [Run Economy → Run map](../references/run-economy.md#run-map). A lesson an existing rule, skill, or tool already covers appends a `recurred` or `exercised` observation to that artifact's ledger entry instead of a new write — a hand-rolled check a covering tool covers records a [bypass](../references/project-tools.md#use-accounting) in place of `recurred`, unless one is already recorded for this check (by a failed run or an earlier rung) — never a second ([Experience Capture](../references/experience-capture.md#applying-experience--auto-apply-through-structural-gates)). A gap escalated to a specification is routed by [Sweep gaps](../references/experience-capture.md#sweep-gaps). See **[Experience Capture](../references/experience-capture.md)**.
 
 ## Anti-Patterns
 
@@ -155,7 +162,7 @@ At the phase boundary, run the [Transition Checkpoint](../references/experience-
 - Modifying the spec to match failing code instead of fixing the code (a genuine spec defect goes through [Upstream Escalation](../references/escalation.md), not a silent edit)
 - Introducing a new test framework when the project already has one
 - Writing tests without traceable ID references
-- Running the full test suite outside Verify, or a test again when the code it covers did not change
+- Running the full test suite outside Verify, or a test again when the code it covers did not change — at a gate, a sign-off or after a subagent's report too ([Run Economy](../references/run-economy.md#reuse))
 - Running integration/live tests in this phase (those belong in Verify)
 - Asking permission for a unit or mock test
 - A permanent test without a keep reason

@@ -26,7 +26,7 @@ Nothing outside this table is collected. A fact that fits no category is dropped
 | `ai_access` | `user.md` | sensitive | stable | Access to other AI providers or local models — the fact of access only |
 | `system` | `environment.md` | environmental | stable | OS, distribution, kernel, shell, hardware |
 | `devices` | `environment.md` | environmental | volatile | Attachable test devices: phones, emulators, simulators, rigs, peripherals |
-| `software` | `environment.md` | environmental | volatile | Available helper software and versions |
+| `software` | `environment.md` | environmental | volatile | Available helper software and versions; local build switches the agent turned on ([Run Economy](run-economy.md#local-switches)) |
 | `misc` | `user.md` | sensitive | stable | Anything else useful for adaptation; sensitive by default, hence `user.md` |
 
 - **environmental** — visible from the machine itself: written **without asking**, announced in the phase report (what was written, to which file, what for).
@@ -53,6 +53,7 @@ Sensitivity belongs to the category, never to an individual value.
 
 - `rg` — 14.1.0 · source: probed · state: exercised · seen: 2026-09-23
 - `docker` — absent · source: observed · state: present · seen: 2026-09-23
+- `~/.gradle/gradle.properties: org.gradle.caching` — true (was absent) · effect: 3m10s → 1m05s · source: probed · state: exercised · seen: 2026-11-19
 ```
 
 `source`: `observed` (seen in the session or the environment) · `stated` (the developer said it) · `probed` (confirmed by running it). `environment.md` entries also carry an evidence `state` ([Evidence Discipline](evidence-discipline.md)) and `seen`; `source: probed` ⇒ `exercised`, `source: stated` never exceeds `present`. `(category, key)` is unique — a repeat observation updates the entry and its `seen`, it does not add a second line.

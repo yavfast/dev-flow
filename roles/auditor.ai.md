@@ -49,7 +49,7 @@ role Auditor {
     - "Reconciled rules/skills indexes; tool verification rows (cards, bindings and states written in Step 7g; legacy self-test findings); entry-by-entry cache index reconciliation (flags, no regeneration); proposed (not auto-applied) merges/removals"
     - "Appended ledger verdicts + proposed prune candidates from recorded evidence state (never estimated)"
     - "Deleted trivial agent-created test cases, emptied test files that no other file uses and helper code that only the deleted cases used; files restored after a failed control run (tests scope, Step 7h)"
-    - "Reflection-derived rules/skills/tools/pointers written automatically through the structural gate (never auto-`must`; contradictions → independent review; a tool promoted per references/project-tools.md and left unverified until Step 7g; visible in the commit diff or, for git-ignored .dev_flow/, named in the report); access needs proposed as todos and named in the report (phases/audit.md Step 3)"
+    - "Reflection-derived rules/skills/tools/pointers written automatically through the structural gate (never auto-`must`; contradictions → independent review; a tool promoted per references/project-tools.md and left unverified until Step 7g; visible in the commit diff or, for git-ignored .dev_flow/, named in the report); access needs and improvements proposed as todos and named in the report (phases/audit.md Step 3)"
     - "A structured audit report for the user (the sole output under --dry-run)"
 
   rules:
@@ -85,7 +85,7 @@ role Auditor {
       - "Extending a cache entry's valid_until after a cheap currency check confirms the source unchanged"
       - "Step 7h test pruning per references/test-economy.md#pruning (tests scope)"
       - "Dormant ledger entry opened for a rule unit that has none (Step 6.4)"
-      - "Reflection-harvested rule/skill/tool/pointer, an access proposal, written through the structural gate — the owner by the checkability rung for a lesson from an incident or a reusable constraint or convention (never auto-`must`; a contradiction routes to independent review first; a tool promoted per references/project-tools.md — its author run of the samples passed — and left unverified for Step 7g)"
+      - "Reflection-harvested rule/skill/tool/pointer, an access proposal or an improvement, written through the structural gate — the owner by the checkability rung for a lesson from an incident or a reusable constraint or convention (never auto-`must`; a contradiction routes to independent review first; a tool promoted per references/project-tools.md — its author run of the samples passed — and left unverified for Step 7g)"
       - "Knowledge-scaling derived layers regenerated from the rule headings: `## Contents` digests (legacy units marked, headings never rewritten), index `rules[]` blocks, missing `{#id}` anchors, severity words normalized (each rename reported), accumulated category summaries / domain descriptions replaced by one scope line"
     proposed_for_confirmation:
       - "Merging two rules that express the same constraint"
@@ -116,7 +116,7 @@ role Auditor {
       - "Apply reconciliation when evidence supports it (targeted edit + Coordination Note); else flag"
     compact_and_reflect:
       - "For each closed task: archive noise to session_history, leave a short summary; Proportionality records only move, never rewritten"
-      - "Distill durable lessons → auto-apply rules/skills/tools/pointers through the structural gate, access needs proposed as todos and named in the report (never auto-`must`; delegate to /dream if available, else inline)"
+      - "Distill durable lessons → auto-apply rules/skills/tools/pointers through the structural gate, access needs and improvements proposed as todos and named in the report (never auto-`must`; delegate to /dream if available, else inline)"
       - "For each closed task with an open proportionality row: show the rows in the report, one fragment per task, and offer to answer; apply each answer per references/proportionate-caution.md; under --dry-run only show them"
       - "Retire fully-compacted closed tasks older than the retention window — never one that still holds an open proportionality row"
     rebuild_indexes:

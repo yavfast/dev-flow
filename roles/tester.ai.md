@@ -13,6 +13,9 @@ role Tester {
     - "Map specification criteria to checks"
     - "Verify the error cases from spec Errors tables and the invariants from spec Data Structures that are main cases or complex logic (references/test-economy.md → What gets a test)"
     - "Run tests level by level and analyze failures"
+    - "Never a build of the whole project where a module build answers, of the dependents, or of a release variant in the test phase without the developer's request (references/run-economy.md#build-scope)"
+    - "When the test phase or a verify fix changed code, run once the checks the fast variant turned off (lint, static analysis) on the touched modules before Review (references/run-economy.md#fast-variant)"
+    - "Before a build or a test run, read the run map (.dev_flow/skills/build/run-map.md) and reuse a run record by its Reuse verdict (references/run-economy.md#reuse); build the narrowest scope and the cheapest variant that answer the question; write a run record for each run (references/run-economy.md)"
     - "Fix discovered issues (code bugs, not spec adjustments)"
     - "Reference traceable IDs in test names/docstrings"
     - "Report test results with coverage mapping"
@@ -31,6 +34,8 @@ role Tester {
   outputs:
     - "New or updated permanent test files, each with its keep reason; temporary checks with the criteria they checked"
     - "Test execution results by level (unit, mock, integration, live)"
+    - "Run records — one per build or test run — the local switches turned on, the checks the fast variant turned off and where they ran, and in verify — on the fix route, in its Verify step — the full or release build: run, CI, or unobserved (references/run-economy.md)"
+    - "Run map updates at the phase's Reflection (references/run-economy.md#run-map)"
     - "Run logs and captures staged under the project workspace (/tmp/{project-slug}/, timestamped names) with paths in the report — never written to .dev_flow/; the calling agent promotes durable baselines to .dev_flow/cache/ (helper position — the agent executing the test/verify phase owns its .dev_flow/ writes, see phases/subtask.md)"
     - "Coverage mapping: spec section -> check (permanent test, temporary test, other)"
     - "Issue report: failures found and fixes applied"
@@ -64,7 +69,7 @@ role Tester {
 
   phase_scope:
     test_phase: "Run ONLY levels 1-2 (unit + functional_mock), scoped to the task test set (references/test-economy.md). Integration and live tests are NOT in scope."
-    verify_phase: "Run regression — re-run levels 1-2 at full-suite or broader-than-changed breadth to catch regressions (no new unit/mock authoring here; that is Test-phase scope) — plus levels 3-4 (integration + live)."
+    verify_phase: "Run regression — re-run levels 1-2 at full-suite or broader-than-changed breadth to catch regressions (no new unit/mock authoring here; that is Test-phase scope) — plus levels 3-4 (integration + live); builds by phases/verify.md → Builds: the dependents of a changed shared module at the regression level, the debug variant for live tests, the full or release build once under references/run-economy.md#when-the-full-build-runs — else CI, or unobserved with its reason"
 
   workflow:
     step_1: "Identify affected functionality from code changes (read git diff)"
@@ -74,7 +79,7 @@ role Tester {
     step_5: "Check the missing criteria — the form by references/test-economy.md; permanent tests carry traceable ID references"
     step_6: "Run tests level by level within the allowed scope"
     step_7: "Analyze failures — fix code bugs (not spec)"
-    step_8: "Re-run failed level and subsequent levels after fixes"
+    step_8: "Re-run failed level and subsequent levels after fixes — a run its record answers is not repeated (references/run-economy.md#reuse)"
     step_9: "Report results: coverage mapping, pass/fail counts, issues found, unobserved criteria with their named reason"
 
   gate_check:
