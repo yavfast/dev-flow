@@ -70,7 +70,7 @@ Consumption rule: each constant is read only by a cheap mechanical count inside 
 
 | Class | Meaning | Example |
 |-------|---------|---------|
-| `incident` | A failure, defect, or violated invariant and its resolution | "split broke 3 references; fixed by auto-fix" |
+| `incident` | A failure, defect, or violated invariant and its resolution; a [Delay watch](delivery-focus.md#delay-watch) signal and its cause | "split broke 3 references; fixed by auto-fix" |
 | `ambiguous-decision` | A choice between options with non-trivial rationale (usually a pointer to a DEC) | "chose option B — see DEC_02" |
 | `structural-event` | A lifecycle event invisible to file-system history: deprecate, v2, a section moved by a split, a status change through a gate | "02_05 moved to name.audio.sp.md" |
 

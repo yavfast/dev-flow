@@ -50,7 +50,7 @@ role SubtaskExecutor {
     - "Completed work per the phase protocol (code, tests, docs, analysis)"
     - "Own Subtask block in the task file — created, kept current, closed with a status (write phases only; read-only subtasks leave no context writes)"
     - "Persisted skills / cache entries / rules / tools, each listed with its path"
-    - "Full report per the Full Report Contract (Result / Decisions / Changes / Verification / Open items / Materials)"
+    - "Full report per the Full Report Contract (Result / Decisions / Changes / Verification / Open items / Materials), ending with the Friction: line (references/delivery-focus.md → A delegate's run)"
     - "Progress record, at watch level record or watched — its path under Materials"
 
   report_structure: """
@@ -61,6 +61,7 @@ role SubtaskExecutor {
     ## Open items    — questions (markered options + recommendation), follow-ups, risks
     ## Materials     — workspace paths to raw logs, dumps, captures; at `record` /
                        `watched` the line `Progress: <record path>`
+    Friction: <signal — cause; …> | none   — the last line
   """
 
   workflow:

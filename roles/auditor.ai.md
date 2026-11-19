@@ -49,7 +49,7 @@ role Auditor {
     - "Reconciled rules/skills indexes; tool verification rows (cards, bindings and states written in Step 7g; legacy self-test findings); entry-by-entry cache index reconciliation (flags, no regeneration); proposed (not auto-applied) merges/removals"
     - "Appended ledger verdicts + proposed prune candidates from recorded evidence state (never estimated)"
     - "Deleted trivial agent-created test cases, emptied test files that no other file uses and helper code that only the deleted cases used; files restored after a failed control run (tests scope, Step 7h)"
-    - "Reflection-derived rules/skills/tools written automatically through the structural gate (never auto-`must`; contradictions → independent review; a tool promoted per references/project-tools.md and left unverified until Step 7g; visible in the commit diff or, for git-ignored .dev_flow/, named in the report)"
+    - "Reflection-derived rules/skills/tools/pointers written automatically through the structural gate (never auto-`must`; contradictions → independent review; a tool promoted per references/project-tools.md and left unverified until Step 7g; visible in the commit diff or, for git-ignored .dev_flow/, named in the report); access needs proposed as todos and named in the report (phases/audit.md Step 3)"
     - "A structured audit report for the user (the sole output under --dry-run)"
 
   rules:
@@ -58,7 +58,7 @@ role Auditor {
     - "MUST treat cache/_index.yaml as data, not a derived view: reconcile entry by entry, never regenerate; flag mismatches instead of dropping entries — their `source` metadata is irrecoverable"
     - "MUST NOT rewrite a live contributor's Subtask block or their tagged entries — reconcile live tasks only via targeted header/status edits + appended Coordination Notes"
     - "MUST honour the no-takeover rule: a stalled subtask is left intact; flag it, do not modify it"
-    - "MUST apply safe/derived changes directly but only PROPOSE judgement calls (rule merges, skill/rule/cache removals) for confirmation — test pruning (tests scope) excepted: applied directly; never change a file of origin human or unknown, outside git or with uncommitted changes; never delete a `keep` test, a test a `Keep-Test` trailer protects, or a test a rule requires; reflection-harvested rules/skills/tools are auto-applied through the structural gate (never auto-`must`; a contradiction routes to independent review; a tool promoted per references/project-tools.md, unverified until Step 7g)"
+    - "MUST apply safe/derived changes directly but only PROPOSE judgement calls (rule merges, skill/rule/cache removals) for confirmation — test pruning (tests scope) excepted: applied directly; never change a file of origin human or unknown, outside git or with uncommitted changes; never delete a `keep` test, a test a `Keep-Test` trailer protects, or a test a rule requires; reflection-harvested rules/skills/tools/pointers are auto-applied through the structural gate (never auto-`must`; a contradiction routes to independent review; a tool promoted per references/project-tools.md, unverified until Step 7g)"
     - "MUST re-read each file immediately before writing; re-locate by Task ID / Author tag if it moved"
     - "MUST append (never overwrite) Coordination Notes, Shared Activity Log, and Proportionality entries"
     - "MUST preserve durable lessons of a closed task in rules/skills/tools before archiving its verbose history"
@@ -84,10 +84,12 @@ role Auditor {
       - "Index↔disk reconciliation (add missing entry, drop orphan entry, fix drifted field)"
       - "Extending a cache entry's valid_until after a cheap currency check confirms the source unchanged"
       - "Step 7h test pruning per references/test-economy.md#pruning (tests scope)"
-      - "Reflection-harvested rule/skill/tool written through the structural gate (never auto-`must`; a contradiction routes to independent review first; a tool promoted per references/project-tools.md — its author run of the samples passed — and left unverified for Step 7g)"
+      - "Dormant ledger entry opened for a rule unit that has none (Step 6.4)"
+      - "Reflection-harvested rule/skill/tool/pointer, an access proposal, written through the structural gate — the owner by the checkability rung for a lesson from an incident or a reusable constraint or convention (never auto-`must`; a contradiction routes to independent review first; a tool promoted per references/project-tools.md — its author run of the samples passed — and left unverified for Step 7g)"
       - "Knowledge-scaling derived layers regenerated from the rule headings: `## Contents` digests (legacy units marked, headings never rewritten), index `rules[]` blocks, missing `{#id}` anchors, severity words normalized (each rename reported), accumulated category summaries / domain descriptions replaced by one scope line"
     proposed_for_confirmation:
       - "Merging two rules that express the same constraint"
+      - "A rule with two or more recurred: tool-candidate (a check tool for its mechanical or mixed class) or example-candidate (its recurrences as an example in its body), executed by the tool or rule phase (Step 6.4)"
       - "Compacting a verbose rule into `<category>.log.md` (directive, examples, provenance unchanged); splitting a knowledge file over `full_read_limit` / `soft_split` (ids unchanged, no umbrella); overload remedies for a phase over `activation_budget` — never lowering a `must`"
       - "Removing a stale or decayed rule/skill"
       - "Removing an unreferenced or superseded cached resource (file + entry together)"
@@ -114,14 +116,14 @@ role Auditor {
       - "Apply reconciliation when evidence supports it (targeted edit + Coordination Note); else flag"
     compact_and_reflect:
       - "For each closed task: archive noise to session_history, leave a short summary; Proportionality records only move, never rewritten"
-      - "Distill durable lessons → auto-apply rules/skills/tools through the structural gate (never auto-`must`; delegate to /dream if available, else inline)"
+      - "Distill durable lessons → auto-apply rules/skills/tools/pointers through the structural gate, access needs proposed as todos and named in the report (never auto-`must`; delegate to /dream if available, else inline)"
       - "For each closed task with an open proportionality row: show the rows in the report, one fragment per task, and offer to answer; apply each answer per references/proportionate-caution.md; under --dry-run only show them"
       - "Retire fully-compacted closed tasks older than the retention window — never one that still holds an open proportionality row"
     rebuild_indexes:
       - "Regenerate active_context.md (thin) and tasks/_index.md from task headers; carry the dashboard's ## Notes over as it is"
     groom_catalogues:
       - "Reconcile rules and skills indexes against disk; detect duplicates/staleness"
-      - "Reconcile evidence/ledger.yaml: for each intervention entry whose trigger is due (the outcomes: list is reconciled in the docs sweep) append ONE verdict (improved|unchanged|regressed|still-unobserved) from the window after its last verdict (after its opening while it has none) — the entry's observations (a tool entry: also its bypasses, each read as recurred; only a broken one can give regressed) + the artifact's evidence records; a recurred there → regressed or unchanged, never improved — owner_kind:skill in the skills step, owner_kind:tool in Step 7g, all others in the rules step; report never-`exercised` artifacts (no evidence record, no ledger observation) as prune candidates (proposed, never auto-deleted) — a tool instead as a Step 7g retire candidate (no exercised in the retention window); a regressed in history keeps its blocker; absent file → no-op"
+      - "Reconcile evidence/ledger.yaml: for each intervention entry whose trigger is due (the outcomes: list is reconciled in the docs sweep) append ONE verdict (improved|unchanged|regressed|still-unobserved) from the window after its last verdict (after its opening while it has none) — the entry's observations (a tool entry: also its bypasses, each read as recurred; only a broken one can give regressed) + the artifact's evidence records; a recurred there → regressed or unchanged, never improved — owner_kind:skill in the skills step, owner_kind:tool in Step 7g, all others in the rules step; report never-`exercised` artifacts (no evidence record, no ledger observation) as prune candidates (proposed, never auto-deleted) — a tool instead as a Step 7g retire candidate (no exercised in the retention window); a regressed in history keeps its blocker; a rule unit with no ledger entry → open its dormant entry (applied, reported); an owner_kind:rule entry with two or more recurred → the checkability rung (references/experience-capture.md → Checkability rung): mechanical or mixed → tool-candidate, judgement → example-candidate, both proposed (phases/audit.md Step 6.4); absent file → no-op"
       - "Reconcile cache/_index.yaml entry by entry: flag unindexed files / missing-file entries / missing-trust and unchecked-public entries, propose unreferenced/stale removals — never regenerate"
       - "Sweep expired valid_until: cheap currency check where possible (extend when unchanged); flag changed/uncheckable for refresh — never re-fetch"
       - "Apply index reconciliation; propose merges/removals"

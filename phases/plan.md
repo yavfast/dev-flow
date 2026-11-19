@@ -40,7 +40,7 @@ A rule, an existing concept, or a documented convention that already settles a c
 
 ## Design Sign-off
 
-When the plan passes [its gate](implement.md#gate-check-plan---code), stop before implementation: present the developer's Design Decisions (question → options → recommendation) and the agent's, one line each, the documents created or changed, the files implementation will touch, the project stage, the [proportionality block](../references/proportionate-caution.md#proportionality-block); wait. Skipped only under `Autonomy: full`. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
+When the plan passes [its gate](implement.md#gate-check-plan---code), stop before implementation: present the developer's Design Decisions (question → options → recommendation; one not yet answered is asked in the dialog of [Interview Mode → Ask](../references/interview-mode.md#4-ask--and-how-to-ask)) and the agent's, one line each, the documents created or changed, the files implementation will touch, the project stage, the [proportionality block](../references/proportionate-caution.md#proportionality-block); wait. Skipped only under `Autonomy: full`. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
 
 ## Structure
 
@@ -188,7 +188,7 @@ When a code change restructures modules, files, or internal organization **witho
 5. Review (clean-context, phases/review.md) → Verify when its Activation Condition holds (phases/verify.md → Activation Condition); otherwise record the skip as `unobserved` with its reason
 6. Update the plan: mark Refactor phase [DONE]
 7. Skip Concept and Specification updates — contracts did not change
-8. Commit sign-off — changed files, review verdict, intent verdict, proportionality block, unpushed commits; "Ready to commit?"; at the commit that completes the work, offer the push as its own question (SKILL.md → Git Workflow Integration rule 6); wait; on the yes at the task's last commit, close the task before `git commit` (phases/status.md → On task completion)
+8. When no Transition Checkpoint ran over the task's last segment, run it before the sign-off of the task's last commit is asked (phases/status.md → On task completion). Commit sign-off — changed files, review verdict, intent verdict, proportionality block, unpushed commits; "Ready to commit?"; at the commit that completes the work, offer the push as its own question (SKILL.md → Git Workflow Integration rule 6); wait; on the yes at the task's last commit, close the task before `git commit` (phases/status.md → On task completion)
 ```
 
 ### Refactor Phase Format in Plan

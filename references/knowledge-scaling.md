@@ -27,7 +27,7 @@ A **rule** is one h2 block in its category file. The heading is the single sourc
 - `directive` — one imperative logical line, executable without the body, within `directive_max`. Over the limit → never truncate: split into two units.
 - `severity` — `must` | `should` | `prefer`, in the heading. Any other word is normalized (see Severity normalization) and the rename reported.
 
-Body, in order: `**Applies to:**` (one human-readable line) · `### Why` (within `rationale_max`) · `### Examples` (Correct / Incorrect, real file path) · `**Provenance:**` (task file, ticket, commit, or a narrative-log entry). Whole body within `unit_body_max`. Investigation narrative, log quotes, and "relationship to neighbours" prose do not live in the body — the task file already holds them; overflow goes to `<category>.log.md` (Narrative log).
+Body, in order: `**Applies to:**` (one human-readable line) · `### Why` (within `rationale_max`) · `### Examples` (Correct / Incorrect, real file path) · `**Check:**` (the `check` tool that covers a `mixed` class's mechanical half — [Checkability rung](experience-capture.md#checkability-rung) — or a rule an audit `tool-candidate` covered; other rules have none) · `**Provenance:**` (task file, ticket, commit, or a narrative-log entry). Whole body within `unit_body_max`. Investigation narrative, log quotes, and "relationship to neighbours" prose do not live in the body — the task file already holds them; overflow goes to `<category>.log.md` (Narrative log).
 
 **Legacy form** (`## Rule: {Name}` + `**Severity:**` line) stays valid until the unit's first substantive edit, which rewrites the heading into the form above; `id` = `{Name}`. Audit never rewrites a legacy heading — it reports `heading-legacy`.
 
@@ -94,7 +94,7 @@ Degradation: an index that does not parse as YAML → match by category names an
 
 ## Consolidation (rules → skill)
 
-A lesson from an incident is written as a **rule** — a conclusion, regularity, or adaptation to apply in later tasks. A **skill** is the consolidated form of an accumulated cluster of rules (or knowledge that is not an artifact constraint at all — research findings, tool knowledge, per [Procedural Skills](procedural-skills.md)). Rules never turn into skills one by one at write time.
+A lesson from an incident is written as a **rule** — a conclusion, regularity, or adaptation to apply in later tasks (its mechanical half as a `check` tool — [checkability rung](experience-capture.md#checkability-rung)). A **skill** is the consolidated form of an accumulated cluster of rules (or knowledge that is not an artifact constraint at all — research findings, tool knowledge, per [Procedural Skills](procedural-skills.md)). Rules never turn into skills one by one at write time.
 
 - **Signal.** Audit groups each category's rules by effective selector (unit `applies_to`, else the category's, else the category itself) and reports `skill-candidate` (advisory) for a group strictly above `consolidation_min` that no skill already lists in full. The agent may also see a cluster while adding the rule that completes it.
 - **Decision.** The agent's: does the cluster describe one coherent how-to, do these rules fire together in a typical task, can a boundary be named? No verdict forces or blocks consolidation.
@@ -105,7 +105,7 @@ A lesson from an incident is written as a **rule** — a conclusion, regularity,
 
 Every write — [rule phase](../phases/rule.md), [skill phase](../phases/skill.md), the Experience Capture harvest, onboard Step 5 — in this order:
 
-1. Owner: a lesson from an incident → `rule`; `skill` only for knowledge that is not an artifact constraint, or as a consolidation (above). In doubt → rule.
+1. Owner: a lesson from an incident → `rule` or a `check` tool by the [checkability rung](experience-capture.md#checkability-rung) (a `mechanical` class goes to the tool instead, a `mixed` one to both); `skill` only for knowledge that is not an artifact constraint, or as a consolidation (above). In doubt → rule.
 2. Heading with an id unique in the catalogue, directive (within `directive_max`, never truncated), severity from the closed set; auto-written severity defaults to `should`, a `must` only through an independent clean-context review.
 3. Selector: inherit the category or narrow it; a widening unit selector is refused (`SELECTOR_WIDENS`).
 4. Bounded body with provenance; a body over `unit_body_max` at write time is refused (`NARRATIVE_IN_BODY`) — move the narrative to the provenance target or the narrative log, keep `Why` within `rationale_max`.
@@ -115,7 +115,7 @@ A skill without an Applicability Boundary is refused (`BOUNDARY_MISSING`, [Proce
 
 ## Compaction and split
 
-**Compaction** (`unit-verbosity`, confirmed): keep heading · Applies to · `Why` (first lines within `rationale_max`, as statements) · Examples · Provenance; move everything else verbatim to `<category>.log.md` under `## {id} — {date}` and add the log link to Provenance. Directive, examples, and provenance must stay unchanged (`CONTENT_LOSS` refusal).
+**Compaction** (`unit-verbosity`, confirmed): keep heading · Applies to · `Why` (first lines within `rationale_max`, as statements) · Examples · Check · Provenance; move everything else verbatim to `<category>.log.md` under `## {id} — {date}` and add the log link to Provenance. Directive, examples, and provenance must stay unchanged (`CONTENT_LOSS` refusal).
 
 **Split** (`split-planned` above `full_read_limit`, `split-required` above `soft_split`; confirmed): move units verbatim into a new category file (rules — with its own selector) or a new file in the same domain (skills); no umbrella — the index is the router. Regenerate digests and index blocks, fix the **path part** of every `<file>#<id>` reference inside the catalogue, assert the set of anchors before = after (`ID_MUTATION` refusal), append a `structural-event` line to the source and each new file.
 

@@ -1,6 +1,6 @@
 # Interview Mode — Surfacing Design Decisions
 
-Shared sub-procedure for the **Concept**, **Specification**, **Plan**, and **Fix** phases. Concept and spec link here for design forks; plan for its Technology Decisions; fix for root-cause and fix-strategy forks (see [Interview Mode in Fix](../phases/fix.md#interview-mode-in-fix)). This is **not** a standalone pipeline stage — it runs *inside* those phases whenever a real fork in the road appears.
+Shared sub-procedure for the **Concept**, **Specification**, **Plan**, and **Fix** phases. Concept and spec link here for design forks; plan for its Technology Decisions; fix for root-cause and fix-strategy forks (see [Interview Mode in Fix](../phases/fix.md#interview-mode-in-fix)). This is **not** a standalone pipeline stage — it runs *inside* those phases whenever a real fork in the road appears, and its [§ 4 ask](#4-ask--and-how-to-ask) at every route's design sign-off ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)).
 
 ## Contents
 
@@ -133,7 +133,7 @@ A **delegated subagent** (a phase author, or a task-delegated [subtask](../phase
 1. **Escalate up the chain.** Present the fork to the initiator in the standard form — markered options + a recommended answer, independent questions batched. The initiator answers from the main-task picture it holds, or relays to the developer what only the developer can decide, and the answer comes back down.
 2. **No live channel** (a one-shot run, batch work)? Checkpoint instead: record each decision point in Design Decisions as **`proposed`** (options, consequences, recommended answer) and surface the list in the report; `open` is reserved for a fork that waits on information nobody has yet. The initiator then answers and **continues the same subagent** (its assembled context is the asset), or runs the interview with the developer itself and flips each record to `resolved`.
 
-Either way nothing slips through: a `proposed` record is presented at the design sign-off before any code edit, and the phase's validation gate will not pass while a material decision is `open` without a trigger.
+Either way nothing slips through: a `proposed` record is asked at the design sign-off, in the dialog of [§ 4](#4-ask--and-how-to-ask), before any code edit, and the phase's validation gate will not pass while a material decision is `open` without a trigger.
 
 ## Recording — the Design Decisions section
 

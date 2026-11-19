@@ -182,6 +182,7 @@ blocks the rest is also a `note` in your progress record.
 ## Report
 Full report per phases/subtask.md → Full Report Contract. Raw output stays in
 the project workspace (/tmp/{project-slug}/, timestamped names), referenced by path.
+<the friction line from references/delegation.md → How>
 ```
 
 Omit the `Role style:` line when the phase has no style. Omit the `Run:`, `Progress:`, `Inbox:` and `Duties:` lines at watch level `none`, and the `## Run bounds` block when the subagent executes no shell commands beyond a read-only search; drop the `note` sentence at `none`. The lines and the block: [Supervising a Delegate → The brief](../references/supervision.md#the-brief).
@@ -204,7 +205,8 @@ When the subagent escalates, answer with the same care as an Interview-Mode repl
 2. The subagent has already updated **its own** Subtask block and any shared entries it owns — verify the task file reflects reality; do not rewrite the subagent's block. (A read-only subtask made no context writes — record its outcome yourself in step 3.)
 3. Record the outcome in **your own** Subtask block / Shared Activity Log: `subtask completed (<phase>): <one line> — <key result>`.
 4. Carry *Open items* into the main flow: answer, escalate to the developer, or convert to tracked items (backlog with trigger, Blocking Issue, DEC record).
-5. Continue the main task using the results.
+5. Write each `Friction:` item as an Activity line of your task; no line after a run that ended `blocked` or `stopped`, wrapped up, went down a step of the stall ladder, passed its run bounds, named a fact or an access it lacked, or was the third run of the same kind in the task → continue the subagent once and ask for it ([Delay watch → A delegate's run](../references/delivery-focus.md#a-delegates-run)).
+6. Continue the main task using the results.
 
 ## Full Report Contract
 
@@ -219,6 +221,7 @@ Complete in **coverage**, conclusion in **style** — every section present, raw
 ## Open items    — questions (markered options + recommendation), follow-ups, risks
 ## Materials     — workspace paths to raw logs, dumps, captures; at `record` /
                    `watched` the line `Progress: <record path>`
+Friction: <signal — cause; …> | none   — the last line
 ```
 
 ## Parallel Subtasks

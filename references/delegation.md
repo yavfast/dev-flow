@@ -106,6 +106,17 @@ The spawning mechanics live in the [Subtask phase](../phases/subtask.md): formul
 
 **The brief names the role by path.** The brief of a subagent that edits code, reviews, tests, researches, or runs a phase opens with `Skill root: <absolute path of the skill>` — taken from the `Base directory for this skill` line of the loaded skill — and `Read first: <role file> — blocks: <names>`. The role file of each launch step: [SKILL.md → Subagents](../SKILL.md#subagents); a path there is relative to the skill root. No blocks named → the subagent reads the whole file. A project overlay listed in `.dev_flow/roles/_index.yaml` is added after the base role; its path is relative to the project root. Several files in the line are separated by `; `. A phase with a role style adds the `Role style:` line after `Read first:` ([Role Styles → Subagents](role-styles.md#subagents)). A subagent that only searches, reads, or counts gets none of these lines. A run supervised at `record` or `watched` adds `Skill root:` (even without a role) and its `Run:`, `Progress:`, `Inbox:` and `Duties:` lines, and a run that executes shell commands beyond a read-only search its `## Run bounds` block ([Supervising a Delegate → The brief](supervision.md#the-brief)).
 
+**Every brief asks for the friction line**, in these words:
+
+```
+End your report with `Friction:` — one item per case, with its cause: a file or fact you
+found only by the third search, or not at all; a tool output the harness cut or saved
+aside; information behind access you did not have; a fact this brief should have carried.
+None → `Friction: none`.
+```
+
+What the initiator does with it: [Delay watch → A delegate's run](delivery-focus.md#a-delegates-run).
+
 Project-specific delegation practice (how *this* project runs its tests, where its live scenarios live, what counts as pass/fail) belongs in a project role overlay under `.dev_flow/roles/`, not here — see [Roles](roles.md) for using and creating them.
 
 These scenarios and rules are **projections, not a formal protocol** — heuristics the agent applies with judgment. When a call is genuinely unclear, it asks the initiator rather than following an algorithm. Don't encode merge rules or rigid MUST/NEVER machinery here; keep the guidance in prose. What is fixed — the formats a script reads, the delegate duties and the stall ladder — lives in [Supervising a Delegate](supervision.md).

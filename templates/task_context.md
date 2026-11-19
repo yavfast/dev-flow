@@ -50,7 +50,7 @@ A subtask is a thread of work claimed by one contributor. To join this task, add
 - [ ] Remaining step
 
 **Activity:**
-<!-- Content filter (see `references/docs-scaling.md`, dev-flow skill): only incidents, ambiguous decisions,
+<!-- Content filter (see `references/docs-scaling.md`, dev-flow skill): only incidents (Delay watch signals included), ambiguous decisions,
      and structural events. A success report or interim status is not written (TRIVIAL_ENTRY) —
      progress lives in the Progress checklist above. -->
 - HH:MM — {what changed in one line}

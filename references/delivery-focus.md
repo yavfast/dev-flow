@@ -8,7 +8,7 @@ Cross-cutting discipline of every phase that plans or does work — [concept](..
 - [Project stage](#project-stage) — `prototype` / `working` / `production`, inferred from facts, shown at the design sign-off
 - [Needed now](#needed-now) — the check before an item enters a plan or the work; what each stage defers; what is never deferred
 - [Security findings and the stage](#security-findings-and-the-stage) — a finding whose attack needs an exposure the stage does not have is deferred
-- [Delay watch](#delay-watch) — signals of delay in the agent's own process and the correction
+- [Delay watch](#delay-watch) — signals of delay in the agent's own process (searching, costly calls and missing access included), the correction, and a delegate's `Friction:` line
 - [Boundaries](#boundaries) — what the stage and the watch never change
 
 ## Why this exists
@@ -77,12 +77,22 @@ The agent watches its own process for what delays the result.
 | `oversized` | A document, a test or a check costs more than the change it serves |
 | `off-goal` | An item serves no part of the task's goal at the current stage |
 | `waiting` | The work waits on something the goal does not need |
+| `search` | A file or fact the work needs is found only by the third search for it, or not at all |
+| `costly-call` | The harness cuts a tool call's output or saves it aside, or the same call runs again to read the rest |
+| `no-access` | Information the work needs sits behind a credential, a privilege or a resource that no channel or tool reaches |
+| `brief-gap` | A delegate's run needed a fact its brief did not carry ([A delegate's run](#a-delegates-run)) |
 
 On a signal:
 
 1. Write one Activity line in the task file: the signal and its cause.
 2. Correct now: narrow the scope, defer the item ([Needed now](#needed-now)), drop a repeated check, or ask the developer when the correction changes what they approved.
-3. At the [Transition Checkpoint](experience-capture.md#transition-checkpoint--the-primary-cadence), a cause seen in this task and in an earlier one becomes a project rule through the structural gate (default `should`, never an auto-`must`).
+3. At the [Transition Checkpoint](experience-capture.md#transition-checkpoint--the-primary-cadence), the cause becomes a lesson through the [owner menu](experience-capture.md#applying-experience--auto-apply-through-structural-gates) (never an auto-`must`): `search` and `brief-gap` → `pointer` and `no-access` → `access` at their first occurrence; any other cause once it is seen in this task and in an earlier one — `costly-call` → `tool`, the rest → `rule` or `tool` by the [checkability rung](experience-capture.md#checkability-rung).
+
+### A delegate's run
+
+A delegate watches its own run for `search`, `costly-call`, `no-access` and `brief-gap` — the cases the brief's friction request names — and ends its report with a `Friction:` line: one item per signal that fired — the signal and its cause; none fired → `Friction: none`. Every brief carries the request in the words of [Delegation for Focus → How](delegation.md#how), so a delegate that never reads this file keeps it. The initiator writes each item as an Activity line of its own task (step 1); the delegate's causes are lessons of that task.
+
+A report with no `Friction:` line, from a run that ended `blocked` or `stopped`, wrapped up, went down a step of the [stall ladder](supervision.md#the-stall-ladder), passed its run bounds, named a fact or an access it lacked, or was the third run of the same kind in the task → the initiator continues that delegate once and asks for the line. A delegate that cannot be continued → its friction is `unobserved` ([Evidence Discipline](evidence-discipline.md)). On the developer's request the initiator does the same for any run. Neither a new subagent nor the initiator reads the delegate's transcript for this.
 
 ## Boundaries
 

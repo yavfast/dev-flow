@@ -46,7 +46,7 @@ role Reviewer {
     - "Updated documents after conflict resolution"
     - "Rules compliance report (if .dev_flow/rules/ exists)"
     - "Pre-commit review report (PASS / FAIL / WARNINGS) with round number, scope mode, round mode, routed contested records, and suppressed checks"
-    - "Round state written to the task file: baseline (snapshot tree hash), carry_over"
+    - "Round state written to the task file: baseline (snapshot tree hash), carry_over; a recurred observation in the ledger entry of each project rule marked fail (once per rule per task)"
     - "Stage row rewritten when the facts make the stage production (phases/review.md step 0)"
     - "A fired 'before the first external exposure' record marked promoted with the task's id, in the task's commit (phases/review.md step 3)"
 
@@ -80,6 +80,7 @@ role Reviewer {
       - "Relevant specification (*.sp.md)"
       - "Relevant plan (*.plan.md)"
       - "Project rules (.dev_flow/rules/) if exist"
+      - "Project check tools (.dev_flow/tools/_index.yaml) whose applies_to matches the changed files and the review phase"
       - "Relevant project skills (.dev_flow/skills/) if exist"
       - "SOLID architecture reference (references/solid-architecture.md)"
       - "docs/_framework.md (the architectural map) if present"
@@ -151,7 +152,7 @@ role Reviewer {
       closes: "A path change: the case takes a route where the list is not the defence, or the decision derives from the operation itself, not from a declared field, and an unrecognised case falls into the stricter branch"
       never_closes: "A fix whose only change to the decision is a list member added or removed — the finding stays open under the same identity"
       no_path: "Upstream escalation; a fix adding the member that covers the case closes the finding only after the owning document (the task file when there is none) records the list as the defence"
-    close_round: "Write baseline (the round's snapshot tree hash, taken when its input was captured — references/review-convergence.md → Incremental round scope), round mode, and carry_over into the task file"
+    close_round: "Write baseline (the round's snapshot tree hash, taken when its input was captured — references/review-convergence.md → Incremental round scope), round mode, and carry_over into the task file; for each project rule marked fail in the Rules Compliance table, append recurred to the rule's ledger entry — once per rule per task, a later round extends its note (phases/review.md step 6)"
 
   conflict_resolution:
     step_1: "Identify conflicting documents and list contradictions"
@@ -204,7 +205,7 @@ role Reviewer {
     procedure:
       - "Read .dev_flow/rules/_index.yaml (by category block when above full_read_limit); match category applies_to selectors against the changed files and the review phase, always-on categories included (Knowledge Scaling activation protocol)"
       - "Take the matched categories' rules[] from the index, filter by unit selector → the relevant set of directives; over activation_budget drops nothing and lowers no severity; read a rule body only when its directive does not decide the case, a violation is suspected or found, an example is needed, or the rule itself is under edit"
-      - "For each changed file, check against the relevant set by severity"
+      - "For each changed file, check against the relevant set by severity; a project check tool whose applies_to matches the changed files and the review phase (.dev_flow/tools/_index.yaml) runs on the diff after its trust check, and its findings are findings of the rule that names it in a Check: line, under that rule's severity (should when no rule names it), never a verdict of their own (references/experience-capture.md → Checkability rung)"
       - "must violations block advancement — fix before proceeding"
       - "should violations trigger warning — acceptable if justified"
       - "prefer violations are informational — note but do not block"

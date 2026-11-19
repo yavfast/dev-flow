@@ -185,7 +185,7 @@ Re-read the usage file immediately before writing it; append a failure, then tri
 
 ## Promote
 
-Every tool starts as a script in the session workspace, written for the current task. A one-off stays there. **Promote** it when you judge it worth reusing; you **must consider** promoting it when the structural trigger of [Experience Capture](experience-capture.md#applying-experience--auto-apply-through-structural-gates) fires — the same check or operation hand-rolled in at least two tasks, or hand-rolled wrong (name those records).
+Every tool starts as a script in the session workspace, written for the current task. A one-off stays there. **Promote** it when you judge it worth reusing, and when the [checkability rung](experience-capture.md#checkability-rung) gives a lesson a `mechanical` or `mixed` class (kind `check`; with no script yet, write one in the session workspace first); you **must consider** promoting it when the structural trigger of [Experience Capture](experience-capture.md#applying-experience--auto-apply-through-structural-gates) fires — the same check or operation hand-rolled in at least two tasks, or hand-rolled wrong (name those records).
 
 1. **Search first** ([Code Reuse](code-reuse.md)). The need lies in a router entry's `range_of_use` → use that tool (`PTL_COVERED`), nothing is written. A neighbouring case that changes for the same reason → [Adapt](#adapt) `extend` that tool (`PTL_NEAR_MATCH`).
 2. **Generalize** to the stated range of use and no further: hard-coded paths and values become inputs, the cases met in the session become samples.
@@ -233,7 +233,7 @@ For each `contract`-regime tool not `retired`, compute what is **due**:
 
 **New-environment verification** — run every sample in this environment: pass → append it to `binding.environments`; fail → report it, leave the state and the binding as they are (that environment stays `read-first`; the row names a `port` candidate). No review: the code is unchanged.
 
-**Independent review.** A clean-context subagent in the reviewer role's tool-review mode ([reviewer role](../roles/reviewer.ai.md)) — never the session that wrote the realization, never the auditor's own context. Its brief opens with `Skill root: <absolute path of the skill>` and `Read first: roles/reviewer.ai.md — blocks: tool_review` ([SKILL.md → Subagents](../SKILL.md#subagents)). Besides these lines it receives only the realization, its header contract, the samples manifest and material, and for `diff` the `prev/` realization; framing is adversarial. Checks:
+**Independent review.** A clean-context subagent in the reviewer role's tool-review mode ([reviewer role](../roles/reviewer.ai.md)) — never the session that wrote the realization, never the auditor's own context. Its brief opens with `Skill root: <absolute path of the skill>` and `Read first: roles/reviewer.ai.md — blocks: tool_review` ([SKILL.md → Subagents](../SKILL.md#subagents)). Besides these lines and the friction line of [Delegation for Focus → How](delegation.md#how) it receives only the realization, its header contract, the samples manifest and material, and for `diff` the `prev/` realization; framing is adversarial. Checks:
 
 | Check | Finding when |
 |-------|------------|

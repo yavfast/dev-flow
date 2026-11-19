@@ -258,6 +258,8 @@ The look runs once per new task; a continuation or a [resume](#resume--re-enter-
 
 The task's last commit is the one after which no step of the task remains: every other subtask is `done`, and your Progress has no open item but the commit and what follows it. The closure goes into that commit.
 
+**Harvest first:** when no Transition Checkpoint ran over the task's last segment, run it before the sign-off of the task's last commit is asked, so its writes are in the diff the developer approves ([Experience Capture → Harvest before demote](../references/experience-capture.md#harvest-before-demote-ordering-invariant)); a route with no commit runs it when the work is done; `ask` writes nothing and harvests nothing.
+
 1. **Moment.** The developer's yes at the sign-off of the task's last commit (or `Autonomy: full`), before `git commit`. A declined sign-off writes nothing. A route with no commit (`research`, `ask`, `adopt`, a project without git) → when the work is done.
 2. **Write the closure:**
    - **task file** — your Subtask block: `Status: done`, Progress checked off, no `Next` item; task-level `Status: done`; header `Last updated`; the final Shared Activity Log entry;

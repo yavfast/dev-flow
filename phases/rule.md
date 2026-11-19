@@ -32,7 +32,7 @@ The request is a freeform description in any language. Interpret the intent and 
    - Removing a rule — request explicitly says "remove", "delete", "видалити".
    - Listing/showing rules — request says "list", "show", "покажи": read-only — print the matching rules from `_index.yaml` and the category files, write nothing (skip steps 4-7).
 
-2a. **Owner.** A lesson from an incident is a rule. Route to the [skill phase](skill.md) only knowledge that is not an artifact constraint, or a consolidation of an accumulated rule cluster ([Knowledge Scaling → Consolidation](../references/knowledge-scaling.md#consolidation-rules--skill)). In doubt — a rule.
+2a. **Owner.** A lesson from an incident is a rule or a `check` tool by the [checkability rung](../references/experience-capture.md#checkability-rung) — a `mechanical` class goes to the [tool phase](tool.md) instead, a `mixed` one to both. Route to the [skill phase](skill.md) only knowledge that is not an artifact constraint, or a consolidation of an accumulated rule cluster ([Knowledge Scaling → Consolidation](../references/knowledge-scaling.md#consolidation-rules--skill)). In doubt — a rule.
 
 3. **Determine rule properties:**
    - **Category:** naming | structure | architecture | error-handling | style — or an additional category (concurrency / performance / security / testing / ui / data; see [Rule Categories](#rule-categories) below)
@@ -68,6 +68,8 @@ The request is a freeform description in any language. Interpret the intent and 
 \```
 {code}
 \```
+
+**Check:** {tool name — a `mixed` class, or a rule an audit `tool-candidate` covered; omit otherwise}
 
 **Provenance:** {task file / ticket / commit / `{category}.log.md` entry}
 ```
@@ -120,8 +122,10 @@ Closed set: `must` | `should` | `prefer`. Any other word is mapped at write time
 The [audit](audit.md) `rules` scope proposes; this phase executes — **only with the developer's confirmation** (`NOT_CONFIRMED` otherwise), and never changing a rule id (`ID_MUTATION` refusal):
 
 - **Consolidation is not a proposal** — a `skill-candidate` cluster is the agent's call, executed through the [skill phase](skill.md); folding a rule into the skill body (removing it, `moved_to` alias) is a deletion and passes an independent clean-context review first.
-- **Compact** (`unit-verbosity`): keep heading · Applies to · Why (within `rationale_max`) · Examples · Provenance; move the rest verbatim to `{category}.log.md` under `## {id} — {date}`; link it from Provenance. Directive, examples, and provenance never change (`CONTENT_LOSS` refusal).
+- **Compact** (`unit-verbosity`): keep heading · Applies to · Why (within `rationale_max`) · Examples · Check · Provenance; move the rest verbatim to `{category}.log.md` under `## {id} — {date}`; link it from Provenance. Directive, examples, and provenance never change (`CONTENT_LOSS` refusal).
 - **Split** (`split-planned` / `split-required`): move rules verbatim into a new category file with its own selector; regenerate digests and index blocks; fix the path part of every `<file>#<id>` reference; the set of anchors before = after. No umbrella — the index is the router.
+- **Example** (`example-candidate`): add the recurrences the proposal names to the rule's `### Examples` (Incorrect, real file path) and its Provenance; directive and severity unchanged.
+- **Check** (`tool-candidate`, once the [tool phase](tool.md) promoted the tool): add the `Check:` line naming it.
 - **Overload remedies** (`knowledge-overload`): narrow selectors · split the category by selector · consolidate the cluster into a skill · merge duplicates · lower to `prefer` — never a `must`.
 
 ## Rule Categories
