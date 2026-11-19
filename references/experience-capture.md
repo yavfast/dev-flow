@@ -8,7 +8,7 @@ Cross-cutting sub-procedure for every phase. Like [Delegation for Focus](delegat
 - [The unit: a segment](#the-unit-a-segment) — What a segment is and where it ends
 - [Transition Checkpoint — the primary cadence](#transition-checkpoint--the-primary-cadence) — Detection signals and the checkpoint steps: summary, re-grade, harvest
 - [Harvest before demote (ordering invariant)](#harvest-before-demote-ordering-invariant) — Reflection runs before `pin` markers are demoted at task close
-- [Applying experience — auto-apply through structural gates](#applying-experience--auto-apply-through-structural-gates) — Coverage rung, owner menu (`rule` · `skill` · `tool` · `pointer` · `access` · `drop`), checkability rung (mechanical → tool, judgement → rule), tool promotion ([Project Tools](project-tools.md)), doubtful writes → independent review
+- [Applying experience — auto-apply through structural gates](#applying-experience--auto-apply-through-structural-gates) — Coverage rung, owner menu (`rule` · `skill` · `tool` · `pointer` · `access` · `drop`), checkability rung (mechanical → tool, judgement → rule), sweep gaps (a spec escalation → a sweep question), tool promotion ([Project Tools](project-tools.md)), doubtful writes → independent review
 - [The Response Trailer — response-granularity carrier](#the-response-trailer--response-granularity-carrier) — Fact-only fields recorded per complex response
 - [Context pressure — a tiered, proxy-driven trigger](#context-pressure--a-tiered-proxy-driven-trigger) — Proxy tiers and their responses; handoff, never auto-compact
 - [Relation to working memory](#relation-to-working-memory) — What the checkpoint promotes from L1 to L2
@@ -39,7 +39,7 @@ At a transition, run a **checkpoint** over the segment that is closing.
 1. **Distill** the closing segment — a noisy read, so delegate it (see [Delegation for Focus](delegation.md)) and keep only the conclusion.
 2. **Record a segment summary** as a Shared Activity Log entry tagged `{s:pin}` — a few lines of "what happened / what was decided", referencing any raw material by path, never inlining it (the no-large-blobs rule).
 3. **Demote the raw turns** of the segment — re-grade them `{s:noise}`, or `{s:superseded→<summary>}` when the summary replaces them.
-4. **Apply durable lessons** (next section) — auto-written through structural gates; a doubtful write goes to independent review first. A cause of delay the [Delay watch](delivery-focus.md#delay-watch) recorded — the agent's own or a delegate's `Friction:` item — is such a lesson when its step 3 says so.
+4. **Apply durable lessons** (next section) — auto-written through structural gates; a doubtful write goes to independent review first. A cause of delay the [Delay watch](delivery-focus.md#delay-watch) recorded — the agent's own or a delegate's `Friction:` item — is such a lesson when its step 3 says so. An escalation to a specification is one too, routed by [Sweep gaps](#sweep-gaps).
 5. **Close the segment**, and **promote** the durable part of working memory to L2 (see [Relation to working memory](#relation-to-working-memory)).
 
 ## Harvest before demote (ordering invariant)
@@ -77,6 +77,18 @@ A lesson bound for a rule — from an incident, or a reusable constraint or conv
 **The developer's review moves to commit time, it does not disappear.** Every auto-write lands in the working tree and is surfaced in the diff under the standing commit-approval gate ([SKILL.md → Commit rules](../SKILL.md#git-workflow-integration)); mention auto-written rules/skills in the commit message and the Response Trailer so they are visible, never silent. Nothing here touches the commit gate.
 
 This is the single home for reflection in dev-flow: [audit](../phases/audit.md) Step 3 "reflect", implement/fix **rule auto-discovery**, and [research](../phases/research.md) Step 4 persistence are all **invocations of this procedure**, not parallel paths.
+
+### Sweep gaps
+
+The list of [Negative sweep](../phases/specification.md#negative-sweep) questions grows from the behaviours that still reached a specification through an [upstream escalation](escalation.md) — from implement, test, review, verify or fix. The Activity entry of an escalated gap names each sweep question that asks for the behaviour the spec lacked ([Recording](escalation.md#recording)); the harvest routes each name by its row:
+
+| The entry names | Owner |
+|-----------------|-------|
+| A question of the six | `none` — the shipped sweep covers it and has no ledger entry; the Activity entry is the record |
+| A project rule | `none` — *covered*: append `recurred` to the rule's ledger entry, `ref` the task file, once per rule per task |
+| `no sweep question` | `rule` — a new sweep question: a `judgement` class, `should`, in the category `spec-sweep` (`applies_to: { phases: [spec] }`, created with its first rule — [Rule Categories](../phases/rule.md#rule-categories)); the directive is the question for that kind of input, written as one imperative line ("Say what happens when …"), the example the spec section that lacked the answer and the section that now gives it; its ledger entry opens on create (`problem_class: spec-sweep:<kind of input>`, `trigger`: the next task that runs the specification phase) |
+
+Any other escalation to a specification — an ambiguity, a wrong value, a change of a published contract — carries no sweep name and goes through the owner menu above like any lesson.
 
 ## The Response Trailer — response-granularity carrier
 
@@ -131,6 +143,7 @@ Experience Capture is what fires the L1→L2 movements of [session working memor
 | [review](../phases/review.md) step 6 | A project rule the round's report marks `fail` appends `recurred` to its ledger entry, once per rule per task |
 | [Task close](../phases/status.md#on-task-completion) | When no checkpoint ran over the task's last segment, one runs before the sign-off of the task's last commit is asked, so its writes are in the diff the developer approves |
 | A delegate's report | Its `Friction:` items are Delay watch signals of the initiator's task ([A delegate's run](delivery-focus.md#a-delegates-run)) |
+| [Upstream Escalation](escalation.md#recording) of a gap in a specification | Its Activity entry names each sweep question that asks for the behaviour; the next checkpoint routes it by [Sweep gaps](#sweep-gaps) |
 | Specialist end-of-burst | A project specialist accrues role-local heuristics **per call** (it self-writes its own memory, so the next call warm-starts on them); this per-call append is **ungated** (only the skill promotion below passes a gate), so — applying "trust structure, not self-assessment" to memory *content* — each heuristic is written as a *falsifiable, evidence-scoped observation*, never an absolute verdict (an over-stated one poisons later warm-starts). At **end-of-burst** this procedure harvests the burst's heuristics and *auto-applies* the broadly-useful ones as skills through the structural gate (hybrid store — role-local memory + skills) |
 | Optional `/dream` | If a reflection/`dream` skill is installed, delegate the distillation step to it for a deeper retrospective; otherwise distill inline. Experience Capture does not depend on `/dream`. |
 

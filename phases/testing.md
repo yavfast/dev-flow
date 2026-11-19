@@ -97,9 +97,10 @@ Before running tests, verify:
    a. Analyze the failure — a code bug, a test bug, or a spec problem?
    b. Code or test bug → fix the root cause (code must satisfy the spec,
       not the other way around)
-   c. Spec problem — two defensible readings of a contract, or the contract
-      contradicts observed reality → stop and escalate upstream instead of
-      guessing; see Upstream Escalation (../references/escalation.md)
+   c. Spec problem — two defensible readings of a contract, a case the
+      contract says nothing about, or the contract contradicts observed
+      reality → stop and escalate upstream instead of guessing; see
+      Upstream Escalation (../references/escalation.md)
    d. Re-run the failed tests
 6. All functional tests pass → delete in-tree temporary tests → proceed to Review phase
 ```
@@ -144,7 +145,7 @@ Before the review starts, verify:
 
 ## Reflection
 
-At the phase boundary, run the [Transition Checkpoint](../references/experience-capture.md): if writing tests surfaced a recurring assertion/mocking pattern or a coverage gap worth a convention, write a testing rule (`.dev_flow/rules/testing.md`) — a `mechanical` class goes to a `check` tool instead, a `mixed` one to both ([Checkability rung](../references/experience-capture.md#checkability-rung)); if it produced a non-trivial fixture/harness technique, write/update a skill — never a fact about the developer or the machine, which belongs to `.dev_flow/profile/` under its consent regime ([Adaptation Profile](../references/adaptation-profile.md)). Auto-apply through the structural [rule](rule.md)/[skill](skill.md) gate — no permission prompt; never auto-write a `must` (route those + contradictions to independent review); every write is visible in the commit diff. A lesson an existing rule, skill, or tool already covers appends a `recurred` or `exercised` observation to that artifact's ledger entry instead of a new write — a hand-rolled check a covering tool covers records a [bypass](../references/project-tools.md#use-accounting) in place of `recurred`, unless one is already recorded for this check (by a failed run or an earlier rung) — never a second ([Experience Capture](../references/experience-capture.md#applying-experience--auto-apply-through-structural-gates)). See **[Experience Capture](../references/experience-capture.md)**.
+At the phase boundary, run the [Transition Checkpoint](../references/experience-capture.md): if writing tests surfaced a recurring assertion/mocking pattern or a coverage gap worth a convention, write a testing rule (`.dev_flow/rules/testing.md`) — a `mechanical` class goes to a `check` tool instead, a `mixed` one to both ([Checkability rung](../references/experience-capture.md#checkability-rung)); if it produced a non-trivial fixture/harness technique, write/update a skill — never a fact about the developer or the machine, which belongs to `.dev_flow/profile/` under its consent regime ([Adaptation Profile](../references/adaptation-profile.md)). Auto-apply through the structural [rule](rule.md)/[skill](skill.md) gate — no permission prompt; never auto-write a `must` (route those + contradictions to independent review); every write is visible in the commit diff. A lesson an existing rule, skill, or tool already covers appends a `recurred` or `exercised` observation to that artifact's ledger entry instead of a new write — a hand-rolled check a covering tool covers records a [bypass](../references/project-tools.md#use-accounting) in place of `recurred`, unless one is already recorded for this check (by a failed run or an earlier rung) — never a second ([Experience Capture](../references/experience-capture.md#applying-experience--auto-apply-through-structural-gates)). A gap escalated to a specification is routed by [Sweep gaps](../references/experience-capture.md#sweep-gaps). See **[Experience Capture](../references/experience-capture.md)**.
 
 ## Anti-Patterns
 

@@ -64,6 +64,7 @@ Every specification must pass these checks before advancing to the plan:
 - [ ] Is the spec precise enough to prevent hallucinations during code generation?
 - [ ] Are all constraints and invariants explicitly stated?
 - [ ] Are state transitions documented with conditions and side effects?
+- [ ] Negative sweep: for each input the spec reads across a boundary and each state it defines, does the spec say what happens when the input is missing, empty or unparsable, written by one who must not write it, placed where it must not be, when the process ends, stops or expires, and what the call leaves unchanged ([Negative sweep](#negative-sweep))?
 - [ ] Are verification criteria defined for all contracts (expected outcomes, edge cases)?
 - [ ] Is `keep` in the `Test` column set only for complex logic or on the developer's request ([Test Economy](../references/test-economy.md#the-keep-marker))?
 - [ ] Are integration scenarios described for cross-module interactions?
@@ -71,6 +72,23 @@ Every specification must pass these checks before advancing to the plan:
 - [ ] Does the spec contain no banned phrases (see Banned Phrases above)?
 - [ ] Is the spec minimal — no "just in case" contracts with no stated consumer?
 - [ ] Is every material design fork either resolved (consensus + rationale) or recorded as an open decision with a resolution trigger in Design Decisions (see Interview Mode)?
+
+### Negative sweep
+
+The checklist's sweep covers each input the spec reads across a boundary — a record another process writes, a file, a user's value, an external system's answer — and each state the spec defines. It applies at every [project stage](../references/delivery-focus.md#project-stage); at `prototype` an answer may be one line ("fails with `X`"); an item that [Needed now](../references/delivery-focus.md#needed-now) defers at the stage is answered by its record with the stage trigger.
+
+| # | Question | Where the answer lands |
+|---|----------|------------------------|
+| 1 | **Missing** — the input or the record is absent | 02 Contracts (an error case) / 04 State Transitions |
+| 2 | **Unparsable** — empty, malformed, out of format; one parse rule for every reader of the input | 03 Validation Rules |
+| 3 | **Wrong writer** — who must not write it or act on it; the permissions of a shared place | 03 Validation Rules / 02 Contracts |
+| 4 | **Wrong place** — where the data must not lie and where it must not go | 01 Data Structures (constraints) |
+| 5 | **End** — a stop, a close, an expiry; the last state and what the next reader sees | 04 State Transitions |
+| 6 | **Unchanged** — the state a call or an event leaves as it was | 05_02 Invariant Checks |
+
+- A question that cannot arise for the input is skipped. The sweep adds no section: each answer lands in the section the table names.
+- The project's rules whose selector holds the phase `spec` add their own questions — the questions grown from [sweep gaps](../references/experience-capture.md#sweep-gaps).
+- The answers are contract behaviour, not tests: [What gets a test](../references/test-economy.md#what-gets-a-test) still decides which of them get a test.
 
 ## Gate Check (Specification -> Plan)
 

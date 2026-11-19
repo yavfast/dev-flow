@@ -51,6 +51,7 @@ role SpecAuthor {
     - "Spec precise enough to prevent hallucinations during code generation"
     - "All constraints and invariants explicitly stated"
     - "State transitions documented with conditions and side effects"
+    - "Negative sweep: for each input the spec reads across a boundary and each state it defines, the spec says what happens when the input is missing, empty or unparsable, written by one who must not write it, placed where it must not be, when the process ends, stops or expires, and what the call leaves unchanged (phases/specification.md → Negative sweep: six questions and the section each answer lands in; a question that cannot arise is skipped; every project stage, one line at `prototype`, an item Needed now defers answered by its record; the project's rules whose selector holds the phase `spec` add their own questions; the answers are contract behaviour, not tests)"
     - "Verification criteria defined for all contracts (expected outcomes, edge cases)"
     - "`keep` in the `Test` column set only for complex logic or on the developer's request (references/test-economy.md)"
     - "Integration scenarios described for cross-module interactions"

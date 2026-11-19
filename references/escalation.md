@@ -10,6 +10,7 @@ Escalate when evidence from a downstream phase points at an upstream artifact:
 |--------|--------------|
 | Two defensible readings of a contract — tests or implementation could justify either | Specification (ambiguity) |
 | Observed reality contradicts a spec'd constraint, limit, or behavior (e.g. a live test shows the contract cannot hold) | Specification (wrong) |
+| The spec says nothing about a case the work meets — an input missing, unparsable, written by one who must not write it, placed where it must not be, an end, a state left unchanged | Specification (gap) |
 | A technology decision does not work as assumed (library can't do it, platform constraint) | Plan |
 | A domain assumption is falsified — the mechanism or boundary itself is wrong | Concept |
 | A "fix" would change a published contract's meaning | Specification (this is a change, not a fix) |
@@ -34,7 +35,7 @@ Escalations are decisions — they leave the same trail as any other:
 
 - The document fix lands with a **Changelog** entry naming the downstream evidence ("live test showed X", "implementation surfaced two readings of Y").
 - A fork goes into the document's **Design Decisions** (`DEC_NN`) section as usual.
-- The task file gets an Activity entry: what was escalated, to which document, and the outcome — so the pause is visible in the session record.
+- The task file gets an Activity entry: what was escalated, to which document, and the outcome — so the pause is visible in the session record. For a gap — the specification lacked a behaviour — the entry also names each [Negative sweep](../phases/specification.md#negative-sweep) question that asks for it — its number, the project rule's name, or `no sweep question` — the input of [Sweep gaps](experience-capture.md#sweep-gaps).
 
 ## Anti-patterns
 

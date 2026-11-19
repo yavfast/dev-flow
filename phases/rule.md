@@ -35,7 +35,7 @@ The request is a freeform description in any language. Interpret the intent and 
 2a. **Owner.** A lesson from an incident is a rule or a `check` tool by the [checkability rung](../references/experience-capture.md#checkability-rung) — a `mechanical` class goes to the [tool phase](tool.md) instead, a `mixed` one to both. Route to the [skill phase](skill.md) only knowledge that is not an artifact constraint, or a consolidation of an accumulated rule cluster ([Knowledge Scaling → Consolidation](../references/knowledge-scaling.md#consolidation-rules--skill)). In doubt — a rule.
 
 3. **Determine rule properties:**
-   - **Category:** naming | structure | architecture | error-handling | style — or an additional category (concurrency / performance / security / testing / ui / data; see [Rule Categories](#rule-categories) below)
+   - **Category:** naming | structure | architecture | error-handling | style — or an additional category (concurrency / performance / security / testing / ui / data / spec-sweep; see [Rule Categories](#rule-categories) below)
    - **Severity:** must | should | prefer — closed set; normalize any other word (see [Severity Normalization](#severity-normalization)); never auto-write a `must` (an independent clean-context review confirms it first)
    - **Rule id:** PascalCase, concise (e.g., `NoMPrefixForFields`, `EnumOverConstants`), or the project's `PREFIX-NNN` scheme when one exists; unique in the catalogue, immutable once written
    - **Directive:** one imperative logical line, within `directive_max`; over the limit → split into two rules (never truncate)
@@ -150,6 +150,7 @@ Additional categories (created on demand when rules don't fit standard ones):
 | testing | `testing.md` | Test patterns, mocking, assertions, test naming |
 | ui | `ui.md` | View patterns, layouts, animations, accessibility |
 | data | `data.md` | DB operations, ORM, queries, migrations |
+| spec-sweep | `spec-sweep.md` | Negative sweep questions grown from spec escalations — `applies_to: { phases: [spec] }` ([Sweep gaps](../references/experience-capture.md#sweep-gaps)) |
 
 New category files are created automatically when the first rule for that category is added. **No category holds a fact about the developer or the machine** — that is `.dev_flow/profile/`, written under its consent regime; a category recorded `declined` there is dropped, never re-homed as a rule ([Adaptation Profile](../references/adaptation-profile.md)).
 
