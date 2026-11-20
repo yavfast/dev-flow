@@ -20,6 +20,7 @@ role Reviewer {
     - "State finding severity; let materiality be computed from the declared Criticality"
     - "Independent tool review (tool_review below) when audit Step 7g or a tool retire spawns it"
     - "Name one concrete fix in a finding whenever the fix is unambiguous — it is what lets the repeat round run as confirm (references/verification-economy.md)"
+    - "Review at the level the brief's Review level line names: open the checks phases/review.md step 2 marks for it, list the others as not opened (references/review-convergence.md → Review level)"
 
   skills:
     - "Cross-document consistency analysis"
@@ -35,7 +36,8 @@ role Reviewer {
     - "Codebase for traceable ID reference checking and for the callers of changed symbols"
     - ".dev_flow/rules/ — project coding rules (if exists)"
     - ".dev_flow/skills/ — for detecting reintroduced pitfalls (if exists)"
-    - "Git diff of all changes, untracked files included (pre-commit review, round 1 or a full round); in a delta round only the delta diff and the carry-over findings with their prescribed fixes"
+    - "Git diff of all changes, untracked files included (pre-commit review, round 1 or a full round); in a delta round only the delta diff and the carry-over findings, each with its identity, severity and prescribed fix in full; a raised round adds, for the checks the raise opens, the whole diff (git diff HEAD <snapshot> of this round)"
+    - "Review level line of the brief (pre-commit review)"
     - "Relevant specification and plan (for pre-commit review)"
     - "references/solid-architecture.md — default architecture principles"
 
@@ -45,8 +47,9 @@ role Reviewer {
     - "Staleness report listing documents needing review"
     - "Updated documents after conflict resolution"
     - "Rules compliance report (if .dev_flow/rules/ exists)"
-    - "Pre-commit review report (PASS / FAIL / WARNINGS) with round number, scope mode, round mode, routed contested records, and suppressed checks"
-    - "Round state written to the task file: baseline (snapshot tree hash), carry_over; a recurred observation in the ledger entry of each project rule marked fail (once per rule per task)"
+    - "Pre-commit review report (PASS / FAIL / WARNINGS) with round number, level, scope mode, round mode, routed contested records, and suppressed checks — the checks not opened at the level included"
+    - "Review level row written to the task file when the developer named a level the row does not hold yet (phases/review.md step 1)"
+    - "Round state written to the task file: baseline (snapshot tree hash), the level of a full round with its reason, carry_over (identity, severity, recurrence, prescribed fix in full, bypassed list); a recurred observation in the ledger entry of each project rule marked fail (once per rule per task)"
     - "Stage row rewritten when the facts make the stage production (phases/review.md step 0)"
     - "A fired 'before the first external exposure' record marked promoted with the task's id, in the task's commit (phases/review.md step 3)"
 
@@ -70,11 +73,14 @@ role Reviewer {
     - "MUST NOT let a must or security finding reach a confirm round, at any criticality"
     - "MUST name the closed list in bypassed_list when a case got past an allow-list, no-confirm list, pattern or class signs; prescribe a path fix, and keep the finding open when the fix only adds or removes list members (references/review-convergence.md)"
     - "MUST name every check suppressed for a missing entry condition as unobserved with the absent fact (references/verification-economy.md)"
+    - "MUST open the checks the brief's Review level opens and list the rest in one unobserved line 'not opened at level <level>: <checks>'; MUST report a must or security defect it sees at any level, outside its checks or the diff included (references/review-convergence.md → Review level)"
 
   pre_commit_review:
     description: "Code review performed before commit by a subagent with clean context"
     inputs:
-      - "Git diff of all changes, untracked files included (round 1 or a full round); in a delta round only the delta diff and the carry-over findings with their prescribed fixes"
+      - "Git diff of all changes, untracked files included (round 1 or a full round); in a delta round only the delta diff and the carry-over findings, each with its identity, severity and prescribed fix in full; a raised round adds, for the checks the raise opens, the whole diff (git diff HEAD <snapshot> of this round)"
+      - "Review level line of the brief — Review level: <level> — <reason>; the level trims the inputs below to what its checks need (phases/review.md step 1)"
+      - "The effective criticality of the changed area — read by the main agent from the owning concept and spec; unstated when none declares it (references/review-convergence.md → Functional criticality)"
       - "While the stage written in the task file is production: every open deferred security finding with the trigger 'before the first external exposure', as a carry-over finding (phases/review.md step 3)"
       - "Role style line of the brief, when present — read the card it names before the first action, work by it where this role leaves a choice, name the style in the report (references/role-styles.md → Subagents)"
       - "Relevant specification (*.sp.md)"
@@ -89,58 +95,77 @@ role Reviewer {
       spec_compliance:
         description: "Code implements all spec contracts, error cases, invariants"
         severity: "must"
+        level: "quick and up — at quick, the contracts the diff touches"
       plan_completeness:
         description: "All plan tasks for the current phase are addressed"
         severity: "must"
+        level: "quick and up"
       rules_compliance:
         description: "New code follows .dev_flow/rules/"
         severity: "the rule's own severity"
+        level: "every level"
       skill_pitfalls:
         description: "Change doesn't reintroduce a pitfall documented in a loaded skill"
         severity: "should (must if also a must rule)"
+        level: "quick and up"
       solid_compliance:
         description: "Code structure follows SOLID and pluggability principles (references/solid-architecture.md) unless overridden by project rules"
         severity: "should"
+        level: "standard and up"
       code_reuse:
         description: "New code reuses existing functions/classes instead of re-implementing them; a new reuse seam has a real consumer, not speculative generality (references/code-reuse.md). Resist over-DRY — do not flag look-alikes that change for different reasons"
         severity: "should"
+        level: "standard and up"
       no_regressions:
         description: "Changes don't break existing functionality — checked against the callers of every changed symbol, read outside the diff"
         severity: "must"
+        level: "quick and up"
       no_leftover_artifacts:
         description: "No debug code, TODOs, commented-out blocks"
         severity: "should"
+        level: "every level"
       test_economy:
         description: "Each new permanent test has a keep reason in the test report; no temporary test in the diff; no test deleted outside `audit tests` while the code it checked stays (references/test-economy.md)"
         severity: "should"
+        level: "quick and up"
       promoted_prototype:
         description: "The task promotes a prototype → a file of the diff identical to its counterpart in the prototype place the spike names has the `keep` mark in the plan; an unmarked one is a finding (phases/research.md → Prototype in the Project)"
         severity: "must"
+        level: "quick and up"
       code_quality:
         description: "Naming, structure, readability follow project conventions"
         severity: "prefer"
+        level: "standard and up"
       security:
         description: "No obvious vulnerabilities (injection, exposure, etc.); a secret counts only where secrets never live (references/proportionate-caution.md). Each security finding states its exposure: external (needs users outside the team or a deployment others reach) or local (references/delivery-focus.md → Security findings and the stage)"
         severity: "must"
+        level: "every level — at formal, the diff lines"
     severity_axis: "must | should | prefer — the same axis as project rules. The reviewer states severity; it never states materiality"
     results:
       pass: "Proceed to commit approval"
-      fail: "Fix issues, re-run the task-set tests that cover the fix (references/test-economy.md#when-to-run) and, when the fix edited code, the checks the fast variant turned off on the modules it touched (references/run-economy.md#fast-variant), then re-review the fixes only (convergence.scope_round.later_round)"
+      fail: "Fix issues, re-run the task-set tests that cover the fix (references/test-economy.md#when-to-run) and, when the fix edited code, the checks the fast variant turned off on the modules it touched (references/run-economy.md#fast-variant), then re-review the fixes only (convergence.scope_round.later_round), at the level convergence.level.choosing gives a later round, raised by convergence.level.raise"
       warnings: "Present warnings to the user, proceed if user approves; an advisory applied after the review is checked as a confirm round (references/verification-economy.md → An applied advisory is confirmed)"
 
   convergence:
     reference: "references/review-convergence.md"
     scope_round:
       round_1: "Read the whole diff"
-      later_round: "Read only the delta (git diff <baseline> <snapshot>) UNION carry-over; unchanged code is context only. Raise a finding only in the delta or where the delta breaks unchanged code; a must or security defect seen anywhere is still reported"
+      later_round: "Read only the delta (git diff <baseline> <snapshot>) UNION carry-over; unchanged code is context only. Raise a finding only in the delta or where the delta breaks unchanged code; a must or security defect seen anywhere is still reported; a raised round also reads the whole diff for the checks the raise opens (convergence.level.raise)"
       full_reasons: ["no reachable baseline"]
     materiality:
-      computed_from: ["finding severity", "finding type", "effective Criticality of the owning concept/spec"]
+      computed_from: ["finding severity", "finding type", "effective Criticality of the owning concept/spec", "from round 3, for the round-3 cap: whether an earlier round raised the identity and whether a raise opened the finding's check in this round"]
       never: "Assigned by the reviewer — it is derived, not judged"
       values:
         blocking: "Spawns the next round; its mode is computed from the fix (references/verification-economy.md)"
         advisory: "Reported to the developer, spawns no round"
         deferrable: "Routes to the todo register at once, spawns no round"
+      round_3_cap: "In round 3 and later, a blocking verdict of the table for an identity no earlier round of the task raised becomes advisory, except a finding of a check the raise opened in this round; the main agent applies it to the report from the Review Rounds carry-over column (phases/review.md step 3)"
+    level:
+      reference: "references/review-convergence.md → Review level"
+      values: ["formal", "quick", "standard", "deep — only on the developer's request"]
+      choosing: "The main agent chooses the level of a full round by the change's complexity and reach, the reason naming the facts read; doubt → the higher level; a level the developer names wins over the choice, either way; the raise still lifts a later round above it, and a level the developer names later wins over both; a later round runs at the highest of the previous full round's level, the raised level and the level its delta would get on its own — the last only when the developer named no level; a level the developer names after the previous full round takes the place of all three"
+      never_narrows: "A must or security defect seen at any level, outside its checks or the diff included, is reported; materiality, round mode and gate criteria do not depend on the level"
+      raise: "A finding at formal or quick that has severity must, is a security finding — the Security check or a security class type — or comes from the No regressions check raises the next full round one step (formal → quick → standard); never to deep; a level never goes down within the task unless the developer names a lower one; the checks the raise opens read the whole diff (git diff HEAD <snapshot> of this round), the others delta UNION carry-over"
     tripwire:
       name: "review-non-convergence"
       condition: "A non-must, non-security blocking finding raised a second time unresolved (identity = normalized location + type)"
@@ -152,7 +177,7 @@ role Reviewer {
       closes: "A path change: the case takes a route where the list is not the defence, or the decision derives from the operation itself, not from a declared field, and an unrecognised case falls into the stricter branch"
       never_closes: "A fix whose only change to the decision is a list member added or removed — the finding stays open under the same identity"
       no_path: "Upstream escalation; a fix adding the member that covers the case closes the finding only after the owning document (the task file when there is none) records the list as the defence"
-    close_round: "Write baseline (the round's snapshot tree hash, taken when its input was captured — references/review-convergence.md → Incremental round scope), round mode, and carry_over into the task file; for each project rule marked fail in the Rules Compliance table, append recurred to the rule's ledger entry — once per rule per task, a later round extends its note (phases/review.md step 6)"
+    close_round: "Write baseline (the round's snapshot tree hash, taken when its input was captured — references/review-convergence.md → Incremental round scope), round mode, the level of a full round with its reason, and carry_over (identity, severity, recurrence, prescribed fix in full, bypassed list) into the task file; for each project rule marked fail in the Rules Compliance table, append recurred to the rule's ledger entry — once per rule per task, a later round extends its note (phases/review.md step 6)"
 
   conflict_resolution:
     step_1: "Identify conflicting documents and list contradictions"

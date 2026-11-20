@@ -99,7 +99,7 @@ These cases refuse the suppression outright — run the check instead:
 
 ## Boundaries
 
-- **`must` findings and security findings are never economized** — not by mode, not by signal, not by ledger.
+- **`must` findings and security findings are never economized** — not by mode, not by signal, not by ledger, not by the [review level](review-convergence.md#review-level--how-deep-a-round-looks).
 - **Commit approval is untouched.** The economy applies to the size of a check, never to the point where the decision passes to the developer.
 - **Clean-context review is not skipped.** `confirm` applies to a **repeat** round of a review already performed, or to an applied advisory.
 - **Cost is not an entry condition.** The condition is an absent subject, not an expensive check.

@@ -2,7 +2,7 @@
 
 Cross-cutting sub-procedure of [review](../phases/review.md) (reads), [concept](../phases/concept.md) and [specification](../phases/specification.md) (declare), [todo](../phases/todo.md) (receives), and [audit](../phases/audit.md) (grooms). Not a pipeline stage and no command.
 
-It bounds the `Review → fix → re-Review` loop with a **declared criticality** the reviewer reads instead of judging, a **recurrence limit** on a single finding, a **path rule** for a finding that got past a closed list, and an **incremental round scope**: a repeat round reads only the fixes.
+It bounds the `Review → fix → re-Review` loop with a **declared criticality** the reviewer reads instead of judging, a **recurrence limit** on a single finding and a **round-3 cap** on new ones, a **path rule** for a finding that got past a closed list, and an **incremental round scope**: a repeat round reads only the fixes. A **review level** sets how deep a round looks: the checks the reviewer opens follow the change's complexity and reach.
 
 Advisory throughout — the Review→Verify gate criteria are unchanged. What changes is which findings can reach `blocking`.
 
@@ -28,7 +28,7 @@ Absence is valid, is never a documentation finding, and never lowers a severity.
 
 ## Finding materiality — computed, not judged
 
-The reviewer assigns `severity` (`must` / `should` / `prefer`) as before, and does **not** assign materiality. Materiality is a pure function of `severity`, finding `type`, and effective criticality.
+The reviewer assigns `severity` (`must` / `should` / `prefer`) as before, and does **not** assign materiality. Materiality is a pure function of `severity`, finding `type`, and effective criticality; from round 3 the round-3 cap below also reads whether an earlier round raised the identity and whether a raise opened the finding's check in this round.
 
 Overrides first, in order:
 
@@ -47,6 +47,8 @@ Then the table (so `severity` is `should` or `prefer`):
 - **advisory** — reported to the developer, spawns no round.
 - **deferrable** — routes to the todo register at once, spawns no round.
 
+**Round-3 cap.** In round 3 and later, a `blocking` verdict of the table for an identity no earlier round of the task raised becomes `advisory`, except a finding of a check the [raise](#raise) opened in this round — that check reads the original change for the first time. Overrides 2–3 still make a `must` or security finding `blocking` in every round; a finding an earlier round raised keeps its verdict and its [recurrence limit](#recurrence-limit--the-review-non-convergence-tripwire). A fix in round 3 that creates a new minor defect is reported, not argued over in round 4.
+
 The unstated column equals the `core` column: silence never lowers a severity. `critical` reads like `core` here; it differs in [Test Economy](test-economy.md#logic-class), where a `critical` area counts as `complex` logic.
 
 **A reviewer who holds the declaration wrong does not argue and does not lower it** — that is an evidence ↔ doc conflict for [Upstream Escalation](escalation.md).
@@ -61,7 +63,7 @@ Finding identity is `(normalized location + type)` — the dedup key of the audi
 
 Symmetric twin of the `verifier-rubber-stamp` tripwire in [Application Enforcement](application-enforcement.md), opposite failure direction. Both fire together when both hold; neither cancels the other.
 
-Round count is bounded by (distinct `must` + security findings, each of which someone must fix) + 2.
+The limit keys on identity, so alone it does not stop a stream of new findings that each fix creates in a new location; the [round-3 cap](#finding-materiality--computed-not-judged) does. From round 3 on, only a `must` or security finding, or a finding of the checks a raise opened in that round, spawns a round, so the round count is bounded by (distinct `must` + security findings, each of which someone must fix) + 3 + the number of raises (at most two).
 
 ## List bypass — fix the path, not the list
 
@@ -90,7 +92,7 @@ Name every routed record in the review report. Silent deferral is a report-ceili
 
 A repeat round reviews the fixes, not the whole task again.
 
-**Baseline.** Take a snapshot of the working tree when the round's input is captured, before the reviewer starts. Round 1 and a full round read `git diff HEAD <snapshot>`, untracked files included (no commit yet: `git diff $(git hash-object -t tree /dev/null) <snapshot>`). At the **close** of the round, write that snapshot into the task file as `baseline`, with `carry_over` — the open blocking findings, each with its recurrence, prescribed fix and bypassed list. The snapshot is a git tree object; taking it changes no index, branch or working-tree file (it writes only unreachable objects into `.git`):
+**Baseline.** Take a snapshot of the working tree when the round's input is captured, before the reviewer starts. Round 1 and a full round read `git diff HEAD <snapshot>`, untracked files included (no commit yet: `git diff $(git hash-object -t tree /dev/null) <snapshot>`). At the **close** of the round, write that snapshot into the task file as `baseline`, with `carry_over` — the open blocking findings, each with its identity, severity, recurrence, prescribed fix in full and bypassed list; the next round's brief passes them so, never abbreviated — the next mode and level read the severity. The snapshot is a git tree object; taking it changes no index, branch or working-tree file (it writes only unreachable objects into `.git`):
 
 ```
 ( d="$(mktemp -d)" || exit 1; trap 'rm -rf "$d"' EXIT
@@ -113,7 +115,28 @@ An empty delta with a non-empty carry-over is a legitimate round. Every part emp
 
 The report names the round's scope — `delta` with its baseline, or `full` with its reason — and the round mode. A full round with no named reason, or a delta round with no recorded baseline, violates the no-silent-truncation rule.
 
-Scope and mode are independent: scope says **what the round reads**, mode says **who performs it**. A `confirm` round reads the fix diff against the prescribed fix; `must` and security findings never reach it (discriminator D1).
+Scope and mode are independent: scope says **what the round reads**, mode says **who performs it**. A `confirm` round reads the fix diff against the prescribed fix; `must` and security findings never reach it (discriminator D1). The [level](#review-level--how-deep-a-round-looks) of a `full` round says **which checks the reviewer opens**.
+
+## Review level — how deep a round looks
+
+A `full` round runs at a level. It sets which checks of the [pre-commit review](../phases/review.md#pre-commit-review-procedure) the reviewer opens — step 2 marks the levels of each check — and how far the reviewer reads past the diff.
+
+| Level | Reads past the diff | Fits a change that |
+|-------|---------------------|--------------------|
+| `formal` | nothing | holds no executable code and changes no contract, data structure or mechanism — comments, docs, formatting, text ([When to run](test-economy.md#when-to-run)) |
+| `quick` | the callers of every changed symbol ([Symbol reach](impact.md#symbol-reach)) | changes logic of class `trivial` ([Logic class](test-economy.md#logic-class)) whose callers lie in one module, and no contract, data structure or mechanism |
+| `standard` | as step 1 of the review lists | anything else: `complex` logic, callers in several modules, a changed contract, data structure or mechanism, a new entity, an area of effective criticality `critical` |
+| `deep` | each changed file whole; the [Impact Walk](impact.md) radius — dependent documents, code bindings, active tasks; the consistency of the area's concept, spec, plan and code ([Detecting Conflicts](../phases/review.md#detecting-conflicts)); the [negative sweep](../phases/specification.md#negative-sweep) of each changed contract | the developer asks for it |
+
+**Choosing.** Before a `full` round the main agent chooses its level by the change's complexity and reach, with the last column as the guide. The reason names the facts read — whether the diff holds executable code, the logic class, the modules the callers lie in, a changed contract, the effective criticality; "it looks simple" is not a reason ([Application Enforcement](application-enforcement.md)). Doubt between two levels → the higher one. A level the developer names for the task wins over the choice, either way; the [raise](#raise) still lifts a later round above it, and a level the developer names later wins over both. `deep` comes only from the developer. A later round runs at the highest of the previous `full` round's level, the [raised](#raise) level, and the level its delta would get on its own — the last only when the developer named no level; a level the developer names after the previous `full` round takes the place of all three.
+
+**What a level never narrows.** A round at any level reports a `must` or security defect it sees, outside its checks or the diff included, as a delta round reports one outside the delta. Materiality, the round mode and the gate criteria do not depend on the level. A check the level does not open is listed in the report's `Unobserved` section in one line — `not opened at level <level>: <checks>` — never omitted ([Verification Economy](verification-economy.md#suppression-is-written-never-silent)).
+
+### Raise
+
+A finding at `formal` or `quick` that has `severity: must`, is a security finding — the Security check or a security class type — or comes from the No regressions check raises the next `full` round one step: `formal` → `quick` → `standard`. Such a finding shows the change reaches further than its level assumed. A raise never reaches `deep`, and a level never goes down within the task unless the developer names a lower one. A `should` finding of another check raises nothing; its fix goes to the round mode selection as usual ([Verification Economy](verification-economy.md#discriminator--re-verifying-a-known-fix)).
+
+The checks the raise opens never ran over the task's change, so they read the whole diff — `git diff HEAD <snapshot>` of this round, as round 1 reads it, untracked files included (no commit yet: `git diff $(git hash-object -t tree /dev/null) <snapshot>`) — while the checks the previous level opened read delta ∪ carry-over. The report names the scope `delta, raised checks full`.
 
 ## Degradation
 

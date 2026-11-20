@@ -17,6 +17,7 @@
 | **Stage** | `{prototype / working / production}` — {the fact it is inferred from, or "developer"} — see `references/delivery-focus.md` (dev-flow skill) |
 | **Traceable ID** | `{C_XXX / SP_XXX / PL_XXX / E_XXX or n/a}` |
 | **Ticket** | `{PROJ-123 (external tracker) or n/a}` — present only when the task is explicitly tied to a tracker ticket; see `references/ticket-tracker.md` (dev-flow skill) |
+| **Review level** | `{formal / quick / standard / deep}` — developer: "{quote}" — present only when the developer named a review level for the task; see `references/review-convergence.md` § Review level (dev-flow skill) |
 
 ## Intent
 
@@ -67,15 +68,20 @@ A subtask is a thread of work claimed by one contributor. To join this task, add
      first round has closed. See `references/review-convergence.md` (dev-flow skill).
      Baseline: the snapshot tree hash taken when the round's input was captured, written at
      its close; the next round
-     reads only `git diff <baseline> <snapshot>` + carry-over (§ Incremental round scope).
+     reads only `git diff <baseline> <snapshot>` + carry-over (§ Incremental round scope);
+     a raised round also reads the whole diff for the checks the raise opens (§ Raise).
      Mode: `full` (clean-context reviewer) or `confirm` (mechanical check of a contained,
      prescribed fix). Round 1 is always `full`, and a `must` or security finding never
-     gets a `confirm` round. See `references/verification-economy.md`. -->
+     gets a `confirm` round. See `references/verification-economy.md`.
+     Level: the review level of a `full` round with its reason — `formal` / `quick` /
+     `standard` / `deep`; `— ` for a `confirm` round (§ Review level).
+     Carry-over: each open blocking finding with its identity, severity, recurrence and
+     prescribed fix in full — the next round's mode, level and round-3 cap read them. -->
 
-| Round | Scope | Mode | Baseline | Verdict | Carry-over (identity → recurrence, prescribed fix[, bypassed list]) |
-|-------|-------|------|----------|---------|----------------------------------------------------------------------|
-| 1 | full (round 1) | full | `<tree-hash>` | FAIL | `src/x.ts:41#logic:null` → 1, guard `x` before `.length` · `src/gate.ts:12#security:null` → 1, derive the decision from the operation, `SKIP_CONFIRM — src/gate.ts:5` |
-| 2 | delta | full | `<tree-hash>` | PASS | — |
+| Round | Scope | Mode | Level | Baseline | Verdict | Carry-over (identity → severity, recurrence, prescribed fix[, bypassed list]) |
+|-------|-------|------|-------|----------|---------|--------------------------------------------------------------------------------|
+| 1 | full (round 1) | full | quick — trivial logic, callers in `src/` only | `<tree-hash>` | FAIL | `src/x.ts:41#logic:null` → must, 1, guard `x` before `.length` · `src/gate.ts:12#security:null` → must, 1, derive the decision from the operation, `SKIP_CONFIRM — src/gate.ts:5` |
+| 2 | delta, raised checks full | full | standard — raised from quick | `<tree-hash>` | PASS | — |
 
 ## Coordination Notes
 

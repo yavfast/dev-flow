@@ -30,7 +30,7 @@ A run that only searches, reads or counts, and a delegate in a read-only phase (
 
 ## The brief
 
-At `record` and `watched` the brief carries its `Skill root:` line — even when the subagent gets no role — and these lines after `Role style:` (or after `Read first:`, or after `Skill root:`, whichever comes last):
+At `record` and `watched` the brief carries its `Skill root:` line — even when the subagent gets no role — and these lines after `Review level:` (or after `Role style:`, or after `Read first:`, or after `Skill root:`, whichever comes last):
 
 ```
 Run: <run id> · Watch: <record|watched> · Expected: <N>m

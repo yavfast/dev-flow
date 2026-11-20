@@ -90,7 +90,7 @@ role ContextTracker {
       authority: "source of truth (shared between contributors)"
       sections:
         header: "Task ID, Created, Last updated, Status, Contributors, Autonomy"
-        current_work_item: "Document type/title/path, Pipeline phase, Role style, Stage, Traceable ID — shared metadata (+ optional Ticket: link)"
+        current_work_item: "Document type/title/path, Pipeline phase, Role style, Stage, Traceable ID — shared metadata (+ optional Ticket: link, optional Review level row)"
         intent: "## Intent — goal / target state / expected result captured at intake (inferred parts marked); the reference for decision checks and the completion verdict (references/task-intent.md)"
         description: "Shared, additive paragraphs signed `— <agent-id>`"
         subtasks: "One block per contributor: ### Subtask: title + Author + Status + Goal + Progress + Activity"

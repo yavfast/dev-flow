@@ -71,6 +71,8 @@ This command is handled by **DevFlowOrchestrator**: [roles/dev-flow-orchestrator
 
 **Role style.** A manner the request names ("creative", "строго за планом") is [the developer's choice](../references/role-styles.md#the-developers-choice) — a pin in the task file's `Role style` row (in Step 6 for a new task). Each phase of the route sets its style at its start ([Role Styles](../references/role-styles.md#selecting-the-style)).
 
+**Review level.** A review depth the request names ("швидке ревью", "deep review") goes into the task file's `Review level` row, quoted (in Step 6 for a new task); the review uses it ([review step 1](review.md#pre-commit-review-procedure)).
+
 **Two or more tasks in one request** → [Batch of Tasks](#batch-of-tasks).
 
 Analyze the freeform request against the loaded context to determine:
@@ -110,7 +112,7 @@ For change requests (not questions/research), classify the change **before** rou
 
 | Class | What it is | Route |
 |-------|-----------|-------|
-| **Trivial** | No behavior change: typo, comment, log message, rename with no contract impact | implement → test (if suite exists and the edit changed executable code — [When to run](../references/test-economy.md#when-to-run)) → review → **commit sign-off**. No design sign-off (no design documents). Skip concept/spec/plan edits; pre-commit review stays a clean-context subagent ([review phase](review.md)) — it just has little to read |
+| **Trivial** | No behavior change: typo, comment, log message, rename with no contract impact | implement → test (if suite exists and the edit changed executable code — [When to run](../references/test-economy.md#when-to-run)) → review → **commit sign-off**. No design sign-off (no design documents). Skip concept/spec/plan edits; pre-commit review stays a clean-context subagent ([review phase](review.md)), at the level the change's complexity and reach earn ([Review level](../references/review-convergence.md#review-level--how-deep-a-round-looks)) |
 | **Standard** | Behavior changes within an existing spec'd area: new field, changed validation, UI element | spec → plan → **design sign-off** → implement → full Test/Review/Verify pipeline → **commit sign-off** |
 | **Architectural** | New capability, new entity, changed mechanism or boundary | concept → spec → plan → **design sign-off** → implement → full pipeline → **commit sign-off** |
 | **Internal refactor** | Structure changes, contracts identical | [Refactoring Protocol](plan.md#refactoring-protocol) (plan-only workflow — carries its own **design sign-off** and **commit sign-off**) |
@@ -181,7 +183,7 @@ If updates are needed:
 
 ### Step 6: Update context
 
-For a **new task**, set the header `Autonomy` field, write the role-style pin Step 2 captured, write the `Stage` row inferred from facts ([Delivery Focus → Project stage](../references/delivery-focus.md#project-stage)), and fill the task file's `## Intent` section with what Step 2 captured (goal / target state / expected result) — it is the reference every later check compares against ([Task Intent](../references/task-intent.md)). If the user restates the goal mid-task, update the section and re-check open work against it.
+For a **new task**, set the header `Autonomy` field, write the role-style pin and the `Review level` row Step 2 captured, write the `Stage` row inferred from facts ([Delivery Focus → Project stage](../references/delivery-focus.md#project-stage)), and fill the task file's `## Intent` section with what Step 2 captured (goal / target state / expected result) — it is the reference every later check compares against ([Task Intent](../references/task-intent.md)). If the user restates the goal mid-task, update the section and re-check open work against it.
 
 Then follow the [status write protocol](status.md#write-protocol) for step-end and phase-boundary updates — your own Subtask block, the task header, the dashboard and catalog rows, re-reading each index immediately before the targeted edit.
 
