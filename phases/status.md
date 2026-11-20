@@ -7,6 +7,7 @@
 - [Roles](#roles) — Each phase role updates its own subtask block; ContextTracker is the dedicated read/write/regenerate/checkpoint/resume worker
 - [Context Files](#context-files) — `.dev_flow/` layout, source-of-truth rule (task files win over derived indexes), templates, legacy single-file migration
 - [Collaboration Model (read first)](#collaboration-model-read-first) — Table of who may edit each region of a shared task file; no exclusive locking, no time-based takeover
+- [Start Checklist](#start-checklist) — One item per command: `status` changes nothing, `checkpoint` before its movements, `resume` never writes the working tree
 - [Read Protocol](#read-protocol) — Re-attention first, then Steps 1–5: read dashboard, read task file, validate freshness, output templates, continuation
 - [Write Protocol](#write-protocol) — Working-memory promotion; updates at phase start / step end / phase end / completion; the upstream look at a new task; project pointer; targeted-edit safety, append-only
 - [Checkpoint — Fix the Task for a Session Boundary](#checkpoint--fix-the-task-for-a-session-boundary) — On-demand fixation at a session boundary: four movements, readiness set R1–R7, the handoff record, what it must not do
@@ -99,6 +100,14 @@ A task file is **shared** between multiple AI contributors. Each contributor app
 **There is no exclusive locking and no time-based takeover.** If a subtask is stalled, a contributor who wants to push it forward adds a *new* Subtask block referencing the stale one — never rewrites the stale block.
 
 **Across machines.** When `.dev_flow/` is not committed, a task file does not reach another machine; there the shared channel is the remote. The [upstream look](#upstream-look) reads it when a new task starts, and the push offer ([SKILL.md → Git Workflow Integration](../SKILL.md#git-workflow-integration)) writes to it.
+
+## Start Checklist
+
+Before the first action: the [Phase start checklist](../SKILL.md#phase-start-checklist), then:
+
+- [ ] **`status`** — the `task_id`, or `—` for all active tasks; reports only, changes nothing ([Command](#command))
+- [ ] **`checkpoint`: before the movements** — an unparseable dashboard → the regeneration procedure first; a task file over its line cap → the archive cycle first; otherwise `—` ([Checkpoint](#checkpoint--fix-the-task-for-a-session-boundary))
+- [ ] **`resume`** — the `task_id`, or `—`; the resume act never commits, never writes the working tree, and never triggers the runtime's own compaction ([Resume](#resume--re-enter-a-task-in-a-fresh-session))
 
 ## Read Protocol
 
@@ -209,6 +218,8 @@ Every dev-flow command MUST update context using this protocol. The goal is **to
 **Working memory → durable (promote at a checkpoint).** Transient working state — the L1 notes / parameters / reminders / reads / runs — is *not* written to task files on every step. At a checkpoint (a phase or subtask boundary, or an [Experience Capture](../references/experience-capture.md) checkpoint) **promote** the durable part — a settled decision, a confirmed parameter, a harvested lesson — into the task file (or an auto-applied rule/skill). The rest stays L1 scratch, acceptably lost on restart. See [Resource Cache → Session Working Memory](../references/cache.md#session-working-memory-l1).
 
 ### When a phase starts on a task
+
+Steps 1–5 carry out item 1 of the [Phase start checklist](../SKILL.md#phase-start-checklist) on the context files, step 6 its item 5; its other items run beside them, and its item 8 writes the start line into your Subtask block.
 
 1. **Identify the task.** Is this a new task or continuation?
    - **New** — generate a Task ID:

@@ -22,6 +22,14 @@ This phase is handled by **PlanAuthor**: [roles/plan-author.ai.md](../roles/plan
 - **Pseudocode, not production code:** Include short sketches to clarify intent, but do not write full implementation.
 - **Formatting:** Follow [Documentation Formatting](../references/formatting.md) — no hard line wraps inside sentences or paragraphs; one paragraph = one logical line.
 
+## Start Checklist
+
+Before the first action: the [Phase start checklist](../SKILL.md#phase-start-checklist), then:
+
+- [ ] **Specification** — the specification and the spec sections each phase will implement ([No orphaned phases](#key-rules))
+- [ ] **Intent** — the task's recorded intent (goal / target state / expected result) the Goal restates ([Goal restates the intent](#key-rules))
+- [ ] **Refactor or full plan** — `refactor` ([Refactoring Protocol](#refactoring-protocol)) when the change restructures modules, files, or internal organization without changing the specification contracts ([When This Applies](#when-this-applies)); otherwise the full plan
+
 ## Context Loading
 
 Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding)):

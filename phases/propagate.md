@@ -10,6 +10,15 @@ Propagate flows an **already-made** decision top-down. The bottom-up path — wh
 
 This phase is handled by **Propagator**: [roles/propagator.ai.md](../roles/propagator.ai.md).
 
+## Start Checklist
+
+Before the first action: the [Phase start checklist](../SKILL.md#phase-start-checklist), then:
+
+- [ ] **Already-made decision** — the decision propagated; a document found wrong itself → [Upstream Escalation](../references/escalation.md) first ([Purpose](#purpose))
+- [ ] **Change type** — the matrix row and the documents it marks `+`; no row fits → "New contract/operation" ([Change-Type Propagation Matrix](#change-type-propagation-matrix))
+- [ ] **Cascade** — the `Used by` chain from the [Impact Walk](../references/impact.md) radius ([Cascade Impact Assessment](#cascade-impact-assessment))
+- [ ] **Drift detection: entry condition** — `explicit-request`, `audit-run` in the matching scope, or a true signal; every signal false → not run, written `unobserved` with the absent fact; `n/a` without a drift run ([When to Run Drift Detection](#when-to-run-drift-detection))
+
 ## Propagation Order
 
 | Step | Action | When to skip |

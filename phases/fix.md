@@ -5,6 +5,7 @@
 - [Purpose](#purpose) — Streamlined investigate → plan → implement → verify path for bugs that need no new concept or spec
 - [Command](#command) — `/dev-flow fix <problem description>` syntax (freeform, any language) with example invocations
 - [Role Responsible](#role-responsible) — The Implementer role used for the implementation step
+- [Start Checklist](#start-checklist) — Role-style key of the step, the evidence in hand, fix vs the full pipeline, the run map before `fix:verify`
 - [Procedure](#procedure) — Steps 0–6: skills/ticket check, analyze (confidence gate), plan + design sign-off, implement, verify, docs, reflect
 - [Diagnosis (optional)](#diagnosis-optional) — When the confidence gate fails: cost gate options A/B/C, the diagnosis loop, missing-seam finding, delegation, artifacts
 - [Interview Mode in Fix](#interview-mode-in-fix) — Root-cause and fix-strategy forks, sanctioned stop-gap, where decisions are recorded, advisory checks, spotted defects
@@ -36,6 +37,15 @@ The description is freeform, in any language. It can be a bug report, error mess
 ## Role Responsible
 
 This phase is handled by **Implementer**: [roles/implementer.ai.md](../roles/implementer.ai.md) for the implementation step; analysis and planning stay with the orchestrating agent. A delegated implementation step: the brief carries `Skill root: <absolute path of the skill>` and `Read first: roles/implementer.ai.md` ([SKILL.md → Subagents](../SKILL.md#subagents)).
+
+## Start Checklist
+
+Before the first action: the [Phase start checklist](../SKILL.md#phase-start-checklist), then:
+
+- [ ] **Role-style key** — the key of the step: `fix:analysis` for Steps 0–2, `fix:implement` for Step 3, `fix:verify` for Steps 4–6; each change of key runs the Phase start checklist again ([Procedure](#procedure))
+- [ ] **Evidence in hand** — the evidence: a description, screenshot, stack trace, or error message ([Step 1](#step-1-analyze))
+- [ ] **Fix, not the full pipeline** — none of the cases of When NOT to Use Fix holds, or the route it names ([When NOT to Use Fix](#when-not-to-use-fix))
+- [ ] **Run map (`fix:verify`)** — `.dev_flow/skills/build/run-map.md`, read before the first build or test run of a phase: its commands for the touched modules, or `absent` ([Run Economy → Run map](../references/run-economy.md#run-map))
 
 ## Procedure
 

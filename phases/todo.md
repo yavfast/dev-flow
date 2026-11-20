@@ -6,6 +6,7 @@
 - [Command](#command) — `/dev-flow todo <description>` with deferred and queued examples; contested has no command form
 - [Role Responsible](#role-responsible) — handled by TodoPlanner (`roles/todo-planner.ai.md`)
 - [Constraints](#constraints) — planning record only, no git, no edits to others' blocks, no triggerless deferral, preliminary analysis
+- [Start Checklist](#start-checklist) — planning record only, where the todo runs, the eligibility of an agent-initiated one
 - [Procedure](#procedure) — Steps 0–5: delegation check, context+gates, doc/state search + dedup, flavor/trigger table, filing rules, report
 - [Output Style](#output-style) — `chat` register for the answer, `documentation` register for the record
 
@@ -56,6 +57,14 @@ This command is handled by **TodoPlanner**: [roles/todo-planner.ai.md](../roles/
 - **No edits to other contributors' subtask blocks** or their tagged entries.
 - **No triggerless deferral** — every record names a return trigger (date, event, task completion, or revisit cadence).
 - **Capture-time analysis is preliminary** — it decides *where* to store and gives a head-start; the full analysis happens at execution, because context drifts.
+
+## Start Checklist
+
+Before the first action: the [Phase start checklist](../SKILL.md#phase-start-checklist), then:
+
+- [ ] **Files only a planning record** — a `[backlog]` item in an owning plan, or an entry in `.dev_flow/todos/`; no code, no commits, no git ([Constraints](#constraints))
+- [ ] **Where it runs** — agent-initiated: a cheap subagent, or inline for a trivial finding; developer-invoked: a subagent when this session already owns an in-progress task, otherwise inline ([Step 0](#step-0-delegation-check))
+- [ ] **Eligibility (agent-initiated)** — the problem is not part of the current task and its fix is deferrable to a later session; otherwise fix it now or escalate ([Step 0](#step-0-delegation-check))
 
 ## Procedure
 

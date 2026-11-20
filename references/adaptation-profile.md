@@ -60,7 +60,7 @@ Sensitivity belongs to the category, never to an individual value.
 
 ## The gate
 
-At phase start, beside the knowledge, style, and resource gates: read both files whole (they are small by construction) and carry forward the preferences (`communication`, `interaction`, `misc`), the capability map (`system`, `devices`, `software`), and the delegation budget (`budget`, `ai_access`). An unparseable block is skipped and named in the phase report; the rest of the file still works.
+At phase start, beside the knowledge and style gates ([Phase start checklist](../SKILL.md#phase-start-checklist), item 6): read both files whole (they are small by construction) and carry forward the preferences (`communication`, `interaction`, `misc`), the capability map (`system`, `devices`, `software`), and the delegation budget (`budget`, `ai_access`). An unparseable block is skipped and named in the phase report; the rest of the file still works.
 
 ## Observation → action
 

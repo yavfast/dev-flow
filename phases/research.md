@@ -7,6 +7,7 @@
 - [Role Responsible](#role-responsible) — Researcher subagent vs main agent duties; panel fan-out for many-sided topics
 - [Entry Points](#entry-points) — table of triggering phases (do, concept, interview, ask, audit) and their signals
 - [When NOT to Use](#when-not-to-use) — cases that belong to skills, ask, interview, or a normal task instead
+- [Start Checklist](#start-checklist) — research vs another route, the framed spike and its cost fork, the target concept or open `DEC_NN`
 - [Context Loading](#context-loading) — skill check and cache check gates, glossary load before investigating
 - [Cost Gate](#cost-gate) — framing fields (questions, scope, time-box, single/panel mode) and the A/B/C fork
 - [Procedure](#procedure) — Steps 1–6: frame, investigate (single or panel + synthesis), conclude, persist, close, hand off
@@ -65,6 +66,14 @@ The main agent frames the spike, receives the conclusion, persists durable knowl
 - The answer is derivable from the codebase or docs — that is [ask](ask.md), not research.
 - The options are already known and only a choice is needed — that is an [interview](../references/interview-mode.md), not a spike.
 - The "research" is actually the main task (e.g. a performance investigation that *is* the deliverable) — run it as a normal task, not a spike.
+
+## Start Checklist
+
+Before the first action: the [Phase start checklist](../SKILL.md#phase-start-checklist), then:
+
+- [ ] **Research, not another route** — none of the cases of When NOT to Use holds, or the route it names ([When NOT to Use](#when-not-to-use))
+- [ ] **Spike framed** — questions, scope, time-box, mode; the A/B/C fork when the expected cost is non-trivial ([Cost Gate](#cost-gate))
+- [ ] **Target** — the target concept (or "to be created"), or the open `DEC_NN` the spike serves ([Step 1](#step-1-frame-the-spike))
 
 ## Context Loading
 

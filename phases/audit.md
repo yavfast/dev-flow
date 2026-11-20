@@ -7,6 +7,7 @@
 - [Role Responsible](#role-responsible) — The Auditor role and the per-lens fan-out of the `code` scope
 - [When to Run](#when-to-run) — Sweep triggers: cadence, status-reported drift, hygiene caps, lagging headers/doc statuses; `code` cadence, reduced mode
 - [Guiding Principles](#guiding-principles) — Reconcile not fabricate, non-destructive (tool `prev/` copies and test pruning excepted), source-of-truth order, safe under contention, apply-safe/propose
+- [Start Checklist](#start-checklist) — Scope and `--dry-run`, the `code` scope's parsed intent and baseline, never commit
 - [Procedure](#procedure) — Steps 1–9: inventory, reconcile, compact & reflect, dashboard, catalog, rules, skills, docs/cache/access (7a–7f), tool verification (7g), tests (7h), report, code
 - [Report Structure](#report-structure) — Report templates: workspace/docs sweep (applied / harvested / proposed / flagged / clean) and the `code` scope summary
 - [Safety & Contention](#safety--contention) — What audit may rewrite (derived files, closed tasks) vs targeted-only edits on live task files; re-read before write
@@ -88,6 +89,14 @@ This phase is handled by **Auditor**: [roles/auditor.ai.md](../roles/auditor.ai.
 3. **Source-of-truth order.** Task files win over the dashboard and catalog (those are derived). For task *reality*, `docs/` document status and git win over the task header. For rules/skills, the files on disk win over their `_index.yaml`. For the cache, disk decides *existence* (a missing file orphans its entry) but the index owns *metadata* (`source`/`summary` cannot be rebuilt from disk) — flag mismatches, never drop or regenerate entries wholesale (Step 7d).
 4. **Safe under contention.** Audit may run while other contributors hold open subtasks. It may fully rewrite *derived* indexes and *closed* task files — except `## Proportionality`, whose records it only moves, never rewrites — but it must never rewrite a live contributor's Subtask block or their tagged entries in shared sections — those are reconciled only with targeted edits, and only the header/status fields. Re-read immediately before each write.
 5. **Apply the safe, propose the judgement.** Derived/reversible changes (index regen, dashboard trim, archival of done work, header reconciliation backed by git) are applied directly and reported. Judgement calls (merging two rules, deleting a skill, removing a cached resource) are **proposed for confirmation**. Step 7h test pruning is the exception: applied directly. Reflection-harvested lessons follow their own gate instead: written **automatically** through the structural [rule](rule.md)/[skill](skill.md) gate (never an auto-`must`; a contradiction routes to independent review), visible in the commit diff — see Step 3.
+
+## Start Checklist
+
+Before the first action: the [Phase start checklist](../SKILL.md#phase-start-checklist), then:
+
+- [ ] **Scope and `--dry-run`** — the scope and its steps from the table (`code` only when named); `--dry-run` → no changes on disk ([Scope → steps](#scope--steps))
+- [ ] **`code` scope: intent and baseline** — the parsed `scope`, `lenses`, `depth`, `mode`, `preview_only`, each default stated back, and `REDUCED` when its step 3 marks it; `n/a` for another scope ([Step 9.0](#step-90--parseintent--context-gates))
+- [ ] **Never commit** — `no commit`: present the changes and follow the standard approval rule ([Step 8](#step-8--report))
 
 ## Procedure
 

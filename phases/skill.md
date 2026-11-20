@@ -56,6 +56,15 @@ Do NOT save:
 - Information already in `onboard/analysis/`
 - A fact about the **developer or the machine** — their language, manner, limits, provider access, hardware, devices, installed tooling. That is `.dev_flow/profile/` under its consent regime, and a category recorded `declined` is dropped rather than re-homed here. See [Adaptation Profile](../references/adaptation-profile.md)
 
+## Start Checklist
+
+Before the first action: the [Phase start checklist](../SKILL.md#phase-start-checklist), then:
+
+- [ ] **Request kind** — finding, creating or updating, or removing; removing only when the request explicitly says "remove", "delete", "видалити", "видали" ([Procedure](#procedure))
+- [ ] **Owner** — a skill directly only for knowledge that is not an artifact constraint, or from an accumulated cluster of rules; a lesson from an incident → the [rule phase](rule.md) or the [tool phase](tool.md) ([step 2a](#creating-or-updating-a-skill))
+- [ ] **Non-triviality** — for a create or update: the knowledge passes the filter, or nothing is saved ([Non-Triviality Filter](#non-triviality-filter))
+- [ ] **Initialization** — `.dev_flow/skills/` present, or created with empty `_index.yaml` files before proceeding ([Initialization](#initialization))
+
 ## Procedure
 
 ### Finding a Skill

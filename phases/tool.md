@@ -4,6 +4,7 @@
 
 - [Purpose](#purpose) — what the command is for and how it relates to the procedures agents call directly
 - [Command](#command) — `/dev-flow tool <request>` syntax and examples
+- [Start Checklist](#start-checklist) — the named tools' cards and usage files, one intent and tool, the task context of a command that writes
 - [Procedure](#procedure) — knowledge gate, intent → procedure table, refusals, reporting
 - [Relation to Other Phases](#relation-to-other-phases) — who else runs the same procedures
 
@@ -38,6 +39,14 @@ The request is freeform, in any language. Interpret the intent and run the match
 /dev-flow tool verify dangling-anchors
 /dev-flow tool retire old-link-check — replaced by dangling-anchors
 ```
+
+## Start Checklist
+
+Before the first action: the [Phase start checklist](../SKILL.md#phase-start-checklist), then:
+
+- [ ] **Named tools** — the cards and usage files of the tools the request names; absent catalogue → only `create` applies ([step 1](#procedure))
+- [ ] **One intent, one tool** — the intent of the step 2 table and its tool; more than one (`PTL_AMBIGUOUS`) → ask, run nothing until answered ([step 3](#procedure))
+- [ ] **Task context** — a command that writes: the task file like any other phase; list / show / find: `none` ([step 5](#procedure))
 
 ## Procedure
 

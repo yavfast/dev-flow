@@ -45,6 +45,8 @@ A subtask is a thread of work claimed by one contributor. To join this task, add
 
 **Goal:** {what this subtask covers in 1–2 sentences}
 
+**Phase start:** `▶ {phase}[:{key}] · chat {language} / docs {language} · style {style} · rules {…} · skills {…} · tools {…} · stage {stage}` — rewritten at each phase start; see `SKILL.md` § Phase start checklist (dev-flow skill)
+
 **Progress:**
 - [x] Completed step
 - [ ] **Next:** {what to do next — specific and actionable} — {phase file, e.g. phases/implement.md} § {section heading}

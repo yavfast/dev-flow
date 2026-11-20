@@ -5,6 +5,7 @@
 - [Purpose](#purpose) — code as an artifact derived from the specification and the plan
 - [Role Responsible](#role-responsible) — the Implementer role; the brief lines of a delegated code edit
 - [Rules](#rules) — what holds for every code edit of the phase
+- [Start Checklist](#start-checklist) — the design sign-off, the plan phase and its `Verify:`, the intent, the reach before the first edit
 - [Gate Check (Plan -> Code)](#gate-check-plan---code) — the gate criteria, the design sign-off, knowledge checks
 - [Implementation Workflow](#implementation-workflow) — the steps of one plan phase, from the plan's `Verify:` field to the commit sign-off
 - [Delegation for Focus](#delegation-for-focus) — which steps go to a subagent and with which brief
@@ -37,6 +38,15 @@ class PermissionInterceptor:
 ```
 
 - **Update the plan status** after completing each phase: `[TODO]` → `[IN PROGRESS]` when starting, `[IN PROGRESS]` → `[DONE]` when the phase's verification passes (workflow steps 6-11), and tick the checkbox in the Progress section.
+
+## Start Checklist
+
+Before the first action: the [Phase start checklist](../SKILL.md#phase-start-checklist), then:
+
+- [ ] **Design sign-off** — the developer's go in the task file; `n/a` for a Trivial change; skipped only under `Autonomy: full` ([Gate Check](#gate-check-plan---code))
+- [ ] **Plan phase** — the plan phase you are implementing and its `Verify:` field ([Implementation Workflow](#implementation-workflow) step 1)
+- [ ] **Intent** — the task file's `## Intent` re-read: goal / target state / expected result ([Intent check](#gate-check-plan---code))
+- [ ] **Reach** — before the first edit, the places the change must reach: every caller of each symbol whose signature, return value, or behaviour changes, plus the tests, fixtures, config, and exports bound to it ([Reach check](#gate-check-plan---code))
 
 ## Gate Check (Plan -> Code)
 

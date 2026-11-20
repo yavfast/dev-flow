@@ -24,6 +24,13 @@ Specifications MUST NOT reference specific programming languages, frameworks, or
 - **Contents + lead summary:** the template's Contents section and the lead summary in the header follow [Docs Scaling](../references/docs-scaling.md) — update the Contents item in the same edit that changes an h2.
 - **Criticality is inherited, then refined:** A spec has no application-level declaration of its own — it inherits the one in its concept's header through `Concept:`. Add a `Criticality:` line to an entity (`§01_xx`) or a contract (`§02_xx`) only where that part's weight inside the module differs from the rest. Optional; an omitted line inherits and lowers nothing. Read by [review](review.md) — see [Review Convergence](../references/review-convergence.md).
 
+## Start Checklist
+
+Before the first action: the [Phase start checklist](../SKILL.md#phase-start-checklist), then:
+
+- [ ] **Language independence** — no specific programming languages, frameworks, or libraries; abstract type notation and pseudocode ([Language Independence](#language-independence))
+- [ ] **Concept and criticality** — the concept named by `Concept:` and the `Criticality:` the spec inherits from its header ([Criticality is inherited, then refined](#key-rules))
+
 ## Context Loading
 
 Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding)):

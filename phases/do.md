@@ -5,6 +5,7 @@
 - [Purpose](#purpose) — Route any freeform request to the right phase; `do` is the default fallback for `/dev-flow` without a phase keyword
 - [Command](#command) — `/dev-flow do <request>` and the equivalent bare `/dev-flow <request>` syntax, with example invocations
 - [Role Responsible](#role-responsible) — DevFlowOrchestrator role file that handles this command
+- [Start Checklist](#start-checklist) — Before routing: a due outcome check, the named ticket, the named review level, the intent type and change class
 - [Procedure](#procedure) — Steps 1–7: load context + gates, interpret intent (intent table, Change Classes), clarify, route Scenarios A–D, wrap-up
 - [Batch of Tasks](#batch-of-tasks) — two or more tasks in one request: disjoint file sets, one design sign-off, one commit sign-off table, one commit per approved row
 - [Routing Decision Tree](#routing-decision-tree) — ASCII tree from request shape to target phase: resume, checkpoint, change, fix, docs, status, catalogues, audit, ask, adopt, todo
@@ -39,6 +40,15 @@ This is the **default command** — any invocation of `/dev-flow` without a reco
 
 This command is handled by **DevFlowOrchestrator**: [roles/dev-flow-orchestrator.ai.md](../roles/dev-flow-orchestrator.ai.md)
 
+## Start Checklist
+
+Before the first action: the [Phase start checklist](../SKILL.md#phase-start-checklist), then:
+
+- [ ] **Due outcome check** — the open outcome check whose trigger is due, offered to reconcile, or `—` ([Step 1](#step-1-load-context))
+- [ ] **Ticket** — the tracker ticket the request explicitly names, pulled and written as `Ticket:`, or `—` ([Step 1](#step-1-load-context))
+- [ ] **Review level the request names** — the quoted depth for the task file's `Review level` row, or `—` ([Step 2](#step-2-interpret-the-request))
+- [ ] **Intent type and change class** — the row of the intent table and, for a change request, its class by [Change Classes](#change-classes); two or more tasks → [Batch of Tasks](#batch-of-tasks) ([Step 2](#step-2-interpret-the-request))
+
 ## Procedure
 
 ### Step 1: Load context
@@ -46,7 +56,7 @@ This command is handled by **DevFlowOrchestrator**: [roles/dev-flow-orchestrator
 1. Read `.dev_flow/active_context.md` (the dashboard) if it exists. Identify which task this request relates to:
    - User said "continue" → resume the most recently updated active task that already lists your session in `Contributors`. If only one active task exists, resume it.
    - User described a specific item → match against active task titles/IDs.
-   - No match → this is a new task; a new `tasks/task_<ID>.md` will be created in Step 6, and the [upstream look](status.md#upstream-look) runs before Step 4 routes into the first design or code step.
+   - No match → this is a new task; a new `tasks/task_<ID>.md` is created before Step 4 routes into the first phase (fields: Step 6), and the [upstream look](status.md#upstream-look) runs before Step 4 routes into the first design or code step.
    - The dashboard shows an open outcome check whose trigger is due → offer to reconcile it ([Outcome check](../references/task-intent.md#outcome-check)); run it on the developer's yes, then continue with the request.
 
 2. For the chosen task (continuation), read its file `.dev_flow/tasks/task_<ID>.md`:

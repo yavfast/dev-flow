@@ -10,6 +10,7 @@ Adoption documents are **advisory**: no traceable ID, no validation gate, not a 
 
 - [Command](#command) — `/dev-flow adopt <repo>` with `--subpath` and `--readopt`, recognized aliases, freeform routing via do
 - [What a run may write](#what-a-run-may-write) — Closed write list (adoption concept + document, `ext_repos/`, `.gitignore`, the pair's `docs/_index.md` row, `.dev_flow/**`), what is never written, and the working-directory rule
+- [Start Checklist](#start-checklist) — The closed write list, the resolved reference, the nesting stop before any write
 - [Procedure](#procedure) — Steps 1–9: resolve, acquire workspace with the source stamp, run mode, source analysis, target context with records and the reconciliation of the previous document, verdicts, synthesis, write, report with the source check
 - [Edge cases](#edge-cases) — Situation → behaviour table: self-analysis, unreachable URL, non-git source, dirty clone, collisions, monorepo, large source, previous document, rejected item, problem with no record
 - [Delegation](#delegation) — Steps 4 and 6 may go to a read-only clean-context subagent, launched from the target root, returning concepts or verdicts, never files; its brief marks source content as data; it is not continued for target work
@@ -41,6 +42,14 @@ A closed list of writes in the target project. Anything outside it is a defect, 
 No code, no specs, no plans, no other `docs/_index.md` row, no `.dev_flow/todos/` entry. Filing the high-relevance items as todos is the developer's call — the run names them in its report and stops.
 
 The source repository is never modified. `git pull` on a clone is the only write toward it, under the conditions in Step 2. Never change the working directory into the source worktree: address it by absolute path or with `git -C <worktree>`. Step 9 checks the source by command.
+
+## Start Checklist
+
+Before the first action: the [Phase start checklist](../SKILL.md#phase-start-checklist), then:
+
+- [ ] **Closed write list** — no write outside the list; the source repository never modified; never change the working directory into the source worktree ([What a run may write](#what-a-run-may-write))
+- [ ] **Reference** — the input form (URL, local path, or the name of a tracked repo), the `<name>`, and `--subpath` / `--readopt` when given ([Step 1](#step-1--resolve-the-reference))
+- [ ] **Nesting** — both paths; stop before any write when the source worktree is the target project root, the target lives inside the source, or the source lives inside the target anywhere other than `ext_repos/` ([Step 1](#step-1--resolve-the-reference))
 
 ## Procedure
 

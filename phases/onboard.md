@@ -5,6 +5,7 @@
 - [Purpose](#purpose) — reverse-engineering docs from code (Code → Concepts → Specs → Plans); one-time optional phase
 - [Command](#command) — `/dev-flow onboard` with `--resume` and `--scope` options
 - [Working Directory](#working-directory) — layout of `.dev_flow/onboard/` checkpoint files
+- [Start Checklist](#start-checklist) — the once-only condition, the `--resume` state, the `--scope`
 - [Procedure Steps](#procedure-steps) — Steps 1–9: workspace, structure, layers, module analysis, rules/skills/glossary, docs, index, validation, cleanup
 - [Session Continuity](#session-continuity) — state/queue tracking and `--resume` behavior across sessions
 - [Parallelization Strategy](#parallelization-strategy) — what can run in parallel and the recommended subagent allocation
@@ -44,6 +45,14 @@ All intermediate artifacts are stored in `.dev_flow/onboard/`.
 ├── queue.yaml              # Ordered processing queue with status per module
 └── issues.md               # Ambiguities, questions, conflicts found during analysis
 ```
+
+## Start Checklist
+
+Before the first action: the [Phase start checklist](../SKILL.md#phase-start-checklist), then:
+
+- [ ] **Needed only once** — the project already has code but no dev-flow documentation, or `--resume` ([Purpose](#purpose))
+- [ ] **Resume** — with `--resume` and an existing `state.yaml`: the last incomplete step it records; otherwise `—` ([Step 1](#step-1-initialize-workspace))
+- [ ] **Scope** — the `--scope <path>`, or `—` for the whole project ([Command](#command))
 
 ## Procedure Steps
 

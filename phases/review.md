@@ -3,6 +3,7 @@
 ## Contents
 
 - [Purpose](#purpose) — scope of the phase: gates, document conflicts, deprecation, doc-code alignment, pre-commit review
+- [Start Checklist](#start-checklist) — before a round: its snapshot and scope, the `Stage` row, the round mode, the level with its reason
 - [Pre-Commit Code Review](#pre-commit-code-review) — clean-context reviewer, tripwires, round scoping/mode, checks table, materiality, report format
 - [After Review: Verify Phase](#after-review-verify-phase) — hand-off to verify before commit; Review -> Verify gate checklist
 - [Validation Gates](#validation-gates) — where each gate's criteria live, and this phase's supplements
@@ -15,6 +16,15 @@
 ## Purpose
 
 Validate pipeline gates, detect conflicts between documents, manage deprecation, ensure the documentation-code alignment is maintained, and perform pre-commit code review of changes.
+
+## Start Checklist
+
+Before the first action: the [Phase start checklist](../SKILL.md#phase-start-checklist), then:
+
+- [ ] **Round snapshot and scope** — this round's snapshot, taken before the reviewer starts, and its scope: round 1 or a full round (with the reason), or delta ∪ carry-over ([step 0](#pre-commit-review-procedure))
+- [ ] **`Stage` row** — checked against the facts; rewritten when they make the stage `production` ([step 0](#pre-commit-review-procedure))
+- [ ] **Round mode** — `confirm` or `full`; round 1 always `full` ([step 0b](#pre-commit-review-procedure))
+- [ ] **Review level** — the round's level with its reason; a level the developer named is the `Review level` row of the task file ([step 1](#pre-commit-review-procedure))
 
 ## Pre-Commit Code Review
 

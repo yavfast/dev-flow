@@ -22,6 +22,15 @@ The request is a freeform description in any language. Interpret the intent and 
 /dev-flow rule Змінити severity для NoMPrefixForFields на must
 ```
 
+## Start Checklist
+
+Before the first action: the [Phase start checklist](../SKILL.md#phase-start-checklist), then:
+
+- [ ] **Request kind** — adding, editing, removing, or listing/showing; listing/showing is read-only and writes nothing ([step 2](#procedure))
+- [ ] **Owner** — a rule, a `check` tool for a `mechanical` class ([tool phase](tool.md)), both for a `mixed` one, or the [skill phase](skill.md) only for knowledge that is not an artifact constraint, or a consolidation of an accumulated rule cluster; in doubt — a rule ([step 2a](#procedure))
+- [ ] **Audit proposal** — for a proposal of the audit `rules` scope: the developer's confirmation, otherwise `NOT_CONFIRMED`; `n/a` for another request ([Executing Confirmed Audit Proposals](#executing-confirmed-audit-proposals))
+- [ ] **Initialization** — `.dev_flow/rules/` present, or created with empty category files and `_index.yaml` before proceeding ([Initialization](#initialization))
+
 ## Procedure
 
 1. **Read** `.dev_flow/rules/_index.yaml` to understand existing rules — by category block when the index is above `full_read_limit`; a rule body only on a trigger — the unit you edit, a suspected violation, an example needed, a directive that does not decide the case (see [Knowledge Scaling](../references/knowledge-scaling.md)).

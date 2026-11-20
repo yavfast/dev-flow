@@ -31,6 +31,13 @@ This command is handled by **Advisor**: [roles/advisor.ai.md](../roles/advisor.a
 - **No git operations.** No commits, branches, or stashes.
 - **No code generation.** Do not produce implementation code (pseudocode for illustration is OK).
 
+## Start Checklist
+
+Before the first action: the [Phase start checklist](../SKILL.md#phase-start-checklist), then:
+
+- [ ] **No file writes, no context updates, no git operations, no code generation** — `read-only`: no file created, edited, or deleted ([Constraints](#constraints))
+- [ ] **Question type** — the row of the Step 1 table: code understanding, feasibility analysis, impact assessment, architecture question, or where to find ([Step 1](#step-1-classify-the-question))
+
 ## Procedure
 
 ### Step 1: Classify the question

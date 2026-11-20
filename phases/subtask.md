@@ -10,6 +10,7 @@
 - [When NOT to Use](#when-not-to-use) — main task, dialogue-heavy work, file conflicts (use todo), trivial tasks
 - [Delegated Rights & Boundaries](#delegated-rights--boundaries) — code/task-file/skills rights, read-only phases prevail, no commits, scope narrowing
 - [Talking to the Initiator](#talking-to-the-initiator) — what to escalate, Interview-Mode discipline, checkpoint dialogue default, the `note` early signal
+- [Start Checklist](#start-checklist) — initiator: task delegation fits; subagent: watch duties, rights and boundaries of the executed phase
 - [Procedure](#procedure) — Steps 1–5: pick phase (table), formulate brief (watch level), spawn (prompt template, run bounds, agent type, model), while it runs (watcher, continue or fresh), integrate
 - [Full Report Contract](#full-report-contract) — required report sections: Result, Decisions, Changes, Verification, Open items, Materials
 - [Parallel Subtasks](#parallel-subtasks) — launching independent subtasks together; disjoint source scopes
@@ -98,6 +99,14 @@ The subagent's escalation channel is its **initiator** — the developer channel
 - **The initiator decides:** answer from the main-task picture, relay to the developer what only the developer can decide, or re-scope the task.
 - **Checkpoint dialogue is the default.** In most runtimes the end-of-turn report IS the channel: finish everything the question does not block, put the questions under the report's *Open items* (markered options + recommendation, Interview-Mode style); the initiator answers and **continues the same subagent** so its assembled context survives. Never stall mid-run waiting for an answer. Live mid-task dialogue is the exception, used when the harness supports it. A subagent with no continuation channel at all records open decisions exactly like a delegated subagent in Interview Mode — options, recommendation, resolution trigger.
 - **Early signal.** At watch level `record` or `watched`, a wrong premise or a conflict that blocks the rest is also a `note` line in the progress record, which wakes a watching initiator; the run goes on with what it does not block ([Supervising a Delegate → Delegate duties](../references/supervision.md#delegate-duties)).
+
+## Start Checklist
+
+Before the first action: the [Phase start checklist](../SKILL.md#phase-start-checklist), then:
+
+- [ ] **Initiator — task delegation** — a task delegation by [Delegation Shapes](#delegation-shapes) and none of the cases of When NOT to Use; a fix to run *after* the current task → a `queued` follow-up via [todo](todo.md) ([When NOT to Use](#when-not-to-use))
+- [ ] **Subagent — watch duties** — the watch level and run id of the brief's `Run:` line, with [Delegate duties](../references/supervision.md#delegate-duties), [Progress record](../references/supervision.md#progress-record) and [Inbox](../references/supervision.md#inbox) read before the first action; `none` without the line ([Step 3](#step-3-spawn-the-subagent))
+- [ ] **Subagent — rights and boundaries** — the executed phase (a read-only phase's no-write constraints prevail), the brief's scope restrictions, no commit ([Delegated Rights & Boundaries](#delegated-rights--boundaries))
 
 ## Procedure
 
@@ -213,6 +222,7 @@ When the subagent escalates, answer with the same care as an Interview-Mode repl
 Complete in **coverage**, conclusion in **style** — every section present, raw material referenced by path, never inlined:
 
 ```
+▶ <phase>[:<key>] · …  — the start line (SKILL.md → Phase start checklist, item 8), the first line
 ## Result        — outcome vs the task goal (met / partially / blocked + why)
 ## Decisions     — choices made (incl. DEC records added), escalations and answers
 ## Changes       — files created/modified: code, tests, docs; own Subtask block

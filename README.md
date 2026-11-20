@@ -8,7 +8,7 @@ A [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skill that enfor
 - [The Pipeline](#the-pipeline) — phase chain with gates, the command per phase, the service commands
 - [Installation](#installation) — where the skill directory goes
 - [Quick Start](#quick-start) — first commands for a greenfield project and for taking over an existing codebase
-- [How It Works](#how-it-works) — the mechanisms behind the pipeline: IDs, gates, review and its bounds, delivery focus, proportionate caution, design decisions, role styles, research, todos, adoption, intent, escalation, cache, tickets, continuity, profile
+- [How It Works](#how-it-works) — the mechanisms behind the pipeline: IDs, gates, the phase start checklist, review and its bounds, delivery focus, proportionate caution, design decisions, role styles, research, todos, adoption, intent, escalation, cache, tickets, continuity, profile
 - [File Structure](#file-structure) — what dev-flow creates inside a project (`docs/`, `.dev_flow/`)
 - [Skill Structure](#skill-structure) — the layout of this skill: `SKILL.md`, phases, references, templates, roles
 - [Key Principles](#key-principles) — the standing rules in one list
@@ -228,6 +228,10 @@ class RateLimiter:
 > (Pre-Concept Checklist, Reuse Check, banned phrases, minimality, design-decision
 > settlement, rollback strategy, self-validation) live in the phase file where each
 > gate is checked; [SKILL.md → Validation Gates](SKILL.md#validation-gates) names it.
+
+### Phase Start Checklist
+
+A rule nobody opened is not followed. Every phase starts with a short checklist: the common items of [SKILL.md → Phase start checklist](SKILL.md#phase-start-checklist) — the task and its next step, the project's rules, skills and tools, the phase file and the gate into it, the chat and documentation language, the role style, the profile, the docs — then the few preconditions of the phase itself, listed in its file. Each item answers with a fact, and the start ends with one line you see in the chat (and the task file keeps): what was loaded, in which language and style. A wrong language or a missing rule shows up at the start, not hours later. dev-flow ships no harness hook; when a project keeps missing a start item, the agent may propose a hook for that project, installed only on your yes.
 
 ### Pre-Commit Review
 

@@ -8,6 +8,7 @@
 - [Role Responsible](#role-responsible) — The Tester role, here at the regression/integration/live levels
 - [Activation Condition](#activation-condition) — the triggers that activate the phase; skip recorded as `unobserved`, never clean
 - [Verification Categories](#verification-categories) — levels 1–3 table (regression/integration/live), live-test kinds, design compliance check for UI
+- [Start Checklist](#start-checklist) — activation, the plan phase's `Verify:` and the intent, safe testing, the run map
 - [Context Loading](#context-loading) — skill/rule/profile gates for the verified area plus per-burst re-activation with Pre-Action Marker
 - [Safe Testing Principle](#safe-testing-principle) — never damage user data: test accounts/entities, ask before real data, what counts as destructive
 - [Verification Workflow](#verification-workflow) — level-by-level procedure, fix cycle with `confirm`-scoped re-runs, upstream escalation, manual checklist
@@ -78,6 +79,15 @@ If none apply — skip directly to commit approval, recording the skip as `unobs
 ### Design Compliance (UI changes)
 
 When the verified change affects visual UI **and** a design source of truth exists (design-tool link, design tokens, mockups, style guide), live verification includes a **design compliance check**: a read-only clean-context validator compares the implementation against the design property by property — layout, color, typography, effects, and **every variant/state the design defines** (not just the ones visible in the handed node) — and returns a compliance report whose deviations enter the fix cycle below. The full procedure, per-app-type inspection guidance (web/mobile/desktop/TUI), and report format live in **[Design Compliance](../references/design-compliance.md)**.
+
+## Start Checklist
+
+Before the first action: the [Phase start checklist](../SKILL.md#phase-start-checklist), then:
+
+- [ ] **Activation** — the condition that holds; none → skip directly to commit approval, recording the skip as `unobserved` with the reason ([Activation Condition](#activation-condition))
+- [ ] **`Verify:` and intent** — the implemented plan phase's `Verify:` field and the task file's `## Intent` ([Verification Workflow](#verification-workflow) step 1)
+- [ ] **Safe testing** — the test account and test entities to use; real user data only after the user's explicit confirmation ([Safe Testing Principle](#safe-testing-principle))
+- [ ] **Run map** — `.dev_flow/skills/build/run-map.md`, read before the first build or test run of a phase: its commands for the touched modules, or `absent` ([Run Economy → Run map](../references/run-economy.md#run-map))
 
 ## Context Loading
 

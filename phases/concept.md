@@ -5,6 +5,7 @@
 - [Purpose](#purpose) — a concept answers "what" and "why": idea, architecture, mechanisms, philosophy
 - [Role Responsible](#role-responsible) — The ConceptAuthor role that executes this phase
 - [Language Independence](#language-independence) — no languages, frameworks, or libraries in a concept
+- [Start Checklist](#start-checklist) — language independence, the Pre-Concept Checklist answers and the Reuse Check findings for a new concept
 - [Pre-Concept Checklist](#pre-concept-checklist) — the questions to answer first; unverified answers go to research or an open decision
 - [Reuse Check](#reuse-check) — mandatory search of existing concepts, code, and `docs/ext_adoption/` before creating a new concept
 - [Context Loading](#context-loading) — skill/rule gates: load domain skills and architecture rules; no mechanism may violate a `must`
@@ -29,6 +30,14 @@ This phase is handled by **ConceptAuthor**: [roles/concept-author.ai.md](../role
 ## Language Independence
 
 Concepts MUST NOT reference specific programming languages, frameworks, or libraries. They describe domain logic, architecture patterns, and data flows at an abstract level.
+
+## Start Checklist
+
+Before the first action: the [Phase start checklist](../SKILL.md#phase-start-checklist), then:
+
+- [ ] **Language independence** — no specific programming languages, frameworks, or libraries in the concept ([Language Independence](#language-independence))
+- [ ] **Pre-Concept Checklist (new concept)** — the six answers, each resting on verified knowledge; an unverified critical answer → [research](research.md) first; proceeding on it is a user decision, recorded as an open Design Decision with a resolution trigger ([Pre-Concept Checklist](#pre-concept-checklist))
+- [ ] **Reuse Check (new concept)** — the overlapping concepts, code, and adoption documents found, each with why a new concept is needed instead of extending the existing one, or `—` ([Reuse Check](#reuse-check))
 
 ## Pre-Concept Checklist
 

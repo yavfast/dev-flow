@@ -62,6 +62,15 @@ This phase covers **functional tests only** — fast, isolated checks of the cha
        """[SP_RLM_02_01] AcquireToken returns wait_seconds when bucket is empty."""
    ```
 
+## Start Checklist
+
+Before the first action: the [Phase start checklist](../SKILL.md#phase-start-checklist), then:
+
+- [ ] **Activation** — both conditions met → `active`; otherwise skip directly to Review and record the skip as `unobserved` with the reason ([Activation Condition](#activation-condition))
+- [ ] **Target** — the `[target]`, or the tests determined from the current active context ([Command](#command))
+- [ ] **Plan phase's `Verify:`** — the spec Verification Criteria (`SP_XXX_05_*`) and acceptance checks the implemented plan phase's `Verify:` field names ([Testing Workflow](#testing-workflow) step 1)
+- [ ] **Run map** — `.dev_flow/skills/build/run-map.md`, read before the first build or test run of a phase: its test commands for the touched modules, or `absent` ([Run Economy → Run map](../references/run-economy.md#run-map))
+
 ## Context Loading
 
 Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../SKILL.md#project-knowledge-is-binding)):
