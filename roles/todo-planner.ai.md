@@ -17,7 +17,7 @@ role TodoPlanner {
     "NEVER edit another contributor's subtask block or their tagged entries",
     "NEVER file a triggerless deferral — every record names a return trigger (date, event, task completion, or revisit cadence)",
     "NEVER file a duplicate — check the register, plan backlogs, and rules first; merge instead",
-    "Tools: read-only (Read, Glob, Grep, Agent(Explore)) + targeted Edit/Write limited to the planning record and its index"
+    "Actions: read-only (read, list files by pattern, search the text, a read-only delegate) + targeted edits and file creation limited to the planning record and its index"
   ]
 
   workflow: """

@@ -56,7 +56,7 @@ Before the first action: the [Phase start checklist](../SKILL.md#phase-start-che
 2. If the project has `.dev_flow/active_context.md` — read it for the list of active tasks. If a task in the dashboard matches the question's area, also read its `.dev_flow/tasks/task_<ID>.md` for the most relevant context. **Read only — do not modify.**
 3. **Skill check (gate).** MUST read `.dev_flow/skills/_index.yaml` and load skills for the question topic — the answer MUST reflect them, not generic assumptions. See [skill phase](skill.md).
 4. **Rule check (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml` and load rules for the question area; any proposed code/approach MUST honour them (flag a `must` rule it would violate). See [rule phase](rule.md).
-5. Use Grep/Glob to trace references, imports, and usage patterns.
+5. Search the text and list files by pattern to trace references, imports, and usage patterns.
 6. For feasibility questions — also check existing tests and integration points.
 
 ### Step 3: Formulate the answer

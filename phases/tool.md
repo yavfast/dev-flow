@@ -59,15 +59,16 @@ Before the first action: the [Phase start checklist](../SKILL.md#phase-start-che
 | find | Match the need against each tool's `purpose`, `range_of_use` and `not_for`; answer with the fitting tools and their [trust check](../references/project-tools.md#trust-check) verdict. Writes nothing |
 | create | [Promote](../references/project-tools.md#promote) — from a script in the session workspace, or from a description (write the script in the session workspace first, run it on real material, then promote) |
 | fix / extend / port / repurpose | [Adapt](../references/project-tools.md#adapt) with that class |
-| regenerate | [Regenerate](../references/project-tools.md#regenerate) from the card alone |
+| regenerate | [Regenerate](../references/project-tools.md#regenerate) from the card alone; on a seeded tool (`seeded_from` set) — [Seed](../references/project-tools.md#seeding-from-shipped-cards) `retry` from the shipped card |
 | verify | The audit tools step ([audit](audit.md) Step 7g) for the named tools, all when none is named; `--dry-run` as in audit |
 | retire | [Adapt](../references/project-tools.md#adapt) `retire` — through the independent review |
 
 3. **Refusals.**
    - The request maps to more than one intent or tool (`PTL_AMBIGUOUS`) → ask with marked options and a recommendation ([Interview Mode](../references/interview-mode.md)); run nothing until answered.
    - Any intent other than list / show / find on a `developer-word` entry (the privileged runner) → refused (`PTL_RUNNER`) with a pointer to [Proportionate Caution](../references/proportionate-caution.md#privileged-commands).
-   - A procedure error (`PTL_*` in [Project Tools](../references/project-tools.md)) → report it with its guidance; a failed promotion or adaptation writes nothing.
-4. **Report.** Name every tool created, changed, verified or retired, its new state, and what awaits audit; offer `/dev-flow tool verify <names>` or `/dev-flow audit tools` for tools left `unverified`. `.dev_flow/` may be ignored by git — name the tools in the commit message when the change is committed.
+   - `fix` or `extend` on a seeded tool (`seeded_from` set) → refused (`RTE_SEEDED_BEHAVIOR`): nothing changes; a bypass `broken` and an `improvement` todo for the skill maintainer ([Project Tools → Adapt](../references/project-tools.md#adapt)).
+   - A procedure error (`PTL_*` or `RTE_*` in [Project Tools](../references/project-tools.md)) → report it with its guidance; a failed promotion or adaptation writes nothing.
+4. **Report.** Name every tool created, seeded, changed, verified or retired, its new state, and what awaits audit; offer `/dev-flow tool verify <names>` or `/dev-flow audit tools` for tools left `unverified`. `.dev_flow/` may be ignored by git — name the tools in the commit message when the change is committed.
 5. **Task context.** A command that writes runs inside a task like any other phase (task file, Subtask block, activity); list / show / find need none.
 
 ## Relation to Other Phases

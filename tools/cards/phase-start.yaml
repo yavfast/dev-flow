@@ -1,0 +1,406 @@
+shipped_card: 1
+name: phase-start
+version: 1
+contract:
+  name: phase-start
+  purpose: Print the project facts of phase start checklist items 1, 2, 4, 6, 7 and the fields of the start record in one run
+  kind: operation
+  range_of_use:
+    - {case: continuing-task, description: "a task id is given: its dashboard row and task file facts; the upstream look is skipped"}
+    - {case: new-task, description: "no task id: the upstream look fetches the branch's upstream and reports incoming, overlap and unpushed"}
+    - {case: no-upstream, description: "a git directory whose current branch has no upstream: the look reports none"}
+    - {case: relevant-set, description: "touched paths given: rules, skills and tools matched by path globs and by phase"}
+    - {case: phase-only, description: "no paths: rules, skills and tools matched by the phase and the always-on selectors"}
+    - {case: no-catalogue, description: "a project with no .dev_flow/ and no git: every catalogue fact is none"}
+    - {case: unparsable-index, description: "an index that does not parse as YAML: its fact is not established, the others print"}
+    - {case: profile-unprotected, description: "a profile store git does not ignore: reported, values never printed"}
+    - {case: seeds, description: "the skill's shipped cards against the project's router"}
+  not_for:
+    - "choosing the role style"
+    - "reading the phase file"
+    - "deciding trust in a tool"
+    - "judging a gate"
+    - "writing the task file, the dashboard or the catalog"
+  applies_to: {paths: [], phases: []}
+  limits:
+    - "facts as of the run; a file changed after it is not seen"
+    - "reads only the files the phase start checklist names; prints no profile value"
+    - "skills with no applies_to on their entry or domain are matched by topic, which is the agent's judgement: they are listed with their topics, never chosen"
+    - "the machine's git configuration applies (excludes, credentials, ssh)"
+    - "the upstream fetch needs the network and the remote's credentials without a prompt; a failed fetch reports the last fetched state"
+  inputs:
+    - {name: root, type: path, required: true, description: "project root"}
+    - {name: skill, type: path, required: true, description: "dev-flow skill root; holds SKILL.md"}
+    - {name: phase, type: enum, required: true, values: [onboard, research, concept, spec, plan, implement, test, review, verify, propagate, fix, rule, skill, tool, ask, todo, do, subtask, status, audit, adopt], description: "the starting phase"}
+    - {name: key, type: string, required: false, description: "step key of the phase, e.g. analysis for fix; printed in the start fields only"}
+    - {name: paths, type: string, required: false, description: "project-relative paths the phase touches, comma-separated (a string, never resolved against the caller's directory); a directory ends with /"}
+    - {name: task, type: string, required: false, description: "id of the continued task (task_<id>); absent = a new task"}
+    - {name: git_dir, type: path, required: false, description: "git directory; absent = <root>/.git"}
+    - {name: upstream, type: path, required: false, description: "a repository to fetch from in place of the upstream remote's URL (samples)"}
+  invocation: ['{root}', '{skill}', '--phase={phase}', '--key={key}', '--paths={paths}', '--task={task}', '--git-dir={git_dir}', '--upstream={upstream}']
+  output:
+    format: lines
+    shape: "one fact per line, `<key>: <value>`, keys tasks, task, upstream, rules, skills, tools, budget, styles, profile, docs, seeds, start in this order"
+    size_class: small
+  behavior: >
+    Exit 2 with `cannot-decide: <reason>` on stderr and nothing on stdout when: root is not a directory
+    (`root is not a directory`); skill holds no SKILL.md (`skill root holds no SKILL.md`); phase is not one of the
+    enum values (`unknown phase <phase>`). Otherwise print the twelve lines below, in order, and exit 0.
+    Grammar of every line: `<key>: <value>`; a list value joins its elements with `; `, fields inside an element
+    with ` · `; `—` means none; `? <reason>` means the fact was not established — the agent answers that item by
+    hand. A failure to read or parse one source never stops the others. Text taken from a file (a heading, a
+    status, a Next text) is copied as found, never interpreted. Paths below are relative to root.
+
+    GIT. The git directory is git_dir when given, else <root>/.git; it is used only when that path exists — a
+    directory, or the `.git` file of a linked worktree or submodule — and the tool never searches parent
+    directories. Every git command runs as
+    `git --git-dir=<git dir> --work-tree=<root> …`. No git directory → "no git".
+
+    tasks — the rows of the table under `## Active Tasks` in .dev_flow/active_context.md, in file order, each
+    `<task id> · <phase> · <status> · <contributors> · <updated>`: the task id is the link text of the first
+    cell (`[task_X](…)` → `task_X`), the other fields are cells 2–5 trimmed. File or section absent → `—`.
+
+    task — no task input → `—`. Else read .dev_flow/tasks/<task>.md; missing → `? no task file <task>.md`.
+    Print `<task> · status <s> · phase <p> · stage <g> · style <y> · autonomy <a> · next <n>`: s from the header
+    line `> **Status:** …`, a from `> **Autonomy:** …`, p, g, y from the rows `**Pipeline phase**`, `**Stage**`,
+    `**Role style**` of the `## Current Work Item` table — each the first backtick-quoted token of the value, else
+    the value trimmed, `—` when the line or row is missing; n is the text after `**Next:** ` on the Next line of
+    the last `### Subtask:` block whose `> Author:` line does not carry `Status: \`done\``, trimmed; none → `—`.
+
+    upstream — task given → `skipped (continuing task)`. No git → `none (not a git repository)`. Current branch
+    from `symbolic-ref -q --short HEAD`; none → `none (detached HEAD)`. Upstream from
+    `rev-parse --abbrev-ref --symbolic-full-name @{u}`; none → `none (no upstream)`. Fetch with the environment
+    GIT_TERMINAL_PROMPT=0 and GIT_SSH_COMMAND=`ssh -o BatchMode=yes`: when the upstream input is given,
+    `fetch -q <upstream> +refs/heads/*:refs/remotes/<remote>/*`, else `fetch -q <remote>`; <remote> is the value
+    of `config branch.<branch>.remote`. The fetch gets 30 seconds; past that it is stopped and counts as
+    failed with the reason `timeout after 30 s`. Then N = `rev-list --count HEAD..@{u}`, the incoming files =
+    `diff --name-only HEAD...@{u}`, M = `rev-list --count @{u}..HEAD`. With paths given, the task's files are
+    the incoming files equal to a path or lying under a path ending in `/`; the value is
+    `<N> incoming (<K> touch the task: <files joined by ", " or —>) · <M> unpushed`; without paths it is
+    `<N> incoming (task files unknown: <short hash> <file count> files, …) · <M> unpushed`. When M > 0 append
+    ` (oldest <age>)`, the age of the oldest outgoing commit's committer date as `<d>d`, `<h>h` or `<m>m`.
+    A failed fetch prefixes the value with `? fetch failed: <first stderr line> — last fetched state: `.
+
+    rules — .dev_flow/rules/_index.yaml absent → `—`; not YAML → `? unparsable .dev_flow/rules/_index.yaml`.
+    The relevant set of Knowledge Scaling's activation protocol: a category selector is its `applies_to`, absent
+    = always-on; a rule entry with `moved_to` is skipped; a rule's selector is its own `applies_to`, else its
+    category's. A selector matches when it is always-on, or the phase is in its `phases`, or one of its `paths`
+    globs covers one of the input paths (`**` = any number of segments, `*` and `?` inside one segment; a path
+    ending in `/` names a directory and is covered by a glob whose text before its first `*`, `?` or `[` starts
+    with that path, or is a prefix of it ending at a `/`, or is empty while the glob holds a `/` or `**`).
+    Each matched rule:
+    `<name> · <severity> · <summary> · <category file>#<name>`, ordered must, should, prefer, then index order.
+    No match → `—`.
+
+    skills — .dev_flow/skills/_index.yaml absent → `—`; not YAML → `? unparsable .dev_flow/skills/_index.yaml`.
+    For each domain (`path`) read .dev_flow/skills/<path>_index.yaml (missing or not YAML → that domain's element
+    is `? <path>_index.yaml unreadable`) and each skill entry. An entry's selector is its own `applies_to`, else
+    its domain's, else none. An entry with a selector is printed only when the selector matches (as for rules):
+    `<path><file> · <skill> · <freshness>`. An entry with no selector is printed with its topics, for the agent's
+    topic match: `<path><file> · <skill> · <freshness> · topics <topics joined by ", ">`. freshness comes from the
+    YAML front matter of the skill file: `freshness.state` and `freshness.written_against` →
+    `<state> <written_against>`; no front matter or no freshness → `no stamp`; file missing → `missing`.
+    Order: selector-matched entries, then topic entries, each in index order. None → `—`.
+
+    tools — .dev_flow/tools/_index.yaml absent → `—`; not YAML → `? unparsable .dev_flow/tools/_index.yaml`.
+    Each entry of `tools` whose `state` is not `retired` and whose `applies_to` matches (absent = always-on):
+    `<name> · <when_to_use> · <run joined by spaces> · <state, else the regime>`, in index order. None → `—`.
+
+    budget — n = the number of rule elements, selector-matched skill elements and tool elements printed above.
+    The budget is the first integer in the value cell of the `activation_budget` row of the Thresholds table in
+    <skill>/references/docs-scaling.md; missing → `no budget set`. Value `<n> of <budget>`, or
+    `over — knowledge-overload phase=<phase> n=<n>` when n exceeds it.
+
+    styles — .dev_flow/output_styles.md absent → `absent`. Else `present · documentation <l> · chat <l>`: for
+    each `## Profile:` section the first word after `**Applies to:**` names its register; its language is the
+    first capitalized word, other than the line's first word, of the first directive line (`- …`) containing
+    `language` in any case; none → `—`; the first profile of a register wins.
+
+    profile — .dev_flow/profile/ absent → `absent`. Else `<files> · ignored <yes|no|no git> · <entries>`: files =
+    the names of user.md and environment.md that exist, joined by ", "; ignored = `check-ignore -q
+    .dev_flow/profile/` exit 0 → yes, 1 → no; no git → `no git`. Entries, joined by ", ": per `## <category>`
+    section, `<category> consent <value>` for a `> **Consent:** <value> — …` line, and per bullet
+    "- `<key>` — …" `<category>/<key> <state>` with the bullet's `state: <state>` field, else `—`. Never a value.
+
+    docs — `_index <yes|no> · _glossary <yes|no> · _framework <yes|no>` for docs/_index.md, docs/_glossary.md,
+    docs/_framework.md.
+
+    seeds — <skill>/tools/_index.yaml absent → `—`; not YAML → `? unparsable shipped index`. Per entry of
+    `shipped_cards`, in name order: `<name> <router state or absent> seeded v<seeded_from.version or —> /
+    shipped v<version>`, the router being .dev_flow/tools/_index.yaml (absent or unparsable = no entries).
+
+    start — `rules <category>: <names joined by ", ">; … · skills <path><file> (<state or no stamp>), … · tools
+    <name> (<state>), … · stage <g>` from the rules, the selector-matched skills and the tools printed above, and
+    the task's stage (`—` with no task); an empty part reads `rules —`, `skills —`, `tools —`. With the key input,
+    the value starts `phase <phase>:<key> · `.
+  effects:
+    reads: ["{root}/.dev_flow/**", "{root}/docs/_index.md", "{root}/docs/_glossary.md", "{root}/docs/_framework.md", "{skill}/SKILL.md", "{skill}/tools/_index.yaml", "{skill}/references/docs-scaling.md", "the git directory"]
+    writes: ["{git_dir}/FETCH_HEAD", "{git_dir}/refs/remotes/**", "{git_dir}/objects/**"]
+    network: ["the remote of the current branch's upstream — new task only"]
+    env: [GIT_TERMINAL_PROMPT, GIT_SSH_COMMAND]
+    replay_input: upstream
+  provenance: {task: task_C_RTE.md, promoted: 2026-11-22}
+samples:
+  - id: continuing-task
+    case: continuing-task
+    kind: good
+    inputs: {root: proj, skill: skill, phase: implement, task: task_DEMO, git_dir: repo.git, upstream: origin.git}
+    expect:
+      exit: 0
+      output_contains:
+        - "tasks: task_DEMO · implement → Phase 2 · in-progress · session-a · 2026-01-01 10:00; task_SPIKE · research · paused · session-b · 2025-12-30 16:20"
+        - "task: task_DEMO · status in-progress · phase implement · stage prototype · style formal · autonomy checkpoints · next Phase 2 — tokenizer"
+        - "upstream: skipped (continuing task)"
+        - "rules: NoBareExcept · must · Catch a named exception, never a bare except · style.md#NoBareExcept; ShortFunctions · should · Keep a function under forty lines · style.md#ShortFunctions; SmallCommits · prefer · Commit one change at a time · process.md#SmallCommits"
+        - "skills: build/cache.md · DemoCache · no stamp · topics cache, speed"
+        - "tools: —"
+        - "budget: 3 of 6"
+        - "start: rules style: NoBareExcept, ShortFunctions; process: SmallCommits · skills — · tools — · stage prototype"
+      writes: []
+    source: "constructed — the dashboard has two active rows; the task file's last subtask block is done, so Next comes from the block before it; the rule category process has no selector (always-on)"
+  - id: new-task-upstream
+    case: new-task
+    kind: good
+    inputs: {root: proj, skill: skill, phase: concept, paths: "docs/", git_dir: repo.git, upstream: origin.git}
+    expect:
+      exit: 0
+      output_contains:
+        - "task: —"
+        - "upstream: 1 incoming (1 touch the task: docs/_glossary.md) · 1 unpushed (oldest "
+        - "rules: GlossaryFirst · prefer · Define a new term in the glossary before using it · docs.md#GlossaryFirst; SmallCommits · prefer ·"
+        - "tools: link-check · Report the broken links of the demo documents · python3 .dev_flow/tools/link-check.py {root} · active"
+        - "start: rules docs: GlossaryFirst; process: SmallCommits · skills — · tools link-check (active) · stage —"
+      writes: [repo.git/FETCH_HEAD]
+    source: "constructed — origin.git holds one commit the branch lacks (README.md, docs/_glossary.md) and the branch one commit origin.git lacks; only docs/_glossary.md lies under docs/; the directory path docs/ is covered by the glob docs/*.md"
+  - id: no-upstream
+    case: no-upstream
+    kind: good
+    inputs: {root: proj, skill: skill, phase: concept, git_dir: origin.git, upstream: origin.git}
+    expect:
+      exit: 0
+      output_contains: ["upstream: none (no upstream)", "profile: environment.md · ignored yes · tools/runtime present, tools/builder exercised"]
+      writes: []
+    source: "constructed — origin.git's branch main tracks nothing; the work tree's .gitignore ignores .dev_flow/"
+  - id: path-and-phase
+    case: relevant-set
+    kind: good
+    inputs: {root: proj, skill: skill, phase: ask, paths: "docs/guide.md,src/", task: task_DEMO, git_dir: repo.git, upstream: origin.git}
+    expect:
+      exit: 0
+      output_contains:
+        - "rules: NoBareExcept · must · Catch a named exception, never a bare except · style.md#NoBareExcept; ShortFunctions · should · Keep a function under forty lines · style.md#ShortFunctions; GlossaryFirst · prefer · Define a new term in the glossary before using it · docs.md#GlossaryFirst; SmallCommits · prefer ·"
+        - "skills: build/release.md · DemoRelease · current demo-build 2.0; build/cache.md · DemoCache · no stamp · topics cache, speed"
+        - "tools: link-check · Report the broken links of the demo documents · python3 .dev_flow/tools/link-check.py {root} · active; unit-run · Run the demo unit tests · python3 .dev_flow/tools/unit-run.py {root} --filter={filter} · unverified"
+        - "budget: over — knowledge-overload phase=ask n=7"
+        - " · skills build/release.md (current) · tools link-check (active), unit-run (unverified) · stage prototype"
+      writes: []
+    source: "constructed — no selector lists the phase ask, so besides the always-on category every match comes from a path: docs/guide.md by docs/*.md and docs/**, the directory src/ by src/**; ReviewChecklist's own selector replaces its category's; seven items over a budget of six"
+  - id: phase-review
+    case: phase-only
+    kind: good
+    inputs: {root: proj, skill: skill, phase: review, task: task_DEMO, git_dir: repo.git, upstream: origin.git}
+    expect:
+      exit: 0
+      output_contains:
+        - "rules: NoBareExcept · must · Catch a named exception, never a bare except · style.md#NoBareExcept; ReviewChecklist · should · Run the review checklist on a changed document · docs.md#ReviewChecklist; ShortFunctions · should ·"
+        - "tools: link-check · Report the broken links of the demo documents · python3 .dev_flow/tools/link-check.py {root} · active"
+        - "budget: 5 of 6"
+        - " · skills — · tools link-check (active) · stage prototype"
+      writes: []
+    source: "constructed — matches by the phase review and by the always-on category; the retired line-length lists review and is skipped; the moved rule OldNaming is skipped"
+  - id: bare-project
+    case: no-catalogue
+    kind: good
+    inputs: {root: proj-bare, skill: skill, phase: ask, upstream: origin.git}
+    expect:
+      exit: 0
+      output_contains: ["tasks: —", "task: —", "upstream: none (not a git repository)", "rules: —", "skills: —", "tools: —", "budget: 0 of 6", "styles: absent", "profile: absent", "docs: _index no · _glossary no · _framework no", "start: rules — · skills — · tools — · stage —"]
+      writes: []
+    source: "constructed — a project before dev-flow's first write: one README.md, no git directory"
+  - id: rules-index-cut
+    case: unparsable-index
+    kind: good
+    inputs: {root: proj-cut, skill: skill, phase: implement, upstream: origin.git}
+    expect:
+      exit: 0
+      output_contains: ["rules: ? unparsable .dev_flow/rules/_index.yaml", "skills: —", "upstream: none (not a git repository)"]
+      writes: []
+    source: "constructed — a rules index cut inside a rule entry, the shape an interrupted write leaves"
+  - id: profile-tracked
+    case: profile-unprotected
+    kind: good
+    inputs: {root: proj-open, skill: skill, phase: ask, git_dir: origin.git, upstream: origin.git}
+    expect:
+      exit: 0
+      output_contains: ["profile: user.md · ignored no · language consent granted, language/chat confirmed"]
+      writes: []
+    source: "constructed — a work tree with no .gitignore; origin.git's empty core.excludesFile keeps the machine's global excludes out"
+  - id: shipped-not-seeded
+    case: seeds
+    kind: good
+    inputs: {root: proj, skill: skill, phase: status, task: task_DEMO, git_dir: repo.git, upstream: origin.git}
+    expect:
+      exit: 0
+      output_contains: ["seeds: alpha-facts unverified seeded v1 / shipped v2; beta-facts absent seeded v— / shipped v1", "profile: environment.md · ignored yes", "docs: _index yes · _glossary yes · _framework no", "styles: absent"]
+      writes: []
+    source: "constructed — the skill ships alpha-facts v2 and beta-facts v1; the router holds alpha-facts seeded from v1 and no beta-facts"
+  - id: no-skill-md
+    case: continuing-task
+    kind: error
+    inputs: {root: proj, skill: proj, phase: implement, task: task_DEMO, upstream: origin.git}
+    expect: {exit: 2, output_contains: ["cannot-decide: skill root holds no SKILL.md"], writes: []}
+    source: "constructed — the project root passed as the skill root: a directory with no SKILL.md"
+material:
+  files:
+    skill/SKILL.md: |
+      # Demo skill
+    skill/references/docs-scaling.md: |
+      ## Thresholds
+
+      | Constant | Value |
+      |----------|-------|
+      | `activation_budget` | 6 items |
+    skill/tools/_index.yaml: |
+      shipped_cards:
+        - {name: alpha-facts, version: 2, card: cards/alpha-facts.yaml, purpose: Print the demo facts}
+        - {name: beta-facts, version: 1, card: cards/beta-facts.yaml, purpose: Print the other demo facts}
+    proj/.gitignore: |
+      .dev_flow/
+    proj/README.md: |
+      # Demo
+    proj/docs/_index.md: |
+      # Index
+    proj/docs/_glossary.md: |
+      # Glossary
+    proj/.dev_flow/active_context.md: |
+      # Active Context
+
+      ## Active Tasks
+
+      | Task | Phase | Status | Contributors | Updated |
+      |------|-------|--------|--------------|---------|
+      | [task_DEMO](tasks/task_DEMO.md) — demo parser | implement → Phase 2 | in-progress | session-a | 2026-01-01 10:00 |
+      | [task_SPIKE](tasks/task_SPIKE.md) — input formats | research | paused | session-b | 2025-12-30 16:20 |
+    proj/.dev_flow/tasks/task_DEMO.md: |
+      # Task: Demo parser
+      > **Task ID:** `task_DEMO`
+      > **Status:** `in-progress`
+      > **Autonomy:** `checkpoints`
+
+      ## Current Work Item
+
+      | Field | Value |
+      |-------|-------|
+      | **Pipeline phase** | `implement` — Phase 2 |
+      | **Stage** | `prototype` — no users yet |
+      | **Role style** | `formal` |
+
+      ### Subtask: implement the parser
+      > Author: `session-a` — Status: `in-progress`
+
+      - [ ] **Next:** Phase 2 — tokenizer
+
+      ### Subtask: spike on input formats
+      > Author: `session-b` — Status: `done`
+
+      - [x] **Next:** nothing left
+    proj/.dev_flow/rules/_index.yaml: |
+      categories:
+        - category: docs
+          file: docs.md
+          applies_to: {paths: ["docs/*.md"], phases: [propagate]}
+          rules:
+            - {name: GlossaryFirst, severity: prefer, summary: Define a new term in the glossary before using it}
+            - {name: ReviewChecklist, severity: should, summary: Run the review checklist on a changed document, applies_to: {phases: [review]}}
+        - category: style
+          file: style.md
+          applies_to: {paths: ["src/**"], phases: [implement, review]}
+          rules:
+            - {name: NoBareExcept, severity: must, summary: "Catch a named exception, never a bare except"}
+            - {name: OldNaming, severity: must, summary: Name modules in snake case, moved_to: naming.md}
+            - {name: ShortFunctions, severity: should, summary: Keep a function under forty lines}
+        - category: process
+          file: process.md
+          rules:
+            - {name: SmallCommits, severity: prefer, summary: Commit one change at a time}
+    proj/.dev_flow/skills/_index.yaml: |
+      domains:
+        - {path: build/, description: How the demo builds, topics: [build, release, cache]}
+    proj/.dev_flow/skills/build/_index.yaml: |
+      domain: build
+      skills:
+        - {file: release.md, skill: DemoRelease, topics: [release], applies_to: {paths: ["src/**"]}}
+        - {file: cache.md, skill: DemoCache, topics: [cache, speed]}
+    proj/.dev_flow/skills/build/release.md: |
+      ---
+      skill: DemoRelease
+      freshness: {state: current, written_against: demo-build 2.0}
+      ---
+      # Release
+    proj/.dev_flow/skills/build/cache.md: |
+      ---
+      skill: DemoCache
+      ---
+      # Cache
+    proj/.dev_flow/tools/_index.yaml: |
+      tools:
+        - name: alpha-facts
+          when_to_use: Print the demo facts
+          applies_to: {paths: [], phases: []}
+          run: [python3, .dev_flow/tools/alpha-facts.py, "{root}"]
+          regime: contract
+          state: unverified
+          seeded_from: {name: alpha-facts, version: 1}
+        - name: line-length
+          when_to_use: Report the long lines of the demo sources
+          applies_to: {paths: [], phases: [review]}
+          run: [python3, .dev_flow/tools/line-length.py, "{root}"]
+          regime: contract
+          state: retired
+        - name: link-check
+          when_to_use: Report the broken links of the demo documents
+          applies_to: {paths: ["docs/**"], phases: [concept, review]}
+          run: [python3, .dev_flow/tools/link-check.py, "{root}"]
+          regime: contract
+          state: active
+        - name: unit-run
+          when_to_use: Run the demo unit tests
+          applies_to: {paths: ["src/**"], phases: []}
+          run: [python3, .dev_flow/tools/unit-run.py, "{root}", "--filter={filter}"]
+          regime: contract
+          state: unverified
+    proj/.dev_flow/profile/environment.md: |
+      ## tools
+
+      - `runtime` — demo-runtime 1.0 · source: observed · state: present
+      - `builder` — demo-make 4.4 · source: observed · state: exercised
+    proj-open/.dev_flow/profile/user.md: |
+      ## language
+
+      > **Consent:** granted — asked once
+
+      - `chat` — demo-tongue · source: stated · state: confirmed
+    proj-cut/.dev_flow/rules/_index.yaml: |
+      categories:
+        - category: style
+          file: style.md
+          rules:
+            - name: [NoBareExcept
+    proj-bare/README.md: |
+      # Demo
+  git:
+    - [init, -q, --bare, --template=, -b, main, --object-format=sha1, repo.git]
+    - [init, -q, --bare, --template=, -b, main, --object-format=sha1, origin.git]
+    - [--git-dir=repo.git, --work-tree=proj, add, -f, .gitignore]
+    - [--git-dir=repo.git, --work-tree=proj, commit, -q, -m, base]
+    - [--git-dir=repo.git, --work-tree=proj, add, -f, README.md, docs/_glossary.md]
+    - [--git-dir=repo.git, --work-tree=proj, commit, -q, -m, upstream work]
+    - [--git-dir=repo.git, push, -q, origin.git, main]
+    - [--git-dir=repo.git, --work-tree=proj, reset, -q, "HEAD~1"]
+    - [--git-dir=repo.git, --work-tree=proj, add, -f, docs/_index.md]
+    - [--git-dir=repo.git, --work-tree=proj, commit, -q, -m, local work]
+    - [--git-dir=repo.git, remote, add, origin, /nonexistent/demo.git]
+    - [--git-dir=repo.git, config, branch.main.remote, origin]
+    - [--git-dir=repo.git, config, branch.main.merge, refs/heads/main]
+    - [--git-dir=repo.git, fetch, -q, origin.git, "+refs/heads/*:refs/remotes/origin/*"]
+    - [--git-dir=origin.git, config, core.excludesFile, ""]

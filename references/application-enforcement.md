@@ -8,7 +8,7 @@ Cross-cutting sub-procedure for the **knowledge-touch** phases. It moves the [Pr
 
 ## The discipline: activate → mark → act → check → (escalate)
 
-Per **action burst** — a series of calls of one action type (e.g. "test run"), **not** each tool call (per-call is noise):
+Per **action burst** — a series of calls of one action type (e.g. "test run"), counted in gathering rounds, **not** each tool call (per-call is noise). The marker stands before the round that carries the burst; a round that carries several action types gets one marker with the set of each type ([Round-Trip Economy](round-trip-economy.md)):
 
 1. **Activate knowledge.** Determine the small relevant set: from the plan's **Required Knowledge** (standard flow) or the selector-computed relevant set of [Knowledge Scaling](knowledge-scaling.md) (other flows — category and unit `applies_to` matched against the touched paths and the current phase, always-on categories included; directives only, a body on a trigger; over `activation_budget` drops nothing and lowers no severity). Empty set → no marker, proceed (no friction).
 2. **Emit a Pre-Action Marker** — *names* of applicable rules/skills/tools + the skills' freshness state (from [Procedural Skills](procedural-skills.md)), **pointer-only** (never the full body — that bloat is what feeds drift) and **fact-only** (no subjective self-score). A tool named in the marker is recorded `wired` in its usage file; before its first run in the session it passes the [trust check](project-tools.md#trust-check). Place it adjacent to the burst for recency. **Carrier:** a short inline note — the **pre-action sibling of the [Response Trailer](experience-capture.md#the-response-trailer--response-granularity-carrier)** (that one is post-hoc; this is pre-action), sharing its fact-only format. (Inline; a runtime that supports message meta-tags may use one instead.)
@@ -52,5 +52,5 @@ A terse **"Knowledge activation"** line sits in each knowledge-touch phase, poin
 
 - **Scope = all project-knowledge** — rules, skills, relevant memory — not skills alone (a formatting rule is a *rule*; a non-standard test procedure is a skill+rule).
 - **Re-trigger is advisory, not blocking.** It raises adherence; only the structural tiers (tripwire / interface-gate) give a guarantee, and only where the runtime allows.
-- **Pointer-only, fact-only, per-burst.** A marker with a full body or a self-score is rejected; activation per-call is forbidden.
+- **Pointer-only, fact-only, per round.** A marker with a full body or a self-score is rejected; activation per call is forbidden.
 - **Honest residue.** Judgment-shaped conformance with no sanctioned entry is not auto-guaranteed — only sampled, bounded assurance + a tripwire on artifact shape. The real fix is reducing residue via interface-gating, not leaning harder on the verifier. Track a false-positive budget; rubric over free-form.

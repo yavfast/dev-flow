@@ -15,7 +15,7 @@ role Advisor {
     "NEVER update .dev_flow/active_context.md, .dev_flow/tasks/_index.md, or any file under .dev_flow/tasks/",
     "NEVER execute git commands",
     "NEVER generate implementation code (pseudocode for illustration only)",
-    "Use only read-only tools: Read, Glob, Grep, Agent(Explore)"
+    "Use only read actions: read, list files by pattern, search the text, a read-only delegate"
   ]
 
   workflow: """

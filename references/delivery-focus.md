@@ -78,7 +78,8 @@ The agent watches its own process for what delays the result.
 | `off-goal` | An item serves no part of the task's goal at the current stage |
 | `waiting` | The work waits on something the goal does not need |
 | `search` | A file or fact the work needs is found only by the third search for it, or not at all |
-| `costly-call` | The harness cuts a tool call's output or saves it aside, or the same call runs again to read the rest |
+| `costly-call` | The harness cuts a returned result or saves it aside, or the result is read again to get the rest |
+| `fan-out` | The facts of one decision come in more gathering rounds than their dependencies required, or by one call per element where one filtering command answers ([Round-Trip Economy](round-trip-economy.md)) |
 | `no-access` | Information the work needs sits behind a credential, a privilege or a resource that no channel or tool reaches |
 | `brief-gap` | A delegate's run needed a fact its brief did not carry ([A delegate's run](#a-delegates-run)) |
 | `wide-run` | A build or a test run is wider than its question: the whole project where a module answers, a release variant where a debug one answers, a `clean`, a cache wipe or a daemon stop when neither stale output was observed nor the build configuration or the toolchain changed ([Run Economy](run-economy.md#build-scope)) |
@@ -92,7 +93,7 @@ On a signal:
 
 ### A delegate's run
 
-A delegate watches its own run for `search`, `costly-call`, `no-access` and `brief-gap` — the cases the brief's friction request names — and ends its report with a `Friction:` line: one item per signal that fired — the signal and its cause; none fired → `Friction: none`. Every brief carries the request in the words of [Delegation for Focus → How](delegation.md#how), so a delegate that never reads this file keeps it. The initiator writes each item as an Activity line of its own task (step 1); the delegate's causes are lessons of that task.
+A delegate watches its own run for `search`, `costly-call`, `fan-out`, `no-access` and `brief-gap` — the cases the brief's friction request names — and ends its report with a `Friction:` line: one item per signal that fired — the signal and its cause; none fired → `Friction: none`. Every brief carries the request in the words of [Delegation for Focus → How](delegation.md#how), so a delegate that never reads this file keeps it. The initiator writes each item as an Activity line of its own task (step 1); the delegate's causes are lessons of that task.
 
 A report with no `Friction:` line, from a run that ended `blocked` or `stopped`, wrapped up, went down a step of the [stall ladder](supervision.md#the-stall-ladder), passed its run bounds, named a fact or an access it lacked, or was the third run of the same kind in the task → the initiator continues that delegate once and asks for the line. A delegate that cannot be continued → its friction is `unobserved` ([Evidence Discipline](evidence-discipline.md)). On the developer's request the initiator does the same for any run. Neither a new subagent nor the initiator reads the delegate's transcript for this.
 

@@ -43,14 +43,14 @@ class PermissionInterceptor:
 
 Before the first action: the [Phase start checklist](../SKILL.md#phase-start-checklist), then:
 
-- [ ] **Design sign-off** — the developer's go in the task file; `n/a` for a Trivial change; skipped only under `Autonomy: full` ([Gate Check](#gate-check-plan---code))
+- [ ] **Design sign-off** — the developer's go in the task file, as its design sign-off line; `n/a` for a Trivial change; skipped only under `Autonomy: full` ([Gate Check](#gate-check-plan---code))
 - [ ] **Plan phase** — the plan phase you are implementing and its `Verify:` field ([Implementation Workflow](#implementation-workflow) step 1)
 - [ ] **Intent** — the task file's `## Intent` re-read: goal / target state / expected result ([Intent check](#gate-check-plan---code))
 - [ ] **Reach** — before the first edit, the places the change must reach: every caller of each symbol whose signature, return value, or behaviour changes, plus the tests, fixtures, config, and exports bound to it ([Reach check](#gate-check-plan---code))
 
 ## Gate Check (Plan -> Code)
 
-**Design sign-off (stop).** Before the first code edit, the task file must show the developer's go at the design sign-off; missing → present it (DEC batch — a developer's DEC not yet answered is asked in the dialog of [Interview Mode → Ask](../references/interview-mode.md#4-ask--and-how-to-ask) — changed docs, files to touch, project stage, proportionality block) and wait. No stop for a Trivial change (no design documents); otherwise skipped only under `Autonomy: full`. A `proposed` Design Decision counts as settled for the checklist below, but no code edit runs on one. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
+**Design sign-off (stop).** Before the first code edit, the task file must show the developer's go at the design sign-off — its design sign-off line; missing → present it (DEC batch — a developer's DEC not yet answered is asked in the dialog of [Interview Mode → Ask](../references/interview-mode.md#4-ask--and-how-to-ask) — changed docs, files to touch, project stage, proportionality block) and wait. On the developer's go, before the first code or shipped-file edit, write the line `- [x] Design sign-off — <each developer decision with its answer>; <what was approved>` in the Progress of the Subtask block that holds the stop; under `Autonomy: full` no line is written. No stop for a Trivial change (no design documents); otherwise skipped only under `Autonomy: full`. A `proposed` Design Decision counts as settled for the checklist below, but no code edit runs on one. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
 
 Before writing code, verify:
 - [ ] Plan covers ALL specification sections

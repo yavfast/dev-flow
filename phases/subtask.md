@@ -140,7 +140,7 @@ The brief hands over pointers; the subagent assembles its own context:
 
 ### Step 3: Spawn the subagent
 
-Use the Agent tool with a prompt structured as:
+Start the delegate with a brief structured as:
 
 ```
 ## Subtask
@@ -196,9 +196,9 @@ the project workspace (/tmp/{project-slug}/, timestamped names), referenced by p
 
 Omit the `Role style:` line when the phase has no style. Omit the `Run:`, `Progress:`, `Inbox:` and `Duties:` lines at watch level `none`, and the `## Run bounds` block when the subagent executes no shell commands beyond a read-only search; drop the `note` sentence at `none`. The lines and the block: [Supervising a Delegate → The brief](../references/supervision.md#the-brief).
 
-Choose the appropriate subagent type:
-- **Explore** — for `ask` (read-only search and analysis)
-- **general-purpose** — for everything that writes: `fix`, `implement`, `test`, `propagate`, `research`, freeform
+Choose the delegate's permission class:
+- **read-only delegate** — for `ask` (read-only search and analysis)
+- **delegate that may write** — for everything that writes: `fix`, `implement`, `test`, `propagate`, `research`, freeform
 
 **Pick the model to fit the task** by its nature, not a fixed name — fast/cheap for mechanical, narrow-output work; stronger when it needs judgment; when unsure, the stronger one. See **[Delegation for Focus](../references/delegation.md)**.
 
@@ -237,7 +237,7 @@ Friction: <signal — cause; …> | none   — the last line
 
 ## Parallel Subtasks
 
-Multiple subtasks can be spawned simultaneously when they are **independent**. Launch them in a single turn using multiple Agent tool calls.
+Multiple subtasks can be spawned simultaneously when they are **independent**. Start them in one gathering round ([Round-Trip Economy](../references/round-trip-economy.md)).
 
 Shared `.dev_flow/` files tolerate this by design. Source files do not — use the brief's **Scope** to give parallel subtasks disjoint file areas, and keep work that touches the initiator's active files out of delegation entirely.
 

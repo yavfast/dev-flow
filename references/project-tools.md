@@ -6,7 +6,7 @@ A **project tool** is a small executable that agents write for agents and keep i
 
 - [Catalogue](#catalogue) — the files under `.dev_flow/tools/` and the three regimes
 - [Header contract](#header-contract) — the block in the tool header: markers, fields, the exit-code contract, an example
-- [Acceptance samples](#acceptance-samples) — the samples manifest; real material for good/bad, constructed only for error and review findings
+- [Acceptance samples](#acceptance-samples) — the samples manifest; real material for good/bad, constructed only for error, review findings and shipped cards
 - [Card, binding, router, usage file](#card-binding-router-usage-file) — the durable copy, the verification record, the derived index, the run-time data
 - [Lifecycle](#lifecycle) — states, transitions, and who may move them
 - [Promote](#promote) — keeping a script from the session workspace; running a sample
@@ -15,6 +15,7 @@ A **project tool** is a small executable that agents write for agents and keep i
 - [Run](#run) — calling a tool and reading its answer by the contract
 - [Adapt](#adapt) — `fix`, `extend`, `port`, `repurpose`, `retire`
 - [Regenerate](#regenerate) — a new realization from the card alone
+- [Seeding from shipped cards](#seeding-from-shipped-cards) — a project tool made from a card the skill ships: SeedCheck, Seed, its errors
 - [Use accounting](#use-accounting) — evidence, run statistics, recent failures, bypasses
 - [Legacy tools and the privileged runner](#legacy-tools-and-the-privileged-runner) — what stays outside this lifecycle
 - [Edge cases](#edge-cases) — situations with a fixed answer
@@ -30,10 +31,12 @@ A **project tool** is a small executable that agents write for agents and keep i
 │   └── …                       # sample material referenced by the manifest
 ├── cards/<name>.yaml           # tool card
 ├── usage/<name>.yaml           # usage file — evidence state, run statistics, recent failures
-└── prev/<name>.<ext>           # last bound realization, kept only while an adaptation awaits audit
+└── prev/<name>.<ext>           # the realization an Adapt fix/extend (the last bound one) or a Seed reseed/retry replaced, kept until audit binds the tool
 ```
 
 Each router entry has a `regime`: `contract` — a tool with a header contract, governed by this file; `harvested` — a tool kept before this file, governed as before (see [Legacy tools](#legacy-tools-and-the-privileged-runner)); `developer-word` — the privileged runner, owned by [Proportionate Caution](proportionate-caution.md#privileged-commands).
+
+The skill ships cards of its own under `<skill>/tools/` — contracts and samples, no realization; a project makes its tool from one at the first need ([Seeding from shipped cards](#seeding-from-shipped-cards)). The skill's shipped cards are the only tools from outside the project.
 
 A one-off script is not a project tool: it lives and disappears in the session workspace `/tmp/{project-slug}/tools/` ([Resource Cache](cache.md)). The project's own scripts and build tooling are project code and go through the pipeline.
 
@@ -106,7 +109,7 @@ Example (a Python check; the same block works behind `//`, `--` or any other com
 
 ## Acceptance samples
 
-`samples/<name>/samples.yaml` holds one key, `samples`, a list; the material the samples use lies beside it, so the samples hash covers expectations and material together.
+`samples/<name>/samples.yaml` holds the key `samples`, a list, and for a tool seeded from a shipped card the key `material`, the recipe a sample run builds ([Sample recipe](#seeding-from-shipped-cards)); any other material the samples use lies beside it, so the samples hash covers expectations and material together.
 
 | Field | Req. | Constraints | Meaning |
 |-------|------|-------------|---------|
@@ -115,11 +118,11 @@ Example (a Python check; the same block works behind `//`, `--` or any other com
 | `kind` | yes | `good` \| `bad` \| `error` | `good` — clean / done; `bad` — the expected report; `error` — input the tool cannot decide on, which it must say instead of reporting clean |
 | `inputs` | yes | every required input; `path` / `path-list` values relative to `samples/<name>/` | The call |
 | `expect` | yes | `{exit, output_contains: [], writes: []}`; `exit` 0 for `good`, 1 for `bad`, 2 for `error`; `writes` relative to the work copy — in a sample run the tool writes only inside the work copy, because its inputs point there; `effects.writes` is checked on real runs ([Run](#run)) | Expected result |
-| `source` | yes | names the real material it was reduced from; `constructed — <why>` only for an `error` sample or a sample pinning a review finding | Provenance |
+| `source` | yes | names the real material it was reduced from; `constructed — <why>` only for an `error` sample, a sample pinning a review finding, or every sample of a shipped card | Provenance |
 
 - A `check` has ≥ 1 `good`, ≥ 1 `bad`, ≥ 1 `error`; an `operation` has ≥ 1 `good`, ≥ 1 `error`, no `bad`.
 - Every `range_of_use` case is the `case` of ≥ 1 sample. A case without a sample lies outside the range of use.
-- `good` and `bad` samples are real project material reduced to the minimal case — never invented from the author's model of the input. An `error` sample, and a sample that pins a review finding, may be constructed when no real material exists; it says so in `source`.
+- `good` and `bad` samples are real project material reduced to the minimal case — never invented from the author's model of the input. An `error` sample, and a sample that pins a review finding, may be constructed when no real material exists; it says so in `source`. A shipped card's samples are all constructed: a file the skill ships carries no project's material ([Sample recipe](#seeding-from-shipped-cards)).
 - A tool with `effects.network` reaches no network in any sample: every sample sets the input named by `effects.replay_input`; what a replay cannot show goes into `limits`.
 
 ## Card, binding, router, usage file
@@ -136,6 +139,7 @@ Example (a Python check; the same block works behind `//`, `--` or any other com
 | `binding` | Binding or `null`; written only by audit |
 | `failure` | `{date, reason, environment, ref, realization_sha256, samples_sha256}` while `failing` — the hashes of the failing realization and samples — else `null` |
 | `retired` | `{date, reason, replaced_by, review}` once `retired`, else `null` |
+| `seeded_from` | `{name, version}` of the shipped card the tool was seeded from, else `null` or absent; set only by [Seed](#seeding-from-shipped-cards). `card_version` stays `1` — the field is additive. Not `null` → the tool's behaviour belongs to the shipped card ([Adapt](#adapt)) |
 
 `state: active` always has a binding. An `unverified` card keeps its previous binding, if any, until audit replaces it — the diff review needs it. "Header ≠ card" and "manifest ≠ card" compare the parsed YAML, never the text, so reformatting alone is not a change.
 
@@ -146,7 +150,7 @@ Example (a Python check; the same block works behind `//`, `--` or any other com
 - **Environment** — `platform` · `arch` (as `uname -m` prints it; `platform.machine()` elsewhere) · `programs` (each `requires[].program` → the version its `version_cmd` prints).
 - **Environment match** — the current environment matches a recorded one when `platform` and `arch` are equal and every program has the same major version (the first run of digits in its version output — `3` in `Python 3.14.7`).
 
-**Router** — `_index.yaml`, one key `tools`, rebuilt from the cards: for each card, `name` · `when_to_use` (= `purpose`) · `applies_to` · `run` (= `invocation`) · `regime: contract` · `state` · `card: cards/<name>.yaml`. Entries of the `harvested` and `developer-word` regimes without a card are carried over untouched; their shape is `name` · `when_to_use` · `applies_to` (absent = always-on) · `run` · `regime` · `self_test: {good, bad, expect}` (`null` for the runner) · `provenance`. A legacy entry whose tool has received a card is replaced by the card's entry, and a legacy `evidence:` field, if any, moves to the tool's usage file. Entries are sorted by name. A `retired` card keeps its router entry (with `state: retired`, no realization), so the name stays reserved and the gate skips it. **Every write of a card is followed by a router rebuild**, so the router's `state` always equals the card's. The router holds no run-time data, so it can always be rebuilt.
+**Router** — `_index.yaml`, one key `tools`, rebuilt from the cards: for each card, `name` · `when_to_use` (= `purpose`) · `applies_to` · `run` (= `invocation`) · `regime: contract` · `state` · `card: cards/<name>.yaml` · `seeded_from` (copied from the card when not `null`). Entries of the `harvested` and `developer-word` regimes without a card are carried over untouched; their shape is `name` · `when_to_use` · `applies_to` (absent = always-on) · `run` · `regime` · `self_test: {good, bad, expect}` (`null` for the runner) · `provenance`. A legacy entry whose tool has received a card is replaced by the card's entry, and a legacy `evidence:` field, if any, moves to the tool's usage file. Entries are sorted by name. A `retired` card keeps its router entry (with `state: retired`, no realization), so the name stays reserved and the gate skips it. **Every write of a card is followed by a router rebuild**, so the router's `state` always equals the card's. The router holds no run-time data, so it can always be rebuilt.
 
 **Usage file** — `usage/<name>.yaml`, the run-time data of one tool. Outside trust: never hashed, never bound, never read by the trust check. Created on the first use event; kept with the card on retire. Read by audit, by `fix`, and by `/dev-flow tool`.
 
@@ -171,17 +175,24 @@ Re-read the usage file immediately before writing it; append a failure, then tri
 | `active` | `failing` | audit: a forced verification (`/dev-flow tool verify <name>`) fails; or a [run](#run) changes the tree outside `effects.writes` | `failure` written |
 | `failing` | `unverified` | Adapt or Regenerate | `failure` cleared at the next audit pass |
 | any but `retired` | `retired` | [retire](#adapt) confirmed by the independent review | realization and `prev/` deleted; card, samples and usage file kept |
+| — | `unverified` | [Seed](#seeding-from-shipped-cards) `first` passed | realization, samples, card with `seeded_from`, router entry — no ledger entry; named in the phase report and the commit message |
+| — | `failing` | Seed `first` failed | card and samples, no realization; `failure` written; an Activity line |
+| `unverified` / `active` / `failing` | `unverified` | Seed `reseed` passed (a newer shipped card) | the old realization → `prev/`; `seeded_from.version` raised |
+| `unverified` / `active` / `failing` | `failing` | Seed `reseed` failed | the old realization → `prev/`; card of the new version; `failure` written |
+| `failing`, or a seeded tool whose realization is missing | `unverified` | Seed `retry` passed (audit: a failed seed or a missing realization; `/dev-flow tool regenerate`: any `failing` one) | as `first`; a realization present → `prev/` |
+| `failing`, or a seeded tool whose realization is missing | `failing` | Seed `retry` failed | a realization present → `prev/`; `failure` written |
 
-`retired` is terminal; a retired name is never reused.
+`retired` is terminal; a retired name is never reused. A retired seeded tool is the project's opt-out: [SeedCheck](#seeding-from-shipped-cards) answers `manual` for its name for good.
 
 **Write discipline.**
 
 - **Trust is raised only by audit.** Only the audit tools step writes a binding, sets `active`, or appends an environment.
 - **Anyone in the lifecycle may lower trust.** Promote, Adapt and Regenerate set `unverified`; a run with an undeclared write sets `failing`.
 - The card's `contract` and `samples` are only ever copies of the header and the manifest.
-- Only Adapt (`fix`, `extend`, `retire`) and Regenerate change or delete a realization; audit never does.
-- `prev/<name>.<ext>` is written only by Adapt `fix` / `extend`, and deleted only by audit on binding, by `retire`, or by Regenerate (including `port`), whose review is always `full`.
-- `.dev_flow/` may be ignored by git: every Promote, Adapt, Regenerate and retire names the tool in the phase report and the commit message.
+- Only Adapt (`fix`, `extend`, `retire`), Regenerate and Seed change or delete a realization; audit never does — a seed audit starts is the Seed delegate's write.
+- `prev/<name>.<ext>` is written only by Adapt `fix` / `extend` and by Seed `reseed` / `retry` (the realization it replaces), and deleted only by audit on binding, by `retire`, or by Regenerate (including `port`), whose review is always `full`.
+- Only Seed sets `seeded_from`; only Seed writes a realization of a seeded tool, except Adapt `port`. Seed never overwrites a tool with `seeded_from` `null` or a retired one, and re-reads the router immediately before its write (two sessions).
+- `.dev_flow/` may be ignored by git: every Promote, Seed, Adapt, Regenerate and retire names the tool in the phase report and the commit message.
 
 ## Promote
 
@@ -201,7 +212,7 @@ Any failure writes nothing to `.dev_flow/tools/` and records the reason in the t
 
 Shared by the author's own run and by audit:
 
-1. Copy `samples/<name>/` to a fresh work copy under `/tmp/{project-slug}/tools/`.
+1. Copy `samples/<name>/` to a fresh work copy under `/tmp/{project-slug}/tools/`; when `samples.yaml` holds `material`, build that [recipe](#seeding-from-shipped-cards) into the work copy.
 2. Substitute the sample's inputs into `invocation`; sample-relative paths resolve inside the work copy.
 3. Snapshot the project tree and the work copy: every file except under `.git/`, ignored files included, as path · size · mtime · type. (`git status --porcelain` alone misses writes to ignored paths, `.dev_flow/` among them, and a second change to an already dirty file.)
 4. Run from the project root with a process environment holding only `PATH`, `HOME`, `LC_ALL=C.UTF-8` (`C` where that locale is missing), on Windows also `SystemRoot` and `TEMP`, and the variables in `effects.env` — the literal invocation, in that clean environment.
@@ -212,11 +223,23 @@ Shared by the author's own run and by audit:
 
 Trust is established in one place: the tools step of [audit](../phases/audit.md) (Step 7g, scope `all` or `tools`), also run by `/dev-flow tool verify <names>`. A session that needs an unverified tool mid-task reads it first or offers `/dev-flow audit tools` to the developer; it does not verify the tool itself.
 
-For each `contract`-regime tool not `retired`, compute what is **due**:
+First, once per entry of the skill's shipped index (`<skill>/tools/_index.yaml`), before what is due:
+
+| Router state of the name | Action | Report row `reason` |
+|--------------------------|--------|---------------------|
+| absent | none | `not seeded — seeded on its first need` |
+| `seeded_from` `null` | none | `shadowed by a project tool` |
+| `retired` | none | — (no row) |
+| `seeded_from.version` < the shipped version | [Seed](#seeding-from-shipped-cards) `reseed`, then the full verification | `reseed v<n> → v<m>` |
+| `failing` with no realization (a failed seed), or a seeded tool whose realization is missing | Seed `retry`, then the full verification | `retry seed: <previous cause, or realization missing>` |
+
+A `retry` probes the machine's programs again: it is the path for a program that appeared on the machine after a seed failed.
+
+Then, for each `contract`-regime tool not `retired`, compute what is **due**:
 
 | Condition | Due |
 |-----------|-----|
-| realization missing (and not `retired`) | report row; [Regenerate](#regenerate) candidate; nothing else runs |
+| realization missing (and not `retired`) | report row; [Regenerate](#regenerate) candidate — a seeded tool: the seeding row's Seed `retry`; nothing else runs |
 | `unverified` | full verification |
 | `failing` and the realization or samples hash differs from the one recorded in `failure` | full verification |
 | `active` and the realization or samples hash ≠ binding, or the header ≠ `card.contract`, or the manifest ≠ `card.samples` | full verification (treated as an adaptation) — first write `state: unverified` (not under `--dry-run`) |
@@ -248,7 +271,7 @@ Review Verdict: `{date, scope: full|diff, verdict: pass|fail, findings: [{check,
 
 **Also in the step:** router ↔ cards ↔ realizations ↔ samples directories — a router entry without its card or (unless `retired`) its realization, or a card, realization or samples directory without a router entry, is a report row (`PTL_ORPHAN`), never deleted. Ledger entries with `owner_kind: tool` whose trigger is due are reconciled here ([Evidence Discipline](evidence-discipline.md#consumer-3--the-intervention-ledger)). `harvested` tools: run their self-test as before and propose a contract through Adapt (`PTL_LEGACY`). `developer-word` entries: not run, not reviewed (`PTL_RUNNER`). Report retire candidates (no `exercised` for ~30 days — neither in the usage file nor as an `exercised` observation of the tool's ledger entry), recent failures per tool, and bypass reasons per tool. Under `--dry-run` nothing runs and nothing is written: each due action is listed as `unobserved` (`PTL_DRY_RUN`). After the per-tool rows, rebuild the router from the cards.
 
-Audit never edits, moves, or deletes a realization or a sample.
+Audit never edits, moves, or deletes a realization or a sample; a `reseed` or `retry` it starts is the Seed delegate's write.
 
 ## Trust check
 
@@ -258,7 +281,7 @@ Before the first use of a tool in a session decide, without writing anything, wh
 |------|--------|
 | Router entry is not `contract` regime | `read-first` (`legacy`); for `developer-word`, [Proportionate Caution](proportionate-caution.md#privileged-commands) decides |
 | Card `state: retired` | `unfit` (`retired`) |
-| Realization missing | `unfit` (`missing-realization`) — Regenerate it, or hand-roll |
+| Realization missing | `unfit` (`missing-realization`) — Regenerate it (a seeded tool: Seed `retry`), or hand-roll |
 | The need matches a `not_for` item | `unfit` (`not-for`) |
 | The need fits no `range_of_use` case | `unfit` (`out-of-range`) |
 | A required input is not available | `unfit` (`missing-input`) |
@@ -297,6 +320,15 @@ Every class except `retire` starts with the header contract and ends with the ca
 | `repurpose` | the purpose changes; old samples no longer express the intent | — a new tool | Promote under a new name; retire the old one or leave it | `full` |
 | `retire` | replaced, merged, or no `exercised` in the retention window (~30 days; usage file or ledger observation) | — | kept | independent review of the deletion |
 
+**A seeded tool** (`seeded_from` not `null`) — its behaviour belongs to the shipped card:
+
+| Class | Result |
+|-------|--------|
+| `fix`, `extend` | refused, `RTE_SEEDED_BEHAVIOR`: nothing changes; a bypass `broken` (note: seeded card `<name>` v`<n>`, the case); an `improvement` todo for the skill maintainer — card, version, input, excerpt, expected ([Experience Capture](experience-capture.md#applying-experience--auto-apply-through-structural-gates)); the facts by hand |
+| `port` | as above: `environment` and `invocation` only, samples unchanged, Regenerate; `seeded_from` kept |
+| `repurpose` | as above: a new tool under a new name, `seeded_from` `null` |
+| `retire` | as above; SeedCheck answers `manual` for the name from then on (opt-out) |
+
 Code Reuse restraint: a near case that changes for a different reason than the tool is not `extend` but a new tool (`PTL_DIFFERENT_REASON`).
 
 **Retire.** The deletion is a doubtful write ([Experience Capture](experience-capture.md#applying-experience--auto-apply-through-structural-gates)): an independent clean-context review of the reason, briefed as the [Independent review](#verification-in-audit): `Read first: roles/reviewer.ai.md — blocks: tool_review`. Confirmed → delete the realization and any `prev/` copy, set `state: retired` and `retired` (`replaced_by` when replaced), keep the card, samples and usage file, rebuild the router; the ledger entry stays and gets no further verdicts. Not confirmed → nothing deleted, report the reviewer's reason (`PTL_RETIRE_REJECTED`).
@@ -308,9 +340,70 @@ Two sessions adapting the same tool: the contract, samples and card change toget
 When the realization is missing (lost or deleted while the card remains), broken beyond `fix`, or unfit for this machine (`port`), write a new one **from the card alone** — `contract` and `samples` plus the sample material — without reading the old code. Its header block is the card's `contract` (for `port`, with the changed `environment` / `invocation`). Run every sample yourself; delete any `prev/<name>.<ext>` copy; the tool becomes `unverified`; audit accepts it with a `full` review and writes a new binding.
 
 - No card (a `harvested` tool) → not regenerable; give it a contract through Adapt first (`PTL_NO_CARD`).
+- A seeded tool (`seeded_from` not `null`) → only `port` regenerates it; a lost realization, or a `failing` one on `/dev-flow tool regenerate`, is written by Seed `retry` ([Seeding from shipped cards](#seeding-from-shipped-cards)).
 - List in the task file every behaviour you had to guess because the card does not state it. The new realization fails a sample, or the list is not empty → the contract is incomplete (`PTL_CONTRACT_INCOMPLETE`): close each gap in the header — `behavior`, `limits`, or a new sample — before the new realization lands; the card is re-copied from that header, and audit reviews the regenerated tool `full` together with the contract change.
 
 The card is complete when a fresh agent, given only the card and the samples, writes a realization that passes them; every regeneration tests exactly that.
+
+## Seeding from shipped cards
+
+The skill ships cards for tools every project needs — the gather tools of [Round-Trip Economy](round-trip-economy.md) — but never their code: each project writes its own realization, in a program its machine has, from the card alone.
+
+**Shipped catalogue** — `<skill>/tools/`: an index and the cards, nothing else — no realization, no sample tree, no repository:
+
+```
+<skill>/tools/
+├── _index.yaml                 # shipped index: shipped_cards — name, version, card, purpose
+└── cards/<name>.yaml           # shipped card: shipped_card 1, name, version, contract, samples, material
+```
+
+A shipped card's `contract` is the [header contract](#header-contract) with three differences: `invocation` holds only the arguments after the program and the realization path, which Seed prepends; `environment` is absent, Seed fills it for the machine; `applies_to` is `{paths: [], phases: []}`, so no selector lists a gather tool — the procedure that needs it calls it by name. Its `samples` are [manifest](#acceptance-samples) entries, each `source` `constructed — <why>`. The index entry and the card agree on `name` and `version`; any change of the contract, the samples or the material raises `version` in the same change.
+
+**Sample recipe** — the card's `material`, the small tree its samples run on, as data:
+
+| Key | Content |
+|-----|---------|
+| `files` | map path → text. The path is relative to the work copy, `/`-separated, never absolute, with no empty, `.` or `..` segment and no `.git` segment in any letter case; the text is written as UTF-8 with `\n` line ends, mode 0644 |
+| `git` | list of steps, each the arguments of one `git` command, run in order in the work copy after every file is written, in the clean environment of [Running a sample](#running-a-sample) step 4 plus: author and committer `dev <dev@example.invalid>`, both dates `2026-01-01T00:00:00+00:00`, no global or system configuration and no global ignore file (`GIT_CONFIG_GLOBAL` an empty file outside the work copy, `GIT_CONFIG_NOSYSTEM=1`, `XDG_CONFIG_HOME` an empty directory); a step names every option its result depends on (`init -b`, `--object-format`, `--template=`); git ≥ 2.32, an older one fails the sample |
+
+The recipe is built only in a sample run's work copy ([Running a sample](#running-a-sample)), never in the catalogue: nothing derived is kept, the samples hash covers `samples.yaml` alone, and no repository lands among a project's files. The tool itself still runs with the machine's `HOME`, so a step sets in the repository's own configuration what its result must not take from the machine — `config core.excludesFile ""` against a global ignore file. A path the table forbids makes the card invalid (`RTE_NO_SHIPPED_CARD`); a step that exits non-zero fails the sample.
+
+**SeedCheck** — before a shipped tool is used, decide whether to use it, gather by hand, or seed it. Nothing is written.
+
+| Router entry for the name | Answer |
+|---------------------------|--------|
+| the shipped index or its entry is missing or does not parse | `manual` |
+| absent | `seed` (`first`) |
+| `retired` | `manual` — the project opted out |
+| `seeded_from` `null` | `manual` — a project tool holds the name; audit reports it `shadowed` |
+| `seeded_from.version` < the shipped version | `seed` (`reseed`) |
+| `failing` | `manual` — the same version failed; audit or `/dev-flow tool regenerate` retries it |
+| otherwise | `use` — then the [trust check](#trust-check) |
+
+`seed` → the facts by hand now; Seed runs as a background delegate and the next need uses the tool.
+
+**Seed** — a delegate of the same session; its brief carries `Skill root:` and `Read first: roles/implementer.ai.md` ([SKILL.md → Subagents](../SKILL.md#subagents)), the name, the reason (`first`, `reseed`, `retry`) and the task that needed the tool.
+
+1. Re-read the router; refuse with nothing written per the errors below.
+2. Copy the shipped card to the session workspace and write `samples.yaml` there from its `samples` and `material`.
+3. Choose the program: one the machine has — the environment profile first, then a probe. None → fail `RTE_NO_PROGRAM`.
+4. Write the realization from the card alone, by the rules of [Regenerate](#regenerate): the header is the card's `contract` plus the `environment` for this machine and the invocation prefix `[program, realization path]`. A behaviour the card does not pin is a gap — an `improvement` todo for the skill maintainer; the header never changes.
+5. Run every sample yourself ([Running a sample](#running-a-sample)); a failure the delegate cannot fix against the card → fail `PTL_SAMPLES_FAIL`.
+6. Write, re-reading the router first: on `reseed` or `retry` with a realization present, it moves to `prev/<name>.<ext>`; the realization; `samples/<name>/` replaced by that `samples.yaml`; the card — `card_version 1`, `name`, `state: unverified`, `contract`, `samples`, `binding: null`, `failure: null`, `retired: null`, `seeded_from: {name, version}`; rebuild the router. No ledger entry: the intervention is the skill's, not a lesson of the project; [use accounting](#use-accounting) runs as for any tool.
+7. On a fail: on `reseed` or `retry` with a realization present, it moves to `prev/<name>.<ext>`; the card as in step 6 with `state: failing` and `failure` `{date, reason: "seed: <code> — <cause>", environment, ref: <task>, realization_sha256: null, samples_sha256}`, no realization; rebuild the router.
+8. Report: `outcome` (`seeded`, `failed`, `refused`), `state`, `program`, `samples` (`<passed>/<total>`), `gaps`, `code`.
+
+| Code | Condition | Result |
+|------|-----------|--------|
+| `RTE_NO_SHIPPED_CARD` | the shipped index or card is missing or does not parse | nothing written; the facts by hand |
+| `RTE_SEEDED_ELSEWHERE` | on re-read, the router holds the name with `seeded_from.version` ≥ the shipped version — on `retry`, only once the entry is no longer `failing` and its realization exists | nothing written; another session seeded it |
+| `RTE_NAME_SHADOWED` | the router holds the name with `seeded_from` `null` | nothing written; audit reports it |
+| `RTE_RETIRED` | the router holds the name retired | nothing written |
+| `RTE_NO_PROGRAM` | no program on the machine can carry the realization | card written `failing` |
+| `PTL_SAMPLES_FAIL` | a sample still fails when the delegate stops | card written `failing` |
+| `RTE_SEEDED_BEHAVIOR` | `fix` or `extend` asked on a seeded tool ([Adapt](#adapt)) | nothing changes; an `improvement` todo for the skill maintainer |
+
+After the report, the initiator names the tool in the phase report and the commit message, adds the Relevant Context row (`Tool` · `.dev_flow/tools/<name>` · `unverified — awaiting audit`), and writes one Activity line — seeded, or failed with its cause. A `failed` seed leaves this and later starts manual until a newer card or a retry by audit or on request (`/dev-flow tool regenerate`) ([SeedCheck](#seeding-from-shipped-cards)).
 
 ## Use accounting
 

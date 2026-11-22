@@ -28,7 +28,7 @@ A build or a test run costs the developer minutes and the context the tokens of 
 
 ## Run record
 
-One row per run key in the `runs` file of the [session working memory](cache.md#session-working-memory-l1), replaced by key:
+One row per run key in the `runs` file of the [session working memory](cache.md#session-working-memory-l1), replaced by key — one JSON object per line, the fields below as its keys (`result` as `{exit, passed, failed, cause}`, `null` for what does not apply), so a tool reads it without guessing; a line that does not parse is reported, the other lines still read:
 
 | Field | Holds |
 |-------|-------|

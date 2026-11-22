@@ -139,7 +139,7 @@ A line that does not parse — a time that is not ISO 8601 with its offset, does
 | `info` | takes the fact into account |
 | `scope` | re-plans: a new `plan` |
 
-The direct initiator writes it; an ancestor only as [Nesting](#nesting) allows. At `record` the inbox stays empty until one of them writes to it. The delegate reads it after the same check as the initiator ([The brief](#the-brief)); a failed check → it leaves the inbox unread and writes a `note`. The delegate acts on the lines it has not acted on before; a line that does not parse — its time by the record's rule, or an unknown instruction — is skipped. Where the harness delivers a message to a running agent, the initiator may use it instead — it too arrives only when the delegate next takes its turn, so neither reaches a delegate blocked inside a command. Claude Code moves a foreground command to the background when the call's own timeout runs out, at the latest after about three minutes, and gives the delegate its turn back; the command runs on, and the delegate waits for it with checks, reading the inbox between them ([The brief](#the-brief), Run bounds).
+The direct initiator writes it; an ancestor only as [Nesting](#nesting) allows. At `record` the inbox stays empty until one of them writes to it. The delegate reads it after the same check as the initiator ([The brief](#the-brief)); a failed check → it leaves the inbox unread and writes a `note`. The delegate acts on the lines it has not acted on before; a line that does not parse — its time by the record's rule, or an unknown instruction — is skipped. Where the harness delivers a message to a running agent, the initiator may use it instead — it too arrives only when the delegate next takes its turn, so neither reaches a delegate blocked inside a command. A harness may move a foreground command to the background when the call's own timeout runs out and give the delegate its turn back; the command runs on, and the delegate waits for it with checks, reading the inbox between them ([The brief](#the-brief), Run bounds).
 
 ## Silence threshold
 
@@ -170,16 +170,16 @@ For a `watched` run the initiator arms one watcher — a background process with
 
 One poll with several of them prints the first in this order: `note`, `done`, `stall`.
 
-**Only while the delegate runs.** The initiator arms a watcher, and arms it again, only while the run's delegate runs: the harness, where it reports one, has not reported its finish (in Claude Code, the background agent's notice) since the delegate last started — its spawn or its continuation. Once it has, no watcher is armed for that run until the delegate is continued, whatever event is still unhandled when the notice comes, or comes after it; that event is not acted on — the finish is handled once, and a watcher still running is stopped ([Handling a watcher event](#handling-a-watcher-event)).
+**Only while the delegate runs.** The initiator arms a watcher, and arms it again, only while the run's delegate runs: the harness, where it reports one, has not reported its finish (the harness's completion notice) since the delegate last started — its spawn or its continuation. Once it has, no watcher is armed for that run until the delegate is continued, whatever event is still unhandled when the notice comes, or comes after it; that event is not acted on — the finish is handled once, and a watcher still running is stopped ([Handling a watcher event](#handling-a-watcher-event)).
 
-A `watched` delegate itself runs in the background — in Claude Code, a background agent — so the initiator is free when the watcher's line comes back; a harness that can only run it in the foreground gets no watcher, as when nothing runs in the background. Copy the example to `/tmp/{project-slug}/agents/watch.sh` once per session and run it through the harness's background facility, so that its one line comes back as a notice — in Claude Code, Bash with `run_in_background`, or `Monitor` with `timeout_ms: 1800000`, its cap. Settings:
+A `watched` delegate itself runs in the background — a background delegate — so the initiator is free when the watcher's line comes back; a harness that can only run it in the foreground gets no watcher, as when nothing runs in the background. Copy the example to `/tmp/{project-slug}/agents/watch.sh` once per session and run it through the harness's background facility, so that its one line comes back as a notice. Settings:
 
 - `WATCH_LIMIT`, in whole seconds, defaults to 1740, under that cap, so the watcher ends with `expired` instead of being cut off without a line.
 - `WATCH_FROM`, in epoch seconds and not later than now, is the floor: silence before it is not counted.
 - `WATCH_NOTED` is the key of the last note the initiator handled — the three fields after `note`: `<run id> <time> <line>`; a time alone covers every note up to that second; unset, every note in the subtree is new.
 - A continued delegate keeps its record, so its first watcher gets `WATCH_FROM=$(date +%s)` and `WATCH_NOTED=$(date -Iseconds)`, taken at the continuation: the `end` of the run before is not read as `done`, and its notes are not new.
 - A setting that does not parse — `WATCH_LIMIT` or `WATCH_FROM` not a whole number, `WATCH_FROM` later than now, a `WATCH_NOTED` time that is not ISO 8601 with its offset, does not convert or is more than a minute ahead of now, or a line number that is not a whole number — gives `error`; nothing is watched. Empty is the same as unset.
-- The optional third argument is a file whose modification time shows the delegate's activity — in Claude Code, its transcript `~/.claude/projects/<project>/<session>/subagents/agent-<agent id>.jsonl`.
+- The optional third argument is a file whose modification time shows the delegate's activity — the delegate's activity file, which the agent finds in its own harness.
 
 The example needs bash, GNU `date` and `stat`, and `awk`; it runs in the C locale, so notes order the same everywhere.
 
@@ -271,7 +271,7 @@ done
 
 To **re-arm** is to run the watcher again on the same run, with the `WATCH_FROM` and `WATCH_NOTED` it had — only while its delegate runs ([Only while the delegate runs](#the-watcher)). Two moves change one of them: after the initiator has acted on silence — judged a run "slow but alive", taken ladder step 2 or 3 — `WATCH_FROM=$(date +%s)`, so the silence it has just acted on does not fire again at once (to re-arm **from now**); after it has handled a `note`, `WATCH_NOTED="<run id> <time> <line>"` from that note. A note is not silence: it moves no floor.
 
-- `done` → where the harness reports the finish (in Claude Code, the background agent's notice), wait for that notice — the report comes with it; then read the report: the conclusion, not the dump.
+- `done` → where the harness reports the finish (the harness's completion notice), wait for that notice — the report comes with it; then read the report: the conclusion, not the dump.
 - `note` → read the line; answer through the inbox or a harness message, or let the run go on; re-arm with `WATCH_NOTED` set to its key.
 - `stall` → [the stall ladder](#the-stall-ladder).
 - `expired` → re-arm.

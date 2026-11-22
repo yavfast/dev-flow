@@ -48,7 +48,7 @@ A rule, an existing concept, or a documented convention that already settles a c
 
 ## Design Sign-off
 
-When the plan passes [its gate](implement.md#gate-check-plan---code), stop before implementation: present the developer's Design Decisions (question → options → recommendation; one not yet answered is asked in the dialog of [Interview Mode → Ask](../references/interview-mode.md#4-ask--and-how-to-ask)) and the agent's, one line each, the documents created or changed, the files implementation will touch, the project stage, the [proportionality block](../references/proportionate-caution.md#proportionality-block); wait. Skipped only under `Autonomy: full`. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
+When the plan passes [its gate](implement.md#gate-check-plan---code), stop before implementation: present the developer's Design Decisions (question → options → recommendation; one not yet answered is asked in the dialog of [Interview Mode → Ask](../references/interview-mode.md#4-ask--and-how-to-ask)) and the agent's, one line each, the documents created or changed, the files implementation will touch, the project stage, the [proportionality block](../references/proportionate-caution.md#proportionality-block); wait. On the go, write the design sign-off line ([implement → Gate Check](implement.md#gate-check-plan---code)). Skipped only under `Autonomy: full`. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
 
 ## Structure
 
@@ -192,7 +192,7 @@ When a code change restructures modules, files, or internal organization **witho
    - List file moves, renames, and structural changes
    - Reference which existing plan phases are affected
    - Name each output of the refactored code that no covering test asserts; each gets a golden (references/test-economy.md → Golden capture)
-   - Design sign-off: present the Refactor phase, the project stage and the proportionality block, and wait for the developer's go (SKILL.md → Developer Checkpoints)
+   - Design sign-off: present the Refactor phase, the project stage and the proportionality block, and wait for the developer's go (SKILL.md → Developer Checkpoints); on the go, write the design sign-off line (phases/implement.md → Gate Check (Plan -> Code))
 3. Capture the goldens from the old code before the first edit; implement the refactoring; update file paths in other phases of the plan
 4. Run the task's tests that cover the refactored code (references/test-economy.md → When to run; gates around the run: phases/testing.md → Gate Check (Code -> Test), Gate Check (Test -> Review)) — all must pass without modification — and the goldens, each matching under its comparison policy; wider breadth belongs to Verify; after the last code edit, run once the checks the fast variant turned off (lint, static analysis) on the touched modules (references/run-economy.md → Fast variant); then the docs sync (phases/propagate.md → Docs sync at task end) — concept and spec skipped (step 7), the plan and the service files follow the change (a moved module may change the layers of docs/_framework.md), without asking
 5. Review (clean-context, phases/review.md) → Verify when its Activation Condition holds (phases/verify.md → Activation Condition); otherwise record the skip as `unobserved` with its reason

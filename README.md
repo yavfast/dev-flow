@@ -255,7 +255,7 @@ The conditions in full: [`references/verification-economy.md`](references/verifi
 
 ### Delivery Focus
 
-Work that is not needed now delays the work that is: a threat model for a product that does not run yet, a test for a case nobody has met, a third review round over a detail that changes nothing. Each task records the project **stage** — `prototype`, `working`, `production` — inferred from facts and shown at the design sign-off. Before an item enters a plan or the work, the agent asks whether the task's goal needs it at that stage; if not, it records the item once with a stage trigger ("before the first external exposure") instead of building it. Tests cover the main use cases and complex logic; an exotic case waits for a real incident. The agent also watches its own process — a third review round, a repeated check, rework, a check bigger than the change, a long search, a tool output cut short, missing access — names the cause and corrects it; a subagent ends its report with a `Friction:` line ([A delegate's run](references/delivery-focus.md#a-delegates-run)), so its struggles reach the initiator's lessons.
+Work that is not needed now delays the work that is: a threat model for a product that does not run yet, a test for a case nobody has met, a third review round over a detail that changes nothing. Each task records the project **stage** — `prototype`, `working`, `production` — inferred from facts and shown at the design sign-off. Before an item enters a plan or the work, the agent asks whether the task's goal needs it at that stage; if not, it records the item once with a stage trigger ("before the first external exposure") instead of building it. Tests cover the main use cases and complex logic; an exotic case waits for a real incident. The agent also watches its own process — a third review round, a repeated check, rework, a check bigger than the change, a long search, a returned result cut short, facts gathered over more rounds than needed, missing access — names the cause and corrects it; a subagent ends its report with a `Friction:` line ([A delegate's run](references/delivery-focus.md#a-delegates-run)), so its struggles reach the initiator's lessons.
 
 Stages, the needed-now check and the delay watch: [`references/delivery-focus.md`](references/delivery-focus.md).
 
@@ -264,6 +264,12 @@ Stages, the needed-now check and the delay watch: [`references/delivery-focus.md
 A test run on code that has not changed repeats a known answer; a full project build after a change in one module answers a question nobody asked. Each build or test run writes a **run record** — command, inputs, the working-tree snapshot, exit code, duration, log — and a run with nothing changed in its reach since a passing record is not repeated: gates, sign-offs, `confirm` rounds and a subagent's claim read the record instead. A build takes the narrowest scope that answers its question (type-check, module, debug app) and a fast variant without shrinking, obfuscation, signing or lint; lint runs after the last code edit, before the review, and the full or release build runs once in verify, only when the diff touches what it changes or you ask. The project's commands per module, with measured durations, live in a **run map** — a project skill — and the agent turns on local speed switches (build cache, parallelism) without asking. A wide or slow run is a delay signal: it becomes a run-map line, a project tool, or an `improvement` proposal for the developer, with its measured cost.
 
 Records, build scope, fast variant, run map and local switches: [`references/run-economy.md`](references/run-economy.md).
+
+### Round-Trip Economy
+
+Every model round-trip re-reads the conversation, so dev-flow counts cost in round-trips per decision and in the volume they bring back, not in tool calls: the facts of one decision are gathered in one round and filtered at the source — one scan that returns a summary instead of many reads — in the classic tool mode and in a code mode alike: [`references/round-trip-economy.md`](references/round-trip-economy.md).
+
+The skill ships `tools/` — an index and the cards of two gather tools, `phase-start` and `gate-facts`, each card carrying its acceptance samples and the recipe of the small tree they run on; no code, no sample files. A project writes its own realization from a card, in a program its machine has, the first time a phase start or a gate check needs one; until then and whenever the tool is missing, untrusted or failing, the items are gathered by hand: [`references/project-tools.md`](references/project-tools.md#seeding-from-shipped-cards).
 
 ### Proportionate Caution
 
@@ -401,12 +407,12 @@ your-project/
     │   ├── _index.yaml
     │   └── {domain}/
     │       └── {skill}.md
-    ├── tools/                      # Project tools: header contract, samples, card, binding written by audit (+ usage/) + run-privileged
+    ├── tools/                      # Project tools: header contract, samples, card, binding written by audit (+ usage/) + run-privileged; phase-start, gate-facts seeded from the skill's shipped cards
     │   ├── _index.yaml             # Tool router — derived from the cards
     │   ├── samples/{tool}/         # Acceptance samples (samples.yaml + material)
     │   ├── cards/                  # Tool cards — contract copy, state, binding
     │   ├── usage/                  # Evidence state, run statistics, recent failures per tool
-    │   └── prev/                   # Last bound realization while an adaptation awaits audit
+    │   └── prev/                   # Realization an Adapt fix/extend or a Seed reseed/retry replaced, kept until audit binds the tool
     ├── roles/                      # Project role overlays & specialists (optional)
     │   └── _index.yaml
     ├── evidence/                   # Intervention ledger (absent → reconcile no-op)
@@ -431,6 +437,7 @@ dev-flow/
 ├── roles/          # AI-DSL subagent role definitions
 ├── templates/      # Document templates — concept, spec, plan, epic, spike, framework map, context files
 ├── references/     # Cross-cutting procedures and conventions
+├── tools/          # Shipped index and cards of the gather tools, samples inline — no code
 └── examples/       # End-to-end walkthrough
 ```
 

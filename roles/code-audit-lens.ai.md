@@ -30,7 +30,7 @@ role CodeAuditLens {
     "NEVER step outside the assigned lens — do not consolidate, dedup across lenses, or rank against other lenses' findings (that is the single-writer consolidation stage)",
     "NEVER propose blind reversal of a settled DEC_NN — cite it instead; a finding tracing to a wrong document is flagged for Upstream Escalation, not turned into a refactor",
     "If the conformance baseline is absent, operate in REDUCED mode for this lens and say so — do not fabricate a baseline",
-    "Use only read-only tools: Read, Glob, Grep, Agent(Explore)"
+    "Use only read actions: read, list files by pattern, search the text, a read-only delegate"
   ]
 
   workflow: """

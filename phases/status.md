@@ -87,8 +87,8 @@ A task file is **shared** between multiple AI contributors. Each contributor app
 
 | Region of the file | Who edits it | Rule |
 |--------------------|--------------|------|
-| Header (Status, Last updated, Contributors) | Any contributor | Targeted Edit on the specific field; re-read before write |
-| Current Work Item | Any contributor (the `Pipeline phase` and `Role style` rows as the phase or the style changes; otherwise rare changes) | Targeted Edit on a row; re-read before write |
+| Header (Status, Last updated, Contributors) | Any contributor | Targeted edit of the specific field; re-read before write |
+| Current Work Item | Any contributor (the `Pipeline phase` and `Role style` rows as the phase or the style changes; otherwise rare changes) | Targeted edit of a row; re-read before write |
 | Description | Any contributor | **Append-only** paragraphs, each signed `— <agent-id>`. Never rewrite others' paragraphs |
 | Subtask blocks | The block's `Author` only | The author is the sole editor of their block |
 | Coordination Notes | Any contributor | Append-only entries, each prefixed `[agent-id]` |
@@ -230,14 +230,14 @@ Steps 1–5 carry out item 1 of the [Phase start checklist](../SKILL.md#phase-st
    - New → write `tasks/task_<ID>.md` from the [task template](../templates/task_context.md). Add yourself to `Contributors`. Fill `## Intent` (goal / target state / expected result — [Task Intent](../references/task-intent.md)), the `Stage` row — inferred from facts ([Delivery Focus → Project stage](../references/delivery-focus.md#project-stage)) — and the header's `Autonomy` field — `full — "<quote>"` only when the request itself orders it, otherwise `checkpoints` ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)). Add one `### Subtask:` block with you as `Author` and `Status: in-progress`; write its `Next` item in the form of [After completing a step](#after-completing-a-step). Set `Last updated` to now.
    - Existing → read the file. Then:
      - If your `<agent-id>` is already in `Contributors` and you have a Subtask block → resume it.
-     - If you are not yet a contributor → add yourself to `Contributors` (targeted Edit on the header), append a new `### Subtask:` block at the end of the Subtasks section, and add a Coordination Notes entry like `HH:MM [your-id] — joined, starting on <goal>`.
-3. **Update the dashboard.** Use `Edit` (not `Write`) on `active_context.md`:
+     - If you are not yet a contributor → add yourself to `Contributors` (targeted edit of the header), append a new `### Subtask:` block at the end of the Subtasks section, and add a Coordination Notes entry like `HH:MM [your-id] — joined, starting on <goal>`.
+3. **Update the dashboard.** Make a targeted edit of `active_context.md`, never a rewrite of the file:
    - `active_context.md` does not exist → create it from the [template](../templates/active_context.md), then offer the [project pointer](#project-pointer) — the main agent only; a subagent relays the need.
    - If your task's row exists → update Phase / Status / Contributors / Updated.
    - If the row is missing (new task) → insert a new row in the Active Tasks table.
-4. **Update the catalog** (`tasks/_index.md`) the same way: targeted `Edit`, single row.
-5. **New task only — run the [upstream look](#upstream-look).**
-6. **Set the role style** — the main agent only: [select](../references/role-styles.md#selecting-the-style) the style of the starting phase, [declare](../references/role-styles.md#declaring-the-style) it, and write the `Role style` row together with the `Pipeline phase` row (a new task: select before step 2, so its Write fills both).
+4. **Update the catalog** (`tasks/_index.md`) the same way: targeted edit, single row.
+5. **New task only — run the [upstream look](#upstream-look).** Its line may come from the `upstream` fact of the `phase-start` run ([Round-Trip Economy → Gather tools](../references/round-trip-economy.md#gather-tools)).
+6. **Set the role style** — the main agent only: [select](../references/role-styles.md#selecting-the-style) the style of the starting phase, [declare](../references/role-styles.md#declaring-the-style) it, and write the `Role style` row together with the `Pipeline phase` row (a new task: select before step 2, so the write that creates it fills both).
 
 ### Upstream look
 
@@ -255,14 +255,14 @@ The look runs once per new task; a continuation or a [resume](#resume--re-enter-
 ### After completing a step
 
 1. **In your own Subtask block:** check off the completed item in Progress, set the `Next` item, append a one-line entry to your block's Activity list. `Next` form: `- [ ] **Next:** <step> — <phase file, relative to the skill root> § <section heading>`; a step that belongs to no phase (waiting for the developer) → `- [ ] **Next:** <what is awaited>`. An `in-progress` Subtask block has exactly one `Next` item; a `done` task has none.
-2. **In the task header:** targeted Edit on `Last updated`.
+2. **In the task header:** targeted edit of `Last updated`.
 3. **Do not touch** the dashboard or catalog yet — step-level updates only live in the task file.
 
 ### After completing a phase
 
 1. **In your own Subtask block:** update Status (`review-pending` / `done`), set final Activity entry.
-2. **In the task header:** targeted Edit on `Status` (use the most active subtask's status, or "in-progress" if any subtask is still running; never `done` — [On task completion](#on-task-completion) writes it).
-3. **In the dashboard:** targeted `Edit` of your task's row — update Phase, Status, Updated.
+2. **In the task header:** targeted edit of `Status` (use the most active subtask's status, or "in-progress" if any subtask is still running; never `done` — [On task completion](#on-task-completion) writes it).
+3. **In the dashboard:** targeted edit of your task's row — update Phase, Status, Updated.
 4. **Append a Shared Activity Log entry** in the task file: `HH:MM [your-id] — subtask "<goal>" → <status>`.
 
 ### On task completion
@@ -274,7 +274,7 @@ The task's last commit is the one after which no step of the task remains: every
 1. **Moment.** The developer's yes at the sign-off of the task's last commit (or `Autonomy: full`), before `git commit`. A declined sign-off writes nothing. A route with no commit (`research`, `ask`, `adopt`, a project without git) → when the work is done.
 2. **Write the closure:**
    - **task file** — your Subtask block: `Status: done`, Progress checked off, no `Next` item; task-level `Status: done`; header `Last updated`; the final Shared Activity Log entry;
-   - **dashboard** — targeted `Edit`: move the task's row from "Active Tasks" to "Recently Completed". If that list now exceeds 5 entries, move the oldest into `session_history/session_YYYY-MM-DD.md` and remove the row from the dashboard;
+   - **dashboard** — targeted edit: move the task's row from "Active Tasks" to "Recently Completed". If that list now exceeds 5 entries, move the oldest into `session_history/session_YYYY-MM-DD.md` and remove the row from the dashboard;
    - **catalog** — the same move, from Active to Recently Completed;
    - **outcome entry** — when the task's `## Intent` carries an Outcome check line; refresh the dashboard's outcome-checks line ([Outcome check](../references/task-intent.md#outcome-check)).
 3. **Stage** the closure files git tracks, with the task's changes. Git ignores them → nothing to stage.
@@ -310,7 +310,7 @@ This project is run through the dev-flow skill. Before work on code or documents
 
 ### Targeted-edit safety
 
-Before any `Edit` on `active_context.md`, `tasks/_index.md`, or shared sections of a task file:
+Before any edit of `active_context.md`, `tasks/_index.md`, or shared sections of a task file:
 1. **Re-read the file** (always, even if you read it a minute ago).
 2. Locate your row / your block / your entry by its unique key (Task ID for index rows; Author tag for Subtask blocks; timestamp for log entries).
 3. Apply the targeted edit (insert / update / remove your own content).
@@ -356,7 +356,7 @@ The task file must answer *what / where / why / next* on its own. Walk these sev
 
 | # | Element | Where | Satisfied when | Repair |
 |---|---------|-------|----------------|--------|
-| R1 | Current work item | `## Current Work Item` | Document, pipeline phase, and traceable ID match what is actually in progress | Targeted Edit on the row |
+| R1 | Current work item | `## Current Work Item` | Document, pipeline phase, and traceable ID match what is actually in progress | Targeted edit of the row |
 | R2 | Intent | `## Intent` | Goal, target state, expected result present — or the task is a trivial route that legitimately has none | Fill from the request wording ([Task Intent](../references/task-intent.md)) |
 | R3 | Next action | your Subtask `Progress` | Exactly one unchecked item is marked `**Next:**` and reads as an **action**, not a topic | Rewrite the item as an action |
 | R4 | Blockers | `## Blocking Issues` | Every live blocker recorded; every resolved one marked resolved | Add or resolve your own entries |

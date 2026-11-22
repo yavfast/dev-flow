@@ -118,7 +118,7 @@ For each task, compare its recorded header `Status` against ground truth:
 
 Then:
 
-- If reality is clearly ahead of the header (committed / closed but header lags) → update the header `Status` via a targeted Edit, refresh `Last updated`, and drop a `[your-id]` Coordination Note recording what evidence drove the change. Do **not** touch contributor Subtask blocks.
+- If reality is clearly ahead of the header (committed / closed but header lags) → update the header `Status` by a targeted edit, refresh `Last updated`, and drop a `[your-id]` Coordination Note recording what evidence drove the change. Do **not** touch contributor Subtask blocks.
 - If the header says `done` but the task's files are uncommitted and no commit carries its ID → **flag in the report**, change nothing.
 - If reality and header disagree in a way evidence cannot settle → **flag in the report**, change nothing.
 - If a task references a document or traceable ID that no longer exists → flag as an orphan for the report; consider it for archival in Step 3 only if its work is demonstrably finished.
@@ -248,12 +248,12 @@ Report-only; never sanction, narrow, suspend, or revoke a channel ([Access Chann
 The one place where trust in a project tool is established; `/dev-flow tool verify <names>` runs this same step for named tools. The procedure — the due set, running the samples in a clean environment, the independent review, the binding — lives in [Project Tools → Verification in audit](../references/project-tools.md#verification-in-audit); this step runs it.
 
 1. **Router ↔ disk** — every `_index.yaml` entry has its realization (except a `retired` one) and, for `regime: contract`, its card; every realization, card and samples directory has an entry. A gap is a report row, never a deletion.
-2. **Contract tools** — for each `regime: contract` tool not `retired`, compute what is due; verify only that (Verification Economy). Full verification: validate the contract and manifest, run every sample, spawn the independent tool review (clean-context subagent, reviewer role tool-review mode — never in the auditor's own context), then write the card copy, the binding and `state: active`, or `state: failing` with the reason. New environment: run the samples here and append the environment, or report a `port` candidate.
+2. **Contract tools** — first, once per entry of the skill's shipped index, the seeding rows of [Project Tools → Verification in audit](../references/project-tools.md#verification-in-audit): `not seeded`, `shadowed by a project tool`, a `reseed` of an older seeded version, or a `retry` of a failed seed or of a seeded tool whose realization is missing — a `reseed` or `retry` by the Seed delegate ([Seeding from shipped cards](../references/project-tools.md#seeding-from-shipped-cards)), then the full verification. Then, for each `regime: contract` tool not `retired`, compute what is due; verify only that (Verification Economy). Full verification: validate the contract and manifest, run every sample, spawn the independent tool review (clean-context subagent, reviewer role tool-review mode — never in the auditor's own context), then write the card copy, the binding and `state: active`, or `state: failing` with the reason. New environment: run the samples here and append the environment, or report a `port` candidate.
 3. **Legacy tools** (`regime: harvested`) — run the self-test on the `good` and `bad` samples as before: a missing sample, a non-clean `good`, a missed `expect` on `bad`, or a project tree changed by the run is a finding; propose a header contract through Adapt.
 4. **Runner** (`regime: developer-word`) — not run, not reviewed; reported as skipped.
 5. **Use** — reconcile the ledger entries with `owner_kind: tool` whose trigger is due (one verdict each, as in Step 6, with each entry's bypasses read as `recurred` observations — only a `broken` bypass can give `regressed`, any other at most `unchanged` ([Evidence Discipline](../references/evidence-discipline.md#consumer-3--the-intervention-ledger))); from the usage files and the ledger report retire candidates (no `exercised` in the retention window, ~30 days), recent failures per tool, bypass reasons per tool. Proposals only; a retirement goes through Adapt `retire` and its independent review.
 
-In `tools/` audit writes only cards (with their bindings) and the router, and deletes a `prev/` copy once its tool is bound; it never edits, moves or deletes a realization or a sample. After the per-tool rows, rebuild the router from the cards ([Project Tools → Card, binding, router, usage file](../references/project-tools.md#card-binding-router-usage-file)) — every card write is followed by a rebuild. Under `--dry-run` no tool runs and nothing is written: each due action is listed as `unobserved`.
+In `tools/` audit writes only cards (with their bindings) and the router, and deletes a `prev/` copy once its tool is bound; it never edits, moves or deletes a realization or a sample — a `reseed` or `retry` is the Seed delegate's write, not audit's. After the per-tool rows, rebuild the router from the cards ([Project Tools → Card, binding, router, usage file](../references/project-tools.md#card-binding-router-usage-file)) — every card write is followed by a rebuild. Under `--dry-run` no tool runs and nothing is written: each due action is listed as `unobserved`.
 
 ### Step 7h — Prune trivial agent tests (scope `tests` / under `all`)
 
@@ -365,7 +365,7 @@ Use this template:
    • Cache: <a> files without index entry / <b> entries with missing files (cannot invent `source`)
    • Cache: <file> expired (<valid_until>), source changed or uncheckable — refresh belongs to its update task
    • Tests: <files> restored — remaining tests failed after pruning
-   • Tools: <name> <state before> → <state after> — <action: none | full | new-environment | failing> — <reason>
+   • Tools: <name> <state before> → <state after> — <action: none | full | new-environment | failing | reseed | retry> — <reason>
    • Tools: <name> without file / file <name> without entry / card without entry (never deleted)
    • Tools (legacy `harvested`): self-test fails (<good not clean | bad missed expect | sample missing>) — propose a contract via Adapt
    • Tools: retire candidates (no `exercised` in the retention window) · recent failures · bypass reasons per tool

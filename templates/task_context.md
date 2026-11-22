@@ -49,6 +49,7 @@ A subtask is a thread of work claimed by one contributor. To join this task, add
 
 **Progress:**
 - [x] Completed step
+<!-- on the developer's go at the design sign-off: - [x] Design sign-off — {each developer decision with its answer}; {what was approved} -->
 - [ ] **Next:** {what to do next — specific and actionable} — {phase file, e.g. phases/implement.md} § {section heading}
 - [ ] Remaining step
 

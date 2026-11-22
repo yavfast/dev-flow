@@ -149,7 +149,7 @@ Role style: <name> — <phase>, <source>[ — <reason, or the candidate not take
 
 Written when the style of the starting phase differs from the style of the task's previous styled phase, when it is the task's first styled phase, and when the developer changed it — not when the style repeats. Under `delegated` it names the candidate not taken.
 
-**Task-file row** — in `## Current Work Item`, written by the main agent together with the `Pipeline phase` row (in the Write that creates a new task file, in one targeted Edit on an existing one); a subagent never writes it:
+**Task-file row** — in `## Current Work Item`, written by the main agent together with the `Pipeline phase` row (in the write that creates a new task file, in one targeted edit of an existing one); a subagent never writes it:
 
 ```
 | **Role style** | `<name>` — <source>[; pinned: <pin>, <pin>…] |

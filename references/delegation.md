@@ -32,7 +32,7 @@ Handing these off hands off the focus itself — there's nothing left to protect
 
 ## The habit that makes it pay off
 
-A delegated subagent returns the **conclusion, not the dump**: a verdict plus what's actionable, with the full log written to a file and referenced by path — under the project workspace `/tmp/{project-slug}/` with a timestamped name, per the [Resource Cache](cache.md) workspace discipline. In this focus shape, anything durable among the artifacts is promoted to `.dev_flow/cache/` by the calling agent — the helper only stages. (A task-delegated subagent persists per the phase protocol itself; see the [subtask phase](../phases/subtask.md).)
+A delegated subagent returns the **conclusion, not the dump**: a verdict plus what's actionable, with the full log written to a file and referenced by path — under the project workspace `/tmp/{project-slug}/` with a timestamped name, per the [Resource Cache](cache.md) workspace discipline. Filtering at the source is the general case: one scan that returns a summary instead of the raw material ([Round-Trip Economy](round-trip-economy.md)). In this focus shape, anything durable among the artifacts is promoted to `.dev_flow/cache/` by the calling agent — the helper only stages. (A task-delegated subagent persists per the phase protocol itself; see the [subtask phase](../phases/subtask.md).)
 
 When a delegated conclusion is **load-bearing** — it will drive a code change, block a fix, or land in a document — spot-check the *specific* claim against primary evidence before acting: open the one file the verdict turns on, re-derive the one number. That is targeted, not a re-read of the dump, and it applies again at every **nested** hop.
 
@@ -110,8 +110,9 @@ The spawning mechanics live in the [Subtask phase](../phases/subtask.md): formul
 
 ```
 End your report with `Friction:` — one item per case, with its cause: a file or fact you
-found only by the third search, or not at all; a tool output the harness cut or saved
-aside; information behind access you did not have; a fact this brief should have carried.
+found only by the third search, or not at all; a returned result the harness cut or saved
+aside; a decision whose facts took more rounds than their dependencies needed; information
+behind access you did not have; a fact this brief should have carried.
 None → `Friction: none`.
 ```
 

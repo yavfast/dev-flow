@@ -20,7 +20,7 @@ And a direction, defaulting to both:
 
 1. **Resolve the start node** to one or more traceable IDs.
 2. **Doc edges, both directions.** From the node's document: `Depends on` / `Used by` metadata, the cross-type fields (`Concept:` / `Specification:` / `Plan:`), and in-body section references (`Implements: [C_XXX_NN]`, `Uses [SP_YYY_NN_NN]`). Walk transitively; record depth.
-3. **Code bindings.** Grep the codebase for the affected IDs (the `[C_XXX`, `[SP_XXX`, `[PL_XXX` comment forms) — collect file:line per ID. Include test files; they bind through the same IDs.
+3. **Code bindings.** Search the codebase text for the affected IDs (the `[C_XXX`, `[SP_XXX`, `[PL_XXX` comment forms) — collect file:line per ID. Include test files; they bind through the same IDs.
 4. **Active work.** Scan `.dev_flow/active_context.md` (with `tasks/_index.md` as the cheap first pass), then the matching task files' Current Work Item / Relevant Context for the affected IDs — an in-flight task inside the radius is a coordination risk, not just another doc edit.
 5. **Asymmetries are findings.** A depends on B but B's `Used by` misses A; an ID in code with no defining document; a dependency on a `deprecated` document — collect these as metadata-drift findings. Do **not** fix them mid-walk; route them to [propagate](../phases/propagate.md).
 
@@ -49,7 +49,7 @@ The counts feed the consuming phase's thresholds (propagate's ">3 documents" bou
 
 The code-altitude walk. Run it when a code change alters a symbol's signature, return value, or behaviour.
 
-1. Grep every caller and reference of each such symbol: definition search plus a content grep of its name.
+1. Search for every caller and reference of each such symbol: definition search plus a content grep of its name.
 2. Add to the list the tests, fixtures, config, and exports that bind to it.
 3. Output the **reach list** — every site the change must reach, or leaves untouched on purpose with the reason.
 
