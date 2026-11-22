@@ -14,7 +14,7 @@
 - [Interview Mode for Design Decisions](#interview-mode-for-design-decisions) — surface material forks as interviews; open decisions vs banned deferrals; forecast check
 - [Banned Phrases](#banned-phrases) — table of deferral phrases ("temporarily", "for now", "TBD", …) with what to write instead
 - [Gate Check (Concept -> Specification)](#gate-check-concept---specification) — the criteria a concept meets before its specification starts
-- [Structure](#structure) — points at `templates/concept.md` for the concept file structure
+- [Structure](#structure) — points at `templates/concept.md` for the concept file structure; the new file's row in `docs/_index.md`, the index created when absent
 - [Spike / Exploration (Optional)](#spike--exploration-optional) — when to run a research spike before or during authoring and how to reference it
 - [Concept Granularity](#concept-granularity) — when to split, when to keep together, rule of thumb; size thresholds from Docs Scaling
 - [Epic / Feature Group](#epic--feature-group) — create an `*.epic.md` when 3+ related concepts have ordering dependencies
@@ -135,6 +135,8 @@ Before the specification starts, verify:
 
 File structure: [templates/concept.md](../templates/concept.md).
 
+**Index.** The step that creates the file adds its row to `docs/_index.md`, without asking the developer; no index yet and `docs/` crossed the threshold → create the index from the files on disk ([Docs Scaling → Index router](../references/docs-scaling.md#index-router)).
+
 ## Spike / Exploration (Optional)
 
 A **spike** is a time-boxed exploration that feeds the concept, executed by the **[research phase](research.md)** (`/dev-flow research`, alias `spike`).
@@ -178,4 +180,4 @@ Ask: "Can someone work on part A without understanding part B?" If yes — split
 
 ## Epic / Feature Group
 
-When a large feature requires 3+ related concepts with ordering dependencies, create an epic document (`*.epic.md`) to coordinate them. See [epic template](../templates/epic.md) for the structure.
+When a large feature requires 3+ related concepts with ordering dependencies, create an epic document (`*.epic.md`) to coordinate them. See [epic template](../templates/epic.md) for the structure. The epic joins `docs/_index.md` as the [Index](#structure) paragraph says.

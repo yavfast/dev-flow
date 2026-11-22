@@ -43,6 +43,7 @@ The single source of numeric thresholds in this skill. Other files name a consta
 | `unit_body_max` | 400 words | words of a knowledge unit's body, heading to next h2 |
 | `digest_min` | 5 units | h2 units in a knowledge file above which a digest is required |
 | `activation_budget` | 20 units | items in one relevant set at a knowledge gate; per phase in the audit overload probe |
+| `docs_index_min` | 5 documents | files in `docs/` above which `_index.md` is kept (the threshold of the [Index router](#index-router)) and the docs sync creates `_framework.md` ([propagate → Framework map](../phases/propagate.md#framework-map)) |
 | `consolidation_min` | 5 rules | rules of one category sharing an effective selector; above it audit reports a `skill-candidate` cluster |
 | `stale_after` | 3 months | age of a document's `Updated` date above which it is treated as stale (review, plan staleness, removal candidacy) |
 | `phase_stalled_after` | 2 months | age of a plan phase held at `[IN PROGRESS]` above which it is reassessed as abandoned |

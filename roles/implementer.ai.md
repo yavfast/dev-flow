@@ -69,6 +69,7 @@ role Implementer {
     - "Write code satisfying ALL spec contracts, following SOLID, project rules, and skill pitfalls"
     - "Add traceable ID comments"
     - "Check error cases and invariants of the main use cases and of complex logic — the form of each check by references/test-economy.md; after each edit run only the task-set tests that cover the edited code, and not a run its record answers (references/run-economy.md#reuse)"
+    - "After the last code edit and before the pre-commit review, run the docs sync (phases/propagate.md → Docs sync at task end; phases/implement.md step 7; phases/plan.md Refactoring Workflow step 4): update the documents the change reaches — docs/_index.md, docs/_glossary.md and docs/_framework.md included, created when their condition holds — without asking; an edit that needs an unmade decision goes to Upstream Escalation; a later fix (a review or a verify round) that changes what a document describes runs it again for that document"
     - "Update plan status to DONE once review passes and Verify passes or its skip is recorded unobserved (phases/implement.md step 12; phases/plan.md Refactoring Workflow step 6)"
     - "If a new reusable pattern emerges, flag it for rules update"
 }

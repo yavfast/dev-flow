@@ -11,7 +11,7 @@
 - [Interview Mode in Fix](#interview-mode-in-fix) — Root-cause and fix-strategy forks, sanctioned stop-gap, where decisions are recorded, advisory checks, spotted defects
 - [Rule Detection](#rule-detection) — Trigger words per language, severity mapping (must/should/prefer), examples, merge into an existing rule, no duplicates
 - [When NOT to Use Fix](#when-not-to-use-fix) — Routes to the full pipeline: new feature, contract/data-structure change, architectural change
-- [Relation to Other Phases](#relation-to-other-phases) — Step 5 propagate trigger, rule suggestion, task-file/dashboard touch rule and fresh task file for a standalone fix
+- [Relation to Other Phases](#relation-to-other-phases) — Step 5 docs sync, rule suggestion, task-file/dashboard touch rule and fresh task file for a standalone fix
 
 ## Purpose
 
@@ -107,15 +107,16 @@ Verify runs on **every** fix — including the fast path that skipped Diagnosis.
 
 ### Step 5: Check documentation impact
 
-After the fix is verified, check whether the code changes require updates to related documentation artifacts:
+After the fix is verified and before the pre-commit review, run the [docs sync](propagate.md#docs-sync-at-task-end) over the fix's change — every needed update is applied now, without asking, never flagged for the developer to decide:
 
 1. **Specifications** — does the fix change behavior described in any `*.sp.md`? (e.g., different error handling, changed contract, new edge case).
 2. **Concepts** — does the fix affect architectural assumptions in any `*.concept.md`? (rare for bug fixes, but possible if the root cause reveals a design flaw).
 3. **Plans** — does the fix invalidate or complete tasks in any `*.plan.md`?
-4. **Tests** — do existing tests need updating? A new permanent test needs a keep reason and a `Keep-Test` trailer ([Test Economy](../references/test-economy.md#keep-reasons)).
-5. **Rules** — does the fix expose a missing rule? (already covered in Step 3 Rule Detection).
+4. **Service files** — `docs/_index.md`, `docs/_glossary.md`, `docs/_framework.md`: created or updated by the sync's items 4–6.
+5. **Tests** — do existing tests need updating? A new permanent test needs a keep reason and a `Keep-Test` trailer ([Test Economy](../references/test-economy.md#keep-reasons)).
+6. **Rules** — does the fix expose a missing rule? (already covered in Step 3 Rule Detection).
 
-If any updates are needed, either apply them immediately (for small changes) or flag them explicitly in the result report for the user to decide.
+Add the sync's `Docs sync:` line to the result report.
 
 When root-cause analysis shows the **document itself is defective** — the spec is ambiguous or contradicts reality, not merely lagging behind the fix — do not patch it silently as "impact": follow [Upstream Escalation](../references/escalation.md) (surface the correction or fork to the developer, update the owning document, re-pass its gate).
 
@@ -222,6 +223,6 @@ Route to the full pipeline instead when:
 
 | Phase | Relation |
 |-------|----------|
-| [propagate](propagate.md) | Documentation impact is checked in **Step 5**; propagate is triggered when specs or concepts need updating |
+| [propagate](propagate.md) | **Step 5** runs its [docs sync](propagate.md#docs-sync-at-task-end) — the documents the fix reaches, `docs/_framework.md` included, updated without asking |
 | [rule](rule.md) | If the fix reveals an undocumented pattern, suggest adding a rule |
 | [status](status.md) | The fix does **NOT** touch any file under `.dev_flow/tasks/` or the dashboard `active_context.md` unless this agent is already a contributor on the task (it has its own Subtask block there). Running `/dev-flow fix` standalone → create a fresh task file and add yourself as the first contributor |

@@ -10,6 +10,8 @@ role Propagator {
     - "Refresh metadata dates and cross-references"
     - "Assess cascade impact before making changes"
     - "Update document index when adding/removing documents"
+    - "Docs sync at task end (phases/propagate.md → Docs sync at task end): after the last code edit of a task and before the pre-commit review, update the documents the change reaches — concept, spec, plan, docs/_index.md, docs/_glossary.md, docs/_framework.md — without a permission prompt; never leave a needed edit flagged for the developer; an edit that needs an unmade decision goes to Upstream Escalation"
+    - "Framework map (phases/propagate.md → Framework map): no map yet, the task changed code and docs/ holds more documents than docs_index_min (references/docs-scaling.md → Thresholds) → create docs/_framework.md from templates/framework.md, every other top-level area of the source tree under Not mapped yet, Coverage: partial (full when no area is left for that list); the change adds, removes or moves a layer, a core abstraction, an extension point, a shared utility or a convention the map records, or touches an area the map lists under Not mapped yet → update the map's entries for that area and remove the area from that list; the list emptied → Coverage: full; a top-level area the change adds outside the map → map it, or list it under Not mapped yet and set Coverage: partial"
     - "Auto-fix obvious documentation defects without a permission prompt; route an uncertain case to independent review, never to a prompt"
     - "NEVER repair an audit freshness finding by writing a document's Updated: date — that finding is report-only; the date is corrected at the document's next substantive edit"
 
@@ -23,10 +25,13 @@ role Propagator {
     - "Existing concept, spec, plan documents"
     - "docs/_index.md"
     - "docs/_glossary.md"
+    - "docs/_framework.md (when present)"
 
   outputs:
     - "Updated concept/spec/plan files with refreshed metadata"
     - "Updated _index.md if documents were added/removed"
+    - "Created or updated docs/_framework.md"
+    - "The Docs sync: line for the phase report"
     - "Impact assessment report (when cascade > 3 documents)"
 
   rules:

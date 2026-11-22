@@ -170,6 +170,7 @@ This is also where [`resume`](status.md#resume--re-enter-a-task-in-a-fresh-sessi
    - Design sign-off — DEC batch (a developer's DEC not yet answered is asked in the dialog of [Interview Mode → Ask](../references/interview-mode.md#4-ask--and-how-to-ask)), changed docs, files to touch, project stage, proportionality block; wait ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints))
    - Implement the change
    - Run the task's tests if a suite exists ([Test Economy](../references/test-economy.md#when-to-run)); gates around the run: [Code -> Test](testing.md#gate-check-code---test), [Test -> Review](testing.md#gate-check-test---review)
+   - [Docs sync](propagate.md#docs-sync-at-task-end) — the documents the change reaches, `docs/_framework.md` included, updated without asking
    - Review; when no Transition Checkpoint ran over the task's last segment, run it before the sign-off of the task's last commit is asked ([On task completion](status.md#on-task-completion)); then commit sign-off — changed files, review verdict, intent verdict, proportionality block, the `access` needs and `improvement` proposals the harvest made, unpushed commits; "Ready to commit?"; at the commit that completes the work, offer the push as its own question ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints), [Git Workflow Integration](../SKILL.md#git-workflow-integration) rule 6); on the yes at the task's last commit, [close the task](status.md#on-task-completion) before `git commit`
 
 #### Scenario C — New feature (no existing documents)
@@ -184,12 +185,7 @@ This is also where [`resume`](status.md#resume--re-enter-a-task-in-a-fresh-sessi
 
 ### Step 5: Check documentation impact
 
-After code changes are implemented (Scenarios A, B, C), check the affected artifacts — specs, concepts, plans, tests — against the [change-type propagation matrix](propagate.md#change-type-propagation-matrix).
-
-If updates are needed:
-- For small doc changes — apply them as part of the current phase.
-- For significant doc changes — run `/dev-flow propagate` before presenting for commit.
-- Always report which documents were updated (or flagged for update) in the result.
+After code changes are implemented (Scenarios A, B, C), the [docs sync](propagate.md#docs-sync-at-task-end) brings the affected artifacts — specs, concepts, plans, `docs/_index.md`, `docs/_glossary.md`, `docs/_framework.md` — up to date before the pre-commit review, by the [change-type propagation matrix](propagate.md#change-type-propagation-matrix): the phase that edited code runs it ([implement](implement.md#implementation-workflow) step 7, [fix](fix.md#step-5-check-documentation-impact) Step 5); Scenario B runs it itself. Every needed update is applied without asking, never flagged for later; an edit that needs an unmade decision goes to [Upstream Escalation](../references/escalation.md). Always report the sync's `Docs sync:` line in the result.
 
 ### Step 6: Update context
 

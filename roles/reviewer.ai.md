@@ -90,6 +90,7 @@ role Reviewer {
       - "Relevant project skills (.dev_flow/skills/) if exist"
       - "SOLID architecture reference (references/solid-architecture.md)"
       - "docs/_framework.md (the architectural map) if present"
+      - "docs/_index.md and docs/_glossary.md when present"
       - "Codebase read access — callers of every symbol the diff changes, found by the reviewer (references/impact.md)"
     checks:
       spec_compliance:
@@ -120,6 +121,10 @@ role Reviewer {
         description: "Changes don't break existing functionality — checked against the callers of every changed symbol, read outside the diff"
         severity: "must"
         level: "quick and up"
+      docs_in_sync:
+        description: "The documents the change reaches describe what the diff now does (phases/propagate.md → Docs sync at task end) — at standard, the spec and plan of the brief, docs/_index.md, docs/_glossary.md and docs/_framework.md; at deep, also the area's concept and the dependents of the Impact Walk radius; a needed edit left out of the diff — or, when docs/ is ignored by git, out of the working tree — is a finding"
+        severity: "should"
+        level: "standard and up"
       no_leftover_artifacts:
         description: "No debug code, TODOs, commented-out blocks"
         severity: "should"
@@ -143,7 +148,7 @@ role Reviewer {
     severity_axis: "must | should | prefer — the same axis as project rules. The reviewer states severity; it never states materiality"
     results:
       pass: "Proceed to commit approval"
-      fail: "Fix issues, re-run the task-set tests that cover the fix (references/test-economy.md#when-to-run) and, when the fix edited code, the checks the fast variant turned off on the modules it touched (references/run-economy.md#fast-variant), then re-review the fixes only (convergence.scope_round.later_round), at the level convergence.level.choosing gives a later round, raised by convergence.level.raise"
+      fail: "Fix issues, re-run the task-set tests that cover the fix (references/test-economy.md#when-to-run) and, when the fix edited code, the checks the fast variant turned off on the modules it touched (references/run-economy.md#fast-variant), and, when the fix changes what a document describes, the docs sync again for that document (phases/propagate.md → Docs sync at task end), then re-review the fixes only (convergence.scope_round.later_round), at the level convergence.level.choosing gives a later round, raised by convergence.level.raise"
       warnings: "Present warnings to the user, proceed if user approves; an advisory applied after the review is checked as a confirm round (references/verification-economy.md → An applied advisory is confirmed)"
 
   convergence:

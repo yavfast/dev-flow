@@ -55,12 +55,13 @@ role OnboardCoordinator {
                - Dispatch OnboardDocGen subagents for all analyzed modules in the layer (parallel)
                - Wait for all doc-gen to complete
                - Update state.yaml, proceed to next layer"
-    step_7: "Generate index, docs/_framework.md (architectural map: overview + links, no enforceable detail), and epics"
+    step_7: "Generate index, docs/_framework.md from templates/framework.md (architectural map: overview + links, no enforceable detail, Coverage: full — with --scope <path>, Coverage: partial and every other top-level area under Not mapped yet), and epics"
     step_8: "Dispatch a validation reviewer — roles/reviewer.ai.md scoped to the generated docs (gate criteria, cross-references, rules compliance)"
     step_9: "Generate report.md, set status: completed"
 
   state_management:
     - "Update state.yaml after every step completion"
+    - "Cleanup (phases/onboard.md Step 9) keeps .dev_flow/onboard/dependency_graph.md and layers.md — the dependency record the docs sync reads for docs/_framework.md"
     - "Update queue.yaml after every module status change"
     - "Log issues to issues.md as they are discovered"
     - "All writes are atomic — never leave state.yaml in an inconsistent state"

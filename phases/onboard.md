@@ -192,7 +192,7 @@ For each analyzed module, starting from Layer 0:
 ### Step 7: Generate index, framework map, and epics
 
 1. If the project has more than 5 documented modules, create `docs/_index.md`.
-2. Generate `docs/_framework.md` — the architectural map (core abstractions · layers · extension points · shared utilities · conventions) distilled from the layer analysis: overview + links down to `.dev_flow/rules/` and `.dev_flow/skills/`, no enforceable detail inlined (see [Conventions → File Organization](../references/conventions.md#file-organization)).
+2. Generate `docs/_framework.md` from [templates/framework.md](../templates/framework.md) — the architectural map (core abstractions · layers · extension points · shared utilities · conventions) distilled from the layer analysis, `Coverage: full` — with `--scope <path>`, `Coverage: partial` and every other top-level area of the source tree under `Not mapped yet`: overview + links down to `.dev_flow/rules/` and `.dev_flow/skills/`, no enforceable detail inlined (see [Conventions → File Organization](../references/conventions.md#file-organization)). Later tasks keep it current through the [docs sync](propagate.md#framework-map).
 3. If 3+ closely related concepts form a logical feature group, create an epic.
 4. Update all `Used by` reverse references across all generated documents.
 5. Update `state.yaml`: `step: index_generated`.
@@ -219,7 +219,7 @@ For each analyzed module, starting from Layer 0:
 ### Step 9: Cleanup (optional, after user approval)
 
 After the user reviews and approves the generated documentation:
-1. The `.dev_flow/onboard/` directory can be deleted or archived.
+1. The `.dev_flow/onboard/` directory can be deleted or archived, except `dependency_graph.md` and `layers.md`: they stay as the dependency record the map's layers come from, read by the [docs sync](propagate.md#framework-map) when it creates or updates `docs/_framework.md`.
 2. Generated docs in `docs/` are now part of the dev-flow pipeline.
 
 ## Session Continuity

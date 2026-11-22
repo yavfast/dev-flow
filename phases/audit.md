@@ -16,7 +16,7 @@
 
 ## Purpose
 
-`.dev_flow/` accumulates drift the normal phases never catch: stale dashboard rows, task headers lagging documents and git, verbose closed tasks, duplicate or stale rules/skills. Audit is the periodic **whole-directory sweep** that reconciles every task's recorded state against ground truth, trims the dashboard to what is actually active, compacts and reflects on closed work so its lessons survive while its noise is archived, grooms the `rules/`, `skills/`, and `cache/` catalogues — and reconciles the integrity of the `docs/` set itself (index, statuses, cross-references, orphans, freshness, glossary, duplicated value sets, docs↔code drift) through the `docs` scope — and prunes trivial agent-created tests from the project's test tree through the `tests` scope ([Step 7h](#step-7h--prune-trivial-agent-tests-scope-tests--under-all)). It is the write-heavy cousin of [status](status.md): `status` *reports* drift, `audit` *resolves* it.
+`.dev_flow/` accumulates drift the normal phases never catch: stale dashboard rows, task headers lagging documents and git, verbose closed tasks, duplicate or stale rules/skills. Audit is the periodic **whole-directory sweep** that reconciles every task's recorded state against ground truth, trims the dashboard to what is actually active, compacts and reflects on closed work so its lessons survive while its noise is archived, grooms the `rules/`, `skills/`, and `cache/` catalogues — and reconciles the integrity of the `docs/` set itself (index, statuses, cross-references, orphans, freshness, glossary, duplicated value sets, framework map, docs↔code drift) through the `docs` scope — and prunes trivial agent-created tests from the project's test tree through the `tests` scope ([Step 7h](#step-7h--prune-trivial-agent-tests-scope-tests--under-all)). It is the write-heavy cousin of [status](status.md): `status` *reports* drift, `audit` *resolves* it.
 
 A separate, opt-in **`code` scope** ([Step 9](#step-9--code-scope-the-whole-codebase-audit)) extends the same "reconcile the project to reality" idea to the *source code itself*: it audits the whole codebase through parallel lenses (architecture / SOLID / DRY / security / …), consolidates the findings, and emits a prioritized **refactoring plan** plus a run report — written under `.dev_flow/audit/` with a timestamped name (not into `docs/`) — plus a `docs/_framework.md` map update. Like every other scope it is **non-committing** — it stops at the Plan→Code gate and hands the plan off to the standard pipeline; it never edits source or commits.
 
@@ -28,7 +28,7 @@ Audit is also the **declared home of a corpus-wide comparison**. A sweep with no
 /dev-flow audit [scope] [--dry-run]
 ```
 
-- `scope` (optional) — limit the sweep to one area. One of: `context` (dashboard + task reconciliation + compaction), `tasks` (reconcile + compact task files only), `rules`, `skills`, `cache`, `tools` (verify project tools — samples, independent review, bindings), `docs` (documentation integrity — index · statuses · cross-refs · orphans · freshness · glossary · duplicated sets · drift), `tests` (delete trivial agent-created tests from the project's test tree), `code` (whole-codebase architecture/SOLID/DRY/security audit → refactoring plan), or `all` (default). `all` runs every workspace + `docs` + `tests` scope below; **`code` is opt-in and excluded from `all`** — it is the heavy, periodic scope and is invoked explicitly.
+- `scope` (optional) — limit the sweep to one area. One of: `context` (dashboard + task reconciliation + compaction), `tasks` (reconcile + compact task files only), `rules`, `skills`, `cache`, `tools` (verify project tools — samples, independent review, bindings), `docs` (documentation integrity — index · statuses · cross-refs · orphans · freshness · glossary · duplicated sets · framework map · drift), `tests` (delete trivial agent-created tests from the project's test tree), `code` (whole-codebase architecture/SOLID/DRY/security audit → refactoring plan), or `all` (default). `all` runs every workspace + `docs` + `tests` scope below; **`code` is opt-in and excluded from `all`** — it is the heavy, periodic scope and is invoked explicitly.
 - The `code` scope takes **free-form intent**, not flags: `/dev-flow audit code <description of intent>`. The `--dry-run` flag below applies to the workspace/`docs` scopes; `code` expresses "report only, no hand-off" in its intent text (e.g. "preview plan") — see [Step 9](#step-9--code-scope-the-whole-codebase-audit).
 - `--dry-run` — produce the audit report only; make no changes on disk.
 
@@ -44,7 +44,7 @@ Each scope runs a defined subset of the [procedure](#procedure); `all` runs the 
 | `skills` | 7 | `.dev_flow/skills/` catalogue |
 | `cache` | 7d | `.dev_flow/cache/` index ↔ disk |
 | `tools` | 7g | `.dev_flow/tools/` — verification, independent review and bindings of project tools ([Project Tools](../references/project-tools.md#verification-in-audit)) |
-| `docs` | 7a · 7b · 7c · 7e | `docs/` — glossary, open decisions/backlogs/todos/spikes/outcome checks, docs↔code drift, **index · statuses · cross-refs · orphans · freshness · duplicated sets · scaling** |
+| `docs` | 7a · 7b · 7c · 7e | `docs/` — glossary, open decisions/backlogs/todos/spikes/outcome checks, docs↔code drift, **index · statuses · cross-refs · orphans · freshness · duplicated sets · scaling · framework map** |
 | `tests` | 7h | the project's test tree — trivial agent-created tests deleted ([Test Economy](../references/test-economy.md#pruning)) |
 | `all` (default) | 1–8 | everything in the workspace, docs **and** `tests` (**not** `code`) |
 | `code` (opt-in, separate) | 9 | the **whole project codebase** — architecture/SOLID/DRY/security/… via lens fan-out → prioritized refactoring plan + run report (timestamped, in `.dev_flow/audit/`) + `docs/_framework.md` update (read-only; hands off to the pipeline, never commits) |
@@ -61,7 +61,7 @@ Each scope runs a defined subset of the [procedure](#procedure); `all` runs the 
 /dev-flow audit cache            # only groom .dev_flow/cache/
 /dev-flow audit tools            # only verify .dev_flow/tools/ (samples, independent review, bindings)
 /dev-flow audit tests            # only prune trivial agent-created tests
-/dev-flow audit docs             # only check docs/ integrity (index, statuses, refs, orphans, freshness, glossary, duplicated sets, drift)
+/dev-flow audit docs             # only check docs/ integrity (index, statuses, refs, orphans, freshness, glossary, duplicated sets, framework map, drift)
 /dev-flow audit code             # whole-codebase audit → refactoring plan (all base lenses)
 /dev-flow audit code модуль auth, фокус на architecture та DRY   # scoped + lens-focused (free-form)
 /dev-flow audit code focus security                              # security-lens sweep
@@ -228,6 +228,7 @@ Grouped with Steps 7a–7c as the **`docs` scope**. `docs/_index.md` is a **deri
    - **anchor-coverage** — a substantive h2/h3 in a concept/spec/plan carries no `{#ID}` anchor (service sections excluded per the closed list; epics excluded entirely — addressed as a whole `E_XXX`), or an anchor has more than one definition site in the corpus. Report only: missing anchors are added at the section's first substantive edit; a duplicate is a defect for manual resolution.
    - **size-trigger** — word count above `soft_split` → verdict `split-planned` (plan the split at the next substantive edit); above `hard_split`, or h3 density above `h3_density` → verdict `split-required` (split before adding new material). Report with the verdict; the split decision stays with the agent/developer, consumed by do/plan.
    - **freshness-branch** — covered by Step 7e.5 above; one definition of freshness, not two.
+8. **Framework map** — when `docs/_framework.md` exists: each area a concept describes (its Integration Points, `Depends on`) is in the map or under `Not mapped yet`; each link to a concept, `.dev_flow/rules/` or `.dev_flow/skills/` resolves; an area under `Not mapped yet` that a commit changed after the map's `Updated:` is a docs sync the task missed. The path of a link whose target moved is an obvious defect, auto-fixed via [propagate](propagate.md); every other finding is reported — the next [docs sync](propagate.md#framework-map) in that area or the `audit code` scope maps it. No map while the project has code and `docs/` holds more documents than `docs_index_min` ([Docs Scaling → Thresholds](../references/docs-scaling.md#thresholds)) → report `map absent`; the next docs sync creates it.
 
 **Scope exclusion.** `docs/ext_adoption/` is out of scope for 7e.2–7e.5 and 7e.7: adoption documents are advisory, own no traceable ID, carry no pipeline `Status`, and are listed in the «Adoption notes» table, not in `_index.md`'s document tables — flagging them as orphans or status-drift is a false positive. Check only that each pair's internal links resolve, and report an adoption document whose source repository no longer exists at the recorded path. See [External Repo Adoption](../references/repo-adoption.md).
 
@@ -298,7 +299,7 @@ One agent (single writer) merges every lens's Findings into ConsolidatedFindings
 2. Stamp the run once (`ts = YYYYMMDD_HHMMSS`) and emit, **under `.dev_flow/audit/` — not `docs/`**:
    - the plan **`.dev_flow/audit/<scope>_<ts>.plan.md`** (`Status: in-progress`) — each item carries its change-class (`trivial`/`standard`/`architectural`), affected files, rationale, and **links to ≥1 ConsolidatedFinding** (no orphan refactors). See the [refactoring playbook](../references/code-audit.md#refactoring-playbook).
    - the run report **`.dev_flow/audit/code-audit_<ts>.report.md`** — the [Report Structure](#report-structure) block, persisted (conclusions only; links its sibling plan).
-3. Update **`docs/_framework.md`** from the abstraction-candidates — overview + links to the `.dev_flow/rules/`/`.dev_flow/skills/` that hold the detail; **no enforceable detail inlined**. The map stays in `docs/` (loaded as code-touch context).
+3. Update **`docs/_framework.md`** from the abstraction-candidates — created from [templates/framework.md](../templates/framework.md) when absent; `Coverage: full` and `Not mapped yet` emptied only when the parsed `scope` is `whole`, the parsed `mode` is `full` and the cost gate did not narrow the run (Step 9.0); otherwise the areas the run analyzed leave `Not mapped yet` — a map the run creates lists every other top-level area of the source tree there — and `Coverage` follows the list: empty → `full`, otherwise `partial` — overview + links to the `.dev_flow/rules/`/`.dev_flow/skills/` that hold the detail; **no enforceable detail inlined**. The map stays in `docs/` (loaded as code-touch context).
 4. Harvest rules/skills, auto-applied through the structural gate ([Experience Capture](../references/experience-capture.md) — no permission prompt; default `should`, never auto-`must`; would-be `must`/contradictions go to independent review). Route any finding that is really a *wrong document* to [Upstream Escalation](../references/escalation.md), not into the plan.
 5. **Fast-track security:** an **exploitable `must`-severity** `security` finding is surfaced for an immediate [fix](fix.md)/escalation, **not** parked in the backlog. Persist AuditState (`planning`).
 6. **No source change, no commit.** The developer approves the plan at the **Plan→Code gate** — that approval is what authorizes execution.
@@ -331,6 +332,7 @@ Use this template:
    • docs/_glossary.md: resolved <b> stale ambiguities (flags dropped)
    • docs: auto-fixed <n> mechanical statuses (plan all-[DONE] → completed)
    • docs/_index.md: rebuilt (+<a>/−<b> entries, fixed <c> status columns)
+   • docs/_framework.md: fixed <n> moved link paths
    • tests: deleted <n> trivial agent test cases in <m> files (<file> — <case> — trivial: <sign>)
 
 🔁 Reflection harvested (auto-applied; ⚑ = sent to independent review)
@@ -368,6 +370,7 @@ Use this template:
    • Tools (legacy `harvested`): self-test fails (<good not clean | bad missed expect | sample missing>) — propose a contract via Adapt
    • Tools: retire candidates (no `exercised` in the retention window) · recent failures · bypass reasons per tool
    • Docs: orphan <doc> (no spec/plan) / deprecated <doc> still in active Depends on / banned phrase in active <doc>
+   • Docs: _framework.md — area <area> outside the map / dangling link <link> / missed sync in <area> (changed after Updated:) / map absent
    • Rules: duplicate anchor {#<id>} in <file-A>, <file-B> / alias <id> → <moved_to> target missing / category <name> has no applies_to (always-on; hint: <selector>) / skill-candidate: <category> <selector> — <n> rules <id…> (agent's call)
 
 ✔️ Clean — no action: <areas with nothing to do>

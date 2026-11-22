@@ -140,6 +140,7 @@ When in doubt, treat the operation as destructive.
    - Analyze the failure — a code bug, a config issue, an environment problem, or a spec/plan defect? The last one → escalate upstream first, see [Upstream Escalation](../references/escalation.md).
    - Fix the root cause.
    - Run the checks the fast variant turned off on the modules the fix touched ([Run Economy → Fast variant](../references/run-economy.md#fast-variant)).
+   - When the fix changes what a document describes, run the [docs sync](propagate.md#docs-sync-at-task-end) again for that document.
    - Re-run functional tests ([Test phase](testing.md)) on the fix.
    - Re-run code review ([Review phase](review.md)) on the fix.
    - Re-run the failed verification level and all subsequent levels.
@@ -153,6 +154,7 @@ When verification finds an issue that requires a code change:
 Verify fails
   → Fix code
   → Run the checks the fast variant turned off on the modules the fix touched
+  → When the fix changes what a document describes, run the docs sync again for that document
   → Re-run functional tests (unit + mock) on the fix
   → Re-run code review on the fix
   → Re-run verification from the failed level

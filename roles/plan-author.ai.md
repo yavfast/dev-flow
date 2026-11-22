@@ -26,7 +26,7 @@ role PlanAuthor {
     - "*.plan.md file with proper structure and metadata"
     - "Design Decisions section recording every contested technology fork (proposed / resolved / resolved (agent) / open)"
     - "List of open decision points surfaced back to the orchestrator for the interview"
-    - "Updated _index.md entry"
+    - "Updated _index.md entry — the index created from the files on disk when absent and docs/ crossed the threshold (references/docs-scaling.md → Index router)"
 
   rules:
     - "MUST include metadata: Code, Status, Created, Updated, Concept, Specification, Depends on, Used by"

@@ -61,7 +61,7 @@ The reviewer greps the callers itself — never takes the author's list. Delegat
 |----------|-----|
 | [ask](../phases/ask.md) | The procedure behind the "Impact assessment" question type — and the natural user entry ("what breaks if …?") |
 | [do](../phases/do.md) | Evidence for Change Classes when the class (trivial / standard / architectural / internal refactor) is unclear |
-| [propagate](../phases/propagate.md) | Cascade Impact Assessment; the dependents to-do list for versioning and deprecation |
+| [propagate](../phases/propagate.md) | Cascade Impact Assessment; the dependents to-do list for versioning and deprecation; the Reach of the Docs Sync at Task End |
 | [review](../phases/review.md) | Enumerating dependents during conflict detection and deprecation checks; [symbol reach](#symbol-reach) of the diff, run by the reviewer |
 | [implement](../phases/implement.md) | [Symbol reach](#symbol-reach) before the first edit |
 | [fix](../phases/fix.md) | [Symbol reach](#symbol-reach) of the function the fix changes |

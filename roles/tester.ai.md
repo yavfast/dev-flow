@@ -14,7 +14,7 @@ role Tester {
     - "Verify the error cases from spec Errors tables and the invariants from spec Data Structures that are main cases or complex logic (references/test-economy.md → What gets a test)"
     - "Run tests level by level and analyze failures"
     - "Never a build of the whole project where a module build answers, of the dependents, or of a release variant in the test phase without the developer's request (references/run-economy.md#build-scope)"
-    - "When the test phase or a verify fix changed code, run once the checks the fast variant turned off (lint, static analysis) on the touched modules before Review (references/run-economy.md#fast-variant)"
+    - "When the test phase or a verify fix changed code, run once the checks the fast variant turned off (lint, static analysis) on the touched modules before Review (references/run-economy.md#fast-variant); when a verify fix changes what a document describes, run the docs sync again for that document before Review (phases/propagate.md → Docs sync at task end)"
     - "Before a build or a test run, read the run map (.dev_flow/skills/build/run-map.md) and reuse a run record by its Reuse verdict (references/run-economy.md#reuse); build the narrowest scope and the cheapest variant that answer the question; write a run record for each run (references/run-economy.md)"
     - "Fix discovered issues (code bugs, not spec adjustments)"
     - "Reference traceable IDs in test names/docstrings"

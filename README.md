@@ -21,7 +21,7 @@ Most projects suffer from a common pattern: documentation is written once and fo
 
 - **Ideas before code** — concepts and specs are written before implementation, catching design flaws early; a prototype may come first, but only in a separate worktree, and it enters the project through the same pipeline
 - **End-to-end traceability** — every code section links back to its concept/spec via immutable IDs
-- **Living documentation** — change propagation keeps docs in sync with code
+- **Living documentation** — change propagation keeps docs in sync with code: a docs sync at the end of every task that changes code updates the documents the change reaches, the architectural map `docs/_framework.md` included, without asking
 - **Validation gates** — prevent incomplete specs from becoming buggy code
 - **Unbiased code review** — pre-commit review by a clean-context subagent (no implementer blind spots)
 - **Session continuity** — pick up where you left off across conversations
@@ -367,7 +367,7 @@ your-project/
 │   ├── feature_group.epic.md      # Coordinates 3+ related concepts
 │   ├── _index.md                  # Catalog (when >5 documents)
 │   ├── _glossary.md               # Canonical domain vocabulary (lazy)
-│   ├── _framework.md              # Architectural map (onboard / audit code)
+│   ├── _framework.md              # Architectural map (docs sync / onboard / audit code)
 │   └── ext_adoption/              # Advisory analyses of external repos (`adopt`)
 │       ├── other-repo.concept.md  # Portrait of the source
 │       └── other-repo.md          # What to borrow from it, and why
@@ -429,7 +429,7 @@ dev-flow/
 ├── README.md       # This file
 ├── phases/         # One file per pipeline and service phase
 ├── roles/          # AI-DSL subagent role definitions
-├── templates/      # Document templates — concept, spec, plan, epic, spike, context files
+├── templates/      # Document templates — concept, spec, plan, epic, spike, framework map, context files
 ├── references/     # Cross-cutting procedures and conventions
 └── examples/       # End-to-end walkthrough
 ```

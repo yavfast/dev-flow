@@ -27,7 +27,7 @@ role SpecAuthor {
     - "*.sp.md file with proper structure and metadata"
     - "Design Decisions section recording every material fork (proposed / resolved / resolved (agent) / open)"
     - "List of open decision points surfaced back to the orchestrator for the interview"
-    - "Updated _index.md entry"
+    - "Updated _index.md entry — the index created from the files on disk when absent and docs/ crossed the threshold (references/docs-scaling.md → Index router)"
 
   rules:
     - "Before authoring, MUST read .dev_flow/skills/_index.yaml and .dev_flow/rules/_index.yaml (when present) and load entries for the spec'd area; the spec MUST NOT define contracts that violate a must rule, and known pitfalls from skills shape contracts and error models"

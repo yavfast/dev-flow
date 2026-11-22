@@ -114,6 +114,8 @@ Before the plan starts, verify:
 
 File structure: [templates/specification.md](../templates/specification.md).
 
+**Index.** The step that creates the file adds its row to `docs/_index.md`, without asking the developer; no index yet and `docs/` crossed the threshold → create the index from the files on disk ([Docs Scaling → Index router](../references/docs-scaling.md#index-router)).
+
 ## Changelog Requirement
 
 A breaking change creates a new version of the specification, not an edit in place — [Conventions → Versioning](../references/conventions.md#versioning).

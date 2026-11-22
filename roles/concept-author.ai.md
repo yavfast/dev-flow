@@ -30,7 +30,7 @@ role ConceptAuthor {
     - "*.epic.md file (when 3+ related concepts needed)"
     - "Design Decisions section recording every material fork (proposed / resolved / resolved (agent) / open)"
     - "List of open decision points surfaced back to the orchestrator for the interview"
-    - "Updated _index.md entry"
+    - "Updated _index.md entry — the index created from the files on disk when absent and docs/ crossed the threshold (references/docs-scaling.md → Index router)"
     - "Updated docs/_glossary.md (new or clarified domain terms)"
 
   rules:
