@@ -1,6 +1,6 @@
 shipped_card: 1
 name: gate-facts
-version: 1
+version: 2
 contract:
   name: gate-facts
   purpose: Print the mechanical facts behind the criteria of one validation gate, with the working-tree state they were taken on
@@ -14,7 +14,9 @@ contract:
     - {case: review-verify, description: "the last row of the task file's Review Rounds table"}
     - {case: verify-commit, description: "run records and the newest pinned checkpoint of the task file"}
     - {case: stale-runs, description: "run records taken on another tree, and a line that does not parse"}
-    - {case: no-git, description: "a root with no git directory: the tree is none, the other facts print"}
+    - {case: no-git, description: "a root with no git directory: the tree is none, every run record not compared, the other facts print"}
+    - {case: converted-tree, description: "a work tree git stages other than its bytes on disk: a CRLF blob kept under text=auto, an index mode kept under core.fileMode=false, an assume-unchanged entry changed on disk — the tree equals the snapshot"}
+    - {case: filter-driver, description: "a path whose filter attribute names a configured clean or process driver: the tree is not established and the driver never runs"}
   not_for:
     - "judging a criterion"
     - "passing a gate"
@@ -23,7 +25,13 @@ contract:
   limits:
     - "facts hold for the printed tree only"
     - "templates and Banned Phrases tables are read from the skill at run time; a project that changed its own templates is not seen"
-    - "a banned phrase is matched as a whole word, case-insensitively, outside code fences, headings and inline code; a phrase in another script or inflected is not seen"
+    - "a banned phrase is matched as a whole word, case-insensitively, outside fences, headings and inline code; a phrase in another script or inflected is not seen"
+    - "HTML comments are read as text: a heading, a phrase or {s:pin} inside <!-- --> counts"
+    - "a heading is read at the start of a line only: a heading inside a block quote or a list item is text"
+    - "list items are not tracked by the fence rule: a fence opened in a list item and left unclosed there runs on to a closing line or the end of the file"
+    - "a path with a configured filter driver (git-lfs among them), in root or in a checked-out submodule, leaves the tree unestablished — `? filter <driver> (<path>)`, every run record `? no tree`: the gate's tree and run criteria by hand"
+    - "code the interpreter runs at its own start-up (a user site .pth file, a sitecustomize on PYTHONPATH) is outside the realization's reach"
+    - "git runs in the tool's own process group, so a signal to the caller's group reaches it too; a SIGKILL leaves the temporary directory behind"
   inputs:
     - {name: root, type: path, required: true, description: "project root"}
     - {name: skill, type: path, required: true, description: "dev-flow skill root; holds SKILL.md"}
@@ -38,105 +46,201 @@ contract:
     shape: "one fact per line, `<key>: <value>`; the keys of the transition, tree first"
     size_class: small
   behavior: >
-    Exit 2 with `cannot-decide: <reason>` on stderr and nothing on stdout when: root is not a directory
-    (`root is not a directory`); skill holds no SKILL.md (`skill root holds no SKILL.md`); the transition needs a
-    document or a task the call does not give or that does not exist (`<transition> needs --document` /
-    `<transition> needs --task` / `no file <path>`); the skill lacks the template or the Banned Phrases table the
-    transition reads (`skill has no <file>`). Otherwise print the keys of the transition, in this order, and exit 0:
-    concept-spec → tree, sections, contents, dec, banned; spec-plan → tree, sections, contents, dec, banned,
-    rollback; plan-code → tree, sections, dec, verify, signoff; code-test → tree, facts; test-review → tree, runs;
-    review-verify → tree, review; verify-commit → tree, runs, checkpoint.
-    Grammar: `<key>: <value>`; a list value joins its elements with `; `, fields inside an element with ` · `;
-    `—` means none; `? <reason>` means not established. Text taken from a file is copied as found.
+    Exit 2 with `cannot-decide: <reason>` on stderr and nothing on stdout when, checked in this order, the
+    first that holds: root is not a directory (`root is not a directory`); skill holds no SKILL.md (`skill
+    root holds no SKILL.md`); the transition needs a document the call does not give (`<transition> needs
+    --document`) or the path given is no file (`no file <path>`, the path as given); the same for the task
+    (`<transition> needs --task` / `no file <path>`); the skill lacks the template the transition reads
+    (`skill has no <file>`, <file> relative to skill, as `templates/concept.md`); the skill lacks the phase
+    file whose Banned Phrases table the transition reads (`skill has no phases/concept.md`) or that file has
+    no `## Banned Phrases` h2 with a table under it (`skill has no ## Banned Phrases table in
+    phases/concept.md`). An input the transition does not read is not checked; an optional input given with
+    an empty value counts as absent. A call that does not follow the invocation — an unknown option; root,
+    skill or --transition missing; a transition outside the enum — exits 3 with a usage line on stderr and
+    nothing on stdout; any other failure exits 3 with one line on stderr and nothing on stdout — a value
+    UTF-8 cannot carry (a lone surrogate from a JSON escape in a run record) and SIGTERM, SIGINT or SIGHUP
+    among them, since every line is built before the first is written. Otherwise print the keys of the
+    transition, in this order, and exit 0: concept-spec → tree, sections, contents, dec, banned; spec-plan →
+    tree, sections, contents, dec, banned, rollback; plan-code → tree, sections, dec, verify, signoff;
+    code-test → tree, facts; test-review → tree, runs; review-verify → tree, review; verify-commit → tree,
+    runs, checkpoint.
 
-    tree — the git directory is git_dir when given, else <root>/.git, used only when that path exists — a
-    directory, or the `.git` file of a linked worktree or submodule (never a parent
-    search); none → `— (no git)`. Else the hash of the tree that `git add -A` and `git write-tree` on a
-    temporary copy of the repository's index would print over root — the snapshot of Review Convergence →
-    Incremental round scope: tracked files as they are on disk (a tracked file gone from disk left out, a
-    tracked file matching an ignore pattern kept), untracked files in, ignored untracked files out — computed
-    without writing anything to the git directory. The files are the union, each path once, of
-    `git --git-dir=<g> --work-tree=<root> ls-files -z --cached` (a path that does not exist on disk dropped)
-    and `… ls-files -z --others --exclude-standard`, both run with GIT_OPTIONAL_LOCKS=0 against the
-    repository's own index, which is never written; an index entry marked skip-worktree (sparse checkout)
-    → `? sparse checkout`; their blob ids come from one `hash-object --stdin-paths` (no -w); a file's mode is 100755 when its owner
-    executable bit is set, else 100644, a symbolic link 120000 with the blob id of its target text; every
-    directory is a tree object — entries sorted by name bytes, a directory's name compared with a trailing `/`,
-    each entry `<mode> <name>\0<raw id>`, the directory mode written `40000`, the object hashed as
-    `tree <body length>\0<body>` with the repository's object format (sha1 unless `extensions.objectFormat`
-    says sha256); print the root tree's id.
+    Before any import, the realization removes from its module path every entry that came from PYTHONPATH
+    and every entry that resolves to the directory it lies in or to the working directory (an empty entry,
+    `.`), so a file beside it, in the working directory or on PYTHONPATH never shadows a module it uses.
+
+    Grammar: `<key>: <value>`; a list value joins its elements with `; `, fields inside an element with
+    ` · `; `—` means none; `? <reason>` means not established. A value taken from a file, from git's output
+    or from an input — a path, a git stderr line, a filter driver's name, a run record's field, a heading
+    text, an anchor, a phrase, the signoff line, an Autonomy token, a Review Rounds cell, the checkpoint
+    words — keeps its characters, except that every `;` is written `,`, every `·` is written `-` and a line
+    break becomes a space, so a copied value never splits an element or a field (a value ending in `;` or
+    ` ·` would otherwise join the next separator). Files are read as UTF-8, a leading byte order
+    mark dropped, a byte that is not UTF-8 kept as it is; a line ends at `\n`, a `\r` before it dropped.
+
+    Git: every git command runs from its work tree, in the tool's own process group, as `git
+    --git-dir=<g> --work-tree=<w> -c core.hooksPath=<the null device> -c core.fsmonitor=false <command>`,
+    with `hook.<name>.enabled=false` for each <name> that `config -z --get-regexp '^hook\.'` gives in the
+    repository and in every checked-out submodule (a key `hook.<name>.<variable>`, <name> what lies between
+    the first and the last dot, `=` and dots included), read before any other command and passed as
+    GIT_CONFIG_COUNT, GIT_CONFIG_KEY_<n>, GIT_CONFIG_VALUE_<n> in git's environment — never as `-c`, which
+    splits a name holding `=` at its first `=`; git hands them on to the git it starts inside a submodule.
+    Its environment is allow-listed: PATH, HOME and XDG_CONFIG_HOME of the caller's, each when set, plus
+    LC_ALL=C, GIT_ASKPASS empty, GIT_OPTIONAL_LOCKS=0, GIT_NO_LAZY_FETCH=1, GIT_TRACE2=0, GIT_TRACE2_EVENT=0,
+    GIT_TRACE2_PERF=0, those GIT_CONFIG_ variables and the variables a step below names — nothing else of
+    the caller's, no other GIT_ variable among them. A list of
+    paths is asked for with -z and read NUL-separated, so a path outside ASCII compares as written. No hook
+    of either kind runs, no fsmonitor daemon starts, no prompt program runs, nothing is fetched; git's
+    messages are in English.
+
+    tree — the git directory <g> is git_dir when given, else <root>/.git, used only when that path exists —
+    a directory, or the `.git` file of a linked worktree or submodule, which git follows (never a parent
+    search); none → `— (no git)`. Else the snapshot of Review Convergence → Incremental round scope, taken by
+    git itself: (1) make a temporary directory, by a direct mkdir with no probe file, under the first of
+    $TMPDIR (when set and absolute), /tmp and /var/tmp that is an existing directory lying outside root and
+    the git directory (none → `? no temporary directory outside the root and the git directory`), and copy
+    into it the index file that `rev-parse --git-path index` names (a relative path is relative to root), keeping its
+    modification time so git's check for racily clean entries still holds, when that file exists — none → no
+    copy, an empty index; every later command runs with GIT_INDEX_FILE = the copy's path. (2)
+    The filter guard: list the work tree's paths with `ls-files -z --cached --others --exclude-standard` and
+    read their filter attribute with `check-attr -z --stdin filter`; the first path, in the listing's order,
+    whose value equals the name of a driver for which `config --get filter.<value>.clean` or `config --get
+    filter.<value>.process` prints a non-empty command — any value, `set`, `unset` and `unspecified`
+    included, since check-attr prints a state and a value of that spelling alike → `? filter <driver>
+    (<path>)`, and no `add` runs, so the driver never runs. Then the same guard inside every checked-out
+    submodule — an index entry of mode 160000 (`ls-files -z --stage`) whose work-tree path holds a `.git`
+    directory or file — with that submodule's own git directory (`<path>/.git`), index, configuration and
+    attributes, recursively, the path printed from root (`sub/a.txt`), since `add -A` runs `status` inside a
+    checked-out submodule. (3) With GIT_OBJECT_DIRECTORY = an empty directory inside the
+    temporary directory and GIT_ALTERNATE_OBJECT_DIRECTORIES = the absolute path that `rev-parse --git-path
+    objects` names (resolved before either is set), run `add -A` and then `write-tree`, each with `-c
+    core.splitIndex=false` so a split index is written back whole into the copy; print the id write-tree
+    prints. A git command that exits non-zero → `? git failed: <its first non-empty stderr line>`;
+    git cannot be started → `? git failed: <the error>`. The temporary directory is removed before exit — on
+    a failure and on SIGTERM, SIGINT or SIGHUP too (the running git command is stopped first); those signals
+    are held while the directory is created and recorded, while it is removed and while the facts are
+    written, so none of these steps is cut half-way. So the tree is what `add -A` would stage over root, as git sees it: tracked files as git
+    reads them (an assume-unchanged or skip-worktree entry as indexed, the index mode under
+    core.fileMode=false, a CRLF blob kept under text=auto), a tracked file gone from disk left out, untracked
+    files in, ignored untracked files out; no git directory gains a file — git only refreshes the
+    modification time of an object already held, in whichever object store holds it (the repository's own,
+    the common git directory's for a linked worktree, a store `objects/info/alternates` names), instead of
+    writing it again, and of the shared index file when an index is split — the repository's or a
+    checked-out submodule's.
+
+    Markdown, for every derivation that reads the document, a template or the task file. A > marker is
+    optional spaces or tabs, >, and at most one space or tab; a list marker is -, *, + or 1 to 9 digits
+    followed by . or ), then one or more spaces or tabs, optionally after spaces or tabs. A line's container
+    prefix is its leading run of > markers and list markers, in any order; its quote depth is the number of
+    > markers in that run. A fence opens on a line whose text after the container prefix, after leading
+    whitespace, starts with three or more ` or ~ characters — a backtick opener whose rest holds a backtick
+    is no fence — and takes that line's quote depth. Inside a fence of depth d, a line that does not start
+    with d > markers ends the fence and is then read as a line outside it; otherwise the text after those d
+    markers closes the fence when, after leading whitespace, it is a run of the fence's character at least as
+    long as the opener's with only whitespace after it — so a list marker or a further > marker keeps the
+    line inside the fence. An unclosed fence runs to the end of the file. The opening line, the closing line
+    and the lines between are fenced: never a heading, a table line, a Status, Verify, sign-off or Autonomy
+    line, a Contents link or part of an Activity Log item, and never searched for a phrase. A heading is a
+    line, not fenced, that starts with at most three spaces, 1 to 6 # and then a space, a tab or the line's
+    end — at the start of the line, never after a container prefix; its level is the number of #, its text
+    the rest trimmed, a trailing `{#…}` anchor cut off. A table is a line, not fenced, whose first
+    non-whitespace character is `|`, followed by a separator row (pipes, dashes, colons and whitespace only,
+    at least one dash — `|:|:|` is no separator row) and the table lines after it; cells split at a `|` not preceded by `\`, trimmed.
 
     The template of the transition: concept-spec → <skill>/templates/concept.md, spec-plan →
-    templates/specification.md, plan-code → templates/plan.md. A heading's anchor is the `{#…}` at its end; a
-    file's code is its h1 anchor (`{#C_XXX}` in the template, `{#C_RTE}` in the document); an h2's suffix is its
-    anchor with the file's code removed from its start (`_01`, `_DEC`).
+    templates/specification.md, plan-code → templates/plan.md. A heading's anchor is the `{#…}` at its end;
+    a file's code is the anchor of its first h1 (`{#C_XXX}` in the template, `{#C_RTE}` in the document); an
+    h2's suffix is its anchor with the file's code removed from its start (`_01`, `_DEC`) — none when the
+    anchor does not start with the code. A section is the lines after its heading up to the next heading of
+    the level given.
 
     sections — the template h2s missing from the document: a template h2 with an anchor is present when a
-    document h2's suffix equals its suffix; one without an anchor when a document h2 has the same text. Elements:
-    the template h2 text without its anchor, in template order. None missing → `—`.
+    document h2's suffix equals its suffix; one without an anchor when a document h2 has the same text.
+    Elements: the template h2 text, in template order. None missing → `—`.
 
-    contents — no `## Contents` h2 → `missing ## Contents`. Else every document h2 with an anchor needs a
-    `](#<anchor>)` link between `## Contents` and the next h2 (`missing <anchor>`), and every such link needs a
-    heading with that anchor in the document (`dangling <anchor>`). None → `—`.
+    contents — no `## Contents` h2 → `missing ## Contents`. Else the anchors of the `](#<anchor>)` links in
+    the Contents section (up to the next h1 or h2), each once, in order of appearance: first every document h2
+    with an anchor that no link names (`missing <anchor>`, in document order), then every link whose anchor no
+    heading of any level carries (`dangling <anchor>`, in link order). None → `—`.
 
-    dec — every `### DEC_<n>` heading and the first `> **Status:** ` line under it before the next heading:
-    `proposed DEC_<n>` when the status starts with `proposed`; `open DEC_<n> without trigger` when it starts with
-    `open` and no line of the record starts with `**Resolution trigger:**`. None → `—`.
+    dec — every h3 whose text starts with `DEC_` and digits is a record up to the next heading of any level;
+    its status is the rest of its first line starting `> **Status:** `: `proposed DEC_<n>` when the status
+    starts with `proposed`; `open DEC_<n> without trigger` when it starts with `open` and no line of the
+    record starts with `**Resolution trigger:**`; a record without a status line gives nothing. In document
+    order; none → `—`.
 
-    banned — the phrases: every double-quoted string in the first cell of the rows of the `## Banned Phrases`
-    table of <skill>/phases/concept.md (concept-spec) or phases/specification.md (spec-plan). Every line of the
-    document outside fenced code blocks and outside headings, with inline code spans removed, is matched against
-    each phrase as a whole word, case-insensitively; each hit `<line number>:"<phrase>"`. None → `—`.
+    banned — the phrases: every double-quoted string in the first cell of the rows of the first table in the
+    `## Banned Phrases` section (up to the next h1 or h2) of <skill>/phases/concept.md (concept-spec) or
+    phases/specification.md (spec-plan), each phrase once, in table order. Every document line that is
+    neither fenced nor a heading, its inline code spans replaced by spaces (a run of backticks up to the next
+    run of exactly the same length; a run with no such closing run is plain text), is matched against each
+    phrase: its words in order with any run of whitespace between them, case-insensitively, with no word
+    character just before or after; each hit `<line number>:"<phrase>"`, one per line and phrase, in line
+    then phrase order. None → `—`.
 
-    rollback — `yes` when the document has an h3 whose anchor suffix is `_06_01` and a table under it, before the
-    next heading, with at least one row after the separator row; else `no`.
+    rollback — `yes` when the document has an h3 whose anchor suffix is `_06_01` and a table in its section
+    (up to the next heading of any level) with at least one row after the separator row; else `no`.
 
-    verify — every h3 starting `### Phase` of the plan needs a line starting `**Verify:**` before the next h3 or
-    h2, whose text after the label does not start with `{`. Elements `missing <h3 text up to " — " or "(">` or
-    `placeholder <…>`. None → `—`.
+    verify — every h3 whose text starts with `Phase` needs, in its section (up to the next h1, h2 or h3), a
+    line starting `**Verify:**`; the first such line counts, and its text after the label, leading
+    whitespace dropped, must not start with `{`. Elements `missing <label>` or `placeholder <label>`, the
+    label the h3 text up to the first ` — ` or `(`, trimmed, in document order. None → `—`.
 
-    signoff — the last line of the task file starting `- [x] Design sign-off — `, printed whole; none →
-    `absent (autonomy <value of the > **Autonomy:** line, first backtick token, or —>)`.
+    signoff — the last line of the task file starting `- [x] Design sign-off — `, printed whole as copied
+    text; none → `absent (autonomy <a>)`, <a> the first backtick-quoted token after `> **Autonomy:**` on the
+    first line starting with it, `—` when there is no such line or token.
 
     facts — `none — the criteria are judgement`.
 
-    runs — no runs input → `? no run records given`; file missing → `? no file <path>`. Each line, in file order:
-    a JSON object → `<key> · exit <result.exit> · <result.passed>/<result.failed> · <current|stale>`, a null
-    count printed `—` and a count of 0 printed `0`, current when its `state` equals the printed tree; a line that
-    does not parse or lacks key, state or result.exit → `? line <n> unparsable`; an empty file → `—`.
+    runs — no runs input → `? no run records given`; no such file → `? no file <path>`. Each line, in file
+    order; a line holding only whitespace is skipped. A JSON object with `key`, `state` and `result` an object
+    whose `exit` is not null → `<key> · exit <result.exit> · <result.passed>/<result.failed> · <match>`, a
+    string printed as it is, null printed `—`, any other value as JSON text — `, ` between elements, `: `
+    after a member name, characters outside ASCII as themselves (a count of 0 printed `0`) — each field then
+    written by the separator rule;
+    <match> is `current` when the printed tree is a tree id and the record's `state` equals it, `stale` when
+    the printed tree is a tree id and the `state` differs, `? no tree` when the printed tree is not an id
+    (`— (no git)` or a `? …` reason). Any other line → `? line <n> unparsable`, n counting every line of the
+    file from 1, the skipped ones included. No element → `—`.
 
-    review — the last row of the table under `## Review Rounds` of the task file:
-    `round <cell 1> · <Verdict cell> · carry-over <last cell>`, the Verdict column found by its header; no such
-    table or no row → `—`.
+    review — the first table in the `## Review Rounds` section (up to the next h1 or h2) of the task file; no
+    such h2, no table or no row after the separator → `—`; no header cell equal to `Verdict`, ignoring case →
+    `? no Verdict column in the Review Rounds table`. Else its last row: `round <its first cell> · <its cell
+    under the Verdict column> · carry-over <its cell under the last header column>`, a missing or empty cell
+    `—` — a row shorter than the header has no carry-over.
 
-    checkpoint — the first line under `## Shared Activity Log` of the task file that contains `{s:pin}`:
-    `<the first token after the list marker> · <the next 12 words>`, the {s:pin} token left out wherever it stands (status.md writes it trailing) — a token or word is a run of
-    non-whitespace characters, punctuation kept, the words joined by one space; none → `—`.
+    checkpoint — in the `## Shared Activity Log` section (up to the next h1 or h2) of the task file, a list
+    item is a line starting with a list marker, not fenced, together with the lines after it up to the next
+    line starting with a list marker, a heading, a blank line or a fenced line. The first item, in file order,
+    that holds `{s:pin}` on any of its lines: its lines joined with one space, the list marker of its first
+    line and every `{s:pin}` left out wherever it stands (status.md writes it trailing), split into tokens —
+    a token is a run of non-whitespace characters, punctuation kept → `<first token> · <the next 12 tokens
+    joined by one space>`, as copied text. None → `—`.
   effects:
-    reads: ["{document}", "{task}", "{runs}", "{root}/** (the snapshot)", "{skill}/SKILL.md", "{skill}/templates/*.md", "{skill}/phases/concept.md", "{skill}/phases/specification.md", "the git directory"]
-    writes: []
+    reads: ["{document}", "{task}", "{runs}", "{root}/** (the snapshot)", "{skill}/SKILL.md", "{skill}/templates/*.md", "{skill}/phases/concept.md", "{skill}/phases/specification.md", "the git directory; the git directory, index, configuration and attributes of every checked-out submodule, recursively", "the object stores the repository uses: its own, the common git directory's for a linked worktree, those objects/info/alternates names", "the git configuration, ignore and attributes files git reads: system, global, $XDG_CONFIG_HOME/git/, the repository's, the files core.excludesFile and core.attributesFile name, the .gitignore and .gitattributes files under {root}"]
+    writes: ["the object stores the repository uses — {git_dir}/objects/**, the common git directory's objects/** for a linked worktree, every store objects/info/alternates names — only the modification time of an object already held (a loose object file or the pack holding it), which git refreshes in place of writing it again", "{git_dir}/sharedindex.*, and in a checked-out submodule's git directory ({git_dir}/modules/<submodule>/sharedindex.* or {root}/<submodule>/.git/sharedindex.*) — the modification time of the shared index file of a split index, which git refreshes on every read of the index", "a temporary directory under the first of $TMPDIR, /tmp, /var/tmp lying outside {root} and the git directory (a copy of the index, the objects the snapshot writes), created directly and removed before exit, on a failure and on SIGTERM, SIGINT, SIGHUP too"]
     network: []
-    env: [GIT_OPTIONAL_LOCKS]
-  provenance: {task: task_C_RTE.md, promoted: 2026-11-22}
+    env: [PATH, HOME, XDG_CONFIG_HOME, TMPDIR]
+  provenance: {task: task_20261122_194700_tool-findings-fix.md, promoted: 2026-11-22}
 samples:
   - id: concept-incomplete
     case: concept-spec
     kind: good
-    inputs: {root: proj, skill: skill, transition: concept-spec, document: proj/docs/kite.concept.md, git_dir: repo.git}
+    inputs: {root: proj, skill: skill, transition: concept-spec, document: proj/docs/kite.concept.md, git_dir: proj/.git}
     expect:
       exit: 0
       output_contains:
-        - "tree: b8dcbb9db97874777d79aee2eeb53e0b7da7cf53"
+        - "tree: a5962dbb4b30d2eaba22b165d9f931fb9bfe6370"
         - "sections: Contents; 1. Intent; 2. Parts; 3. Choices; Notes"
         - "contents: missing ## Contents"
         - "dec: proposed DEC_01; open DEC_02 without trigger"
         - 'banned: 18:"someday"; 18:"one day"; 18:"good enough"'
       writes: []
-    source: "constructed — a concept of a title and two decision records: every template h2 missing, no Contents, one decision proposed and one open without a trigger; the concept table's phrases hit only on the last line, after a heading, a longer word, inline code and a fence that hold them and a phrase only the specification table bans"
+    source: "constructed — a concept of a title and two decision records: every template h2 missing, no Contents, one decision proposed and one open without a trigger; the concept table's phrases hit only on the last line, after a heading, a longer word, inline code and a fence that hold them and a phrase only the specification table bans; git_dir given"
   - id: spec-complete
     case: spec-plan
     kind: good
-    inputs: {root: proj, skill: skill, transition: spec-plan, document: proj/docs/kite.sp.md, git_dir: repo.git}
+    inputs: {root: proj, skill: skill, transition: spec-plan, document: proj/docs/kite.sp.md, git_dir: proj/.git}
     expect:
       exit: 0
       output_contains: ["sections: —", "contents: —", "dec: —", "banned: —", "rollback: yes"]
@@ -145,25 +249,25 @@ samples:
   - id: plan-signed-off
     case: plan-code
     kind: good
-    inputs: {root: proj, skill: skill, transition: plan-code, document: proj/docs/kite.plan.md, task: proj/.dev_flow/tasks/task_kite.md, git_dir: repo.git}
+    inputs: {root: proj, skill: skill, transition: plan-code, document: proj/docs/kite.plan.md, task: proj/.dev_flow/tasks/task_kite.md}
     expect:
       exit: 0
-      output_contains: ["sections: Choices", "dec: —", "verify: —", 'signoff: - [x] Design sign-off — kite owner: "build it" (2026-01-01 10:00)']
+      output_contains: ["sections: Choices", "dec: —", "verify: —", 'signoff: - [x] Design sign-off — kite owner: "build it", paper - cloth (2026-01-01 10:00)']
       writes: []
-    source: "constructed — a plan without its Choices h2 whose phases have real Verify lines; a task file with two checked design sign-off lines, the later one the go"
+    source: "constructed — a plan without its Choices h2 whose phases have real Verify lines; a task file with two checked design sign-off lines, the later one the go, holding `; ` and ` · ` — written `, ` and ` - ` so the line stays one value"
   - id: code-test-tree
     case: code-test
     kind: good
-    inputs: {root: proj, skill: skill, transition: code-test, git_dir: repo.git}
+    inputs: {root: proj, skill: skill, transition: code-test}
     expect:
       exit: 0
-      output_contains: ["tree: b8dcbb9db97874777d79aee2eeb53e0b7da7cf53", "facts: none — the criteria are judgement"]
+      output_contains: ["tree: a5962dbb4b30d2eaba22b165d9f931fb9bfe6370", "facts: none — the criteria are judgement"]
       writes: []
-    source: "constructed — the last commit of repo.git lacks the untracked plan, so the tree differs from the committed tree; expected tree from add -A and write-tree on a copy of the index"
+    source: "constructed — the last commit of proj lacks the untracked plan, so the tree differs from the committed tree; expected tree from add -A and write-tree on a copy of the index; git_dir absent, so <root>/.git; proj's configuration holds a config-based hook (hook.marker.event post-index-change, command touch hook-ran) that add -A on the copy would run, and a second one named a=b (touch hook-eq-ran), which a `-c` disable would split at its `=` — nothing written, here and in every sample on proj"
   - id: runs-current
     case: test-review
     kind: good
-    inputs: {root: proj, skill: skill, transition: test-review, runs: runs.jsonl, git_dir: repo.git}
+    inputs: {root: proj, skill: skill, transition: test-review, runs: runs.jsonl}
     expect:
       exit: 0
       output_contains: ["runs: kite-test --fast @ . · exit 0 · 4/0 · current"]
@@ -172,7 +276,7 @@ samples:
   - id: last-review-round
     case: review-verify
     kind: good
-    inputs: {root: proj, skill: skill, transition: review-verify, task: proj/.dev_flow/tasks/task_kite.md, git_dir: repo.git}
+    inputs: {root: proj, skill: skill, transition: review-verify, task: proj/.dev_flow/tasks/task_kite.md}
     expect:
       exit: 0
       output_contains: ["review: round 2 · PASS · carry-over —"]
@@ -181,7 +285,7 @@ samples:
   - id: verify-commit-facts
     case: verify-commit
     kind: good
-    inputs: {root: proj, skill: skill, transition: verify-commit, task: proj/.dev_flow/tasks/task_kite.md, runs: runs.jsonl, git_dir: repo.git}
+    inputs: {root: proj, skill: skill, transition: verify-commit, task: proj/.dev_flow/tasks/task_kite.md, runs: runs.jsonl}
     expect:
       exit: 0
       output_contains: ["runs: kite-test --fast @ . · exit 0 · 4/0 · current", "checkpoint: 10:20 · frame and tail done, paint next, string still open, flight test on"]
@@ -190,45 +294,153 @@ samples:
   - id: checkpoint-trailing-pin
     case: verify-commit
     kind: good
-    inputs: {root: proj, skill: skill, transition: verify-commit, task: task_trailing.md, runs: runs.jsonl, git_dir: repo.git}
+    inputs: {root: proj, skill: skill, transition: verify-commit, task: task_trailing.md, runs: runs.jsonl}
     expect:
       exit: 0
       output_contains: ["checkpoint: 11:00 · [impl] paint done"]
       writes: []
     source: "constructed — the {s:pin} token trailing the entry, the form phases/status.md § Salience markers writes; the task file lies outside proj so the snapshot tree is unchanged"
+  - id: checkpoint-multi-line
+    case: verify-commit
+    kind: good
+    inputs: {root: proj, skill: skill, transition: verify-commit, task: extra/task_multiline.md, runs: runs.jsonl}
+    expect:
+      exit: 0
+      output_contains: ["checkpoint: 12:00 · [impl] segment: frame cut, tail - paint chosen, string next"]
+      writes: []
+    source: "constructed — a pinned entry of two lines, the token trailing its continuation line, after an unpinned newer entry: the item's head and its words, not the continuation line; its text holds `; ` and ` · `"
   - id: runs-other-tree
     case: stale-runs
     kind: good
-    inputs: {root: proj, skill: skill, transition: test-review, runs: runs-stale.jsonl, git_dir: repo.git}
+    inputs: {root: proj, skill: skill, transition: test-review, runs: runs-stale.jsonl}
     expect:
       exit: 0
       output_contains: ["runs: kite-lint @ . · exit 1 · —/— · stale; ? line 2 unparsable"]
       writes: []
     source: "constructed — a run record taken on the committed tree, before the plan was written, with null counts; then a run written as a table row"
+  - id: runs-blank-line
+    case: stale-runs
+    kind: good
+    inputs: {root: proj, skill: skill, transition: test-review, runs: runs-blank.jsonl}
+    expect:
+      exit: 0
+      output_contains: ["runs: kite-test --fast @ . · exit 0 · 4/0 · current; kite-lint @ . · exit 1 · —/— · stale"]
+      writes: []
+    source: "constructed — the records of runs-current and runs-other-tree with an empty line between them: skipped, no element for it"
   - id: no-git-dir
     case: no-git
     kind: good
-    inputs: {root: proj, skill: skill, transition: code-test}
+    inputs: {root: nogit, skill: skill, transition: code-test}
     expect:
       exit: 0
       output_contains: ["tree: — (no git)", "facts: none — the criteria are judgement"]
       writes: []
-    source: "constructed — the project root called without git_dir: its git directory lies beside it, so <root>/.git does not exist"
+    source: "constructed — a root with no .git and no git_dir; the work copy itself is no repository either"
+  - id: runs-no-tree
+    case: no-git
+    kind: good
+    inputs: {root: nogit, skill: skill, transition: test-review, runs: runs-nogit.jsonl}
+    expect:
+      exit: 0
+      output_contains: ["tree: — (no git)", "runs: kite-test --fast @ . · exit 0 · 4/0 · ? no tree"]
+      writes: []
+    source: "constructed — a run record whose state is the text `— (no git)`: a tree that is no id compares with nothing, so the record is neither current nor stale"
   - id: review-verify-no-task
     case: review-verify
     kind: error
-    inputs: {root: proj, skill: skill, transition: review-verify, git_dir: repo.git}
+    inputs: {root: proj, skill: skill, transition: review-verify}
     expect: {exit: 2, output_contains: ["cannot-decide: review-verify needs --task"], writes: []}
     source: "constructed — the gate check called before the task file is known"
+  - id: review-no-verdict-column
+    case: review-verify
+    kind: good
+    inputs: {root: proj, skill: skill, transition: review-verify, task: extra/task_noverdict.md}
+    expect:
+      exit: 0
+      output_contains: ["review: ? no Verdict column in the Review Rounds table"]
+      writes: []
+    source: "constructed — a Review Rounds table whose result column is named Result"
+  - id: skill-without-banned-table
+    case: concept-spec
+    kind: error
+    inputs: {root: proj, skill: skill-plain, transition: concept-spec, document: proj/docs/kite.concept.md}
+    expect: {exit: 2, output_contains: ["cannot-decide: skill has no ## Banned Phrases table in phases/concept.md"], writes: []}
+    source: "constructed — a skill whose concept phase file has the Banned Phrases h2 but no table under it"
+  - id: fences-in-containers
+    case: concept-spec
+    kind: good
+    inputs: {root: proj, skill: skill, transition: concept-spec, document: extra/fences.concept.md}
+    expect:
+      exit: 0
+      output_contains:
+        - "sections: Contents; 1. Intent; 2. Parts; 3. Choices; Notes"
+        - "contents: missing ## Contents"
+        - 'banned: 18:"someday"'
+      writes: []
+    source: "constructed — banned phrases inside a fence in a block quote, a fence indented four spaces as list-item content and a fence opened on a list marker line, which also holds a `## Contents` line: none of them a phrase hit or a heading; only the plain last line hits"
   - id: tracked-ignored-kept
     case: code-test
     kind: good
-    inputs: {root: proj-ignored, skill: skill, transition: code-test, git_dir: repo-ignored.git}
+    inputs: {root: proj-ignored, skill: skill, transition: code-test}
     expect:
       exit: 0
       output_contains: ["tree: 0bd681315a4eaa21aa36952c19a83143ee2e6be9", "facts: none — the criteria are judgement"]
       writes: []
-    source: "constructed — the index of repo-ignored.git tracks keep.log, which the .gitignore pattern *.log matches and which changed on disk since its commit, and gone.md, gone from disk; .gitignore and README.md untracked; drop.log untracked and ignored; expected tree from add -A and write-tree on a copy of the index"
+    source: "constructed — the index of proj-ignored tracks keep.log, which the .gitignore pattern *.log matches and which changed on disk since its commit, and gone.md, gone from disk; .gitignore and README.md untracked; drop.log untracked and ignored; expected tree from add -A and write-tree on a copy of the index"
+  - id: converted-tree
+    case: converted-tree
+    kind: good
+    inputs: {root: conv, skill: skill, transition: test-review, runs: runs-conv.jsonl}
+    expect:
+      exit: 0
+      output_contains: ["tree: b35fdc432f1342e96b61d5af245c25df9e38b56c", "runs: conv-test @ . · exit 0 · 2/0 · current"]
+      writes: []
+    source: "constructed — conv under text=auto holds notes.txt changed on disk with CRLF over an indexed CRLF blob (add keeps CRLF), run.sh indexed 100755 and 0644 on disk under core.fileMode=false (add keeps 100755), keep.txt assume-unchanged and changed on disk (add keeps the indexed blob); core.fsmonitor is a hook that would write fsmonitor-ran; the expected id and the record's state are the snapshot's, add -A and write-tree on a copy of the index"
+  - id: filter-driver
+    case: filter-driver
+    kind: good
+    inputs: {root: filt, skill: skill, transition: test-review, runs: runs.jsonl}
+    expect:
+      exit: 0
+      output_contains: ["tree: ? filter stamp (data.bin)", "runs: kite-test --fast @ . · exit 0 · 4/0 · ? no tree"]
+      writes: []
+    source: "constructed — *.bin carries filter=stamp and filter.stamp.clean is a command that would write clean-ran: the tree is refused before add, the driver never runs, so nothing is written"
+  - id: filter-named-set
+    case: filter-driver
+    kind: good
+    inputs: {root: filt-set, skill: skill, transition: code-test}
+    expect:
+      exit: 0
+      output_contains: ["tree: ? filter set (data.bin)"]
+      writes: []
+    source: "constructed — *.bin carries filter=set, which check-attr prints as it prints the set state, and filter.set.clean is a command that would write clean-ran: refused all the same, the driver never runs"
+  - id: submodule-filter
+    case: filter-driver
+    kind: good
+    inputs: {root: smsup, skill: skill, transition: code-test}
+    expect:
+      exit: 0
+      output_contains: ["tree: ? filter stamp (sub/a.txt)"]
+      writes: []
+    source: "constructed — smsup tracks the checked-out repository sub as a gitlink; sub's own attributes give *.txt filter=stamp and its own configuration a clean command that would write sub-clean-ran, and sub/a.txt differs from sub's index at the same size, so add -A's status inside sub would clean it: refused with the path from root, the driver never runs"
+  - id: runs-odd-fields
+    case: test-review
+    kind: good
+    inputs: {root: proj, skill: skill, transition: test-review, runs: runs-weird.jsonl}
+    expect:
+      exit: 0
+      output_contains: ['runs: ["a, b", "c - d"] · exit 0 · 4/0 · current; kite-lint - · exit 1 · —/— · stale; kite-test, · exit 0 · 4/1, · current']
+      writes: []
+    source: "constructed — a record whose key is a list holding `; ` and ` · ` (written as JSON text, then by the separator rule), one whose key ends in ` ·` and one whose key and failed count end in `;` — each would otherwise join the next separator"
+  - id: review-short-row
+    case: review-verify
+    kind: good
+    inputs: {root: proj, skill: skill, transition: review-verify, task: extra/task_short.md}
+    expect:
+      exit: 0
+      output_contains: ["review: round 2 · PASS · carry-over —"]
+      writes: []
+    source: "constructed — the last Review Rounds row has no cell under the Carry-over header column"
 material:
   files:
     skill/SKILL.md: |
@@ -341,7 +553,7 @@ material:
       ## Progress
 
       - [x] Design sign-off — first sketch agreed (2026-01-01 09:00)
-      - [x] Design sign-off — kite owner: "build it" (2026-01-01 10:00)
+      - [x] Design sign-off — kite owner: "build it"; paper · cloth (2026-01-01 10:00)
       - [ ] Phase 1 — Frame
 
       ## Review Rounds
@@ -357,9 +569,9 @@ material:
       - 10:20 {s:pin} frame and tail done, paint next, string still open, flight test on Friday morning
       - 09:10 {s:pin} plan agreed
     runs.jsonl: |
-      {"key": "kite-test --fast @ .", "inputs": ["docs"], "state": "b8dcbb9db97874777d79aee2eeb53e0b7da7cf53", "variant": "fast", "result": {"exit": 0, "passed": 4, "failed": 0, "cause": null}, "duration": "1.2s", "count": 1, "log": "/tmp/kite/logs/test.log"}
+      {"key": "kite-test --fast @ .", "inputs": ["docs"], "state": "a5962dbb4b30d2eaba22b165d9f931fb9bfe6370", "variant": "fast", "result": {"exit": 0, "passed": 4, "failed": 0, "cause": null}, "duration": "1.2s", "count": 1, "log": "/tmp/kite/logs/test.log"}
     runs-stale.jsonl: |
-      {"key": "kite-lint @ .", "inputs": ["docs"], "state": "db0583cc27cdc06df5f42fa70e70860803e0ffe0", "variant": "lint", "result": {"exit": 1, "passed": null, "failed": null, "cause": "2 warnings"}, "duration": "0.3s", "count": 2, "log": "/tmp/kite/logs/lint.log"}
+      {"key": "kite-lint @ .", "inputs": ["docs"], "state": "6f05fff6c6198cf20ef4af4f1bf0b4b39cd0e994", "variant": "lint", "result": {"exit": 1, "passed": null, "failed": null, "cause": "2 warnings"}, "duration": "0.3s", "count": 2, "log": "/tmp/kite/logs/lint.log"}
       | `kite-lint` | docs | lint | exit 1 | 0.3s | 2 | /tmp/kite/logs/lint.log |
     before/keep.log: |
       flight 1
@@ -382,12 +594,155 @@ material:
       - 11:30 [impl] string tied
       - 11:00 [impl] paint done {s:pin}
       - 10:00 {s:pin} frame built
+    runs-blank.jsonl: |
+      {"key": "kite-test --fast @ .", "inputs": ["docs"], "state": "a5962dbb4b30d2eaba22b165d9f931fb9bfe6370", "variant": "fast", "result": {"exit": 0, "passed": 4, "failed": 0, "cause": null}, "duration": "1.2s", "count": 1, "log": "/tmp/kite/logs/test.log"}
+
+      {"key": "kite-lint @ .", "inputs": ["docs"], "state": "6f05fff6c6198cf20ef4af4f1bf0b4b39cd0e994", "variant": "lint", "result": {"exit": 1, "passed": null, "failed": null, "cause": "2 warnings"}, "duration": "0.3s", "count": 2, "log": "/tmp/kite/logs/lint.log"}
+    runs-nogit.jsonl: |
+      {"key": "kite-test --fast @ .", "inputs": ["docs"], "state": "— (no git)", "variant": "fast", "result": {"exit": 0, "passed": 4, "failed": 0, "cause": null}, "duration": "1.2s", "count": 1, "log": "/tmp/kite/logs/test.log"}
+    runs-conv.jsonl: |
+      {"key": "conv-test @ .", "inputs": ["."], "state": "b35fdc432f1342e96b61d5af245c25df9e38b56c", "variant": "full", "result": {"exit": 0, "passed": 2, "failed": 0, "cause": null}, "duration": "0.4s", "count": 1, "log": "/tmp/kite/logs/conv.log"}
+    nogit/README.md: |
+      # No git
+    extra/fences.concept.md: |
+      # Fences  {#C_FENCE}
+
+      > ```text
+      > someday
+      > ```
+
+      - a step
+
+          ```
+          good enough
+          ```
+
+      - ```
+        one day
+        ## Contents
+        ```
+
+      Someday the kite flies.
+    extra/task_multiline.md: |
+      # Task multiline
+
+      ## Shared Activity Log
+
+      - 12:30 [impl] glue dry
+      - 12:00 [impl] segment: frame cut; tail · paint
+        chosen, string next {s:pin}
+      - 11:00 {s:pin} plan agreed
+    extra/task_noverdict.md: |
+      # Task no verdict
+
+      ## Review Rounds
+
+      | Round | Scope | Result |
+      |-------|-------|--------|
+      | 1 | full | PASS |
+    skill-plain/SKILL.md: |
+      # Plain skill
+    skill-plain/templates/concept.md: |
+      # {Concept}  {#C_XXX}
+      ## Contents
+    skill-plain/phases/concept.md: |
+      ## Banned Phrases
+
+      No table yet.
+    conv/attrs.txt: |
+      * text=auto
+    conv/run.sh: |
+      echo fly
+    conv/keep.txt: |
+      kept on disk
+    conv-lf/notes.txt: |
+      a
+      b
+    conv-src/notes.txt: |
+      a
+      b
+      c
+    conv-src/keep.txt: |
+      kept in the index
+    filt/.gitattributes: |
+      *.bin filter=stamp
+    filt/data.bin: |
+      payload
+    filt/notes.md: |
+      # Notes
+    runs-weird.jsonl: |
+      {"key": ["a; b", "c · d"], "inputs": ["docs"], "state": "a5962dbb4b30d2eaba22b165d9f931fb9bfe6370", "variant": "fast", "result": {"exit": 0, "passed": 4, "failed": 0, "cause": null}, "duration": "1.2s", "count": 1, "log": "/tmp/kite/logs/test.log"}
+      {"key": "kite-lint ·", "inputs": ["docs"], "state": "6f05fff6c6198cf20ef4af4f1bf0b4b39cd0e994", "variant": "lint", "result": {"exit": 1, "passed": null, "failed": null, "cause": null}, "duration": "0.3s", "count": 1, "log": "/tmp/kite/logs/lint.log"}
+      {"key": "kite-test;", "inputs": ["docs"], "state": "a5962dbb4b30d2eaba22b165d9f931fb9bfe6370", "variant": "fast", "result": {"exit": 0, "passed": 4, "failed": "1;", "cause": null}, "duration": "1.2s", "count": 1, "log": "/tmp/kite/logs/test.log"}
+    extra/task_short.md: |
+      # Task short row
+
+      ## Review Rounds
+
+      | Round | Verdict | Carry-over |
+      |-------|---------|------------|
+      | 1 | FAIL | R1-1 |
+      | 2 | PASS |
+    filt-set/.gitattributes: |
+      *.bin filter=set
+    filt-set/data.bin: |
+      payload
+    smsup/README.md: |
+      # Super
+    smsup/sub/.gitattributes: |
+      *.txt filter=stamp
+    smsup/sub/a.txt: |
+      flight 1
+    smsrc/a.txt: |
+      flight 2
   git:
-    - [init, -q, --bare, --template=, -b, main, --object-format=sha1, repo.git]
-    - [--git-dir=repo.git, config, core.excludesFile, ""]
-    - [--git-dir=repo.git, --work-tree=proj, add, docs/kite.concept.md, docs/kite.sp.md, .dev_flow/tasks/task_kite.md]
-    - [--git-dir=repo.git, --work-tree=proj, commit, -q, -m, concept and spec]
-    - [init, -q, --bare, --template=, -b, main, --object-format=sha1, repo-ignored.git]
-    - [--git-dir=repo-ignored.git, config, core.excludesFile, ""]
-    - [--git-dir=repo-ignored.git, --work-tree=before, add, keep.log, gone.md]
-    - [--git-dir=repo-ignored.git, --work-tree=proj-ignored, commit, -q, -m, first flight]
+    - [init, -q, --template=, -b, main, --object-format=sha1, proj]
+    - [-C, proj, config, core.excludesFile, ""]
+    - [-C, proj, config, core.attributesFile, ""]
+    - [-C, proj, add, docs/kite.concept.md, docs/kite.sp.md, .dev_flow/tasks/task_kite.md]
+    - [-C, proj, commit, -q, -m, concept and spec]
+    - [-C, proj, config, hook.marker.event, post-index-change]
+    - [-C, proj, config, hook.marker.command, touch hook-ran]
+    - [-C, proj, config, hook.a=b.event, post-index-change]
+    - [-C, proj, config, hook.a=b.command, touch hook-eq-ran]
+    - [init, -q, --template=, -b, main, --object-format=sha1, proj-ignored]
+    - [-C, proj-ignored, config, core.excludesFile, ""]
+    - [-C, proj-ignored, config, core.attributesFile, ""]
+    - [--git-dir=proj-ignored/.git, --work-tree=before, add, keep.log, gone.md]
+    - [-C, proj-ignored, commit, -q, -m, first flight]
+    - [init, -q, --template=, -b, main, --object-format=sha1, conv]
+    - [-C, conv, config, core.excludesFile, ""]
+    - [-C, conv, config, core.attributesFile, ""]
+    - [--git-dir=conv/.git, --work-tree=conv-lf, add, notes.txt]
+    - [-C, conv, -c, core.autocrlf=true, checkout-index, notes.txt]
+    - [-C, conv, rm, -q, -f, --cached, notes.txt]
+    - [-C, conv, add, notes.txt, attrs.txt, run.sh, keep.txt]
+    - [-C, conv, commit, -q, -m, crlf]
+    - [--git-dir=conv/.git, --work-tree=conv-src, add, notes.txt, keep.txt]
+    - [-C, conv, -c, core.autocrlf=true, checkout-index, -f, notes.txt]
+    - [-C, conv, reset, -q, --, notes.txt]
+    - [-C, conv, update-index, --assume-unchanged, keep.txt]
+    - [-C, conv, mv, attrs.txt, .gitattributes]
+    - [-C, conv, config, core.fileMode, "false"]
+    - [-C, conv, update-index, --chmod=+x, run.sh]
+    - [-C, conv, config, core.fsmonitor, "touch fsmonitor-ran; false"]
+    - [init, -q, --template=, -b, main, --object-format=sha1, filt]
+    - [-C, filt, config, core.excludesFile, ""]
+    - [-C, filt, config, core.attributesFile, ""]
+    - [-C, filt, config, filter.stamp.clean, "touch clean-ran; cat"]
+    - [init, -q, --template=, -b, main, --object-format=sha1, filt-set]
+    - [-C, filt-set, config, core.excludesFile, ""]
+    - [-C, filt-set, config, core.attributesFile, ""]
+    - [-C, filt-set, config, filter.set.clean, "touch clean-ran; cat"]
+    - [init, -q, --template=, -b, main, --object-format=sha1, smsup]
+    - [-C, smsup, config, core.excludesFile, ""]
+    - [-C, smsup, config, core.attributesFile, ""]
+    - [init, -q, --template=, -b, main, --object-format=sha1, smsup/sub]
+    - [-C, smsup/sub, config, core.excludesFile, ""]
+    - [-C, smsup/sub, config, core.attributesFile, ""]
+    - [-C, smsup/sub, add, .gitattributes, a.txt]
+    - [-C, smsup/sub, commit, -q, -m, sub]
+    - [-C, smsup, add, README.md, sub]
+    - [-C, smsup, commit, -q, -m, super]
+    - [--git-dir=smsup/sub/.git, --work-tree=smsrc, add, a.txt]
+    - [-C, smsup/sub, config, filter.stamp.clean, "touch sub-clean-ran; cat"]

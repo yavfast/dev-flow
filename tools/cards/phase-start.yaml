@@ -1,6 +1,6 @@
 shipped_card: 1
 name: phase-start
-version: 1
+version: 2
 contract:
   name: phase-start
   purpose: Print the project facts of phase start checklist items 1, 2, 4, 6, 7 and the fields of the start record in one run
@@ -9,6 +9,9 @@ contract:
     - {case: continuing-task, description: "a task id is given: its dashboard row and task file facts; the upstream look is skipped"}
     - {case: new-task, description: "no task id: the upstream look fetches the branch's upstream and reports incoming, overlap and unpushed"}
     - {case: no-upstream, description: "a git directory whose current branch has no upstream: the look reports none"}
+    - {case: detached-head, description: "a git directory with no branch checked out: the look reports none"}
+    - {case: linked-worktree, description: "the git directory is a linked worktree's .git file: facts as for a directory; the fetch writes in the main repository's git directory"}
+    - {case: fetch-failed, description: "the upstream fetch fails: the look reports the failure and the last fetched state"}
     - {case: relevant-set, description: "touched paths given: rules, skills and tools matched by path globs and by phase"}
     - {case: phase-only, description: "no paths: rules, skills and tools matched by the phase and the always-on selectors"}
     - {case: no-catalogue, description: "a project with no .dev_flow/ and no git: every catalogue fact is none"}
@@ -24,18 +27,22 @@ contract:
   applies_to: {paths: [], phases: []}
   limits:
     - "facts as of the run; a file changed after it is not seen"
-    - "reads only the files the phase start checklist names; prints no profile value"
+    - "reads only the files the phase start checklist names; prints no profile value, so the chat language a profile records is the agent's to read"
     - "skills with no applies_to on their entry or domain are matched by topic, which is the agent's judgement: they are listed with their topics, never chosen"
-    - "the machine's git configuration applies (excludes, credentials, ssh)"
+    - "the machine's git configuration applies (excludes, credential helpers, core.sshCommand, core.alternateRefsCommand, proxies, http.sslCAInfo); the caller's environment reaches git only through the allow-list in behavior, so a CA given only by the caller's GIT_SSL_CAINFO is not seen"
+    - "phase- or condition-scoped style profiles are named, never resolved: which of them applies is the agent's to decide"
     - "the upstream fetch needs the network and the remote's credentials without a prompt; a failed fetch reports the last fetched state"
+    - "with no upstream input the fetch follows the remote's configured refspecs: a refspec that maps outside refs/remotes/ writes there"
+    - "the 30-second fetch stop and the missing-YAML-parser exit are not pinned by a sample"
+    - "code the interpreter runs at its own start-up, before the realization's first line (a Python user site .pth file, a sitecustomize or usercustomize module on PYTHONPATH), is outside the module-path rule"
   inputs:
     - {name: root, type: path, required: true, description: "project root"}
     - {name: skill, type: path, required: true, description: "dev-flow skill root; holds SKILL.md"}
     - {name: phase, type: enum, required: true, values: [onboard, research, concept, spec, plan, implement, test, review, verify, propagate, fix, rule, skill, tool, ask, todo, do, subtask, status, audit, adopt], description: "the starting phase"}
     - {name: key, type: string, required: false, description: "step key of the phase, e.g. analysis for fix; printed in the start fields only"}
     - {name: paths, type: string, required: false, description: "project-relative paths the phase touches, comma-separated (a string, never resolved against the caller's directory); a directory ends with /"}
-    - {name: task, type: string, required: false, description: "id of the continued task (task_<id>); absent = a new task"}
-    - {name: git_dir, type: path, required: false, description: "git directory; absent = <root>/.git"}
+    - {name: task, type: string, required: false, description: "id of the continued task, ^task_[A-Za-z0-9_-]+$ (another value prints task: ? not a task id); absent = a new task"}
+    - {name: git_dir, type: path, required: false, description: "git directory, or a linked worktree's or submodule's .git file; absent = <root>/.git"}
     - {name: upstream, type: path, required: false, description: "a repository to fetch from in place of the upstream remote's URL (samples)"}
   invocation: ['{root}', '{skill}', '--phase={phase}', '--key={key}', '--paths={paths}', '--task={task}', '--git-dir={git_dir}', '--upstream={upstream}']
   output:
@@ -43,103 +50,171 @@ contract:
     shape: "one fact per line, `<key>: <value>`, keys tasks, task, upstream, rules, skills, tools, budget, styles, profile, docs, seeds, start in this order"
     size_class: small
   behavior: >
-    Exit 2 with `cannot-decide: <reason>` on stderr and nothing on stdout when: root is not a directory
-    (`root is not a directory`); skill holds no SKILL.md (`skill root holds no SKILL.md`); phase is not one of the
-    enum values (`unknown phase <phase>`). Otherwise print the twelve lines below, in order, and exit 0.
+    Exit 2 with `cannot-decide: <reason>` on stderr and nothing on stdout when, checked in this order: root is not
+    a directory (`root is not a directory`); skill holds no SKILL.md (`skill root holds no SKILL.md`); phase is not
+    one of the enum values (`unknown phase <phase>`); no YAML parser is available to the realization (`no YAML
+    parser`). A usage error (an unknown, value-less or repeated option; not exactly two positional arguments; no
+    --phase) prints a usage line on stderr and exits 3. Otherwise print the twelve lines below, in order, and exit
+    0; an error outside the facts exits 3 with `phase-start: failure: <error type>: <message>` on stderr. The
+    realization loads no code from the directory it lies in or from the working directory, so a sibling file never
+    shadows a module it uses: before any import it removes from its module path every entry that came from
+    PYTHONPATH (or its equivalent) and every entry that resolves to its own directory or to the working directory
+    (an empty entry, `.`).
+
     Grammar of every line: `<key>: <value>`; a list value joins its elements with `; `, fields inside an element
     with ` · `; `—` means none; `? <reason>` means the fact was not established — the agent answers that item by
-    hand. A failure to read or parse one source never stops the others. Text taken from a file (a heading, a
-    status, a Next text) is copied as found, never interpreted. Paths below are relative to root.
+    hand. A failure to read or parse one source never stops the others; an unexpected error inside one fact prints
+    `? <error type>: <message>` as that fact. A value taken from a file, from git's output or from an input (a
+    cell, a heading, a status, a Next text, a name, a summary, a stamp, a path, a stderr line, the task and key
+    inputs) is copied as found, never interpreted, except that each line break becomes a space, every `;` is
+    written `,` and every `·` is written `-`, so a copied value never splits an element or a field — a value
+    ending in `;` or ` ·` would otherwise join the next separator. Paths below are relative to root. A file is read as UTF-8, a leading byte-order mark
+    dropped and an invalid byte replaced; a line ends at \r\n, \r or \n. An optional input given empty counts as
+    omitted. paths is split at `,`, each element trimmed, empty elements dropped, never normalized.
 
     GIT. The git directory is git_dir when given, else <root>/.git; it is used only when that path exists — a
-    directory, or the `.git` file of a linked worktree or submodule — and the tool never searches parent
-    directories. Every git command runs as
-    `git --git-dir=<git dir> --work-tree=<root> …`. No git directory → "no git".
+    directory, or the `.git` file of a linked worktree or submodule, which git follows — and the tool never
+    searches parent directories. No git directory → "no git". Every git command runs from root as
+    `git -c core.hooksPath=<the null device> -c core.fsmonitor=false --git-dir=<git dir> --work-tree=<root> …`,
+    in a child environment of only: the caller's `PATH`, `HOME` and `XDG_CONFIG_HOME`, those that are set (the
+    fetch adds more, below); `LC_ALL=C`, `GIT_TERMINAL_PROMPT=0`, `GIT_ASKPASS` empty, `GIT_TRACE2=0`,
+    `GIT_TRACE2_EVENT=0`, `GIT_TRACE2_PERF=0`; and `hook.<name>.enabled=false` for each name the configuration
+    gives a `hook.<name>.*` key (the names from `config -z --name-only --get-regexp ^hook\.`, run first under
+    the same rules), passed as `GIT_CONFIG_COUNT`, `GIT_CONFIG_KEY_<n>`, `GIT_CONFIG_VALUE_<n>` — never as `-c`,
+    which splits a name holding `=` at its first `=`. No other caller variable reaches git — `GIT_*` and
+    `SSH_ASKPASS` included: no hook of any kind runs, no fsmonitor starts, no trace is written, no prompt program
+    runs and git's messages are not translated, while the machine's and the repository's git configuration apply
+    (`HOME` and `XDG_CONFIG_HOME` are read by git). No git command of the tool runs inside a submodule. A list of paths from git is read NUL-separated (`-z`), so a path outside ASCII compares and
+    prints as written. A
+    git command a fact needs that exits non-zero → `? git <subcommand> failed: <its first non-empty stderr line,
+    else exit <code>>` as that fact.
 
     tasks — the rows of the table under `## Active Tasks` in .dev_flow/active_context.md, in file order, each
     `<task id> · <phase> · <status> · <contributors> · <updated>`: the task id is the link text of the first
-    cell (`[task_X](…)` → `task_X`), the other fields are cells 2–5 trimmed. File or section absent → `—`.
+    cell (`[task_X](…)` → `task_X`; a cell with no link → the cell trimmed), the other fields are cells 2–5
+    trimmed, a missing or empty cell `—`. File or section absent → `—`.
 
-    task — no task input → `—`. Else read .dev_flow/tasks/<task>.md; missing → `? no task file <task>.md`.
-    Print `<task> · status <s> · phase <p> · stage <g> · style <y> · autonomy <a> · next <n>`: s from the header
-    line `> **Status:** …`, a from `> **Autonomy:** …`, p, g, y from the rows `**Pipeline phase**`, `**Stage**`,
-    `**Role style**` of the `## Current Work Item` table — each the first backtick-quoted token of the value, else
-    the value trimmed, `—` when the line or row is missing; n is the text after `**Next:** ` on the Next line of
-    the last `### Subtask:` block whose `> Author:` line does not carry `Status: \`done\``, trimmed; none → `—`.
+    task — no task input → `—`. A task input that does not match `^task_[A-Za-z0-9_-]+$` → `? not a task id
+    <value>`, and no file is read for it. Else read .dev_flow/tasks/<task>.md; missing → `? no task file
+    <task>.md`. Print `<task> · status <s> · phase <p> · stage <g> · style <y> · autonomy <a> · next <n>`: s from
+    the header line `> **Status:** …`, a from `> **Autonomy:** …`, p, g, y from the rows `**Pipeline phase**`,
+    `**Stage**`, `**Role style**` of the `## Current Work Item` table — each the first backtick-quoted token of the
+    value, else the value trimmed, `—` when the line or row is missing; n is the text after `**Next:** ` on the
+    first Next line of the last `### Subtask:` block whose `> Author:` line does not carry `Status: \`done\`` (a
+    block ends at the next heading of level 1–3; a block with no Author line counts as not done), trimmed; none →
+    `—`.
 
-    upstream — task given → `skipped (continuing task)`. No git → `none (not a git repository)`. Current branch
-    from `symbolic-ref -q --short HEAD`; none → `none (detached HEAD)`. Upstream from
-    `rev-parse --abbrev-ref --symbolic-full-name @{u}`; none → `none (no upstream)`. Fetch with the environment
-    GIT_TERMINAL_PROMPT=0 and GIT_SSH_COMMAND=`ssh -o BatchMode=yes`: when the upstream input is given,
-    `fetch -q <upstream> +refs/heads/*:refs/remotes/<remote>/*`, else `fetch -q <remote>`; <remote> is the value
-    of `config branch.<branch>.remote`. The fetch gets 30 seconds; past that it is stopped and counts as
-    failed with the reason `timeout after 30 s`. Then N = `rev-list --count HEAD..@{u}`, the incoming files =
-    `diff --name-only HEAD...@{u}`, M = `rev-list --count @{u}..HEAD`. With paths given, the task's files are
-    the incoming files equal to a path or lying under a path ending in `/`; the value is
+    upstream — task input given, valid or not → `skipped (continuing task)`. No git → `none (not a git
+    repository)`. Current branch from `symbolic-ref -q --short HEAD`; none → `none (detached HEAD)`. Upstream from
+    `rev-parse --abbrev-ref --symbolic-full-name @{u}`; none → `none (no upstream)`. <remote> is the value of
+    `config branch.<branch>.remote`. Fetch: git older than 2.29 (the first `<major>.<minor>` of `git --version`)
+    → no fetch, and the fetch counts as failed with the reason `git older than 2.29`. Else run
+    `-c fetch.writeCommitGraph=false -c fetch.bundleURI= fetch -q --no-tags --no-prune --no-prune-tags
+    --no-recurse-submodules --no-write-fetch-head --no-auto-maintenance`, then, when the repository is local,
+    `--upload-pack=git -c uploadpack.packObjectsHook=env upload-pack` (so a configured pack-objects hook does not
+    run), then `--end-of-options`, then `<upstream> +refs/heads/*:refs/remotes/<remote>/*` when the upstream input
+    is given, else `<remote>`; the fetch's environment adds `GIT_SSH_COMMAND=<ssh> -o BatchMode=yes`, <ssh> being
+    the value of `config core.sshCommand`, else `ssh`, and passes on, when the caller has them set, `SSH_AUTH_SOCK`
+    (ssh), `http_proxy`, `https_proxy`, `all_proxy`, `no_proxy` and their upper-case forms, and
+    `DBUS_SESSION_BUS_ADDRESS`, `XDG_RUNTIME_DIR`, `XDG_CACHE_HOME`, `SSL_CERT_FILE`, `SSL_CERT_DIR` (credential
+    helpers and a custom CA). The repository — the upstream input, else the URL
+    `ls-remote --get-url --end-of-options <remote>` prints — is local when it is a `file://` URL or a path: no
+    `<scheme>://`, and no `:` or a `/` before its first `:` (`host:path` is a remote). The fetch therefore writes
+    only in the common git directory (`rev-parse
+    --git-common-dir`: the git directory, or the main repository's for a linked worktree): the remote-tracking refs
+    (under `reftable/` in a reftable repository), their reflog when the repository keeps one, and the fetched
+    objects — no tag, no FETCH_HEAD, no pruned ref, no packed-refs rewrite, no submodule, no commit-graph, no
+    maintenance. The fetch gets 30 seconds; past
+    that its process group is stopped (SIGTERM, SIGKILL 5 seconds later) and it counts as failed with the reason
+    `timeout after 30 s`; any other failure's reason is the fetch's first non-empty stderr line, else `exit
+    <code>`. Then N = `rev-list --count HEAD..@{u}`, the incoming files = `diff -z --name-only HEAD...@{u}` in
+    git's order, M = `rev-list --count @{u}..HEAD`. With paths given, the task's files are the incoming files equal
+    to a path or lying under a path ending in `/`; the value is
     `<N> incoming (<K> touch the task: <files joined by ", " or —>) · <M> unpushed`; without paths it is
-    `<N> incoming (task files unknown: <short hash> <file count> files, …) · <M> unpushed`. When M > 0 append
-    ` (oldest <age>)`, the age of the oldest outgoing commit's committer date as `<d>d`, `<h>h` or `<m>m`.
-    A failed fetch prefixes the value with `? fetch failed: <first stderr line> — last fetched state: `.
+    `<N> incoming (task files unknown: <commits joined by ", " or —>) · <M> unpushed`, one commit element per
+    incoming commit, newest first, `<short hash> <file count> files`, the files from `log --no-mailmap -z
+    --name-only --diff-merges=first-parent HEAD..@{u}` (a merge counted against its first parent). When M > 0
+    append ` (oldest <age>)`, the age of the oldest outgoing commit's committer date (`log --no-mailmap
+    --format=%ct @{u}..HEAD`) as `<d>d`, `<h>h` or `<m>m`, rounded down; a date in the future → `0m`. Every `log`
+    runs with `--no-mailmap`, so no .mailmap is read. A failed fetch prefixes the value with
+    `? fetch failed: <reason> — last fetched state: `.
 
-    rules — .dev_flow/rules/_index.yaml absent → `—`; not YAML → `? unparsable .dev_flow/rules/_index.yaml`.
-    The relevant set of Knowledge Scaling's activation protocol: a category selector is its `applies_to`, absent
-    = always-on; a rule entry with `moved_to` is skipped; a rule's selector is its own `applies_to`, else its
-    category's. A selector matches when it is always-on, or the phase is in its `phases`, or one of its `paths`
-    globs covers one of the input paths (`**` = any number of segments, `*` and `?` inside one segment; a path
-    ending in `/` names a directory and is covered by a glob whose text before its first `*`, `?` or `[` starts
-    with that path, or is a prefix of it ending at a `/`, or is empty while the glob holds a `/` or `**`).
-    Each matched rule:
-    `<name> · <severity> · <summary> · <category file>#<name>`, ordered must, should, prefer, then index order.
-    No match → `—`.
+    rules — .dev_flow/rules/_index.yaml absent → `—`; not YAML, or YAML that is not a mapping → `? unparsable
+    .dev_flow/rules/_index.yaml`. The relevant set of Knowledge Scaling's activation protocol: a category selector
+    is its `applies_to`, absent or null = always-on; a rule entry with `moved_to` is skipped; a rule's selector is
+    its own `applies_to`, else its category's. A selector matches when it is always-on, or the phase is in its
+    `phases`, or one of its `paths` globs covers one of the input paths (`**` = zero or more segments, `*`, `?` and
+    `[…]` inside one segment; a path ending in `/` names a directory and is covered by a glob whose text before
+    its first `*`, `?` or `[` starts with that path, or is a prefix of it ending at a `/`, or is empty while the
+    glob holds a `/` or `**`); a selector that is not a mapping matches nothing. Each matched rule:
+    `<name> · <severity> · <summary> · <category file>#<name>`, ordered must, should, prefer, any other severity
+    after prefer, then index order. No match → `—`.
 
-    skills — .dev_flow/skills/_index.yaml absent → `—`; not YAML → `? unparsable .dev_flow/skills/_index.yaml`.
-    For each domain (`path`) read .dev_flow/skills/<path>_index.yaml (missing or not YAML → that domain's element
-    is `? <path>_index.yaml unreadable`) and each skill entry. An entry's selector is its own `applies_to`, else
-    its domain's, else none. An entry with a selector is printed only when the selector matches (as for rules):
-    `<path><file> · <skill> · <freshness>`. An entry with no selector is printed with its topics, for the agent's
-    topic match: `<path><file> · <skill> · <freshness> · topics <topics joined by ", ">`. freshness comes from the
-    YAML front matter of the skill file: `freshness.state` and `freshness.written_against` →
-    `<state> <written_against>`; no front matter or no freshness → `no stamp`; file missing → `missing`.
-    Order: selector-matched entries, then topic entries, each in index order. None → `—`.
+    skills — .dev_flow/skills/_index.yaml absent → `—`; not YAML or not a mapping → `? unparsable
+    .dev_flow/skills/_index.yaml`. For each domain (`path`; one without a trailing `/` gets one) read
+    .dev_flow/skills/<path>_index.yaml (missing, not YAML or not a mapping → that domain's element is
+    `? <path>_index.yaml unreadable`) and each skill entry. A domain path, or an entry `file`, that is absolute by
+    the running platform's rule or holds a `..` segment between `/` → `? <path> outside .dev_flow/skills/` (for an
+    entry <path> is the domain path joined with the file), and nothing under it is read; any other path, `c:ops/`
+    on a POSIX platform among them, lies inside. An entry's selector is its own `applies_to`, else its domain's (the
+    domain index's own `applies_to`, else the `domains` entry's), else none. An entry with a selector is printed
+    only when the selector matches (as for rules): `<path><file> · <skill> · <freshness>`. An entry with no
+    selector is printed with its topics, for the agent's topic match: `<path><file> · <skill> · <freshness> ·
+    topics <topics joined by ", ">`. An entry outside the directory prints its `? … outside` element in the place
+    its element would take. freshness comes from the YAML front matter of the skill file (the lines between a
+    first line `---` and the next `---` or `...`): `freshness.state` and `freshness.written_against` →
+    `<state> <written_against>`, either one missing → `—` for it; no or unparsable front matter, or a freshness
+    with neither field → `no stamp`; file missing or unreadable → `missing`. Order: selector-matched entries, then
+    topic entries, each in index order, then the elements of unreadable domains and of domains outside the
+    directory, in index order. None → `—`.
 
-    tools — .dev_flow/tools/_index.yaml absent → `—`; not YAML → `? unparsable .dev_flow/tools/_index.yaml`.
-    Each entry of `tools` whose `state` is not `retired` and whose `applies_to` matches (absent = always-on):
-    `<name> · <when_to_use> · <run joined by spaces> · <state, else the regime>`, in index order. None → `—`.
+    tools — .dev_flow/tools/_index.yaml absent → `—`; not YAML or not a mapping → `? unparsable
+    .dev_flow/tools/_index.yaml`. Each entry of `tools` whose `state` is not `retired` and whose `applies_to`
+    matches (absent or null = always-on): `<name> · <when_to_use> · <run joined by spaces> · <state, else the
+    regime, else —>`, in index order. None → `—`.
 
-    budget — n = the number of rule elements, selector-matched skill elements and tool elements printed above.
-    The budget is the first integer in the value cell of the `activation_budget` row of the Thresholds table in
-    <skill>/references/docs-scaling.md; missing → `no budget set`. Value `<n> of <budget>`, or
-    `over — knowledge-overload phase=<phase> n=<n>` when n exceeds it.
+    budget — n = the number of rule elements, selector-matched skill elements (a `?` element not counted) and tool
+    elements printed above. The budget is the first integer in the value cell of the `activation_budget` row of
+    the Thresholds table in <skill>/references/docs-scaling.md; file, row or integer missing → `no budget set`.
+    Else value `<n> of <budget>`, or `over — knowledge-overload phase=<phase> n=<n>` when n exceeds it.
 
-    styles — .dev_flow/output_styles.md absent → `absent`. Else `present · documentation <l> · chat <l>`: for
-    each `## Profile:` section the first word after `**Applies to:**` names its register; its language is the
-    first capitalized word, other than the line's first word, of the first directive line (`- …`) containing
-    `language` in any case; none → `—`; the first profile of a register wins.
+    styles — .dev_flow/output_styles.md absent → `absent`. A profile is a `## Profile: <name>` section, ending at
+    the next level-1 or level-2 heading; its register is the first run of letters after `**Applies to:**`,
+    lowercased; a profile whose `**Applies to:**` line holds `phases:` or `when:` is narrower, the others are base
+    profiles. Value `present · documentation <l> · chat <l>`: per register the first base profile gives the
+    language — the first capitalized word (a run of letters whose first letter is upper case), other than the
+    line's first word, of its first directive line (`- …`) containing `language` in any case; none → `—`. When a
+    narrower profile exists, append ` · narrower <names joined by ", ">` in file order; a narrower profile is named,
+    never resolved.
 
     profile — .dev_flow/profile/ absent → `absent`. Else `<files> · ignored <yes|no|no git> · <entries>`: files =
     the names of user.md and environment.md that exist, joined by ", "; ignored = `check-ignore -q
-    .dev_flow/profile/` exit 0 → yes, 1 → no; no git → `no git`. Entries, joined by ", ": per `## <category>`
-    section, `<category> consent <value>` for a `> **Consent:** <value> — …` line, and per bullet
-    "- `<key>` — …" `<category>/<key> <state>` with the bullet's `state: <state>` field, else `—`. Never a value.
+    .dev_flow/profile/` exit 0 → yes, 1 → no, other → `? <its first non-empty stderr line, else exit <code>>`; no
+    git → `no git`. Entries, joined by ", ": per `## <category>` section (a `#` heading ends it; lines before the
+    first section are not entries), `<category> consent <value>` for a `> **Consent:** <value> — …` line (the
+    value is the text before ` — `), and per bullet "- `<key>` — …" `<category>/<key> <state>` with the bullet's
+    last `state: <state>` field, else `—`. Never a value.
 
     docs — `_index <yes|no> · _glossary <yes|no> · _framework <yes|no>` for docs/_index.md, docs/_glossary.md,
     docs/_framework.md.
 
-    seeds — <skill>/tools/_index.yaml absent → `—`; not YAML → `? unparsable shipped index`. Per entry of
-    `shipped_cards`, in name order: `<name> <router state or absent> seeded v<seeded_from.version or —> /
-    shipped v<version>`, the router being .dev_flow/tools/_index.yaml (absent or unparsable = no entries).
+    seeds — <skill>/tools/_index.yaml absent → `—`; not YAML or not a mapping → `? unparsable shipped index`. Per
+    entry of `shipped_cards`, in name order: `<name> <router state or absent> seeded v<seeded_from.version or —> /
+    shipped v<version>`, the router being .dev_flow/tools/_index.yaml (absent or unparsable = no entries; an
+    entry's state as in tools).
 
     start — `rules <category>: <names joined by ", ">; … · skills <path><file> (<state or no stamp>), … · tools
-    <name> (<state>), … · stage <g>` from the rules, the selector-matched skills and the tools printed above, and
-    the task's stage (`—` with no task); an empty part reads `rules —`, `skills —`, `tools —`. With the key input,
-    the value starts `phase <phase>:<key> · `.
+    <name> (<state>), … · stage <g>` from the rules, the selector-matched skills and the tools printed above, the
+    categories in order of their first rule printed, and the task's stage (`—` with no task input, `?` when the
+    task fact was not established); an empty part reads `rules —`, `skills —`, `tools —`, a part whose fact was
+    not established `rules ?`, `skills ?`, `tools ?`. With the key input, the value starts `phase <phase>:<key> · `.
   effects:
-    reads: ["{root}/.dev_flow/**", "{root}/docs/_index.md", "{root}/docs/_glossary.md", "{root}/docs/_framework.md", "{skill}/SKILL.md", "{skill}/tools/_index.yaml", "{skill}/references/docs-scaling.md", "the git directory"]
-    writes: ["{git_dir}/FETCH_HEAD", "{git_dir}/refs/remotes/**", "{git_dir}/objects/**"]
+    reads: ["{root}/.dev_flow/**", "{root}/docs/_index.md", "{root}/docs/_glossary.md", "{root}/docs/_framework.md", "{skill}/SKILL.md", "{skill}/tools/_index.yaml", "{skill}/references/docs-scaling.md", "the git directory and, for a .git file, the common git directory", "the git configuration, ignore and attributes files git reads: the system and global configuration (~/.gitconfig, $XDG_CONFIG_HOME/git/config), the repository's, $XDG_CONFIG_HOME/git/ignore or ~/.config/git/ignore, the file core.excludesFile names, the .gitignore files under {root}; a local upstream's pack-objects reads the system and XDG attributes files"]
+    writes: ["<common git dir>/refs/remotes/** — new task only; <common git dir> = rev-parse --git-common-dir: the git directory, or the main repository's for a linked worktree", "<common git dir>/reftable/** — in place of refs/ in a reftable repository", "<common git dir>/logs/refs/remotes/** — when the repository keeps reflogs", "<common git dir>/objects/**"]
     network: ["the remote of the current branch's upstream — new task only"]
-    env: [GIT_TERMINAL_PROMPT, GIT_SSH_COMMAND]
+    env: [PATH, HOME, XDG_CONFIG_HOME, SSH_AUTH_SOCK, http_proxy, https_proxy, all_proxy, no_proxy, HTTP_PROXY, HTTPS_PROXY, ALL_PROXY, NO_PROXY, DBUS_SESSION_BUS_ADDRESS, XDG_RUNTIME_DIR, XDG_CACHE_HOME, SSL_CERT_FILE, SSL_CERT_DIR]
     replay_input: upstream
-  provenance: {task: task_C_RTE.md, promoted: 2026-11-22}
+  provenance: {task: task_20261122_194700_tool-findings-fix.md, promoted: 2026-11-22}
 samples:
   - id: continuing-task
     case: continuing-task
@@ -166,12 +241,18 @@ samples:
       exit: 0
       output_contains:
         - "task: —"
-        - "upstream: 1 incoming (1 touch the task: docs/_glossary.md) · 1 unpushed (oldest "
+        - "upstream: 2 incoming (2 touch the task: docs/_glossary.md, docs/файл.md) · 1 unpushed (oldest "
         - "rules: GlossaryFirst · prefer · Define a new term in the glossary before using it · docs.md#GlossaryFirst; SmallCommits · prefer ·"
         - "tools: link-check · Report the broken links of the demo documents · python3 .dev_flow/tools/link-check.py {root} · active"
         - "start: rules docs: GlossaryFirst; process: SmallCommits · skills — · tools link-check (active) · stage —"
-      writes: [repo.git/FETCH_HEAD]
-    source: "constructed — origin.git holds one commit the branch lacks (README.md, docs/_glossary.md) and the branch one commit origin.git lacks; only docs/_glossary.md lies under docs/; the directory path docs/ is covered by the glob docs/*.md"
+      writes:
+        - repo.git/logs/refs/remotes/origin/main
+        - repo.git/objects/26/48d552f0a8fbaa71225ccd3f45cc6fa03807dc
+        - repo.git/objects/7f/f741351d547f842135904eefc20e5617adf8d0
+        - repo.git/objects/c5/18dc412894d735569ba68a4283a26913284bf0
+        - repo.git/objects/e5/a079bfe1975d107758eddd177717ed9763d1ef
+        - repo.git/refs/remotes/origin/main
+    source: "constructed — origin.git holds two commits the branch lacks (README.md and docs/_glossary.md; then docs/файл.md, tagged by the annotated v1) and the branch one commit origin.git lacks; repo.git keeps reflogs, unpacks a small fetch into loose objects whatever the machine's transfer.unpackLimit, turns fetch.prune and fetch.pruneTags on over a packed stale remote-tracking ref origin/gone and a local tag localtag, and holds a reference-transaction hook file that would write hook-ran.txt and config-based ones (hook.marker, and hook.a=b whose name holds '=') that would write config-hook-ran.txt and eq-hook-ran.txt; the writes are the remote-tracking ref (loose beside the packed one), its reflog and the four objects of the second commit (fixed identity and dates make their ids fixed) — no tag, no FETCH_HEAD, no pruned ref, no packed-refs rewrite, no marker of either hook; docs/файл.md lies under docs/ outside ASCII; the directory path docs/ is covered by the glob docs/*.md"
   - id: no-upstream
     case: no-upstream
     kind: good
@@ -181,6 +262,45 @@ samples:
       output_contains: ["upstream: none (no upstream)", "profile: environment.md · ignored yes · tools/runtime present, tools/builder exercised"]
       writes: []
     source: "constructed — origin.git's branch main tracks nothing; the work tree's .gitignore ignores .dev_flow/"
+  - id: detached-head
+    case: detached-head
+    kind: good
+    inputs: {root: proj-bare, skill: skill, phase: fix, key: analysis, git_dir: det.git, upstream: origin.git}
+    expect:
+      exit: 0
+      output_contains: ["upstream: none (detached HEAD)", "start: phase fix:analysis · rules — · skills — · tools — · stage —"]
+      writes: []
+    source: "constructed — det.git's HEAD holds a commit id, not a branch; the key input opens the start value"
+  - id: linked-worktree
+    case: linked-worktree
+    kind: good
+    inputs: {root: wt, skill: skill, phase: concept, git_dir: wt/.git, upstream: origin.git}
+    expect:
+      exit: 0
+      output_contains:
+        - "upstream: 2 incoming (task files unknown: "
+        - " 1 files, "
+        - " 2 files) · 1 unpushed (oldest "
+        - "docs: _index yes · _glossary no · _framework no"
+      writes:
+        - repo.git/logs/refs/remotes/origin/main
+        - repo.git/objects/26/48d552f0a8fbaa71225ccd3f45cc6fa03807dc
+        - repo.git/objects/7f/f741351d547f842135904eefc20e5617adf8d0
+        - repo.git/objects/c5/18dc412894d735569ba68a4283a26913284bf0
+        - repo.git/objects/e5/a079bfe1975d107758eddd177717ed9763d1ef
+        - repo.git/refs/remotes/origin/main
+    source: "constructed — wt is a linked worktree of repo.git on branch feat, which tracks origin's main; its .git file points into repo.git, so the fetch's writes land in repo.git and none under wt/; without paths each incoming commit is listed newest first with its file count"
+  - id: fetch-failed
+    case: fetch-failed
+    kind: good
+    inputs: {root: proj, skill: skill, phase: concept, paths: "docs/", git_dir: repo.git, upstream: nowhere.git}
+    expect:
+      exit: 0
+      output_contains:
+        - "upstream: ? fetch failed: fatal: "
+        - " — last fetched state: 1 incoming (1 touch the task: docs/_glossary.md) · 1 unpushed (oldest "
+      writes: []
+    source: "constructed — the stand-in upstream nowhere.git does not exist, so the fetch fails; git's message is untranslated (fatal:) whatever the caller's locale; the last fetched state is the remote-tracking ref the material's own fetch left"
   - id: path-and-phase
     case: relevant-set
     kind: good
@@ -223,7 +343,7 @@ samples:
     inputs: {root: proj-cut, skill: skill, phase: implement, upstream: origin.git}
     expect:
       exit: 0
-      output_contains: ["rules: ? unparsable .dev_flow/rules/_index.yaml", "skills: —", "upstream: none (not a git repository)"]
+      output_contains: ["rules: ? unparsable .dev_flow/rules/_index.yaml", "skills: —", "upstream: none (not a git repository)", "start: rules ? · skills — · tools — · stage —"]
       writes: []
     source: "constructed — a rules index cut inside a rule entry, the shape an interrupted write leaves"
   - id: profile-tracked
@@ -244,6 +364,24 @@ samples:
       output_contains: ["seeds: alpha-facts unverified seeded v1 / shipped v2; beta-facts absent seeded v— / shipped v1", "profile: environment.md · ignored yes", "docs: _index yes · _glossary yes · _framework no", "styles: absent"]
       writes: []
     source: "constructed — the skill ships alpha-facts v2 and beta-facts v1; the router holds alpha-facts seeded from v1 and no beta-facts"
+  - id: edge-inputs
+    case: continuing-task
+    kind: good
+    inputs: {root: proj-edge, skill: skill, phase: fix, key: analysis, task: "../../docs/x", upstream: origin.git}
+    expect:
+      exit: 0
+      output_contains:
+        - "tasks: —"
+        - "task: ? not a task id ../../docs/x"
+        - "upstream: skipped (continuing task)"
+        - "rules: Terse · must · Keep it short - · style.md#Terse; Plain · should · Use plain words, · style.md#Plain"
+        - "skills: kb/notes.md · DemoNotes · current demo-api 3.1, docs - v2 second line; ? kb/../../../secret.md outside .dev_flow/skills/; c:ops/run.md · DemoOps · no stamp · topics ops; ? ../outside/ outside .dev_flow/skills/"
+        - "budget: 3 of 6"
+        - "styles: present · documentation English · chat Ukrainian · narrower Review chat, Incident chat"
+        - "docs: _index no · _glossary no · _framework yes"
+        - "start: phase fix:analysis · rules style: Terse, Plain · skills kb/notes.md (current) · tools — · stage ?"
+      writes: []
+    source: "constructed — a task id holding a path whose file exists (docs/x.md) is refused unread; a skill entry file and a domain path leave .dev_flow/skills/ toward files that exist and are not read, while the domain path c:ops/ (relative on POSIX) lies inside; a written_against holding both separators and a line break; rule summaries ending in ' ·' and in ';' stay one field each; a phase-scoped profile placed before the chat base profile and a condition-scoped one after it"
   - id: no-skill-md
     case: continuing-task
     kind: error
@@ -388,9 +526,86 @@ material:
             - name: [NoBareExcept
     proj-bare/README.md: |
       # Demo
+    up/docs/файл.md: |
+      # Файл
+    hooksrc/reference-transaction: |
+      #!/bin/sh
+      echo ran >> "$(dirname "$0")/../../hook-ran.txt"
+    proj-edge/docs/_framework.md: |
+      # Framework
+    proj-edge/docs/x.md: |
+      # Not a task
+      > **Status:** `leaked`
+    proj-edge/secret.md: |
+      ---
+      skill: Secret
+      freshness: {state: leaked, written_against: outside}
+      ---
+      # Secret
+    proj-edge/.dev_flow/outside/_index.yaml: |
+      domain: outside
+      skills:
+        - {file: leak.md, skill: Leak, topics: [leak]}
+    proj-edge/.dev_flow/rules/_index.yaml: |
+      categories:
+        - category: style
+          file: style.md
+          rules:
+            - {name: Terse, severity: must, summary: "Keep it short ·"}
+            - {name: Plain, severity: should, summary: "Use plain words;"}
+    proj-edge/.dev_flow/skills/_index.yaml: |
+      domains:
+        - {path: kb/, description: Demo notes, topics: [notes]}
+        - {path: "c:ops/", description: Demo operations, topics: [ops]}
+        - {path: ../outside/, description: A domain outside the skills directory, topics: [leak]}
+    "proj-edge/.dev_flow/skills/c:ops/_index.yaml": |
+      domain: ops
+      skills:
+        - {file: run.md, skill: DemoOps, topics: [ops]}
+    "proj-edge/.dev_flow/skills/c:ops/run.md": |
+      # Run
+    proj-edge/.dev_flow/skills/kb/_index.yaml: |
+      domain: kb
+      skills:
+        - {file: notes.md, skill: DemoNotes, topics: [notes], applies_to: {phases: [fix]}}
+        - {file: ../../../secret.md, skill: Secret, topics: [leak], applies_to: {phases: [fix]}}
+    proj-edge/.dev_flow/skills/kb/notes.md: |
+      ---
+      skill: DemoNotes
+      freshness: {state: current, written_against: "demo-api 3.1; docs · v2\nsecond line"}
+      ---
+      # Notes
+    proj-edge/.dev_flow/output_styles.md: |
+      # Output styles
+
+      ## Profile: Review chat
+
+      **Applies to:** chat · phases: review
+
+      - Chat language: English, short answers.
+
+      ## Profile: Team docs
+
+      **Applies to:** documentation
+
+      - Documentation language: English.
+
+      ## Profile: Chat default
+
+      **Applies to:** chat
+
+      - Chat language: Ukrainian.
+
+      ## Profile: Incident chat
+
+      **Applies to:** chat · when: an incident is open
+
+      - Chat language: English.
   git:
     - [init, -q, --bare, --template=, -b, main, --object-format=sha1, repo.git]
     - [init, -q, --bare, --template=, -b, main, --object-format=sha1, origin.git]
+    - [--git-dir=repo.git, config, core.logAllRefUpdates, "true"]
+    - [--git-dir=repo.git, config, fetch.unpackLimit, "100"]
     - [--git-dir=repo.git, --work-tree=proj, add, -f, .gitignore]
     - [--git-dir=repo.git, --work-tree=proj, commit, -q, -m, base]
     - [--git-dir=repo.git, --work-tree=proj, add, -f, README.md, docs/_glossary.md]
@@ -402,5 +617,30 @@ material:
     - [--git-dir=repo.git, remote, add, origin, /nonexistent/demo.git]
     - [--git-dir=repo.git, config, branch.main.remote, origin]
     - [--git-dir=repo.git, config, branch.main.merge, refs/heads/main]
-    - [--git-dir=repo.git, fetch, -q, origin.git, "+refs/heads/*:refs/remotes/origin/*"]
+    - [--git-dir=repo.git, fetch, -q, --no-write-fetch-head, origin.git, "+refs/heads/*:refs/remotes/origin/*"]
+    - [--git-dir=repo.git, config, core.excludesFile, ""]
+    - [--git-dir=repo.git, worktree, add, -q, -b, feat, wt, main]
+    - [--git-dir=repo.git, config, branch.feat.remote, origin]
+    - [--git-dir=repo.git, config, branch.feat.merge, refs/heads/main]
+    - [--git-dir=repo.git, config, fetch.prune, "true"]
+    - [--git-dir=repo.git, config, fetch.pruneTags, "true"]
+    - [--git-dir=repo.git, tag, localtag, main]
+    - [--git-dir=repo.git, update-ref, refs/remotes/origin/gone, refs/remotes/origin/main]
+    - [--git-dir=repo.git, pack-refs, --all]
+    - [--git-dir=origin.git, read-tree, main]
+    - [--git-dir=origin.git, --work-tree=up, add, -f, docs/файл.md]
+    - [--git-dir=origin.git, --work-tree=up, commit, -q, -m, upstream utf-8]
+    - [--git-dir=origin.git, tag, -a, -m, release one, v1, main]
     - [--git-dir=origin.git, config, core.excludesFile, ""]
+    - [init, -q, --bare, --template=, -b, main, --object-format=sha1, det.git]
+    - [--git-dir=det.git, --work-tree=proj-bare, add, -f, README.md]
+    - [--git-dir=det.git, --work-tree=proj-bare, commit, -q, -m, one]
+    - [--git-dir=det.git, update-ref, --no-deref, HEAD, HEAD]
+    - [init, -q, --bare, --template=, -b, main, --object-format=sha1, hook.git]
+    - [--git-dir=hook.git, --work-tree=hooksrc, add, -f, reference-transaction]
+    - [--git-dir=hook.git, --work-tree=hooksrc, update-index, --chmod=+x, reference-transaction]
+    - [--git-dir=hook.git, --work-tree=hooksrc, checkout-index, --prefix=../repo.git/hooks/, reference-transaction]
+    - [--git-dir=repo.git, config, hook.marker.event, reference-transaction]
+    - [--git-dir=repo.git, config, hook.marker.command, "echo ran >> ../config-hook-ran.txt"]
+    - [--git-dir=repo.git, config, "hook.a=b.event", reference-transaction]
+    - [--git-dir=repo.git, config, "hook.a=b.command", "echo ran >> ../eq-hook-ran.txt"]
