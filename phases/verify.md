@@ -123,7 +123,7 @@ Loading project knowledge is a **gate** (see [Project Knowledge Is Binding](../S
 
 ### What counts as a destructive operation
 
-- Deleting records, files, or resources
+- Deleting records, files, or resources — a file also needs its [recovery point](../references/recovery-points.md)
 - Modifying user settings, permissions, or credentials
 - Sending real notifications (email, SMS, push)
 - Triggering payments, subscriptions, or billing events

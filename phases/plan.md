@@ -29,6 +29,7 @@ Before the first action: the [Phase start checklist](../SKILL.md#phase-start-che
 - [ ] **Specification** — the specification and the spec sections each phase will implement ([No orphaned phases](#key-rules))
 - [ ] **Intent** — the task's recorded intent (goal / target state / expected result) the Goal restates ([Goal restates the intent](#key-rules))
 - [ ] **Refactor or full plan** — `refactor` ([Refactoring Protocol](#refactoring-protocol)) when the change restructures modules, files, or internal organization without changing the specification contracts ([When This Applies](#when-this-applies)); otherwise the full plan
+- [ ] **Recovery points** — before the first operation on each existing file the change touches: its recovery point, or the route that gives one ([Recovery Points](../references/recovery-points.md#routes))
 
 ## Context Loading
 
@@ -48,7 +49,7 @@ A rule, an existing concept, or a documented convention that already settles a c
 
 ## Design Sign-off
 
-When the plan passes [its gate](implement.md#gate-check-plan---code), stop before implementation: present the developer's Design Decisions (question → options → recommendation; one not yet answered is asked in the dialog of [Interview Mode → Ask](../references/interview-mode.md#4-ask--and-how-to-ask)) and the agent's, one line each, the documents created or changed, the files implementation will touch, the project stage, the [proportionality block](../references/proportionate-caution.md#proportionality-block); wait. On the go, write the design sign-off line ([implement → Gate Check](implement.md#gate-check-plan---code)). Skipped only under `Autonomy: full`. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
+When the plan passes [its gate](implement.md#gate-check-plan---code), stop before implementation: present the developer's Design Decisions (question → options → recommendation; one not yet answered is asked in the dialog of [Interview Mode → Ask](../references/interview-mode.md#4-ask--and-how-to-ask)) and the agent's, one line each, the documents created or changed, the files implementation will touch (with no repository: the [repository recommendation](../references/recovery-points.md#repository-recommendation), or its recorded answer when it was made before), the project stage, the [proportionality block](../references/proportionate-caution.md#proportionality-block); wait. On the go, write the design sign-off line ([implement → Gate Check](implement.md#gate-check-plan---code)). Skipped only under `Autonomy: full`. See [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints).
 
 ## Structure
 

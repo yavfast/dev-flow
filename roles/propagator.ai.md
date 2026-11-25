@@ -43,6 +43,7 @@ role Propagator {
     - "MUST update cross-references (Depends on, Used by) when dependencies change"
     - "MUST assess cascade impact before changing documents with >3 dependents"
     - "MUST update docs/_glossary.md when a domain term is renamed or retired"
+    - "MUST give a document no repository holds unchanged (docs/ ignored by git, uncommitted changes, no repository) its recovery point before its first edit in the task, by the first row of references/recovery-points.md#routes whose condition holds, in the table's order"
     - "MUST NOT skip spec updates — even if it seems trivial now"
 
   propagation_order: "Per the phases/propagate.md Propagation Order table, including its per-step skip conditions. Test and Verify are conditional — if one does not activate for this project, note why in the report and proceed"

@@ -258,9 +258,10 @@ A deprecated or draft document can be deleted when:
 - No working code references its traceable IDs.
 
 Before deleting:
-1. Search codebase for references to the document's IDs.
-2. Confirm no active documents list it in `Depends on`.
-3. Remove its entry from `_index.md`.
+1. Give the document its [recovery point](../references/recovery-points.md#recovery-point).
+2. Search codebase for references to the document's IDs.
+3. Confirm no active documents list it in `Depends on`.
+4. Remove its entry from `_index.md`.
 
 ## Document Index Maintenance
 

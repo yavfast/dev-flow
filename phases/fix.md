@@ -78,11 +78,11 @@ If you'll delegate the diagnosis loop or verification (see the **Delegation** no
 2. **Propose the fix** — list specific changes (files, methods, what changes and why). If the same root cause admits *materially different* strategies — a quick **band-aid**, a **structural** fix, a **workaround** — with different long-term cost, surface them as marked options with a recommendation, not a single silent pick (see [Interview Mode in Fix](#interview-mode-in-fix)).
 3. **Assess impact** — note if the fix touches shared code that other features depend on; the callers found in Step 1 are its reach.
 4. **Check rules (gate).** When `.dev_flow/rules/` exists, MUST read `.dev_flow/rules/_index.yaml` and load rules for the code you'll change; the fix MUST comply (`must` = blocks).
-5. **Present to user** — show the analysis, the fix option(s), the project stage, and the [proportionality block](../references/proportionate-caution.md#proportionality-block); a developer's decision among the options is asked in the dialog of [Interview Mode → Ask](../references/interview-mode.md#4-ask--and-how-to-ask). Wait for approval (or the developer's chosen/composed option) before proceeding to implementation. This is the fix route's design sign-off ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)).
+5. **Present to user** — show the analysis, the fix option(s), the files the fix will touch (with no repository: the [repository recommendation](../references/recovery-points.md#repository-recommendation), or its recorded answer when it was made before), the project stage, and the [proportionality block](../references/proportionate-caution.md#proportionality-block); a developer's decision among the options is asked in the dialog of [Interview Mode → Ask](../references/interview-mode.md#4-ask--and-how-to-ask). Wait for approval (or the developer's chosen/composed option) before proceeding to implementation. This is the fix route's design sign-off ([SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints)).
 
 ### Step 3: Implement
 
-1. Apply the fix following the approved plan.
+1. Apply the fix following the approved plan; before the first operation on each existing file, its [recovery point](../references/recovery-points.md#recovery-point) ([implement → Recovery check](implement.md#gate-check-plan---code)).
 2. Comply with `.dev_flow/rules/` (`must` = blocks).
 3. If the fix reveals a pattern-level issue, fix all occurrences found in Step 1.
 4. Add comments referencing the problem only if the fix is non-obvious.

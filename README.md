@@ -273,9 +273,15 @@ The skill ships `tools/` — an index and the cards of two gather tools, `phase-
 
 ### Proportionate Caution
 
-Access levels and safety rules come from your project rules and the agent's own system instructions, not from dev-flow; dev-flow adds the mechanisms for working inside them. When the agent needs a password or a token, it offers a way for you to type it outside the chat — a hidden-input dialog, a small wrapper script, or your own terminal — and sees only the result. A privileged or remote command (`sudo`, `ssh` to a server, `kubectl`, a cloud CLI) can go through a small runner script in your project that checks the target against a declared boundary and shows you the command and its impact before it runs. Access that your project needs is an **access channel**: you sanction it once, at the design sign-off of the concept that needs it, and then the agents run its operations — remote reads, test deploys, the routine of a firmware or device project — without asking again; a release to production still shows you HEAD and the diff since the last release to confirm. You re-authorize only when the resource itself asks (an expired token), and a journal and a report show you afterwards what ran. When a discipline that owns a row kind relaxes caution, it leaves a row in one **proportionality block** that the design and commit sign-offs show you; an unanswered row stays open, because silence is never consent.
+Access levels and safety rules come from your project rules and the agent's own system instructions, not from dev-flow — except the recovery points below; dev-flow adds the mechanisms for working inside them. When the agent needs a password or a token, it offers a way for you to type it outside the chat — a hidden-input dialog, a small wrapper script, or your own terminal — and sees only the result. A privileged or remote command (`sudo`, `ssh` to a server, `kubectl`, a cloud CLI) can go through a small runner script in your project that checks the target against a declared boundary and shows you the command and its impact before it runs. Access that your project needs is an **access channel**: you sanction it once, at the design sign-off of the concept that needs it, and then the agents run its operations — remote reads, test deploys, the routine of a firmware or device project — without asking again; a release to production still shows you HEAD and the diff since the last release to confirm. You re-authorize only when the resource itself asks (an expired token), and a journal and a report show you afterwards what ran. When a discipline that owns a row kind relaxes caution, it leaves a row in one **proportionality block** that the design and commit sign-offs show you; an unanswered row stays open, because silence is never consent.
 
 Secret input, the runner, and the block: [`references/proportionate-caution.md`](references/proportionate-caution.md); access channels: [`references/access-channels.md`](references/access-channels.md).
+
+### Recovery Points
+
+An edit, a deletion, a rename or an in-place rewrite of a file whose current content nothing holds cannot be undone. Before such an operation, the agent makes sure the path has a **recovery point**: a declared exception class (temporary files, build output, caches, installed dependencies, process lock files, generated configs, dev-flow's own working state), a file the task created, a repository that holds the file unchanged, or a verified backup in `.dev_flow/backups/<task>/` with a sha256 manifest (a stash entry: a ref under `refs/dev-flow/<task>/`). In a project with no repository, it recommends one — `git init`, a `.gitignore` written first, and a baseline commit with secrets left out. When you decline, or a repository cannot be created, a backup is made when it fits ([Backups](references/recovery-points.md#backups)); otherwise the operation is refused. The refusal says what would be lost, which routes were checked and why each failed, and gives the exact command if you want to run it yourself. Your project rules can add exception classes.
+
+Operations, routes, backups and the exception list: [`references/recovery-points.md`](references/recovery-points.md).
 
 ### Interview Mode
 
@@ -396,6 +402,7 @@ your-project/
     ├── todos/                      # Deferred future work filed by `todo`
     │   └── _index.md
     ├── proto/                      # Working prototypes kept for your verdict (gitignored worktrees)
+    ├── backups/                    # Recovery-point backups per task + sha256 manifest (gitignored, removed on your word)
     ├── session_history/            # Archived completed tasks
     ├── rules/                      # Project coding rules — directive-first units, `## Contents` digest, `applies_to` selectors
     │   ├── _index.yaml             # Derived router (category summary + selector + rules[])

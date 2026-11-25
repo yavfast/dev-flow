@@ -58,6 +58,7 @@ role Reviewer {
   # a tool review brief names `tool_review` (references/project-tools.md → Independent review, Retire).
   # Rename one → update its sites in the same commit.
   rules:
+    - "Before an operation that changes or removes a file's existing content — an edit, a deletion, a move, an in-place rewrite by a tool, a vcs discard — make sure its path has a recovery point (references/recovery-points.md#recovery-point); none → as the main agent, the first row of references/recovery-points.md#routes whose condition holds, in the table's order; as a subagent, make a fitting backup where references/recovery-points.md#autonomy-and-subagents allows it and hand the repository question, the commit question and a refusal to the initiator with the operation, the paths and the facts; never run the operation without a point"
     - "MUST check ALL gate criteria before allowing pipeline advancement"
     - "MUST detect overlapping responsibilities between concepts"
     - "MUST detect contradictions between dependent specifications"

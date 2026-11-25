@@ -40,7 +40,7 @@ The skill ships cards of its own under `<skill>/tools/` — contracts and sample
 
 A one-off script is not a project tool: it lives and disappears in the session workspace `/tmp/{project-slug}/tools/` ([Resource Cache](cache.md)). The project's own scripts and build tooling are project code and go through the pipeline.
 
-What a tool may do — its access, and which of its actions need the developer's confirmation — is set by the project rules and the agent's system instructions, as for any other action of the agent. This file defines the process; the declared effects in the contract describe what the tool does, so that an agent can choose it and a reviewer can check the code against it.
+What a tool may do — its access, and which of its actions need the developer's confirmation — is set by the project rules and the agent's system instructions, and a file operation that cannot be undone needs its [recovery point](recovery-points.md), as for any other action of the agent. This file defines the process; the declared effects in the contract describe what the tool does, so that an agent can choose it and a reviewer can check the code against it.
 
 ## Header contract
 
@@ -290,12 +290,12 @@ Before the first use of a tool in a session decide, without writing anything, wh
 | Current environment matches none in the binding | `read-first` (`new-environment`) |
 | Otherwise | `run` (`ok`) |
 
-`run` — call the tool without reading its code. `read-first` — read the realization, then use it as before this file existed; the discrepancy waits for the next audit. `unfit` — do not use the tool for this need. The trust check verifies nothing — it only reads the binding audit wrote; whether the tool's action is allowed is decided by the project rules and the agent's system instructions.
+`run` — call the tool without reading its code. `read-first` — read the realization, then use it as before this file existed; the discrepancy waits for the next audit. `unfit` — do not use the tool for this need. The trust check verifies nothing — it only reads the binding audit wrote; whether the tool's action is allowed is decided by the project rules and the agent's system instructions, and a file operation that cannot be undone also by [Recovery Points](recovery-points.md).
 
 ## Run
 
 1. Build argv from `invocation` and the input values — an argument array, never a shell string.
-2. A tool with `effects.writes` → snapshot the project tree first.
+2. A tool with `effects.writes` → every existing file its `writes` match gets its [recovery point](recovery-points.md#operations) (an `in-place run`); then snapshot the project tree.
 3. `output.size_class: large` → redirect the output to `/tmp/{project-slug}/tools/<name>_YYYYMMDD_HHMMSS.out` and read it by path.
 4. Read the exit by the [exit-code contract](#header-contract). The run verdict is `clean` \| `findings` \| `done` \| `cannot-decide` \| `tool-failure`, or `undeclared-write` when step 5 fails.
 5. A tool with `effects.writes` → the paths changed by the run must all match `effects.writes`; anything else → the run failed, set the card `state: failing` with `failure`, report it to the developer (`PTL_UNDECLARED_WRITE`).

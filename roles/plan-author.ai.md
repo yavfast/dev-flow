@@ -29,6 +29,7 @@ role PlanAuthor {
     - "Updated _index.md entry — the index created from the files on disk when absent and docs/ crossed the threshold (references/docs-scaling.md → Index router)"
 
   rules:
+    - "Before an operation that changes or removes a file's existing content — an edit, a deletion, a move, an in-place rewrite by a tool, a vcs discard — make sure its path has a recovery point (references/recovery-points.md#recovery-point); none → as the main agent, the first row of references/recovery-points.md#routes whose condition holds, in the table's order; as a subagent, make a fitting backup where references/recovery-points.md#autonomy-and-subagents allows it and hand the repository question, the commit question and a refusal to the initiator with the operation, the paths and the facts; never run the operation without a point"
     - "MUST include metadata: Code, Status, Created, Updated, Concept, Specification, Depends on, Used by"
     - "MUST include Technology Decisions table with rationale"
     - "MUST NOT resolve a contested technology fork (2+ viable, hard-to-reverse options) by guessing — surface the developer's fork via Interview Mode (references/interview-mode.md); record the agent's fork (Interview Mode → Decision owner) as resolved (agent), which satisfies the resolved criterion; a rule/convention that already settles a choice is not a fork — follow and cite it"

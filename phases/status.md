@@ -54,6 +54,7 @@ For the periodic whole-directory revision see the [audit phase](audit.md): `stat
 ├── tools/                     # _index.yaml (router) + realizations + samples/ + cards/ + usage/ + prev/ — project tools (Project Tools): header contract, acceptance samples, card, binding written by audit; run-privileged — the privileged runner (Proportionate Caution), written only with the developer's word
 ├── access/                    # channels.yaml — sanctioned access channels (committed); journal.log — hash-chained call journal (gitignored) (Access Channels)
 ├── proto/                     # <slug>/ — working project prototypes kept for the developer's verdict or promotion (research); git-ignored, never committed
+├── backups/                   # <task_id>/files/ + manifest.md — recovery-point backups (Recovery Points); git-ignored, removed only on the developer's word
 ├── evidence/                  # ledger.yaml — intervention ledger + outcome entries (Evidence Discipline); absent → reconcile is a no-op
 ├── tasks/
 │   ├── _index.md              # Catalog of task files
@@ -282,6 +283,7 @@ The task's last commit is the one after which no step of the task remains: every
 5. **After the commit:** the push, at the commit that completes the work — when approved, or under `Autonomy: full` ([SKILL.md → Git Workflow Integration](../SKILL.md#git-workflow-integration) rule 6); the tracker writes, each confirmed, and after a push the *Done* proposals for every ticket it carries ([Ticket Tracker Integration](../references/ticket-tracker.md#what-dev-flow-does-with-it)). Nothing after the commit is written to a file git tracks.
 6. **Clean check.** `git status --porcelain` in each repository the task touched, over the files the task changed and its closure files only. Empty, or the report names each leftover file and why.
 7. **Report:**
+   - **Backups:** when the task made backups, name the store `.dev_flow/backups/<task_id>/` with its file count and size, and the task's `refs/dev-flow/<task_id>/` refs, and offer their removal — removed only on the developer's word ([Recovery Points → Backups](../references/recovery-points.md#backups)).
    - **Tools awaiting audit:** name the project tools this task promoted, adapted or regenerated that are still `unverified`, and offer `/dev-flow audit tools` — a suggestion, not an auto-run ([Project Tools](../references/project-tools.md#verification-in-audit)).
    - **Queued follow-ups:** scan `.dev_flow/todos/` and plan backlogs for `queued` records triggered `after task_<this ID>` and offer to run each next (`/dev-flow do …`) — a suggestion, not an auto-run; the executed work still passes its own gates and commit approval. See [todo phase](todo.md).
 

@@ -34,6 +34,7 @@ role ConceptAuthor {
     - "Updated docs/_glossary.md (new or clarified domain terms)"
 
   rules:
+    - "Before an operation that changes or removes a file's existing content — an edit, a deletion, a move, an in-place rewrite by a tool, a vcs discard — make sure its path has a recovery point (references/recovery-points.md#recovery-point); none → as the main agent, the first row of references/recovery-points.md#routes whose condition holds, in the table's order; as a subagent, make a fitting backup where references/recovery-points.md#autonomy-and-subagents allows it and hand the repository question, the commit question and a refusal to the initiator with the operation, the paths and the facts; never run the operation without a point"
     - "MUST NOT reference specific programming languages, frameworks, or libraries"
     - "MUST NOT resolve a material design fork (2+ viable, hard-to-reverse options) by guessing — surface the developer's fork via Interview Mode (references/interview-mode.md); record the agent's fork (Interview Mode → Decision owner) as resolved (agent), which satisfies the resolved criterion"
     - "When running as a delegated subagent with no developer channel: record each fork as an OPEN decision with options, a recommended answer + rationale, and a resolution trigger; report them up — never silently choose"

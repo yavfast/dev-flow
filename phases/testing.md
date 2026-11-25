@@ -70,6 +70,7 @@ Before the first action: the [Phase start checklist](../SKILL.md#phase-start-che
 - [ ] **Target** — the `[target]`, or the tests determined from the current active context ([Command](#command))
 - [ ] **Plan phase's `Verify:`** — the spec Verification Criteria (`SP_XXX_05_*`) and acceptance checks the implemented plan phase's `Verify:` field names ([Testing Workflow](#testing-workflow) step 1)
 - [ ] **Run map** — `.dev_flow/skills/build/run-map.md`, read before the first build or test run of a phase: its test commands for the touched modules, or `absent` ([Run Economy → Run map](../references/run-economy.md#run-map))
+- [ ] **Recovery points** — before the first operation on each existing file the change touches: its recovery point, or the route that gives one ([Recovery Points](../references/recovery-points.md#routes))
 
 ## Context Loading
 

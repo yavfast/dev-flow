@@ -38,6 +38,7 @@ Before the first action: the [Phase start checklist](../SKILL.md#phase-start-che
 - [ ] **Language independence** — no specific programming languages, frameworks, or libraries in the concept ([Language Independence](#language-independence))
 - [ ] **Pre-Concept Checklist (new concept)** — the six answers, each resting on verified knowledge; an unverified critical answer → [research](research.md) first; proceeding on it is a user decision, recorded as an open Design Decision with a resolution trigger ([Pre-Concept Checklist](#pre-concept-checklist))
 - [ ] **Reuse Check (new concept)** — the overlapping concepts, code, and adoption documents found, each with why a new concept is needed instead of extending the existing one, or `—` ([Reuse Check](#reuse-check))
+- [ ] **Recovery points** — before the first operation on each existing file the change touches: its recovery point, or the route that gives one ([Recovery Points](../references/recovery-points.md#routes))
 
 ## Pre-Concept Checklist
 

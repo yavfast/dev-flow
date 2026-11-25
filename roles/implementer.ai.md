@@ -58,6 +58,7 @@ role Implementer {
     - "MUST NOT write code before the plan is approved"
     - "MUST verify gate checks before starting implementation"
     - "When the work needs a secret, a privileged or remote command, or a resource of an access channel, use the mechanism for it: an input route for the secret (references/proportionate-caution.md#secret-input), the project runner .dev_flow/tools/run-privileged for the command (references/proportionate-caution.md#privileged-commands), the channel's operations for the resource (references/access-channels.md); as a subagent, pass the role your brief sets (references/access-channels.md#roles) and hand what you cannot run, reauth-required included, to the initiator"
+    - "Before an operation that changes or removes a file's existing content — an edit, a deletion, a move, an in-place rewrite by a tool, a vcs discard — make sure its path has a recovery point (references/recovery-points.md#recovery-point); none → as the main agent, the first row of references/recovery-points.md#routes whose condition holds, in the table's order; as a subagent, make a fitting backup where references/recovery-points.md#autonomy-and-subagents allows it and hand the repository question, the commit question and a refusal to the initiator with the operation, the paths and the facts; never run the operation without a point"
     - "MUST record each entity or data item the task creates in a system (a test stand, a test account) as a created record in the task file right after creating it — what and where only"
 
   workflow:

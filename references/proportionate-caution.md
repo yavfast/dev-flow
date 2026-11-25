@@ -24,22 +24,20 @@ An action with any of these consequences needs the **developer's word now** — 
 | `production-write` | It writes to production |
 | `money` | It triggers a payment, a subscription, or billing — also for an entity the task created |
 | `outward-message` | It sends an email, an SMS, a push notification, or a chat message to a real person |
-| `irreversible-destruction` | It discards content that cannot be recovered: a reset of uncommitted changes (`reset --hard`, `checkout --`, `restore`, `stash drop`), or a file removal or a replacement of the whole content, when the current task did not write that content and vcs history does not hold it. Or it deletes data outside a confirmed test target, and that data cannot be recovered |
+| `irreversible-destruction` | It discards uncommitted changes the current task did not write — a [`vcs discard`](recovery-points.md#operations) (`reset --hard`, `checkout --`, `restore`, `stash drop`, `clean`, …) — asked also when the [recovery point](recovery-points.md#recovery-point) it needs first holds them; a discard of only the task's own changes is not a consequence. Or it deletes data outside a confirmed test target, and that data cannot be recovered. Any other operation on a file: [Recovery Points](recovery-points.md) — with a point it has no such consequence; without one it is refused there, never asked |
 | `access-relaxation` | Without the developer's confirmation, it removes or bypasses a command gate, widens the permissions of the agent runtime, sanctions or widens an [access channel](access-channels.md#sanction), or creates or changes the privileged runner ([Privileged commands](#privileged-commands)). A `proposed` channel entry and a narrowing are not a relaxation |
 
 **Not a consequence:**
 
-- An edit of files inside the change the task makes — also a repeat edit of the same file, and an edit of a file the task created, with or without vcs.
-- A change of committed files under vcs.
-- A deletion of build artifacts, caches, and temporary files that regenerate.
+- An operation on a file that has a [recovery point](recovery-points.md#recovery-point), other than a vcs discard of changes the task did not write: a file the task created, one its repository holds unchanged, one with a verified backup, one of a declared [exception class](recovery-points.md#exceptions) — build output, caches and temporary files among them.
 - A deletion of entities and data the task recorded as created ([created records](#proportionality-block)).
 - An action on a local database seeded from the project's own fixtures or migrations.
 
-The created exemption applies to `irreversible-destruction` only: a payment for a subscription the task created is still `money`. A file that is new in the task's diff counts as created without a record. A file under vcs is recoverable only when it has no changes since the last commit.
+The created exemption applies to `irreversible-destruction` only: a payment for a subscription the task created is still `money`. A file the task created at a path where nothing was counts as created without a record ([Recovery Points](recovery-points.md#recovery-point)).
 
 **The classifier returns a set.** It can be empty. When an action has several consequences, each applies.
 
-**Unestablished fact — `FACT_UNKNOWN`.** When a fact that a row needs is unknown (is this production, who receives the message, where the data came from, does a recovery exist), the row applies. The question to the developer names the unknown fact.
+**Unestablished fact — `FACT_UNKNOWN`.** When a fact that a row needs is unknown (is this production, who receives the message, where the data came from, does a recovery exist), the row applies. The question to the developer names the unknown fact. For a file, the recovery fact belongs to [Recovery Points](recovery-points.md#recovery-point): an unestablished point is no point — its routes decide, never a question.
 
 The hard floor also holds what the agent never settles alone:
 
@@ -238,3 +236,4 @@ A row is **open** until an answer with the same `kind`, `ref`, and occurrence ex
 - No gate criterion changes. The developer checkpoints stay as they are; each one shows the block.
 - The [Adaptation Profile](adaptation-profile.md) rule "secrets are never written" does not change.
 - The [Safe Testing Principle](../phases/verify.md#safe-testing-principle) of verify stays in force; its list of destructive operations is read together with the hard floor.
+- [Recovery Points](recovery-points.md) owns the file operations that cannot be undone; the hard floor keeps the discards of uncommitted changes the current task did not write and the data outside files.

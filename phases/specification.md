@@ -30,6 +30,7 @@ Before the first action: the [Phase start checklist](../SKILL.md#phase-start-che
 
 - [ ] **Language independence** — no specific programming languages, frameworks, or libraries; abstract type notation and pseudocode ([Language Independence](#language-independence))
 - [ ] **Concept and criticality** — the concept named by `Concept:` and the `Criticality:` the spec inherits from its header ([Criticality is inherited, then refined](#key-rules))
+- [ ] **Recovery points** — before the first operation on each existing file the change touches: its recovery point, or the route that gives one ([Recovery Points](../references/recovery-points.md#routes))
 
 ## Context Loading
 

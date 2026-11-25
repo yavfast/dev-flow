@@ -65,7 +65,7 @@ Every task that changes code ends its work with a docs sync: the agent brings th
   5. **`docs/_glossary.md`** — a domain term the change added, renamed or retired; created lazily ([Glossary](../references/glossary.md)).
   6. **`docs/_framework.md`** — by [Framework map](#framework-map).
 
-  Each edit follows [Mandatory Metadata Updates](#mandatory-metadata-updates).
+  Each edit follows [Mandatory Metadata Updates](#mandatory-metadata-updates). A document no repository holds unchanged — `docs/` ignored by git, a document with uncommitted changes, a project with no repository — gets its [recovery point](../references/recovery-points.md#recovery-point) before its first edit in the task, by the first row of [Routes](../references/recovery-points.md#routes) whose condition holds, in the table's order.
 - **No permission prompt.** The sync writes what the task's settled decisions (the design sign-off, the approved fix plan) already decided; the developer sees each edit in the commit diff. A needed edit is made, never left as an item flagged for the developer.
 - **Boundary.** An edit that needs a decision nobody has made — any signal of [Upstream Escalation → When to trigger](../references/escalation.md#when-to-trigger) — goes to Upstream Escalation, not into the sync. A wish to reverse a settled, working design decision is a change request raised with the developer, not an escalation (the same section).
 - **Record.** One line in the report of the phase that ran it: `Docs sync: <documents updated or created>`, or `Docs sync: none — <reason>`; the commit sign-off shows the documents among the changed files — when `docs/` is ignored by git, as the `Docs sync:` line. A file the sync creates is a structural event in the task's Activity.
