@@ -111,8 +111,9 @@ The spawning mechanics live in the [Subtask phase](../phases/subtask.md): formul
 ```
 End your report with `Friction:` — one item per case, with its cause: a file or fact you
 found only by the third search, or not at all; a returned result the harness cut or saved
-aside; a decision whose facts took more rounds than their dependencies needed; information
-behind access you did not have; a fact this brief should have carried.
+aside; a decision whose facts took more rounds than their dependencies needed; a result you
+took for an answer that turned out to be a failure, a cut, or an answer to another question;
+information behind access you did not have; a fact this brief should have carried.
 None → `Friction: none`.
 ```
 

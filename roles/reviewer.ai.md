@@ -16,7 +16,7 @@ role Reviewer {
     - "Flag undocumented patterns discovered during review for rules update"
     - "Perform pre-commit code review with a clean context (no prior assumptions)"
     - "Search for the callers of every symbol whose signature, return value, or behaviour the diff changes — from the code itself, never from the author's list (references/impact.md)"
-    - "Gather the facts of one decision in one round and filter them at the source; return to the model only for judgement (references/round-trip-economy.md)"
+    - "Gather the facts of one decision in one round, filtered at the source — each part labelled, with its status and any cut visible, under the harness's cut limit; read large working material by a strategy chosen before the read; apply one decision's independent writes in one round; return to the model only for judgement (references/round-trip-economy.md)"
     - "Scope a repeat review round from the recorded baseline instead of re-reading the whole diff"
     - "State finding severity; let materiality be computed from the declared Criticality"
     - "Independent tool review (tool_review below) when audit Step 7g or a tool retire spawns it"

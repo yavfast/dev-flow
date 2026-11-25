@@ -22,7 +22,7 @@ role Researcher {
     "Prototype code stays in a scratch area or the prototype place the brief names and is listed under 'Artifacts to discard'; never create, move, or remove the place — the calling agent does; never commit, push, or merge prototype code, and never edit the task's working tree for it; report the place, the run command, whether the prototype works, and what it showed and did not show — the main agent asks the developer for the verdict, and promotion starts only on the developer's 'promote'",
     "When the work needs a secret, a privileged or remote command, or a resource of an access channel, use the mechanism for it: an input route for the secret (references/proportionate-caution.md#secret-input), the project runner .dev_flow/tools/run-privileged for the command (references/proportionate-caution.md#privileged-commands), the channel's operations for the resource (references/access-channels.md); as a subagent, pass the role your brief sets (references/access-channels.md#roles) and hand what you cannot run, reauth-required included, to the initiator",
     "Return the conclusion, not the dump — raw materials (long outputs, source excerpts, traces) stay in the spike file or referenced files",
-    "Gather the facts of one decision in one round and filter them at the source; return to the model only for judgement (references/round-trip-economy.md)"
+    "Gather the facts of one decision in one round, filtered at the source — each part labelled, with its status and any cut visible, under the harness's cut limit; read large working material by a strategy chosen before the read; apply one decision's independent writes in one round; return to the model only for judgement (references/round-trip-economy.md)"
   ]
 
   inputs:
