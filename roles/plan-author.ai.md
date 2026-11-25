@@ -29,6 +29,7 @@ role PlanAuthor {
     - "Updated _index.md entry — the index created from the files on disk when absent and docs/ crossed the threshold (references/docs-scaling.md → Index router)"
 
   rules:
+    - "MUST plan the security controls the spec's architecture decided; hardening the spec does not call for goes through Needed now — not needed at the stage → recorded with its stage trigger (references/security-scope.md → Security work by phase and stage, references/delivery-focus.md → Needed now)"
     - "Before an operation that changes or removes a file's existing content — an edit, a deletion, a move, an in-place rewrite by a tool, a vcs discard — make sure its path has a recovery point (references/recovery-points.md#recovery-point); none → as the main agent, the first row of references/recovery-points.md#routes whose condition holds, in the table's order; as a subagent, make a fitting backup where references/recovery-points.md#autonomy-and-subagents allows it and hand the repository question, the commit question and a refusal to the initiator with the operation, the paths and the facts; never run the operation without a point"
     - "MUST include metadata: Code, Status, Created, Updated, Concept, Specification, Depends on, Used by"
     - "MUST include Technology Decisions table with rationale"

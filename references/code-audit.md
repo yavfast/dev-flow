@@ -41,7 +41,7 @@ Pulled in only when the intent names them or the project type makes them relevan
 | key | focus | source of truth |
 |-----|-------|-----------------|
 | `concurrency` | shared-state access, locking, deadlock/livelock, async ordering | concurrency heuristics + `.dev_flow/rules/` |
-| `dependencies` | third-party version drift, unused/duplicate deps, known-vuln packages, license risk | lockfiles + advisories |
+| `dependencies` | third-party version drift, unused/duplicate deps, known-vuln packages — a risk only when project code calls the vulnerable function with actor-controlled input ([Risk argument](security-scope.md#risk-argument)), otherwise a recommendation — license risk | lockfiles + advisories |
 | `types` | type-safety holes, `any`/`unchecked` casts, nullability gaps | the type system's strictness settings |
 | `error-handling` | error propagation, swallowed exceptions, retry/backoff, partial-failure handling | `.dev_flow/rules/error-handling.md` |
 | `config` | hard-coded config, env/secret handling (a secret counts only where secrets never live), environment parity | config conventions + `security` overlap |
@@ -113,7 +113,7 @@ Each checklist is the "what to look for" for one lens. Findings carry an `id`, t
 
 ### `security`
 
-Static audit only — **never run or execute exploits**. Mirrors [review](../phases/review.md)'s blocking Security check at codebase scale. An OWASP-style class sweep:
+Static audit only — **never run or execute exploits**. Mirrors [review](../phases/review.md)'s Security check at codebase scale, against a general standard — the one a project rule names, else the OWASP Top 10 categories — without suppositions: a finding names a path, not a possibility ([Security Scope](security-scope.md)). The class sweep:
 
 - **Injection** — SQL/NoSQL/command/template injection; unparameterized queries; unsanitized input reaching an interpreter.
 - **SSRF / path traversal** — user-controlled URLs/paths reaching a fetch or file op without validation.
@@ -123,7 +123,8 @@ Static audit only — **never run or execute exploits**. Mirrors [review](../pha
 - **Missing authz** — an action/endpoint without an access check; broken object-level authorization.
 - **Unsafe defaults & error leakage** — permissive defaults, verbose errors leaking internals, missing input validation / output encoding.
 - **Auth/crypto sub-angles** fold in here.
-- **Fast-track rule:** an **exploitable `must`-severity** finding is *not* parked in the refactoring backlog — it is surfaced for an immediate [fix](../phases/fix.md) (or escalation). Security findings are never silently down-prioritized. Exception: a finding of type `vuln:*` or `missing-authz` whose exposure is `external` while the [project stage](delivery-focus.md#project-stage) is not `production` goes to the backlog with the trigger "before the first external exposure" ([Delivery Focus](delivery-focus.md#security-findings-and-the-stage)); `secret-exposure` never takes it.
+- **Risk argument:** every finding carries the [risk argument](security-scope.md#risk-argument) — actor, entry, chain, precondition, exposure, impact — and the risk it computes ([Security Scope → Risk](security-scope.md#risk--computed-not-judged)); the stage comes from the parsed audit intent ([audit Step 9.0](../phases/audit.md#step-90--parseintent--context-gates)).
+- **Fast-track rule:** a finding of risk `real`, or a `secret-exposure`, is *not* parked in the refactoring backlog — it is surfaced for an immediate [fix](../phases/fix.md) (or escalation). A finding of risk `deferred` goes to the plan backlog with the trigger "before the first external exposure". A finding of risk `hypothetical` — a known CVE whose vulnerable function the project never reaches with actor-controlled input among them — goes to the report's security recommendations: what would protect, never a restriction of a function ([Protect, never restrict](security-scope.md#protect-never-restrict)), no blocker, no fast-track. No security finding is dropped silently: each stands in the report with its risk.
 - Finding types: `vuln:injection`, `vuln:ssrf`, `vuln:path-traversal`, `vuln:insecure-crypto`, `vuln:unsafe-deserialization`, `secret-exposure`, `missing-authz`, `unsafe-default`.
 
 ### `correctness`
@@ -157,7 +158,7 @@ Complexity- and resource-usage heuristics (measure where a profiler exists; othe
 
 ### Menu / domain lens checklists (stubs — extend per project)
 
-`concurrency`: shared-state without synchronization, lock ordering, deadlock cycles, async-result ordering. `dependencies`: outdated/duplicate/unused deps, known-vuln versions (advisory lookup), license incompatibility. `types`: `any`/unchecked casts, nullability holes, generics misuse. `error-handling`: propagation gaps, retry/backoff correctness, partial-failure recovery. `config`: hard-coded config, env parity, secret handling (overlaps `security`). `scalability`: data-volume assumptions, pagination, statelessness. `api`: contract stability, versioning, surface minimality. `data`: migration safety, integrity constraints, serialization compat. `readability`: clarity, naming-at-scale, comment health. `docs`: docstring/README drift at code scale. `a11y` / `i18n` / `network`: domain checklists the project fills in when it adopts the lens.
+`concurrency`: shared-state without synchronization, lock ordering, deadlock cycles, async-result ordering. `dependencies`: outdated/duplicate/unused deps, known-vuln versions (advisory lookup; a risk only by the [risk argument](security-scope.md#risk-argument), otherwise a recommendation), license incompatibility. `types`: `any`/unchecked casts, nullability holes, generics misuse. `error-handling`: propagation gaps, retry/backoff correctness, partial-failure recovery. `config`: hard-coded config, env parity, secret handling (overlaps `security`). `scalability`: data-volume assumptions, pagination, statelessness. `api`: contract stability, versioning, surface minimality. `data`: migration safety, integrity constraints, serialization compat. `readability`: clarity, naming-at-scale, comment health. `docs`: docstring/README drift at code scale. `a11y` / `i18n` / `network`: domain checklists the project fills in when it adopts the lens.
 
 ## Shared Bottom-Up Analysis
 
@@ -226,7 +227,7 @@ How Consolidate and ProducePlan turn Findings into a prioritized, *executable* p
 
 ### Priority
 
-`priority = f(max severity, blast_radius, effort)`. High-severity, high-blast, low-effort items rank first; low-severity, high-effort items sink toward the backlog. Blast-radius comes from an [Impact Walk](impact.md) over the affected files. **Security overrides ranking**: an exploitable `must` vuln fast-tracks past the queue to an immediate fix.
+`priority = f(max severity, blast_radius, effort)`. High-severity, high-blast, low-effort items rank first; low-severity, high-effort items sink toward the backlog. Blast-radius comes from an [Impact Walk](impact.md) over the affected files. **Security overrides ranking** only for a real risk: a security finding of risk `real`, or a `secret-exposure`, fast-tracks past the queue to an immediate fix; a `hypothetical` one goes to the report's security recommendations, outside the ranking ([Security Scope](security-scope.md#risk--computed-not-judged)).
 
 ### Change-class → route
 

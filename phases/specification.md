@@ -17,6 +17,7 @@ Specifications MUST NOT reference specific programming languages, frameworks, or
 - **No final code:** Specs do NOT contain implementation code. They may contain abstract pseudocode, data structures, contract signatures, and validation rules.
 - **Data structures are detailed:** Describe every field with type, constraints, default, and purpose.
 - **Structure over prose:** Avoid vague descriptions. Define concrete fields, methods, and constraints.
+- **Security as architecture only:** the spec states the trust boundaries its inputs cross, who may write or act on each entity, where data must not go and where secrets live — built on the ownership and placement answers of [negative sweep](#negative-sweep) questions 3–4. A hypothetical vulnerability of code not yet written is neither a finding nor a gate criterion ([Security Scope](../references/security-scope.md#security-work-by-phase-and-stage)).
 - **Isolation and modularity:** Each spec is strictly isolated. Changes in one must not affect others unless explicitly defined in contracts.
 - **Single Source of Truth:** Once created, source code becomes a derived artifact. All changes start in the specification first.
 - **Follow the glossary:** `docs/_glossary.md` is loaded with `docs/_index.md`; name every entity, field, and contract with its canonical term (not an `_Avoid_` alias). If the spec introduces a genuinely new domain term, add it to the glossary. Term *formation* is mainly a concept-phase job — here you consume the canonical vocabulary. See [Glossary](../references/glossary.md).
@@ -95,6 +96,7 @@ The checklist's sweep covers each input the spec reads across a boundary — a r
 | 6 | **Unchanged** — the state a call or an event leaves as it was | 05_02 Invariant Checks |
 
 - A question that cannot arise for the input is skipped. The sweep adds no section: each answer lands in the section the table names.
+- Questions 3 and 4 ask who owns the input and where it may lie — ownership and placement, asked at every stage — never how the code could later be attacked ([Security Scope](../references/security-scope.md#security-work-by-phase-and-stage)).
 - The project's rules whose selector holds the phase `spec` add their own questions — the questions grown from [sweep gaps](../references/experience-capture.md#sweep-gaps).
 - The answers are contract behaviour, not tests: [What gets a test](../references/test-economy.md#what-gets-a-test) still decides which of them get a test.
 

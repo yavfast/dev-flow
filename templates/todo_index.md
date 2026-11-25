@@ -22,6 +22,7 @@ A todo is *deferred*, not committed work — execution happens later via `/dev-f
 | TD_20260101_090000_short-slug | short description | Standard | implement | when X happens / by YYYY-MM-DD | candidate |
 | TD_20260102_140000_cache-leak | fix noticed during current work | Trivial | fix | after task_C_AUTH | queued |
 | TD_20260103_101500_button-states | review finding that did not converge | Trivial | fix | next deliberate change to `ui/panel.ts` | contested |
+| TD_20260104_110000_upload-authz | review security finding of risk deferred | Standard | fix | before the first external exposure | candidate |
 
 ## Entries
 
@@ -59,7 +60,17 @@ A todo is *deferred*, not committed work — execution happens later via `/dev-f
 
 <!-- Both positions are mandatory. A record with one position is one side's verdict,
      not a disagreement, and must not be filed. Never carries a `must` or security
-     finding — those block without limit. See `references/review-convergence.md` (dev-flow skill). -->
+     finding — a `must` finding blocks without limit; a security finding blocks, waits
+     for its stage, or stays a recommendation by its risk (`references/security-scope.md`). See `references/review-convergence.md` (dev-flow skill). -->
+
+### TD_20260104_110000_upload-authz — <stage-deferred security finding title>
+
+> **Status:** candidate — **Created:** YYYY-MM-DD — **From:** `task_<ID>` review round N
+
+- **Finding:** {the defect, in 1–2 sentences} — identity `<normalized location>#<type>`
+- **Risk argument:** actor {who, outside the team} · entry `file:line` · chain `file:line` → `file:line` · precondition {what must hold besides the exposure, or `none`} · exposure `external` · impact {one line}
+- **Stage at capture:** {the task's stage}
+- **Return trigger:** `before the first external exposure`
 
 ---
 

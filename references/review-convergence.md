@@ -28,13 +28,12 @@ Absence is valid, is never a documentation finding, and never lowers a severity.
 
 ## Finding materiality — computed, not judged
 
-The reviewer assigns `severity` (`must` / `should` / `prefer`) as before, and does **not** assign materiality. Materiality is a pure function of `severity`, finding `type`, and effective criticality; from round 3 the round-3 cap below also reads whether an earlier round raised the identity and whether a raise opened the finding's check in this round.
+The reviewer assigns `severity` (`must` / `should` / `prefer`) as before, and does **not** assign materiality. Materiality is a pure function of `severity`, finding `type`, effective criticality and, for a security finding, its [risk](security-scope.md#risk--computed-not-judged); from round 3 the round-3 cap below also reads whether an earlier round raised the identity and whether a raise opened the finding's check in this round.
 
 Overrides first, in order:
 
-1. A security finding — the Security check, or a type `vuln:*` or `missing-authz` — with `exposure: external` while the stage written in the task file is not `production` → `deferrable`, routed as a todo of flavor `deferred` with the trigger "before the first external exposure", not the `contested` route ([Delivery Focus](delivery-focus.md#security-findings-and-the-stage)). `secret-exposure` never takes this override.
-2. `type` in a security class (`vuln:*`, `secret-exposure`, `missing-authz`) → `blocking` (`secret-exposure` is only a secret in a place where secrets never live — [Proportionate Caution](proportionate-caution.md#secrets))
-3. `severity: must` → `blocking`
+1. A security finding — the Security check, or a type in a security class (`vuln:*`, `missing-authz`, `secret-exposure`) — by its risk ([Security Scope](security-scope.md#risk--computed-not-judged)): `real` → `blocking`; `deferred` → `deferrable`, routed as a todo of flavor `deferred` with the trigger "before the first external exposure", not the `contested` route; `hypothetical` → `advisory`, whatever its severity. `secret-exposure` — only a real secret in a place where secrets never live ([Proportionate Caution](proportionate-caution.md#secrets)) — is `blocking` at every stage.
+2. `severity: must` → `blocking`
 
 Then the table (so `severity` is `should` or `prefer`):
 
@@ -47,7 +46,7 @@ Then the table (so `severity` is `should` or `prefer`):
 - **advisory** — reported to the developer, spawns no round.
 - **deferrable** — routes to the todo register at once, spawns no round.
 
-**Round-3 cap.** In round 3 and later, a `blocking` verdict of the table for an identity no earlier round of the task raised becomes `advisory`, except a finding of a check the [raise](#raise) opened in this round — that check reads the original change for the first time. Overrides 2–3 still make a `must` or security finding `blocking` in every round; a finding an earlier round raised keeps its verdict and its [recurrence limit](#recurrence-limit--the-review-non-convergence-tripwire). A fix in round 3 that creates a new minor defect is reported, not argued over in round 4.
+**Round-3 cap.** In round 3 and later, a `blocking` verdict of the table for an identity no earlier round of the task raised becomes `advisory`, except a finding of a check the [raise](#raise) opened in this round — that check reads the original change for the first time. Overrides 1–2 still make a `must` finding or a [real-risk security finding](security-scope.md#risk--computed-not-judged) `blocking` in every round; a finding an earlier round raised keeps its verdict and its [recurrence limit](#recurrence-limit--the-review-non-convergence-tripwire). A fix in round 3 that creates a new minor defect is reported, not argued over in round 4.
 
 The unstated column equals the `core` column: silence never lowers a severity. `critical` reads like `core` here; it differs in [Test Economy](test-economy.md#logic-class), where a `critical` area counts as `complex` logic.
 
@@ -57,13 +56,13 @@ The unstated column equals the `core` column: silence never lowers a severity. `
 
 Finding identity is `(normalized location + type)` — the dedup key of the audit `Finding`, reused unchanged.
 
-- `must` and security findings block **without limit**. They must be fixed; no exit exists — except a security finding override 1 defers by the project stage.
+- `must` findings and real-risk security findings block **without limit**. They must be fixed; no exit exists — except the developer's answer when the only protection restricts a function ([Security Scope → Protect, never restrict](security-scope.md#protect-never-restrict)).
 - Any other `blocking` finding gets at most two rounds. The same identity raised a second time unresolved fires the tripwire.
 - `deferrable` spawns no round; it routes immediately.
 
 Symmetric twin of the `verifier-rubber-stamp` tripwire in [Application Enforcement](application-enforcement.md), opposite failure direction. Both fire together when both hold; neither cancels the other.
 
-The limit keys on identity, so alone it does not stop a stream of new findings that each fix creates in a new location; the [round-3 cap](#finding-materiality--computed-not-judged) does. From round 3 on, only a `must` or security finding, or a finding of the checks a raise opened in that round, spawns a round, so the round count is bounded by (distinct `must` + security findings, each of which someone must fix) + 3 + the number of raises (at most two).
+The limit keys on identity, so alone it does not stop a stream of new findings that each fix creates in a new location; the [round-3 cap](#finding-materiality--computed-not-judged) does. From round 3 on, only a `must` or real-risk security finding, or a finding of the checks a raise opened in that round, spawns a round, so the round count is bounded by (distinct `must` + real-risk security findings, each of which someone must fix) + 3 + the number of raises (at most two).
 
 ## List bypass — fix the path, not the list
 
@@ -78,7 +77,7 @@ A fix whose only change to the decision is a member added to or removed from the
 
 ## The `contested` route
 
-A tripped or `deferrable` finding — except one override 1 defers — leaves the loop as a todo record of flavor `contested`, beside `candidate` and `queued`. It carries **both** readings, the reviewer's and the author's, so the next session does not re-derive the argument.
+A tripped or `deferrable` finding — except a security finding of risk `deferred` (override 1) — leaves the loop as a todo record of flavor `contested`, beside `candidate` and `queued`. It carries **both** readings, the reviewer's and the author's, so the next session does not re-derive the argument.
 
 - Not speculative — the YAGNI-gate does not drop it.
 - Does not surface when the originating task completes — that would reopen the argument right after the commit.
@@ -109,13 +108,13 @@ Otherwise the round reads **delta ∪ carry-over**:
 - **delta** — everything changed since the baseline: the fixes and any other edit since, so a regression introduced into an already-reviewed file stays in scope. A changed spec, plan or rule is in the delta like any other file; one the snapshot does not hold (a git-ignored `docs/` or `.dev_flow/`) that changed since the baseline is named in the brief with its changed sections, and code it breaks is in scope like code a changed function breaks.
 - **carry-over** — previously open findings, whether or not their file changed, so moving code cannot close a finding.
 
-The reviewer reads unchanged code only as the context of the delta. It raises a finding only in the delta, or in unchanged code the delta breaks (a caller of a changed function). One exception: a `must` or security defect it sees outside the delta is still reported, and classified as usual.
+The reviewer reads unchanged code only as the context of the delta. It raises a finding only in the delta, or in unchanged code the delta breaks (a caller of a changed function). One exception: a `must` defect or a real-risk security finding it sees outside the delta is still reported, and classified as usual.
 
 An empty delta with a non-empty carry-over is a legitimate round. Every part empty means no round is needed.
 
 The report names the round's scope — `delta` with its baseline, or `full` with its reason — and the round mode. A full round with no named reason, or a delta round with no recorded baseline, violates the no-silent-truncation rule.
 
-Scope and mode are independent: scope says **what the round reads**, mode says **who performs it**. A `confirm` round reads the fix diff against the prescribed fix; `must` and security findings never reach it (discriminator D1). The [level](#review-level--how-deep-a-round-looks) of a `full` round says **which checks the reviewer opens**.
+Scope and mode are independent: scope says **what the round reads**, mode says **who performs it**. A `confirm` round reads the fix diff against the prescribed fix; `must` and real-risk security findings never reach it (discriminator D1). The [level](#review-level--how-deep-a-round-looks) of a `full` round says **which checks the reviewer opens**.
 
 ## Review level — how deep a round looks
 
@@ -123,18 +122,18 @@ A `full` round runs at a level. It sets which checks of the [pre-commit review](
 
 | Level | Reads past the diff | Fits a change that |
 |-------|---------------------|--------------------|
-| `formal` | nothing | holds no executable code and changes no contract, data structure or mechanism — comments, docs, formatting, text ([When to run](test-economy.md#when-to-run)) |
+| `formal` | nothing — except the reads a security finding's risk argument needs ([Security Scope → Risk argument](security-scope.md#risk-argument)) | holds no executable code and changes no contract, data structure or mechanism — comments, docs, formatting, text ([When to run](test-economy.md#when-to-run)) |
 | `quick` | the callers of every changed symbol ([Symbol reach](impact.md#symbol-reach)) | changes logic of class `trivial` ([Logic class](test-economy.md#logic-class)) whose callers lie in one module, and no contract, data structure or mechanism |
 | `standard` | as step 1 of the review lists | anything else: `complex` logic, callers in several modules, a changed contract, data structure or mechanism, a new entity, an area of effective criticality `critical` |
 | `deep` | each changed file whole; the [Impact Walk](impact.md) radius — dependent documents, code bindings, active tasks; the consistency of the area's concept, spec, plan and code ([Detecting Conflicts](../phases/review.md#detecting-conflicts)); the [negative sweep](../phases/specification.md#negative-sweep) of each changed contract | the developer asks for it |
 
 **Choosing.** Before a `full` round the main agent chooses its level by the change's complexity and reach, with the last column as the guide. The reason names the facts read — whether the diff holds executable code, the logic class, the modules the callers lie in, a changed contract, the effective criticality; "it looks simple" is not a reason ([Application Enforcement](application-enforcement.md)). Doubt between two levels → the higher one. A level the developer names for the task wins over the choice, either way; the [raise](#raise) still lifts a later round above it, and a level the developer names later wins over both. `deep` comes only from the developer. A later round runs at the highest of the previous `full` round's level, the [raised](#raise) level, and the level its delta would get on its own — the last only when the developer named no level; a level the developer names after the previous `full` round takes the place of all three.
 
-**What a level never narrows.** A round at any level reports a `must` or security defect it sees, outside its checks or the diff included, as a delta round reports one outside the delta. Materiality, the round mode and the gate criteria do not depend on the level. A check the level does not open is listed in the report's `Unobserved` section in one line — `not opened at level <level>: <checks>` — never omitted ([Verification Economy](verification-economy.md#suppression-is-written-never-silent)).
+**What a level never narrows.** A round at any level reports a `must` defect or a real-risk security finding it sees, outside its checks or the diff included, as a delta round reports one outside the delta. Materiality, the round mode and the gate criteria do not depend on the level. A check the level does not open is listed in the report's `Unobserved` section in one line — `not opened at level <level>: <checks>` — never omitted ([Verification Economy](verification-economy.md#suppression-is-written-never-silent)).
 
 ### Raise
 
-A finding at `formal` or `quick` that has `severity: must`, is a security finding — the Security check or a security class type — or comes from the No regressions check raises the next `full` round one step: `formal` → `quick` → `standard`. Such a finding shows the change reaches further than its level assumed. A raise never reaches `deep`, and a level never goes down within the task unless the developer names a lower one. A `should` finding of another check raises nothing; its fix goes to the round mode selection as usual ([Verification Economy](verification-economy.md#discriminator--re-verifying-a-known-fix)).
+A finding at `formal` or `quick` that has `severity: must`, is a [real-risk security finding](security-scope.md#risk--computed-not-judged), or comes from the No regressions check raises the next `full` round one step: `formal` → `quick` → `standard`. Such a finding shows the change reaches further than its level assumed. A raise never reaches `deep`, and a level never goes down within the task unless the developer names a lower one. A `should` finding of another check raises nothing; its fix goes to the round mode selection as usual ([Verification Economy](verification-economy.md#discriminator--re-verifying-a-known-fix)).
 
 The checks the raise opens never ran over the task's change, so they read the whole diff — `git diff HEAD <snapshot>` of this round, as round 1 reads it, untracked files included (no commit yet: `git diff $(git hash-object -t tree /dev/null) <snapshot>`) — while the checks the previous level opened read delta ∪ carry-over. The report names the scope `delta, raised checks full`.
 

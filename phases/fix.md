@@ -83,7 +83,7 @@ If you'll delegate the diagnosis loop or verification (see the **Delegation** no
 ### Step 3: Implement
 
 1. Apply the fix following the approved plan; before the first operation on each existing file, its [recovery point](../references/recovery-points.md#recovery-point) ([implement → Recovery check](implement.md#gate-check-plan---code)).
-2. Comply with `.dev_flow/rules/` (`must` = blocks).
+2. Comply with `.dev_flow/rules/` (`must` = blocks), and write code by the [secure-coding baseline](../references/security-scope.md#secure-coding-baseline); a security fix never removes, disables or narrows a function the request, the developer, a spec contract or a project rule names; when only a restriction would protect, the developer decides ([Protect, never restrict](../references/security-scope.md#protect-never-restrict)).
 3. If the fix reveals a pattern-level issue, fix all occurrences found in Step 1.
 4. Add comments referencing the problem only if the fix is non-obvious.
 5. **Auto-extract rules** — if the problem description contains an explicit directive (see Rule Detection below), add or update the corresponding rule in `.dev_flow/rules/` using the [rule phase](rule.md) procedure. Report the added rule in the result.

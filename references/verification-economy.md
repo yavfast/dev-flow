@@ -72,7 +72,7 @@ The ledger of what was read — target, state reference, time, extent — lives 
 
 | # | Discriminator | Source |
 |---|---------------|--------|
-| D1 | The finding is not `must` and not a security class | finding fields |
+| D1 | The finding is not `must` and not a [real-risk security finding](security-scope.md#risk--computed-not-judged) | finding fields |
 | D2 | The review record names one concrete fix | the finding text, written before the fix existed |
 | D3 | The fix diff is contained in the locations the finding named | diff |
 | D4 | Nothing outside those locations changed in this round | diff |
@@ -99,7 +99,7 @@ These cases refuse the suppression outright — run the check instead:
 
 ## Boundaries
 
-- **`must` findings and security findings are never economized** — not by mode, not by signal, not by ledger, not by the [review level](review-convergence.md#review-level--how-deep-a-round-looks).
+- **`must` findings and real-risk security findings are never economized** — not by mode, not by signal, not by ledger, not by the [review level](review-convergence.md#review-level--how-deep-a-round-looks).
 - **Commit approval is untouched.** The economy applies to the size of a check, never to the point where the decision passes to the developer.
 - **Clean-context review is not skipped.** `confirm` applies to a **repeat** round of a review already performed, or to an applied advisory.
 - **Cost is not an entry condition.** The condition is an absent subject, not an expensive check.

@@ -19,6 +19,7 @@ This phase is handled by **PlanAuthor**: [roles/plan-author.ai.md](../roles/plan
 - **No orphaned phases:** Every phase must reference which spec sections it implements.
 - **Per-phase verification checklist:** Every phase carries a `Verify:` field beside `Implements:` — the spec Verification Criteria (`SP_XXX_05_*`) covering the contracts it implements, plus any phase-local acceptance check the spec does not carry. It is the phase's definition-of-done and the ready, reusable checklist that [Test](testing.md) and [Verify](verify.md) consume.
 - **Promoted prototype:** a plan that promotes a prototype marks each prototype file — [research → Prototype in the Project](research.md#prototype-in-the-project).
+- **Security as architecture only:** a plan phase builds the security controls the spec's architecture decided; the [secure-coding baseline](../references/security-scope.md#secure-coding-baseline) needs no phase of its own. Hardening the spec does not call for goes through [Needed now](../references/delivery-focus.md#needed-now): not needed at the stage → recorded with its stage trigger ([Security Scope](../references/security-scope.md#security-work-by-phase-and-stage)).
 - **Pseudocode, not production code:** Include short sketches to clarify intent, but do not write full implementation.
 - **Formatting:** Follow [Documentation Formatting](../references/formatting.md) — no hard line wraps inside sentences or paragraphs; one paragraph = one logical line.
 

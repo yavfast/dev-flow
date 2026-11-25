@@ -70,12 +70,13 @@ role Reviewer {
     - "Pre-commit review MUST run as a subagent with clean context"
     - "MUST NOT assign materiality to a finding — it is computed (references/review-convergence.md)"
     - "MUST NOT lower a declared Criticality to win an argument — a wrong declaration is an upstream escalation"
-    - "MUST NOT route a must or security finding to a contested todo, at any criticality, at any recurrence"
+    - "MUST NOT route a must or real-risk security finding to a contested todo, at any criticality, at any recurrence (references/security-scope.md → Risk)"
     - "MUST name every routed record (contested or stage-deferred) and the round scope in the report"
-    - "MUST NOT let a must or security finding reach a confirm round, at any criticality"
+    - "MUST NOT let a must or real-risk security finding reach a confirm round, at any criticality"
+    - "MUST fill the risk argument of every security finding from the code and the environment as they are now — actor, entry, chain, precondition, exposure, impact; a supposition fills no field; MUST NOT prescribe a security fix that removes, disables or narrows a function the request, the developer, a spec contract or a project rule names — when only a restriction protects, write the fix as 'developer decision — only a restriction of <function> protects' (references/security-scope.md → Risk argument, Protect, never restrict)"
     - "MUST name the closed list in bypassed_list when a case got past an allow-list, no-confirm list, pattern or class signs; prescribe a path fix, and keep the finding open when the fix only adds or removes list members (references/review-convergence.md)"
     - "MUST name every check suppressed for a missing entry condition as unobserved with the absent fact (references/verification-economy.md)"
-    - "MUST open the checks the brief's Review level opens and list the rest in one unobserved line 'not opened at level <level>: <checks>'; MUST report a must or security defect it sees at any level, outside its checks or the diff included (references/review-convergence.md → Review level)"
+    - "MUST open the checks the brief's Review level opens and list the rest in one unobserved line 'not opened at level <level>: <checks>'; MUST report a must defect or a real-risk security finding it sees at any level, outside its checks or the diff included (references/review-convergence.md → Review level)"
 
   pre_commit_review:
     description: "Code review performed before commit by a subagent with clean context"
@@ -83,6 +84,7 @@ role Reviewer {
       - "Git diff of all changes, untracked files included (round 1 or a full round); in a delta round only the delta diff and the carry-over findings, each with its identity, severity and prescribed fix in full; a raised round adds, for the checks the raise opens, the whole diff (git diff HEAD <snapshot> of this round)"
       - "Review level line of the brief — Review level: <level> — <reason>; the level trims the inputs below to what its checks need (phases/review.md step 1)"
       - "The effective criticality of the changed area — read by the main agent from the owning concept and spec; unstated when none declares it (references/review-convergence.md → Functional criticality)"
+      - "The stage written in the task file — the Security check opens by it and a security finding's risk reads it; kept at every level (references/security-scope.md → Security work by phase and stage)"
       - "While the stage written in the task file is production: every open deferred security finding with the trigger 'before the first external exposure', as a carry-over finding (phases/review.md step 3)"
       - "Role style line of the brief, when present — read the card it names before the first action, work by it where this role leaves a choice, name the style in the report (references/role-styles.md → Subagents)"
       - "Relevant specification (*.sp.md)"
@@ -144,9 +146,9 @@ role Reviewer {
         severity: "prefer"
         level: "standard and up"
       security:
-        description: "No obvious vulnerabilities (injection, exposure, etc.); a secret counts only where secrets never live (references/proportionate-caution.md). Each security finding states its exposure: external (needs users outside the team or a deployment others reach) or local (references/delivery-focus.md → Security findings and the stage)"
-        severity: "must"
-        level: "every level — at formal, the diff lines"
+        description: "By references/security-scope.md → Security work by phase and stage: in code, a vulnerability — injection, exposure, a broken item of the secure-coding baseline; in a concept, spec or plan, only the security mechanisms the document decides — a hypothetical vulnerability of code not yet written is no finding. A secret counts only where secrets never live (references/proportionate-caution.md). Each finding carries its risk argument — actor, entry, chain, precondition, exposure, impact (references/security-scope.md → Risk argument); a measure it prescribes never restricts a function (references/security-scope.md → Protect, never restrict)"
+        severity: "must; should for a finding of risk deferred or hypothetical"
+        level: "every level — at formal, the diff lines and the reads their risk argument needs; not opened while the stage written in the task file is prototype, except a secret-exposure of a real secret — listed as unobserved 'not opened at stage prototype: Security'"
     severity_axis: "must | should | prefer — the same axis as project rules. The reviewer states severity; it never states materiality"
     results:
       pass: "Proceed to commit approval"
@@ -157,10 +159,10 @@ role Reviewer {
     reference: "references/review-convergence.md"
     scope_round:
       round_1: "Read the whole diff"
-      later_round: "Read only the delta (git diff <baseline> <snapshot>) UNION carry-over; unchanged code is context only. Raise a finding only in the delta or where the delta breaks unchanged code; a must or security defect seen anywhere is still reported; a raised round also reads the whole diff for the checks the raise opens (convergence.level.raise)"
+      later_round: "Read only the delta (git diff <baseline> <snapshot>) UNION carry-over; unchanged code is context only. Raise a finding only in the delta or where the delta breaks unchanged code; a must defect or a real-risk security finding seen anywhere is still reported; a raised round also reads the whole diff for the checks the raise opens (convergence.level.raise)"
       full_reasons: ["no reachable baseline"]
     materiality:
-      computed_from: ["finding severity", "finding type", "effective Criticality of the owning concept/spec", "from round 3, for the round-3 cap: whether an earlier round raised the identity and whether a raise opened the finding's check in this round"]
+      computed_from: ["finding severity", "finding type", "effective Criticality of the owning concept/spec", "for a security finding, its risk (references/security-scope.md → Risk)", "from round 3, for the round-3 cap: whether an earlier round raised the identity and whether a raise opened the finding's check in this round"]
       never: "Assigned by the reviewer — it is derived, not judged"
       values:
         blocking: "Spawns the next round; its mode is computed from the fix (references/verification-economy.md)"
@@ -171,13 +173,13 @@ role Reviewer {
       reference: "references/review-convergence.md → Review level"
       values: ["formal", "quick", "standard", "deep — only on the developer's request"]
       choosing: "The main agent chooses the level of a full round by the change's complexity and reach, the reason naming the facts read; doubt → the higher level; a level the developer names wins over the choice, either way; the raise still lifts a later round above it, and a level the developer names later wins over both; a later round runs at the highest of the previous full round's level, the raised level and the level its delta would get on its own — the last only when the developer named no level; a level the developer names after the previous full round takes the place of all three"
-      never_narrows: "A must or security defect seen at any level, outside its checks or the diff included, is reported; materiality, round mode and gate criteria do not depend on the level"
-      raise: "A finding at formal or quick that has severity must, is a security finding — the Security check or a security class type — or comes from the No regressions check raises the next full round one step (formal → quick → standard); never to deep; a level never goes down within the task unless the developer names a lower one; the checks the raise opens read the whole diff (git diff HEAD <snapshot> of this round), the others delta UNION carry-over"
+      never_narrows: "A must defect or a real-risk security finding seen at any level, outside its checks or the diff included, is reported; materiality, round mode and gate criteria do not depend on the level"
+      raise: "A finding at formal or quick that has severity must, is a real-risk security finding (references/security-scope.md → Risk), or comes from the No regressions check raises the next full round one step (formal → quick → standard); never to deep; a level never goes down within the task unless the developer names a lower one; the checks the raise opens read the whole diff (git diff HEAD <snapshot> of this round), the others delta UNION carry-over"
     tripwire:
       name: "review-non-convergence"
-      condition: "A non-must, non-security blocking finding raised a second time unresolved (identity = normalized location + type)"
+      condition: "A non-must blocking finding that is not a real-risk security finding, raised a second time unresolved (identity = normalized location + type)"
       action: "Route to a contested todo carrying BOTH positions; do not spawn a third round"
-      exempt: "must findings and security findings block without limit and never leave the loop — except a security finding with exposure external while the stage written in the task file is not production: deferrable, a deferred todo with the trigger 'before the first external exposure' (references/review-convergence.md → override 1); secret-exposure never"
+      exempt: "must findings and real-risk security findings block without limit and never leave the loop. A security finding takes its materiality from its risk (references/review-convergence.md → override 1; references/security-scope.md → Risk): real or a secret-exposure → blocking; deferred (exposure external while the stage written in the task file is not production) → deferrable, a deferred todo with the trigger 'before the first external exposure'; hypothetical → advisory, a warning with its recommendation"
       twin: "Symmetric to verifier-rubber-stamp; both may fire together, neither cancels the other"
     list_bypass:
       field: "bypassed_list — name + file:line of the closed list the case got past"

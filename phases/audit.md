@@ -95,7 +95,7 @@ This phase is handled by **Auditor**: [roles/auditor.ai.md](../roles/auditor.ai.
 Before the first action: the [Phase start checklist](../SKILL.md#phase-start-checklist), then:
 
 - [ ] **Scope and `--dry-run`** — the scope and its steps from the table (`code` only when named); `--dry-run` → no changes on disk ([Scope → steps](#scope--steps))
-- [ ] **`code` scope: intent and baseline** — the parsed `scope`, `lenses`, `depth`, `mode`, `preview_only`, each default stated back, and `REDUCED` when its step 3 marks it; `n/a` for another scope ([Step 9.0](#step-90--parseintent--context-gates))
+- [ ] **`code` scope: intent and baseline** — the parsed `scope`, `lenses`, `depth`, `mode`, `preview_only`, `stage`, each default or assumption stated back, and `REDUCED` when its step 3 marks it; `n/a` for another scope ([Step 9.0](#step-90--parseintent--context-gates))
 - [ ] **Never commit** — `no commit`: present the changes and follow the standard approval rule ([Step 8](#step-8--report))
 
 ## Procedure
@@ -280,7 +280,7 @@ The opt-in `code` scope is its **own multi-stage procedure**, not a subset of St
 
 #### Step 9.0 — ParseIntent + context gates
 
-1. Parse the free-form intent text into working parameters — `scope` (path/glob, or `whole`), `lenses` (default: all base lenses), `depth` (`quick`/`standard`/`deep`), `mode` (`full`/`incremental` + `baseline`), `preview_only`. **Never prompt for flags**; an absent/unparseable field takes its default and the assumption is stated back in the result.
+1. Parse the free-form intent text into working parameters — `scope` (path/glob, or `whole`), `lenses` (default: all base lenses), `depth` (`quick`/`standard`/`deep`), `mode` (`full`/`incremental` + `baseline`), `preview_only`, `stage` — read from the project's facts ([Project stage](../references/delivery-focus.md#project-stage)) and stated as an assumption; a security finding's risk reads it. **Never prompt for flags**; an absent/unparseable field takes its default and the assumption is stated back in the result.
 2. **`scope` resolving to nothing is an error (NO_SCOPE)** — state what was looked for; do **not** silently fall back to the whole codebase.
 3. Run the standard gates (skill / rule / glossary / cache). Load `docs/_framework.md` (if present), the architecture concepts, `.dev_flow/rules/architecture.md`, and the [SOLID reference](../references/solid-architecture.md) as the conformance baseline (project rules override generic guidance). If none of these exist → mark the run **REDUCED**.
 4. **Cost gate** (research-style) for a large `scope`/`deep` depth — may narrow to incremental or sampled (the narrowing is logged in the report). Create/Resume **AuditState** in `.dev_flow/audit/` (L2, mirrors onboard's `.dev_flow/onboard/`): `status`, `scope`/`lenses`/`mode`, `units {done,total}`, timestamps. A free-form "audit code continue" resumes from this state instead of re-analyzing settled units.
@@ -301,7 +301,7 @@ One agent (single writer) merges every lens's Findings into ConsolidatedFindings
    - the run report **`.dev_flow/audit/code-audit_<ts>.report.md`** — the [Report Structure](#report-structure) block, persisted (conclusions only; links its sibling plan).
 3. Update **`docs/_framework.md`** from the abstraction-candidates — created from [templates/framework.md](../templates/framework.md) when absent; `Coverage: full` and `Not mapped yet` emptied only when the parsed `scope` is `whole`, the parsed `mode` is `full` and the cost gate did not narrow the run (Step 9.0); otherwise the areas the run analyzed leave `Not mapped yet` — a map the run creates lists every other top-level area of the source tree there — and `Coverage` follows the list: empty → `full`, otherwise `partial` — overview + links to the `.dev_flow/rules/`/`.dev_flow/skills/` that hold the detail; **no enforceable detail inlined**. The map stays in `docs/` (loaded as code-touch context).
 4. Harvest rules/skills, auto-applied through the structural gate ([Experience Capture](../references/experience-capture.md) — no permission prompt; default `should`, never auto-`must`; would-be `must`/contradictions go to independent review). Route any finding that is really a *wrong document* to [Upstream Escalation](../references/escalation.md), not into the plan.
-5. **Fast-track security:** an **exploitable `must`-severity** `security` finding is surfaced for an immediate [fix](fix.md)/escalation, **not** parked in the backlog. Persist AuditState (`planning`).
+5. **Fast-track security:** a `security` or `dependencies` finding of risk `real`, or a `secret-exposure` ([Security Scope → Risk](../references/security-scope.md#risk--computed-not-judged)), is surfaced for an immediate [fix](fix.md)/escalation, **not** parked in the backlog; one of risk `deferred` goes to the plan backlog with the trigger "before the first external exposure", its item naming the finding's identity (normalized location + type), severity, risk argument and fix — what [review](review.md) step 1 passes on as carry-over; one of risk `hypothetical` is listed under the run report's security recommendations — no blocker, no fast-track. Persist AuditState (`planning`).
 6. **No source change, no commit.** The developer approves the plan at the **Plan→Code gate** — that approval is what authorizes execution.
 
 #### Step 9.4 — HandOff (execution = the standard pipeline)
@@ -397,7 +397,13 @@ For the **`code` scope** (Step 9) the output is the refactoring plan itself, sum
    • <abstractions added / links updated> (overview only — detail stays in rules/skills)
 
 🚨 Fast-tracked (not in backlog)
-   • Security <vuln:class> at <file:line> (must, exploitable) → immediate fix/escalation
+   • Security <vuln:class> at <file:line> (risk real — <actor> → <entry> → <impact>) → immediate fix/escalation
+
+⏸️ Security deferred (risk deferred — no blocker until the first external exposure)
+   • <type> at <file:line> — exposure external, stage <stage> → audit plan backlog, trigger "before the first external exposure"
+
+🔒 Security recommendations (risk hypothetical — no blocker)
+   • <type> at <file:line> — lacks <field> | stage prototype — <recommendation, never a restriction of a function>
 
 🔁 Harvested (auto-applied; ⚑ = sent to independent review)
    • rule <Name> (<category>/<severity>) / skill <domain/Name>

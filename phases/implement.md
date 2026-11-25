@@ -28,6 +28,7 @@ This phase is handled by **Implementer**: [roles/implementer.ai.md](../roles/imp
 - **Implement ALL fields from specification tables.** Do not skip optional fields — implement them with their default values.
 - **Use immutable structures** where the spec says "immutable after creation".
 - **Implement all error cases** from the spec's Errors tables.
+- **Secure-coding baseline:** write code by the [secure-coding baseline](../references/security-scope.md#secure-coding-baseline) at every stage, `prototype` included, and build the security controls the spec's architecture decided; further security work only as [Needed now](../references/delivery-focus.md#needed-now) and the [never-cut set](../references/consequence-forecasting.md#the-yagni-gate) admit it at the stage. A security measure never removes, disables or narrows a function the request, the developer, a spec contract or a project rule names; when only a restriction would protect, the developer decides ([Protect, never restrict](../references/security-scope.md#protect-never-restrict)).
 - **Promoted prototype:** copy from the prototype place only the files the plan marks `keep`; nothing else enters the task's working tree from it ([research](research.md#prototype-in-the-project)).
 - **Reference traceable IDs in code comments.**
 

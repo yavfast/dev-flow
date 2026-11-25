@@ -44,7 +44,7 @@ The hard floor also holds what the agent never settles alone:
 | Category | Meaning |
 |----------|---------|
 | `must-rule` | A violation of a project `must` rule. The agent does not leave, defer, or accept it: it fixes it, or hands it to the developer |
-| `security-defect` | A security defect. The same as `must-rule` |
+| `security-defect` | A [real-risk security finding](security-scope.md#risk--computed-not-judged) — risk `real`, or a real secret in a place where secrets never live. The same as `must-rule`. A security finding of risk `deferred` waits for its stage, one of risk `hypothetical` is a recommendation — neither is on the floor |
 | `secret-exposure` | Output or write of a secret value into a place where secrets never live. The agent refuses ([seen and emitted secrets](#seen-and-emitted-secrets)). A write to another place (a git-ignored file outside history) is allowed without a repeat of the value in the chat |
 
 The developer checkpoints (design sign-off, commit sign-off) are not part of the hard floor: [SKILL.md → Developer Checkpoints](../SKILL.md#developer-checkpoints) owns them.
@@ -192,7 +192,7 @@ A row is **open** until an answer with the same `kind`, `ref`, and occurrence ex
 | `unrun-tests` | `run-full-local` · `run-full-ci` · `skip` | test selection |
 | `test-recipe-field` | `confirm` · `keep-default` | test selection |
 | `risk-awaiting` | `handle` · `accept` | risk triage |
-| `hardening` | `build` · `decline` | [delivery focus](delivery-focus.md#security-findings-and-the-stage) |
+| `hardening` | `build` · `decline` | [security scope](security-scope.md#risk--computed-not-judged) |
 
 **Append a row** (the owner discipline does it):
 

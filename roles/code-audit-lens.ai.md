@@ -6,12 +6,13 @@ role CodeAuditLens {
   inputs: [
     "lens key + its checklist section in references/code-audit.md",
     "scope (path/glob or `whole`) and depth (quick | standard | deep) from the parsed AuditIntent",
+    "the project stage from the parsed AuditIntent — a security finding's risk reads it (references/security-scope.md → Risk)",
     "conformance baseline: docs/_framework.md, architecture concepts, .dev_flow/rules/, docs/*.sp.md, SOLID reference (whichever the lens judges against; REDUCED if absent)",
     "the Shared Bottom-Up Analysis walk (references/code-audit.md) over the scope"
   ]
 
   outputs: [
-    "Finding[] for this lens — each: { id, lens, type (from the lens checklist vocabulary), locations (file:line / symbol), severity (must|should|prefer), blast_radius (low|medium|high), suggested_change_class (trivial|standard|architectural), conclusion (one line) }",
+    "Finding[] for this lens — each: { id, lens, type (from the lens checklist vocabulary), locations (file:line / symbol), severity (must|should|prefer), blast_radius (low|medium|high), suggested_change_class (trivial|standard|architectural), conclusion (one line); a security finding adds risk (real|deferred|hypothetical) with its risk argument — actor, entry, chain, precondition, exposure, impact (references/security-scope.md) — and, when hypothetical, the field it lacks — or `stage prototype` — and a recommendation }",
     "Any raw artifact (search hits, traces) staged in the /tmp project workspace and referenced BY PATH — never inlined into a Finding"
   ]
 
@@ -47,8 +48,12 @@ role CodeAuditLens {
        into one Finding spanning its locations (especially for `duplication`).
     4. Keep raw evidence (search hits, traces) in the /tmp workspace; reference it
        by path. Return ONLY the Finding[] — no dumps, no prose narrative.
-    5. For the `security` lens: audit statically; flag an exploitable must-severity
-       hole prominently so the caller can fast-track it (do not run exploits).
+    5. For the `security` and `dependencies` lenses: audit statically (do not run
+       exploits); fill each security finding's risk argument — actor, entry, chain,
+       precondition, exposure, impact — from the code as it is, never a supposition,
+       and compute its risk (references/security-scope.md → Risk argument, Risk);
+       flag a `real` one or a `secret-exposure` prominently so the caller can
+       fast-track it; a `hypothetical` one carries its recommendation.
   """
 }
 ```

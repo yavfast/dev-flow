@@ -74,7 +74,7 @@ A subtask is a thread of work claimed by one contributor. To join this task, add
      reads only `git diff <baseline> <snapshot>` + carry-over (§ Incremental round scope);
      a raised round also reads the whole diff for the checks the raise opens (§ Raise).
      Mode: `full` (clean-context reviewer) or `confirm` (mechanical check of a contained,
-     prescribed fix). Round 1 is always `full`, and a `must` or security finding never
+     prescribed fix). Round 1 is always `full`, and a `must` or real-risk security finding never
      gets a `confirm` round. See `references/verification-economy.md`.
      Level: the review level of a `full` round with its reason — `formal` / `quick` /
      `standard` / `deep`; `— ` for a `confirm` round (§ Review level).
