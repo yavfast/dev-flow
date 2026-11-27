@@ -1,9 +1,9 @@
 shipped_cards:
   - name: gate-facts
-    version: 2
+    version: 3
     card: cards/gate-facts.yaml
     purpose: Print the mechanical facts behind the criteria of one validation gate, with the working-tree state they were taken on
   - name: phase-start
-    version: 2
+    version: 3
     card: cards/phase-start.yaml
     purpose: Print the project facts of phase start checklist items 1, 2, 4, 6, 7 and the fields of the start record in one run

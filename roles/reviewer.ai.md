@@ -251,12 +251,12 @@ role Reviewer {
     inputs:
       - "The realization with its header contract block"
       - "samples/<name>/samples.yaml and the sample material"
-      - "Scope: full, or diff with the prev/<name> realization as the base"
+      - "Scope: full, or diff with the prev/<name> realization as the base; after a Seed amend, also the ids of the samples added, removed or changed since the failed verdict, when the samples hash differs from failure.samples_sha256 (references/project-tools.md#verification-in-audit)"
       - "For retire: the stated reason (replaced, merged, or no exercised in the retention window, ~30 days — usage file or ledger observation), the usage file, the tool's ledger entry in .dev_flow/evidence/ledger.yaml (observations, bypasses), the router, and the card of the replacing tool when replaced_by is named"
     rules:
       - "Read only the inputs above — never the author's task notes"
       - "Adversarial framing: look for what the contract does not declare, not for reasons to pass"
-      - "effects — a finding on any read, write, network call, environment read or child process the contract does not declare"
+      - "effects — a finding on any read, write, network call, environment read or child process the contract does not declare; the platform's part (the dynamic loader, the C library, the name service — references/project-tools.md#header-contract) is no finding unless the tool sets or changes it, or reaches it for a purpose of its own (a host-name lookup its function needs)"
       - "contract — a finding when an agent seeing the tool for the first time could not choose it, call it, or read its answer from the header alone"
       - "range — a finding on a range_of_use case without a sample, or code serving cases outside the range"
       - "behavior — a finding when the code departs from the contract's behavior on inputs the samples do not pin"

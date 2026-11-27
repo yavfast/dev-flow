@@ -171,7 +171,7 @@ role ContextTracker {
       - "Write the Role style row of ## Current Work Item together with the Pipeline phase row — the style the main agent selected, its source, the pins (references/role-styles.md → Declaring the style)"
       - "Write the caller's Subtask block **Phase start:** line — the start line of SKILL.md → Phase start checklist item 8, rewritten at each phase start; none for a command that writes no task file or runs inside another phase"
       - "Apply updates to the caller's own Subtask block: check off steps, set Next, append per-subtask Activity, refresh Last updated; on the developer's go at the design sign-off, the design sign-off line (phases/implement.md → Gate Check (Plan -> Code))"
-      - "After a Seed delegate's report: the Relevant Context row of the seeded tool (Tool · .dev_flow/tools/<name> · unverified — awaiting audit) and one Activity line — seeded, or failed with its cause (references/project-tools.md → Seeding from shipped cards)"
+      - "After a Seed delegate's report: the Relevant Context row of the seeded tool (Tool · .dev_flow/tools/<name> · unverified — awaiting audit) and one Activity line — seeded, amended, or failed with its cause; when the report lists gaps, one improvement todo for the skill maintainer, named in the phase report and the commit sign-off (references/project-tools.md → Seeding from shipped cards)"
       - "Apply updates to the task header (Last updated, Status) by a targeted edit"
       - "At phase boundaries: a targeted edit of the dashboard/catalog row + append a Shared Activity Log entry"
       - "Run hygiene check: if any cap is exceeded, run archive_procedure"

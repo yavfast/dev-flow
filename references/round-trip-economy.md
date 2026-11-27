@@ -145,7 +145,7 @@ Two shipped tools gather the mechanical facts of the two most repeated decisions
 6. Item 5 (the role style) is the agent's judgement; item 8's start record takes the `start` fact, the chat language and the style.
 7. A run that cannot decide or fails → those items by hand and a bypass `broken`; an implausible answer → stop and confirm by hand ([Project Tools → Run](project-tools.md#run)).
 
-The writes of item 1 — a new task file, the dashboard and catalog rows — stay with the agent. The three indexes of item 2 are read at every start: by the tool when it runs, by hand otherwise. A failed seed of `phase-start` keeps the starts manual until a newer card or a retry by audit or on request (`/dev-flow tool regenerate`).
+The writes of item 1 — a new task file, the dashboard and catalog rows — stay with the agent. The three indexes of item 2 are read at every start: by the tool when it runs, by hand otherwise. A failed seed of `phase-start` keeps the starts manual until a newer card, a retry (by audit after a failed `first`, `reseed` or `retry`, or on request — `/dev-flow tool regenerate`), or, after a failed `amend`, the developer's word ([Seeding from shipped cards](project-tools.md#seeding-from-shipped-cards)).
 
 **Gate check** ([SKILL.md → Validation Gates](../SKILL.md#validation-gates)):
 

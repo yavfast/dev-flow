@@ -425,7 +425,7 @@ your-project/
     │   ├── samples/{tool}/         # Acceptance samples (samples.yaml + material)
     │   ├── cards/                  # Tool cards — contract copy, state, binding
     │   ├── usage/                  # Evidence state, run statistics, recent failures per tool
-    │   └── prev/                   # Realization an Adapt fix/extend or a Seed reseed/retry replaced, kept until audit binds the tool
+    │   └── prev/                   # Realization an Adapt fix/extend or a Seed reseed/retry/amend replaced, kept until audit binds the tool
     ├── roles/                      # Project role overlays & specialists (optional)
     │   └── _index.yaml
     ├── evidence/                   # Intervention ledger (absent → reconcile no-op)

@@ -1,6 +1,6 @@
 shipped_card: 1
 name: gate-facts
-version: 2
+version: 3
 contract:
   name: gate-facts
   purpose: Print the mechanical facts behind the criteria of one validation gate, with the working-tree state they were taken on
@@ -30,8 +30,17 @@ contract:
     - "a heading is read at the start of a line only: a heading inside a block quote or a list item is text"
     - "list items are not tracked by the fence rule: a fence opened in a list item and left unclosed there runs on to a closing line or the end of the file"
     - "a path with a configured filter driver (git-lfs among them), in root or in a checked-out submodule, leaves the tree unestablished — `? filter <driver> (<path>)`, every run record `? no tree`: the gate's tree and run criteria by hand"
-    - "code the interpreter runs at its own start-up (a user site .pth file, a sitecustomize on PYTHONPATH) is outside the realization's reach"
-    - "git runs in the tool's own process group, so a signal to the caller's group reaches it too; a SIGKILL leaves the temporary directory behind"
+    - "code the runtime's own installation runs at its start-up (a .pth file or a sitecustomize module in the interpreter's own site-packages) belongs to the installation environment.requires names"
+    - "a signal during the interpreter's start-up, before the realization's first line, takes its default action: no stderr line, the exit the signal gives"
+    - "a byte that is not UTF-8 in a path copied into a cannot-decide reason or a usage line may print escaped on stderr"
+    - "a locale whose encoding is not UTF-8 is outside the range of use: a path or an argument outside ASCII may fail or print altered (the samples run under C.UTF-8)"
+    - "a relative root or skill whose name starts with `--` reads as an option: give it as `./<name>` or as an absolute path"
+    - "the checkpoint is the first pinned item in file order, the newest under the template's newest-first Shared Activity Log; a log kept oldest first gives its oldest pin"
+    - "git runs in the tool's own process group, so a signal to the caller's group reaches it too; a SIGKILL, or another terminating signal than SIGTERM, SIGINT and SIGHUP (SIGQUIT, SIGUSR1 and the like), leaves the temporary directory behind"
+    - "needs git 2.45.1 or later, the first release whose every command honours GIT_NO_LAZY_FETCH: an older git — a maintenance release that also honours it among them — leaves the tree unestablished"
+    - "a checked-out submodule whose core.worktree resolves elsewhere than its path: add -A's status there reads that directory, which the filter guard does not cover"
+    - "a working-tree-encoding attribute makes add -A convert through iconv, which loads the C library's conversion modules"
+    - "no sample pins a held signal, a failing mkdir, a temporary directory under $TEMP or $TMP, git older than 2.45.1, a nested repository whose .git file points outside root, a submodule with its own alternates or include files, a caller's runtime variable, a path holding a line feed, a run-record line that is not valid UTF-8, a linked worktree, a split index, a quoted alternates entry, submodules nested past one level, an untracked nested repository or a sha256 repository: no sample builds them, behavior pins them"
   inputs:
     - {name: root, type: path, required: true, description: "project root"}
     - {name: skill, type: path, required: true, description: "dev-flow skill root; holds SKILL.md"}
@@ -59,46 +68,59 @@ contract:
     skill or --transition missing; a transition outside the enum — exits 3 with a usage line on stderr and
     nothing on stdout; any other failure exits 3 with one line on stderr and nothing on stdout — a value
     UTF-8 cannot carry (a lone surrogate from a JSON escape in a run record) and SIGTERM, SIGINT or SIGHUP
-    among them, since every line is built before the first is written. Otherwise print the keys of the
+    among them (except one that arrives while the facts are written, below), since every line is built before
+    the first is written. Otherwise print the keys of the
     transition, in this order, and exit 0: concept-spec → tree, sections, contents, dec, banned; spec-plan →
     tree, sections, contents, dec, banned, rollback; plan-code → tree, sections, dec, verify, signoff;
     code-test → tree, facts; test-review → tree, runs; review-verify → tree, review; verify-commit → tree,
     runs, checkpoint.
 
-    Before any import, the realization removes from its module path every entry that came from PYTHONPATH
-    and every entry that resolves to the directory it lies in or to the working directory (an empty entry,
-    `.`), so a file beside it, in the working directory or on PYTHONPATH never shadows a module it uses.
+    The realization's runtime runs isolated from the caller's: it reads none of its own variables from the caller's
+    environment (module path, home, compiled-file cache, warnings, inspection, I/O encoding, user base among
+    them) but the locale's (LC_ALL, LC_CTYPE, LANG), loads no code from a user site, from the directory the
+    realization lies in or from the working directory, and writes no compiled module file, from its start-up
+    on — for python3 the invocation prefix is `[python3, -I, -B, <realization>]` (isolated mode, no bytecode);
+    another runtime takes its own equivalent, and a runtime with none cannot realize the card.
 
     Grammar: `<key>: <value>`; a list value joins its elements with `; `, fields inside an element with
     ` · `; `—` means none; `? <reason>` means not established. A value taken from a file, from git's output
     or from an input — a path, a git stderr line, a filter driver's name, a run record's field, a heading
     text, an anchor, a phrase, the signoff line, an Autonomy token, a Review Rounds cell, the checkpoint
     words — keeps its characters, except that every `;` is written `,`, every `·` is written `-` and a line
-    break becomes a space, so a copied value never splits an element or a field (a value ending in `;` or
-    ` ·` would otherwise join the next separator). Files are read as UTF-8, a leading byte order
+    break — CR LF, CR or LF; U+0085, U+2028, U+2029, VT and FF stay as they are — becomes a space, so a copied value never splits an element or a field (a value ending in `;` or
+    ` ·` would otherwise join the next separator); a value copied into a `cannot-decide:` reason or a usage
+    line (a path as given) follows the same rule. Files are read as UTF-8, a leading byte order
     mark dropped, a byte that is not UTF-8 kept as it is; a line ends at `\n`, a `\r` before it dropped.
 
     Git: every git command runs from its work tree, in the tool's own process group, as `git
     --git-dir=<g> --work-tree=<w> -c core.hooksPath=<the null device> -c core.fsmonitor=false <command>`,
     with `hook.<name>.enabled=false` for each <name> that `config -z --get-regexp '^hook\.'` gives in the
     repository and in every checked-out submodule (a key `hook.<name>.<variable>`, <name> what lies between
-    the first and the last dot, `=` and dots included), read before any other command and passed as
+    the first and the last dot, `=` and dots included), read in the repository before any other command but `git --version` and in a
+    submodule before any command inside it, and passed as
     GIT_CONFIG_COUNT, GIT_CONFIG_KEY_<n>, GIT_CONFIG_VALUE_<n> in git's environment — never as `-c`, which
     splits a name holding `=` at its first `=`; git hands them on to the git it starts inside a submodule.
     Its environment is allow-listed: PATH, HOME and XDG_CONFIG_HOME of the caller's, each when set, plus
     LC_ALL=C, GIT_ASKPASS empty, GIT_OPTIONAL_LOCKS=0, GIT_NO_LAZY_FETCH=1, GIT_TRACE2=0, GIT_TRACE2_EVENT=0,
     GIT_TRACE2_PERF=0, those GIT_CONFIG_ variables and the variables a step below names — nothing else of
     the caller's, no other GIT_ variable among them. A list of
-    paths is asked for with -z and read NUL-separated, so a path outside ASCII compares as written. No hook
+    paths is asked for with -z and read NUL-separated, so a path outside ASCII compares as written. A single path git prints (`rev-parse --absolute-git-dir`, `--git-common-dir`, `--git-path …`)
+    comes from a call that prints only that path, minus one trailing line feed, so a path holding a line feed
+    stays whole. No hook
     of either kind runs, no fsmonitor daemon starts, no prompt program runs, nothing is fetched; git's
     messages are in English.
 
     tree — the git directory <g> is git_dir when given, else <root>/.git, used only when that path exists —
     a directory, or the `.git` file of a linked worktree or submodule, which git follows (never a parent
-    search); none → `— (no git)`. Else the snapshot of Review Convergence → Incremental round scope, taken by
+    search); none → `— (no git)`. Else `git --version` runs first: a version below 2.45.1 — the first release whose
+    every git command honours GIT_NO_LAZY_FETCH — or an output with no `<major>.<minor>.<patch>` → `? git <the
+    version, else the output's first line> may fetch lazily (2.45.1 or later)`, and no other git command runs.
+    Else the snapshot of Review Convergence → Incremental round scope, taken by
     git itself: (1) make a temporary directory, by a direct mkdir with no probe file, under the first of
-    $TMPDIR (when set and absolute), /tmp and /var/tmp that is an existing directory lying outside root and
-    the git directory (none → `? no temporary directory outside the root and the git directory`), and copy
+    $TMPDIR, $TEMP, $TMP (each when set and absolute), /tmp and /var/tmp that is an existing directory lying
+    outside root, the git directory and the common git directory (`rev-parse --git-common-dir`) and where that
+    mkdir succeeds — a candidate whose mkdir fails gives way
+    to the next (none left → `? no temporary directory outside the root and the git directory`) — and copy
     into it the index file that `rev-parse --git-path index` names (a relative path is relative to root), keeping its
     modification time so git's check for racily clean entries still holds, when that file exists — none → no
     copy, an empty index; every later command runs with GIT_INDEX_FILE = the copy's path. (2)
@@ -115,11 +137,14 @@ contract:
     temporary directory and GIT_ALTERNATE_OBJECT_DIRECTORIES = the absolute path that `rev-parse --git-path
     objects` names (resolved before either is set), run `add -A` and then `write-tree`, each with `-c
     core.splitIndex=false` so a split index is written back whole into the copy; print the id write-tree
-    prints. A git command that exits non-zero → `? git failed: <its first non-empty stderr line>`;
+    prints. A git command that exits non-zero → `? git failed: <its first non-empty stderr line, else exit
+    <code>>` — except a `config` lookup's exit 1, which means no such key;
     git cannot be started → `? git failed: <the error>`. The temporary directory is removed before exit — on
     a failure and on SIGTERM, SIGINT or SIGHUP too (the running git command is stopped first); those signals
     are held while the directory is created and recorded, while it is removed and while the facts are
-    written, so none of these steps is cut half-way. So the tree is what `add -A` would stage over root, as git sees it: tracked files as git
+    written, so none of these steps is cut half-way: one held over the creation or the removal takes effect
+    when that step ends — the directory removed, exit 3, nothing on stdout; one that arrives while the facts
+    are written is discarded, the facts complete and the exit is 0. So the tree is what `add -A` would stage over root, as git sees it: tracked files as git
     reads them (an assume-unchanged or skip-worktree entry as indexed, the index mode under
     core.fileMode=false, a CRLF blob kept under text=auto), a tracked file gone from disk left out, untracked
     files in, ignored untracked files out; no git directory gains a file — git only refreshes the
@@ -140,12 +165,13 @@ contract:
     long as the opener's with only whitespace after it — so a list marker or a further > marker keeps the
     line inside the fence. An unclosed fence runs to the end of the file. The opening line, the closing line
     and the lines between are fenced: never a heading, a table line, a Status, Verify, sign-off or Autonomy
-    line, a Contents link or part of an Activity Log item, and never searched for a phrase. A heading is a
+    line, a `**Resolution trigger:**` line, a Contents link or part of an Activity Log item, and never
+    searched for a phrase. A heading is a
     line, not fenced, that starts with at most three spaces, 1 to 6 # and then a space, a tab or the line's
     end — at the start of the line, never after a container prefix; its level is the number of #, its text
     the rest trimmed, a trailing `{#…}` anchor cut off. A table is a line, not fenced, whose first
     non-whitespace character is `|`, followed by a separator row (pipes, dashes, colons and whitespace only,
-    at least one dash — `|:|:|` is no separator row) and the table lines after it; cells split at a `|` not preceded by `\`, trimmed.
+    at least one `|` and one dash — `|:|:|` and `---` are no separator rows) and the table lines after it; cells split at a `|` not preceded by `\`, trimmed.
 
     The template of the transition: concept-spec → <skill>/templates/concept.md, spec-plan →
     templates/specification.md, plan-code → templates/plan.md. A heading's anchor is the `{#…}` at its end;
@@ -169,7 +195,7 @@ contract:
     record starts with `**Resolution trigger:**`; a record without a status line gives nothing. In document
     order; none → `—`.
 
-    banned — the phrases: every double-quoted string in the first cell of the rows of the first table in the
+    banned — the phrases: every double-quoted string holding a word in the first cell of the rows of the first table in the
     `## Banned Phrases` section (up to the next h1 or h2) of <skill>/phases/concept.md (concept-spec) or
     phases/specification.md (spec-plan), each phrase once, in table order. Every document line that is
     neither fenced nor a heading, its inline code spans replaced by spaces (a run of backticks up to the next
@@ -179,7 +205,8 @@ contract:
     then phrase order. None → `—`.
 
     rollback — `yes` when the document has an h3 whose anchor suffix is `_06_01` and a table in its section
-    (up to the next heading of any level) with at least one row after the separator row; else `no`.
+    (up to the next heading of any level) — any of its tables, not only the first — with at least one row after
+    the separator row; else `no`.
 
     verify — every h3 whose text starts with `Phase` needs, in its section (up to the next h1, h2 or h3), a
     line starting `**Verify:**`; the first such line counts, and its text after the label, leading
@@ -193,10 +220,14 @@ contract:
     facts — `none — the criteria are judgement`.
 
     runs — no runs input → `? no run records given`; no such file → `? no file <path>`. Each line, in file
-    order; a line holding only whitespace is skipped. A JSON object with `key`, `state` and `result` an object
-    whose `exit` is not null → `<key> · exit <result.exit> · <result.passed>/<result.failed> · <match>`, a
-    string printed as it is, null printed `—`, any other value as JSON text — `, ` between elements, `: `
-    after a member name, characters outside ASCII as themselves (a count of 0 printed `0`) — each field then
+    order; a line holding only whitespace is skipped. A line that is valid UTF-8 and one JSON text by RFC 8259 — `NaN`,
+    `Infinity` and `-Infinity` are not JSON; arrays and objects nest at most 64 levels deep, the line's own object
+    the first — holding an object in which no object repeats a member name, with
+    `key`, `state` and `result` an object whose `exit` is not null → `<key> · exit <result.exit> ·
+    <result.passed>/<result.failed> · <match>`, a string printed as it is, null or a missing `passed` or
+    `failed` printed `—`, a number printed as written in the line, of any size or precision (`1E2`, `1.50`,
+    `-0`, `1e400` stay so; a count of 0 printed `0`), any other value as JSON text — `, ` between elements,
+    `: ` after a member name, numbers as written, characters outside ASCII as themselves — each field then
     written by the separator rule;
     <match> is `current` when the printed tree is a tree id and the record's `state` equals it, `stale` when
     the printed tree is a tree id and the `state` differs, `? no tree` when the printed tree is not an id
@@ -211,17 +242,17 @@ contract:
 
     checkpoint — in the `## Shared Activity Log` section (up to the next h1 or h2) of the task file, a list
     item is a line starting with a list marker, not fenced, together with the lines after it up to the next
-    line starting with a list marker, a heading, a blank line or a fenced line. The first item, in file order,
-    that holds `{s:pin}` on any of its lines: its lines joined with one space, the list marker of its first
+    line starting with a list marker, a heading, a blank line or a fenced line. The first item, in file order (the
+    template keeps the log newest first, so it is the newest pin), that holds `{s:pin}` on any of its lines: its lines joined with one space, the list marker of its first
     line and every `{s:pin}` left out wherever it stands (status.md writes it trailing), split into tokens —
     a token is a run of non-whitespace characters, punctuation kept → `<first token> · <the next 12 tokens
     joined by one space>`, as copied text. None → `—`.
   effects:
-    reads: ["{document}", "{task}", "{runs}", "{root}/** (the snapshot)", "{skill}/SKILL.md", "{skill}/templates/*.md", "{skill}/phases/concept.md", "{skill}/phases/specification.md", "the git directory; the git directory, index, configuration and attributes of every checked-out submodule, recursively", "the object stores the repository uses: its own, the common git directory's for a linked worktree, those objects/info/alternates names", "the git configuration, ignore and attributes files git reads: system, global, $XDG_CONFIG_HOME/git/, the repository's, the files core.excludesFile and core.attributesFile name, the .gitignore and .gitattributes files under {root}"]
-    writes: ["the object stores the repository uses — {git_dir}/objects/**, the common git directory's objects/** for a linked worktree, every store objects/info/alternates names — only the modification time of an object already held (a loose object file or the pack holding it), which git refreshes in place of writing it again", "{git_dir}/sharedindex.*, and in a checked-out submodule's git directory ({git_dir}/modules/<submodule>/sharedindex.* or {root}/<submodule>/.git/sharedindex.*) — the modification time of the shared index file of a split index, which git refreshes on every read of the index", "a temporary directory under the first of $TMPDIR, /tmp, /var/tmp lying outside {root} and the git directory (a copy of the index, the objects the snapshot writes), created directly and removed before exit, on a failure and on SIGTERM, SIGINT, SIGHUP too"]
+    reads: ["{document}", "{task}", "{runs}", "{root}/** (the snapshot)", "{skill}/SKILL.md", "{skill}/templates/*.md", "{skill}/phases/concept.md", "{skill}/phases/specification.md", "the git directory and, for a linked worktree, the common git directory; the git directory, index, configuration and attributes of every checked-out submodule, recursively; the git directory a nested repository's .git file under {root} names (its HEAD, refs and configuration), read by add -A to record it", "the object stores the repository and every checked-out submodule use: their own, the common git directory's for a linked worktree, those their objects/info/alternates name, recursively", "the git configuration, ignore and attributes files git reads: the system's, the global ones (~/.gitconfig, $XDG_CONFIG_HOME/git/, else ~/.config/git/), the repository's and each checked-out submodule's, every file an include.path or includeIf.<condition>.path in one of them names, recursively, the files core.excludesFile and core.attributesFile name, <common git dir>/info/exclude and info/attributes, the .gitignore and .gitattributes files under {root}", "the runtime's installation — the interpreter, its standard library and site-packages (the loader's, the C library's and the name service's part is the platform's: references/project-tools.md § Header contract)"]
+    writes: ["the object stores the repository uses — <common git dir>/objects/** (<common git dir> = rev-parse --git-common-dir: the git directory, the main repository's for a linked worktree), every store objects/info/alternates names — only the modification time of an object already held (a loose object file or the pack holding it), which git refreshes in place of writing it again", "<git dir>/sharedindex.* (<git dir> = rev-parse --absolute-git-dir: for a linked worktree <common git dir>/worktrees/<id>), and a checked-out submodule's <git dir>/sharedindex.* — the modification time of the shared index file of a split index, which git refreshes on every read of the index", "a temporary directory under the first of $TMPDIR, $TEMP, $TMP, /tmp, /var/tmp lying outside {root}, <git dir> and <common git dir> where the direct mkdir succeeds (a copy of the index, the objects the snapshot writes), removed before exit, on a failure and on SIGTERM, SIGINT, SIGHUP too"]
     network: []
-    env: [PATH, HOME, XDG_CONFIG_HOME, TMPDIR]
-  provenance: {task: task_20261122_194700_tool-findings-fix.md, promoted: 2026-11-22}
+    env: [PATH, HOME, XDG_CONFIG_HOME, LC_ALL, LC_CTYPE, LANG, TMPDIR, TEMP, TMP]
+  provenance: {task: task_20261126_112949_phase-start-v3.md, promoted: 2026-11-26}
 samples:
   - id: concept-incomplete
     case: concept-spec
@@ -327,6 +358,15 @@ samples:
       output_contains: ["runs: kite-test --fast @ . · exit 0 · 4/0 · current; kite-lint @ . · exit 1 · —/— · stale"]
       writes: []
     source: "constructed — the records of runs-current and runs-other-tree with an empty line between them: skipped, no element for it"
+  - id: runs-strict-json
+    case: stale-runs
+    kind: good
+    inputs: {root: proj, skill: skill, transition: test-review, runs: runs-strict.jsonl}
+    expect:
+      exit: 0
+      output_contains: ["runs: ? line 1 unparsable; ? line 2 unparsable; k-num · exit 1E2 · 1.50/— · stale; k-big · exit -0 · 123456789012345678901234567890/1e400 · stale; ? line 5 unparsable"]
+      writes: []
+    source: "constructed — a record whose exit is NaN and one whose key member repeats are not JSON objects by RFC 8259 (unparsable); numbers keep their written form, a 30-digit count and one beyond the double range included, and a missing failed count prints like null; a key nested 70 arrays deep goes past the 64-level limit (unparsable)"
   - id: no-git-dir
     case: no-git
     kind: good
@@ -441,6 +481,57 @@ samples:
       output_contains: ["review: round 2 · PASS · carry-over —"]
       writes: []
     source: "constructed — the last Review Rounds row has no cell under the Carry-over header column"
+  - id: spec-contents-gaps
+    case: spec-plan
+    kind: good
+    inputs: {root: proj, skill: skill, transition: spec-plan, document: extra/gaps.sp.md}
+    expect:
+      exit: 0
+      output_contains: ["sections: Notes", "contents: missing SP_GAP_06; missing SP_GAP_DEC; dangling SP_GAP_09", "rollback: no"]
+      writes: []
+    source: "constructed — a specification whose Contents links one of its three anchored h2s and an anchor no heading carries, and whose 06_01 section holds no table"
+  - id: spec-rollback-second-table
+    case: spec-plan
+    kind: good
+    inputs: {root: proj, skill: skill, transition: spec-plan, document: extra/second.sp.md}
+    expect:
+      exit: 0
+      output_contains: ["rollback: yes"]
+      writes: []
+    source: "constructed — the 06_01 section holds an empty table and then one with a row: any table of the section counts, not only the first"
+  - id: plan-verify-gaps
+    case: plan-code
+    kind: good
+    inputs: {root: proj, skill: skill, transition: plan-code, document: extra/gaps.plan.md, task: extra/task_bare.md}
+    expect:
+      exit: 0
+      output_contains: ["verify: missing Phase 1; placeholder Phase 2", "signoff: absent (autonomy checkpoints)"]
+      writes: []
+    source: "constructed — a plan whose first phase has no Verify line and whose second keeps the template's placeholder; a task file with no design sign-off line"
+  - id: review-no-rounds
+    case: review-verify
+    kind: good
+    inputs: {root: proj, skill: skill, transition: review-verify, task: extra/task_bare.md}
+    expect:
+      exit: 0
+      output_contains: ["review: —"]
+      writes: []
+    source: "constructed — a task file with no Review Rounds h2"
+  - id: checkpoint-none
+    case: verify-commit
+    kind: good
+    inputs: {root: proj, skill: skill, transition: verify-commit, task: extra/task_bare.md, runs: runs.jsonl}
+    expect:
+      exit: 0
+      output_contains: ["checkpoint: —"]
+      writes: []
+    source: "constructed — a Shared Activity Log whose entries carry no {s:pin}"
+  - id: missing-document-separators
+    case: concept-spec
+    kind: error
+    inputs: {root: proj, skill: skill, transition: concept-spec, document: "no;such·doc.md"}
+    expect: {exit: 2, output_contains: ["cannot-decide: no file ", "no,such-doc.md"], writes: []}
+    source: "constructed — a document path that names no file and holds `;` and `·`: the reason copies the path by the separator rule"
 material:
   files:
     skill/SKILL.md: |
@@ -594,6 +685,12 @@ material:
       - 11:30 [impl] string tied
       - 11:00 [impl] paint done {s:pin}
       - 10:00 {s:pin} frame built
+    runs-strict.jsonl: |
+      {"key": "k-nan", "state": "6f05fff6c6198cf20ef4af4f1bf0b4b39cd0e994", "result": {"exit": NaN, "passed": 1, "failed": 0}}
+      {"key": "first", "key": "second", "state": "6f05fff6c6198cf20ef4af4f1bf0b4b39cd0e994", "result": {"exit": 0, "passed": 1, "failed": 0}}
+      {"key": "k-num", "state": "6f05fff6c6198cf20ef4af4f1bf0b4b39cd0e994", "result": {"exit": 1E2, "passed": 1.50}}
+      {"key": "k-big", "state": "6f05fff6c6198cf20ef4af4f1bf0b4b39cd0e994", "result": {"exit": -0, "passed": 123456789012345678901234567890, "failed": 1e400}}
+      {"key": [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]], "state": "6f05fff6c6198cf20ef4af4f1bf0b4b39cd0e994", "result": {"exit": 0}}
     runs-blank.jsonl: |
       {"key": "kite-test --fast @ .", "inputs": ["docs"], "state": "a5962dbb4b30d2eaba22b165d9f931fb9bfe6370", "variant": "fast", "result": {"exit": 0, "passed": 4, "failed": 0, "cause": null}, "duration": "1.2s", "count": 1, "log": "/tmp/kite/logs/test.log"}
 
@@ -683,6 +780,63 @@ material:
       |-------|---------|------------|
       | 1 | FAIL | R1-1 |
       | 2 | PASS |
+    extra/gaps.sp.md: |
+      # Gaps — Spec  {#SP_GAP}
+
+      ## Contents
+
+      - [01. Shapes](#SP_GAP_01)
+      - [09. Gone](#SP_GAP_09)
+
+      ## 01. Shapes  {#SP_GAP_01}
+
+      ## 06. Undo  {#SP_GAP_06}
+
+      ### 06_01. Undo Steps  {#SP_GAP_06_01}
+
+      No table yet.
+
+      ## 07. Choices  {#SP_GAP_DEC}
+    extra/second.sp.md: |
+      # Spec: Second  {#SP_TWO}
+
+      ## 06. Undo  {#SP_TWO_06}
+
+      ### 06_01. Undo Steps  {#SP_TWO_06_01}
+
+      | Step | Undo |
+      |------|------|
+
+      | Step | Undo |
+      |------|------|
+      | 1 | drop the frame |
+    extra/gaps.plan.md: |
+      # Plan: Gaps  {#PL_GAP}
+
+      ## Steps
+
+      ### Phase 1 — Frame  {#PL_GAP_P1}
+
+      Cut the spars.
+
+      ### Phase 2 (Tail)  {#PL_GAP_P2}
+
+      **Verify:** {what to check}
+
+      ## Choices  {#PL_GAP_DEC}
+    extra/task_bare.md: |
+      # Task bare
+
+      > **Autonomy:** `checkpoints`
+
+      ## Progress
+
+      - [ ] Design sign-off — not given yet
+
+      ## Shared Activity Log
+
+      - 09:30 [impl] frame cut
+      - 09:00 [impl] plan read
     filt-set/.gitattributes: |
       *.bin filter=set
     filt-set/data.bin: |

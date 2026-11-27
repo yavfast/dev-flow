@@ -60,7 +60,7 @@ Before the first action: the [Phase start checklist](../SKILL.md#phase-start-che
 | create | [Promote](../references/project-tools.md#promote) — from a script in the session workspace, or from a description (write the script in the session workspace first, run it on real material, then promote) |
 | fix / extend / port / repurpose | [Adapt](../references/project-tools.md#adapt) with that class |
 | regenerate | [Regenerate](../references/project-tools.md#regenerate) from the card alone; on a seeded tool (`seeded_from` set) — [Seed](../references/project-tools.md#seeding-from-shipped-cards) `retry` from the shipped card |
-| verify | The audit tools step ([audit](audit.md) Step 7g) for the named tools, all when none is named; `--dry-run` as in audit |
+| verify | The audit tools step ([audit](audit.md) Step 7g) for the named tools, all when none is named; `--dry-run` as in audit. A seeded tool `failing` past the tripwire or after a failed amend, with the developer's word `amend` in the request: its [Seed](../references/project-tools.md#seeding-from-shipped-cards) `amend` first, then this step ([Verification in audit](../references/project-tools.md#verification-in-audit)) |
 | retire | [Adapt](../references/project-tools.md#adapt) `retire` — through the independent review |
 
 3. **Refusals.**

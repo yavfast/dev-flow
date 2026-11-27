@@ -155,6 +155,9 @@ Run: <run id> · Watch: <record|watched> · Expected: <N>m
 Progress: /tmp/{project-slug}/agents/<run id>.progress
 Inbox: /tmp/{project-slug}/agents/<run id>.inbox
 Duties: before your first action read references/supervision.md § Delegate duties, § Progress record and § Inbox; keep the duties of your watch level
+Shell: <name>[ — <notes>]
+Cut limit: <N> <unit>
+Recovery points: <path> · <point>[; …]
 Follow the `<phase>` phase protocol (phases/<phase>.md). You are a full
 dev-flow participant with delegated rights — see phases/subtask.md →
 Delegated Rights & Boundaries. A base role's
@@ -194,7 +197,7 @@ the project workspace (/tmp/{project-slug}/, timestamped names), referenced by p
 <the friction line from references/delegation.md → How>
 ```
 
-Omit the `Role style:` line when the phase has no style. Omit the `Run:`, `Progress:`, `Inbox:` and `Duties:` lines at watch level `none`, and the `## Run bounds` block when the subagent executes no shell commands beyond a read-only search; drop the `note` sentence at `none`. The lines and the block: [Supervising a Delegate → The brief](../references/supervision.md#the-brief).
+Omit the `Role style:` line when the phase has no style. Omit the `Run:`, `Progress:`, `Inbox:` and `Duties:` lines at watch level `none`, and the `## Run bounds` block when the subagent executes no shell commands beyond a read-only search; drop the `note` sentence at `none`. Omit `Shell:` when the subagent runs no shell command, `Cut limit:` while no cut has shown the session's limit, and `Recovery points:` when you made no recovery point for the files the subagent changes ([Delegation for Focus → How](../references/delegation.md#how)). The lines and the block: [Supervising a Delegate → The brief](../references/supervision.md#the-brief).
 
 Choose the delegate's permission class:
 - **read-only delegate** — for `ask` (read-only search and analysis)
